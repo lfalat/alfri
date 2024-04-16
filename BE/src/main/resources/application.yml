@@ -1,0 +1,16 @@
+spring:
+  application:
+    name: ${APPLICATION_NAME}
+  datasource:
+    url: ${DATABASE_PROD_URL}
+    username: ${DATABASE_PROD_USER}
+    password: ${DATABASE_PROD_PASSWORD}
+  jpa:
+    show-sql: ${PROD_SHOW_SQL}
+    hibernate:
+      # Spring Boot won't modify the database based on @Entity classes - we must update the database ourselves
+      ddl-auto: none
+  security:
+    jwt:
+      secret-key: ${JWT_PROD_SECRET_KEY}
+      expiration-time: ${JWT_PROD_EXPIRATION_TIME}
