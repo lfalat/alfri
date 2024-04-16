@@ -9,6 +9,7 @@ import jakarta.validation.constraints.Size;
 import java.time.LocalDate;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.format.annotation.DateTimeFormat;
 
 @Getter
 @Setter
@@ -17,8 +18,9 @@ import lombok.Setter;
 public class StudentSubject {
   @EmbeddedId private StudentSubjectId id;
 
-  @NotNull
+  @NotNull(message = "StudentSubject's year cannot be null!")
   @Column(name = "year", nullable = false)
+  @DateTimeFormat(style = "yyyy-mm-dd")
   private LocalDate year;
 
   @Size(max = 2)

@@ -1,7 +1,9 @@
 package sk.uniza.fri.alfri.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import lombok.Getter;
@@ -19,25 +21,26 @@ public class Question {
   @Column(name = "question_id", nullable = false)
   private Integer id;
 
-  @NotNull
+  @NotNull(message = "Question's questionnaire cannot be null!")
   @ManyToOne(fetch = FetchType.LAZY, optional = false)
   @JoinColumn(name = "questionnaire_id", nullable = false)
   private Questionnaire questionnaire;
 
-  @NotNull
+  @NotNull(message = "Question's answer type cannot be null!")
   @ManyToOne(fetch = FetchType.LAZY, optional = false)
   @JoinColumn(name = "answer_type_id", nullable = false)
   private AnswerType answerType;
 
-  @NotNull
+  @NotNull(message = "Question's position in questionnaire cannot be null!")
+  @Positive(message = "Question's position in questionnaire cannot be negative number or zero!")
   @Column(name = "position_in_questionnaire", nullable = false)
   private Integer positionInQuestionnaire;
 
-  @NotNull
+  @NotBlank(message = "Question's content cannot be blank or null!")
   @Column(name = "content", nullable = false, length = Integer.MAX_VALUE)
   private String content;
 
-  @NotNull
+  @NotNull(message = "Question's optional cannot be null!")
   @Column(name = "optional", nullable = false)
   private Boolean optional = false;
 

@@ -19,51 +19,51 @@ public class Focus {
   @JoinColumn(name = "subject_id", nullable = false)
   private Subject subject;
 
-  @NotNull
+  @NotNull(message = "Math focus cannot be null!")
   @Column(name = "math_focus", nullable = false)
   private Integer mathFocus;
 
-  @NotNull
+  @NotNull(message = "Logic focus cannot be null!")
   @Column(name = "logic_focus", nullable = false)
   private Integer logicFocus;
 
-  @NotNull
+  @NotNull(message = "Programming focus cannot be null!")
   @Column(name = "programming_focus", nullable = false)
   private Integer programmingFocus;
 
-  @NotNull
+  @NotNull(message = "Design focus cannot be null!")
   @Column(name = "design_focus", nullable = false)
   private Integer designFocus;
 
-  @NotNull
+  @NotNull(message = "Economics focus cannot be null!")
   @Column(name = "economics_focus", nullable = false)
   private Integer economicsFocus;
 
-  @NotNull
+  @NotNull(message = "Management focus cannot be null!")
   @Column(name = "management_focus", nullable = false)
   private Integer managementFocus;
 
-  @NotNull
+  @NotNull(message = "Hardware focus cannot be null!")
   @Column(name = "hardware_focus", nullable = false)
   private Integer hardwareFocus;
 
-  @NotNull
+  @NotNull(message = "Network focus cannot be null!")
   @Column(name = "network_focus", nullable = false)
   private Integer networkFocus;
 
-  @NotNull
+  @NotNull(message = "Data focus cannot be null!")
   @Column(name = "data_focus", nullable = false)
   private Integer dataFocus;
 
-  @NotNull
+  @NotNull(message = "Testing focus cannot be null!")
   @Column(name = "testing_focus", nullable = false)
   private Integer testingFocus;
 
-  @NotNull
+  @NotNull(message = "Language focus cannot be null!")
   @Column(name = "language_focus", nullable = false)
   private Integer languageFocus;
 
-  @NotNull
+  @NotNull(message = "Physical focus cannot be null!")
   @Column(name = "physical_focus", nullable = false)
   private Integer physicalFocus;
 }

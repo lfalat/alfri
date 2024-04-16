@@ -1,6 +1,7 @@
 package sk.uniza.fri.alfri.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import java.time.Instant;
 import lombok.Getter;
@@ -14,16 +15,16 @@ import org.hibernate.annotations.ColumnDefault;
 public class TextAnswer {
   @EmbeddedId private TextAnswerId id;
 
-  @NotNull
+  @NotNull(message = "TextAnswer's answer type cannot be null!")
   @ManyToOne(fetch = FetchType.LAZY, optional = false)
   @JoinColumn(name = "answer_type_id", nullable = false)
   private AnswerType answerType;
 
-  @NotNull
+  @NotBlank(message = "TextAnswer's answer cannot be blank or null!")
   @Column(name = "answer", nullable = false, length = Integer.MAX_VALUE)
   private String answer;
 
-  @NotNull
+  @NotNull(message = "TextAnswer's timestamp cannot be null!")
   @ColumnDefault("now()")
   @Column(name = "\"timestamp\"", nullable = false)
   private Instant timestamp;

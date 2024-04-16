@@ -14,12 +14,12 @@ import org.hibernate.annotations.ColumnDefault;
 public class OptionsAnswer {
   @EmbeddedId private OptionsAnswerId id;
 
-  @NotNull
+  @NotNull(message = "OptionsAnswer's answerType cannot be null!")
   @ManyToOne(fetch = FetchType.LAZY, optional = false)
   @JoinColumn(name = "answer_type_id", nullable = false)
   private AnswerType answerType;
 
-  @NotNull
+  @NotNull(message = "OptionsAnswer's timestamp cannot be null!")
   @ColumnDefault("now()")
   @Column(name = "\"timestamp\"", nullable = false)
   private Instant timestamp;

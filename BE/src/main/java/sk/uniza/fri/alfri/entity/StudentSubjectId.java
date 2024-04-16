@@ -16,11 +16,11 @@ import org.hibernate.Hibernate;
 public class StudentSubjectId implements Serializable {
   @Serial private static final long serialVersionUID = -5039088440635804271L;
 
-  @NotNull
+  @NotNull(message = "StudentSubjectId's student id cannot be null!")
   @Column(name = "student_id", nullable = false)
   private Integer studentId;
 
-  @NotNull
+  @NotNull(message = "StudentSubjectId's subject id cannot be null!")
   @Column(name = "subject_id", nullable = false)
   private Integer subjectId;
 

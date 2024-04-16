@@ -1,6 +1,7 @@
 package sk.uniza.fri.alfri.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
@@ -18,13 +19,13 @@ public class Option {
   @Column(name = "option_id", nullable = false)
   private Integer id;
 
-  @NotNull
+  @NotNull(message = "Option question cannot be null!")
   @ManyToOne(fetch = FetchType.LAZY, optional = false)
   @JoinColumn(name = "question_id", nullable = false)
   private Question question;
 
   @Size(max = 100)
-  @NotNull
+  @NotBlank(message = "Option's name cannot be blank or null!")
   @Column(name = "name", nullable = false, length = 100)
   private String name;
 }

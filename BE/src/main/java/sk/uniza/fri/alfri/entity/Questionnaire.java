@@ -1,6 +1,7 @@
 package sk.uniza.fri.alfri.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.time.Instant;
@@ -22,15 +23,15 @@ public class Questionnaire {
   private Integer id;
 
   @Size(max = 100)
-  @NotNull
+  @NotBlank(message = "Questinnaire's title cannot be null or blank!")
   @Column(name = "title", nullable = false, length = 100)
   private String title;
 
-  @NotNull
+  @NotBlank(message = "Questinnaire's description cannot be null or blank!")
   @Column(name = "description", nullable = false, length = Integer.MAX_VALUE)
   private String description;
 
-  @NotNull
+  @NotNull(message = "Questinnaire's date of creation cannot be null!")
   @ColumnDefault("now()")
   @Column(name = "date_of_creation", nullable = false)
   private Instant dateOfCreation;

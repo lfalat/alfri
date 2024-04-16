@@ -1,7 +1,7 @@
 package sk.uniza.fri.alfri.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -21,7 +21,7 @@ public class AnswerType {
   private Integer id;
 
   @Size(max = 50)
-  @NotNull
+  @NotBlank(message = "Answer type name cannot be blank or empty!")
   @Column(name = "name", nullable = false, length = 50)
   private String name;
 

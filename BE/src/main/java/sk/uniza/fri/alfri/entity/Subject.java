@@ -1,7 +1,7 @@
 package sk.uniza.fri.alfri.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
@@ -19,16 +19,16 @@ public class Subject {
   private Integer id;
 
   @Size(max = 100)
-  @NotNull
+  @NotBlank(message = "Subject's name cannot be blank or null!")
   @Column(name = "name", nullable = false, length = 100)
   private String name;
 
   @Size(max = 50)
-  @NotNull
+  @NotBlank(message = "Subject's code cannot be blank or null!")
   @Column(name = "code", nullable = false, length = 50)
   private String code;
 
-  @NotNull
+  @NotBlank(message = "Subject's description cannot be blank or null!")
   @Column(name = "description", nullable = false, length = Integer.MAX_VALUE)
   private String description;
 

@@ -16,15 +16,15 @@ import org.hibernate.Hibernate;
 public class OptionsAnswerId implements Serializable {
   @Serial private static final long serialVersionUID = 1534310898789660737L;
 
-  @NotNull
+  @NotNull(message = "OptionsAnswerId's questionnaireId cannot be null!")
   @Column(name = "questionnaire_id", nullable = false)
   private Integer questionnaireId;
 
-  @NotNull
+  @NotNull(message = "OptionsAnswerId's questionId cannot be null!")
   @Column(name = "question_id", nullable = false)
   private Integer questionId;
 
-  @NotNull
+  @NotNull(message = "OptionsAnswerId's userId cannot be null!")
   @Column(name = "user_id", nullable = false)
   private Integer userId;
 

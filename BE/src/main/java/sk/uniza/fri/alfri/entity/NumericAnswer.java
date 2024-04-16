@@ -15,16 +15,16 @@ import org.hibernate.annotations.ColumnDefault;
 public class NumericAnswer {
   @EmbeddedId private NumericAnswerId id;
 
-  @NotNull
+  @NotNull(message = "Numeric's answer answer type cannot be null!")
   @ManyToOne(fetch = FetchType.LAZY, optional = false)
   @JoinColumn(name = "answer_type_id", nullable = false)
   private AnswerType answerType;
 
-  @NotNull
+  @NotNull(message = "Numeric's answer answer cannot be null!")
   @Column(name = "answer", nullable = false)
   private BigDecimal answer;
 
-  @NotNull
+  @NotNull(message = "Numeric's answer timestamp cannot be null!")
   @ColumnDefault("now()")
   @Column(name = "\"timestamp\"", nullable = false)
   private Instant timestamp;

@@ -1,7 +1,7 @@
 package sk.uniza.fri.alfri.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
@@ -16,7 +16,7 @@ public class StudyProgram {
   private Integer id;
 
   @Size(max = 100)
-  @NotNull
+  @NotBlank(message = "StudyProgram's name cannot be blank or null!")
   @Column(name = "name", nullable = false, length = 100)
   private String name;
 }
