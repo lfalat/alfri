@@ -3,6 +3,8 @@ package sk.uniza.fri.alfri.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+
+import java.io.Serializable;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import lombok.Getter;
@@ -13,7 +15,7 @@ import org.hibernate.annotations.ColumnDefault;
 @Setter
 @Entity
 @Table(name = "role")
-public class Role {
+public class Role implements Serializable {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @ColumnDefault("nextval('role_role_id_seq'")
