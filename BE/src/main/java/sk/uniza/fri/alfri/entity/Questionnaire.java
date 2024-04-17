@@ -1,5 +1,6 @@
 package sk.uniza.fri.alfri.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -37,5 +38,6 @@ public class Questionnaire {
   private Instant dateOfCreation;
 
   @OneToMany(mappedBy = "questionnaire", fetch = FetchType.LAZY)
+  @JsonBackReference
   private Set<Question> questions = new LinkedHashSet<>();
 }

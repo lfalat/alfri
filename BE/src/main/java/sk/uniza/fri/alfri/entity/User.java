@@ -1,5 +1,7 @@
 package sk.uniza.fri.alfri.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -32,8 +34,9 @@ public class User implements UserDetails {
   private Integer id;
 
   @NotNull(message = "User's role cannot be null!")
-  @ManyToOne(fetch = FetchType.LAZY, optional = false)
+  @ManyToOne(optional = false)
   @JoinColumn(name = "role_id", nullable = false)
+  @JsonManagedReference
   private Role role;
 
   @Size(max = 100)
@@ -57,6 +60,7 @@ public class User implements UserDetails {
   private String password;
 
   @OneToOne(mappedBy = "user")
+  @JsonBackReference
   private transient Student student;
 
   /**

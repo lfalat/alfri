@@ -1,5 +1,6 @@
 package sk.uniza.fri.alfri.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -26,14 +27,18 @@ public class AnswerType {
   private String name;
 
   @OneToMany(mappedBy = "answerType", fetch = FetchType.LAZY)
+  @JsonBackReference
   private Set<NumericAnswer> numericAnswers = new LinkedHashSet<>();
 
   @OneToMany(mappedBy = "answerType", fetch = FetchType.LAZY)
+  @JsonBackReference
   private Set<OptionsAnswer> optionsAnswers = new LinkedHashSet<>();
 
   @OneToMany(mappedBy = "answerType", fetch = FetchType.LAZY)
+  @JsonBackReference
   private Set<Question> questions = new LinkedHashSet<>();
 
   @OneToMany(mappedBy = "answerType", fetch = FetchType.LAZY)
+  @JsonBackReference
   private Set<TextAnswer> textAnswers = new LinkedHashSet<>();
 }

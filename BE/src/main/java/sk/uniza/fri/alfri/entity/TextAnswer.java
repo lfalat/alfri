@@ -1,5 +1,6 @@
 package sk.uniza.fri.alfri.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -18,6 +19,7 @@ public class TextAnswer {
   @NotNull(message = "TextAnswer's answer type cannot be null!")
   @ManyToOne(fetch = FetchType.LAZY, optional = false)
   @JoinColumn(name = "answer_type_id", nullable = false)
+  @JsonManagedReference
   private AnswerType answerType;
 
   @NotBlank(message = "TextAnswer's answer cannot be blank or null!")

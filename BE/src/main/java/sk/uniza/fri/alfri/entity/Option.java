@@ -1,5 +1,6 @@
 package sk.uniza.fri.alfri.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -22,6 +23,7 @@ public class Option {
   @NotNull(message = "Option question cannot be null!")
   @ManyToOne(fetch = FetchType.LAZY, optional = false)
   @JoinColumn(name = "question_id", nullable = false)
+  @JsonManagedReference
   private Question question;
 
   @Size(max = 100)

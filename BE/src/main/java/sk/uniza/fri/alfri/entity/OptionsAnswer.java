@@ -1,5 +1,6 @@
 package sk.uniza.fri.alfri.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import java.time.Instant;
@@ -17,6 +18,7 @@ public class OptionsAnswer {
   @NotNull(message = "OptionsAnswer's answerType cannot be null!")
   @ManyToOne(fetch = FetchType.LAZY, optional = false)
   @JoinColumn(name = "answer_type_id", nullable = false)
+  @JsonManagedReference
   private AnswerType answerType;
 
   @NotNull(message = "OptionsAnswer's timestamp cannot be null!")

@@ -1,5 +1,7 @@
 package sk.uniza.fri.alfri.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -24,11 +26,13 @@ public class Question {
   @NotNull(message = "Question's questionnaire cannot be null!")
   @ManyToOne(fetch = FetchType.LAZY, optional = false)
   @JoinColumn(name = "questionnaire_id", nullable = false)
+  @JsonManagedReference
   private Questionnaire questionnaire;
 
   @NotNull(message = "Question's answer type cannot be null!")
   @ManyToOne(fetch = FetchType.LAZY, optional = false)
   @JoinColumn(name = "answer_type_id", nullable = false)
+  @JsonManagedReference
   private AnswerType answerType;
 
   @NotNull(message = "Question's position in questionnaire cannot be null!")
@@ -45,5 +49,6 @@ public class Question {
   private Boolean optional = false;
 
   @OneToMany(mappedBy = "question", fetch = FetchType.LAZY)
+  @JsonBackReference
   private Set<Option> options = new LinkedHashSet<>();
 }

@@ -1,5 +1,6 @@
 package sk.uniza.fri.alfri.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -17,6 +18,7 @@ public class Focus {
   @MapsId
   @OneToOne(fetch = FetchType.LAZY, optional = false)
   @JoinColumn(name = "subject_id", nullable = false)
+  @JsonManagedReference
   private Subject subject;
 
   @NotNull(message = "Math focus cannot be null!")

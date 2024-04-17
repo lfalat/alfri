@@ -7,28 +7,32 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import sk.uniza.fri.alfri.entity.Role;
 import sk.uniza.fri.alfri.entity.User;
 import sk.uniza.fri.alfri.exception.InvalidCredentialsException;
 import sk.uniza.fri.alfri.exception.UserAlreadyRegisteredException;
-import sk.uniza.fri.alfri.repository.UserRepository;
+import sk.uniza.fri.alfri.repository.IRoleRepository;
+import sk.uniza.fri.alfri.repository.IUserRepository;
 import sk.uniza.fri.alfri.service.IAuthService;
 
-/** Created by petos on 17/04/2024. */
 @Slf4j
 @Service
 public class AuthService implements IAuthService {
 
-  private final UserRepository userRepository;
+  private final IUserRepository userRepository;
+  private final IRoleRepository roleRepository;
 
   private final PasswordEncoder passwordEncoder;
 
   private final AuthenticationManager authenticationManager;
 
   public AuthService(
-      UserRepository userRepository,
+      IUserRepository userRepository,
+      IRoleRepository roleRepository,
       PasswordEncoder passwordEncoder,
       AuthenticationManager authenticationManager) {
     this.userRepository = userRepository;
+    this.roleRepository = roleRepository;
     this.passwordEncoder = passwordEncoder;
     this.authenticationManager = authenticationManager;
   }
@@ -38,19 +42,27 @@ public class AuthService implements IAuthService {
 
     log.info("Trying to register user with email {}", userToRegister.getEmail());
 
-    String userToRegisterUsername = userToRegister.getUsername();
+    String userToRegisterEmail = userToRegister.getUsername();
     if (userRepository.findByEmail(userToRegister.getEmail()).isPresent()) {
       throw new UserAlreadyRegisteredException(
-          String.format(
-              "User with username %s or email %s is already registered!",
-              userToRegisterUsername, userToRegister.getEmail()));
+          String.format("User with email %s is already registered!", userToRegisterEmail));
     }
+
+    Integer roleId = userToRegister.getId();
+    Role userRole =
+        roleRepository
+            .findById(roleId)
+            .orElseThrow(
+                () ->
+                    new EntityNotFoundException(
+                        String.format("Role with id %d was not found!", roleId)));
 
     User user =
         User.builder()
-            .role(userToRegister.getRole())
+            .role(userRole)
             .firstName(userToRegister.getFirstName())
             .lastName(userToRegister.getLastName())
+            .email(userToRegister.getEmail())
             .password(passwordEncoder.encode(userToRegister.getPassword()))
             .build();
 

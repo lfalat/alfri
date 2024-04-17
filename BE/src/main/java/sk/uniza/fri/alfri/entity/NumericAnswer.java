@@ -1,5 +1,6 @@
 package sk.uniza.fri.alfri.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import java.math.BigDecimal;
@@ -18,6 +19,7 @@ public class NumericAnswer {
   @NotNull(message = "Numeric's answer answer type cannot be null!")
   @ManyToOne(fetch = FetchType.LAZY, optional = false)
   @JoinColumn(name = "answer_type_id", nullable = false)
+  @JsonManagedReference
   private AnswerType answerType;
 
   @NotNull(message = "Numeric's answer answer cannot be null!")

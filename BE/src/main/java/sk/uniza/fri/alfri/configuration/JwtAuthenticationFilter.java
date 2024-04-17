@@ -18,7 +18,6 @@ import org.springframework.web.servlet.HandlerExceptionResolver;
 import sk.uniza.fri.alfri.exceptionhandler.GlobalExceptionHandler;
 import sk.uniza.fri.alfri.service.implementation.JwtService;
 
-/** Created by petos on 17/04/2024. */
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
   private final HandlerExceptionResolver handlerExceptionResolver;

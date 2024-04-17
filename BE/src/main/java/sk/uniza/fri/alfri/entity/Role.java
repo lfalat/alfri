@@ -1,9 +1,9 @@
 package sk.uniza.fri.alfri.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
-
 import java.io.Serializable;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -28,5 +28,6 @@ public class Role implements Serializable {
   private String name;
 
   @OneToMany(mappedBy = "role", fetch = FetchType.LAZY)
+  @JsonBackReference
   private Set<User> users = new LinkedHashSet<>();
 }

@@ -1,5 +1,6 @@
 package sk.uniza.fri.alfri.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -19,6 +20,7 @@ public class Student {
 
   @OneToOne()
   @JoinColumn(name = "user_id")
+  @JsonManagedReference
   private User user;
 
   @NotNull(message = "Student's studyProgramId cannot be null!")

@@ -1,5 +1,6 @@
 package sk.uniza.fri.alfri.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -33,5 +34,6 @@ public class Subject {
   private String description;
 
   @OneToOne(mappedBy = "subject")
+  @JsonBackReference
   private Focus focus;
 }
