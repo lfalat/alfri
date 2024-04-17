@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import java.io.Serial;
 import java.util.Collection;
 import java.util.List;
 import lombok.*;
@@ -27,6 +28,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 @NoArgsConstructor
 @AllArgsConstructor
 public class User implements UserDetails {
+  @Serial
+  private static final long serialVersionUID = -1611510836045616813L;
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @ColumnDefault("nextval('user_user_id_seq'")
