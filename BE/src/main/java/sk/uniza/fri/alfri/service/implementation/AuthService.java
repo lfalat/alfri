@@ -11,24 +11,24 @@ import sk.uniza.fri.alfri.entity.Role;
 import sk.uniza.fri.alfri.entity.User;
 import sk.uniza.fri.alfri.exception.InvalidCredentialsException;
 import sk.uniza.fri.alfri.exception.UserAlreadyRegisteredException;
-import sk.uniza.fri.alfri.repository.IRoleRepository;
-import sk.uniza.fri.alfri.repository.IUserRepository;
+import sk.uniza.fri.alfri.repository.RoleRepository;
+import sk.uniza.fri.alfri.repository.UserRepository;
 import sk.uniza.fri.alfri.service.IAuthService;
 
 @Slf4j
 @Service
 public class AuthService implements IAuthService {
 
-  private final IUserRepository userRepository;
-  private final IRoleRepository roleRepository;
+  private final UserRepository userRepository;
+  private final RoleRepository roleRepository;
 
   private final PasswordEncoder passwordEncoder;
 
   private final AuthenticationManager authenticationManager;
 
   public AuthService(
-      IUserRepository userRepository,
-      IRoleRepository roleRepository,
+      UserRepository userRepository,
+      RoleRepository roleRepository,
       PasswordEncoder passwordEncoder,
       AuthenticationManager authenticationManager) {
     this.userRepository = userRepository;

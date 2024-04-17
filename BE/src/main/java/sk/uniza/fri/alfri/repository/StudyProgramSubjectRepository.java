@@ -4,5 +4,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import sk.uniza.fri.alfri.entity.StudyProgramSubject;
 import sk.uniza.fri.alfri.entity.StudyProgramSubjectId;
 
-public interface IStudyProgramSubjectRepository
+public interface StudyProgramSubjectRepository
     extends JpaRepository<StudyProgramSubject, StudyProgramSubjectId> {}

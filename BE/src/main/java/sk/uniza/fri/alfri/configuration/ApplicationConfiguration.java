@@ -10,13 +10,13 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import sk.uniza.fri.alfri.repository.IUserRepository;
+import sk.uniza.fri.alfri.repository.UserRepository;
 
 @Configuration
 public class ApplicationConfiguration {
-  private final IUserRepository userRepository;
+  private final UserRepository userRepository;
 
-  public ApplicationConfiguration(IUserRepository userRepository) {
+  public ApplicationConfiguration(UserRepository userRepository) {
     this.userRepository = userRepository;
   }
 
