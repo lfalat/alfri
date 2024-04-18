@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: ${APPLICATION_NAME:ALFRI_BE}
+  datasource:
+    url: jdbc:postgresql://${DATABASE_DEV_URL:localhost:5432/alfri}
+    username: ${DATABASE_DEV_USER:alfri_be}
+    password: ${DATABASE_DEV_PASSWORD:password123}
+  jpa:
+    show-sql: ${DEV_SHOW_SQL:false}
+    hibernate:
+      # Spring Boot won't modify the database based on @Entity classes - we must update the database ourselves
+      ddl-auto: none
+  security:
+    jwt:
+      secret-key: ${JWT_DEV_SECRET_KEY:3cfa76ef14937c1c0ea519f8fc057a80fcd04a7420f8e8bcd0a7567c272e007b}
+      expiration-time: ${JWT_DEV_EXPIRATION_TIME:3600000}
+frontend-url: ${FRONTEND_DEV_URL:http://localhost:4200}
