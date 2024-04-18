@@ -30,6 +30,7 @@ import type { RegisterUserDto, Role } from '../../types';
     NgForOf,
     HttpClientModule
   ],
+  providers: [ HttpClientModule],
   templateUrl: './registration-form.component.html',
   styleUrl: './registration-form.component.scss'
 })
@@ -42,7 +43,6 @@ export class RegistrationFormComponent {
   ];
 
   constructor(private formBuilder: FormBuilder,
-              private http: HttpClient,
               private router: Router,
               private authService: AuthService) {
     this.registerForm = this.formBuilder.group({
