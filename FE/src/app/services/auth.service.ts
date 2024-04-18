@@ -13,7 +13,7 @@ export class AuthService {
   }
 
   postUser(userData: any): Observable<any> {
-
+    console.log(userData);
     const httpOptions = {
       headers: new HttpHeaders({
         'Content-Type': 'application/json'

@@ -81,8 +81,8 @@ export class RegistrationFormComponent {
     }
 
     const userData: RegisterUserDto = {
-      firstName: this.registerForm.value.firstName,
-      lastName: this.registerForm.value.lastName,
+      firstName: this.registerForm.value.name,
+      lastName: this.registerForm.value.surname,
       roleId: this.registerForm.value.roleId,
       email: this.registerForm.value.email,
       password: this.registerForm.value.password
