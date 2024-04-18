@@ -1,0 +1,54 @@
+<div>
+  <mat-card class="center container-sm py-3">
+    <h1 class="text-center">Registrácia</h1>
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="d-flex flex-column gap-2">
+      <mat-form-field appearance="outline">
+        <mat-label>Meno</mat-label>
+        <input matInput formControlName="name" required>
+        <mat-error *ngIf="registerForm.controls['name'].invalid">
+          Neplatné meno.
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Priezvisko</mat-label>
+        <input matInput formControlName="surname" required>
+        <mat-error *ngIf="registerForm.controls['surname'].invalid">
+          Neplatné priezvisko.
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Email</mat-label>
+        <input matInput formControlName="email" required type="email">
+        <mat-error *ngIf="registerForm.controls['email'].invalid">
+          Neplatná emailová adresa.
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Heslo</mat-label>
+        <input matInput formControlName="password" type="password" required pattern="^(?=.*[A-Z])(?=.*[0-9])(?=.*[a-z]).{8,}$">
+        <mat-error *ngIf="registerForm.controls['password'].invalid">
+          Heslo musí mať aspoň 9 znakov.
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Potvrď heslo</mat-label>
+        <input matInput formControlName="confirmPassword" type="password" required>
+        <mat-error *ngIf="registerForm.controls['confirmPassword'].invalid">
+          Heslá sa nezhodujú.
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Rola</mat-label>
+        <mat-select formControlName="roleId" required>
+          <mat-option *ngFor="let role of roles" [value]="role.id">{{ role.name }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <button mat-stroked-button color="primary" type="submit">Registrovať</button>
+    </form>
+  </mat-card>
+</div>
