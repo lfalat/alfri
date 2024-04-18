@@ -1,13 +1,17 @@
 package sk.uniza.fri.alfri.configuration;
 
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.io.IOException;
 import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -20,10 +24,9 @@ import sk.uniza.fri.alfri.service.implementation.JwtService;
 
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
-  private final HandlerExceptionResolver handlerExceptionResolver;
-
   private final JwtService jwtService;
   private final UserDetailsService userDetailsService;
+  private final HandlerExceptionResolver handlerExceptionResolver;
 
   public JwtAuthenticationFilter(
       JwtService jwtService,
@@ -39,7 +42,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
       @NonNull HttpServletRequest request,
       @NonNull HttpServletResponse response,
       @NonNull FilterChain filterChain)
-      throws IOException {
+      throws IOException, java.io.IOException {
     final String authHeader = request.getHeader("Authorization");
 
     try {
@@ -69,10 +72,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
       }
 
       filterChain.doFilter(request, response);
-    } catch (Exception exception) {
-      response.setStatus(HttpStatus.UNAUTHORIZED.value());
+    } catch (ExpiredJwtException
+        | MalformedJwtException
+        | ServletException
+        | AuthenticationException ex) {
       handlerExceptionResolver.resolveException(
-          request, response, GlobalExceptionHandler.class, exception);
+          request, response, GlobalExceptionHandler.class, ex);
     }
   }
 }

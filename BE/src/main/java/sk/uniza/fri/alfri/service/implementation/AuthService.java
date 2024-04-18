@@ -48,7 +48,7 @@ public class AuthService implements IAuthService {
           String.format("User with email %s is already registered!", userToRegisterEmail));
     }
 
-    Integer roleId = userToRegister.getId();
+    Integer roleId = userToRegister.getRole().getId();
     Role userRole =
         roleRepository
             .findById(roleId)
