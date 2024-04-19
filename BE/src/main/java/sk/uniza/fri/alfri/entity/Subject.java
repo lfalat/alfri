@@ -29,9 +29,9 @@ public class Subject {
   @Column(name = "code", nullable = false, length = 50)
   private String code;
 
-  @NotBlank(message = "Subject's description cannot be blank or null!")
-  @Column(name = "description", nullable = false, length = Integer.MAX_VALUE)
-  private String description;
+  @NotBlank(message = "Subject's abbreviation cannot be blank or null!")
+  @Column(name = "abbreviation", nullable = false, length = Integer.MAX_VALUE)
+  private String abbreviation;
 
   @OneToOne(mappedBy = "subject")
   @JsonBackReference
