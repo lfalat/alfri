@@ -13,6 +13,7 @@ import { HttpClient } from '@angular/common/http';
 import { HttpClientModule } from '@angular/common/http';
 import { AuthService } from '../../services/auth.service';
 import type { RegisterUserDto, Role } from '../../types';
+import { ErrorService } from '../../services/error.service';
 
 @Component({
   selector: 'app-registration-form',
@@ -46,7 +47,8 @@ export class RegistrationFormComponent {
 
   constructor(private formBuilder: FormBuilder,
               private router: Router,
-              private authService: AuthService) {
+              private authService: AuthService,
+              private errorService: ErrorService) {
     this.registerForm = this.formBuilder.group({
       name: ['', [Validators.required]],
       surname: ['', [Validators.required]],
@@ -100,5 +102,9 @@ export class RegistrationFormComponent {
         this.isError = true;
       }
     );
+  }
+
+  hideError() {
+    this.isError = false;
   }
 }

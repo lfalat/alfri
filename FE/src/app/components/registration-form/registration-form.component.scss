@@ -1,28 +1,24 @@
+@import "../../../../node_modules/bootstrap/scss/bootstrap";
+
 $primary-color: #007bff;
 $secondary-color: #d5e9fd;
-$alert-color: #dc3545;
 $font-family: Arial, sans-serif;
 $padding-medium: 15px;
 
 .registration-form {
-  background-color: #f9f9f9;
   font-family: $font-family;
-  max-width: 500px;
-  margin: 0 auto;
   padding: $padding-medium;
-  border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 
-  h1 {
-    color: $primary-color;
-    margin-bottom: $padding-medium;
+  #heroText {
+    text-align: justify;
   }
 
-  .alert {
-    background-color: $alert-color;
-    color: white;
-    padding: 10px;
-    border-radius: 5px;
+  .divider {
+    color: $gray-600;
+  }
+
+  h3 {
+    color: $primary-color;
     margin-bottom: $padding-medium;
   }
 
@@ -36,9 +32,31 @@ $padding-medium: 15px;
     width: 100%;
   }
 
-  button[type="submit"] {
-    display: flex;
-    align-self: center;
-    width: 50%;
+  .registration-form-wrapper {
+    flex-direction: column;
+
+    @include media-breakpoint-up(md) {
+      flex-direction: row;
+    }
+  }
+
+  .hero-wrapper {
+    align-items: center;
+    flex-direction: column;
+  }
+
+  .divider {
+    display: none;
+    @include media-breakpoint-up(md) {
+      display: block;
+    }
+  }
+
+  @include media-breakpoint-up(md) {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    flex-direction: row;
   }
 }
