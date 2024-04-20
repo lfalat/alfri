@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import type { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { HttpHeaders } from '@angular/common/http';
-import type {RegisterUserDto, UserDto } from '../types';
+import type { RegisterUserDto } from '../types';
 
 @Injectable({
   providedIn: 'root'
@@ -14,7 +14,6 @@ export class AuthService {
   }
 
   postUser(userData: RegisterUserDto): Observable<any> {
-    console.log(userData);
     const httpOptions = {
       headers: new HttpHeaders({
         'Content-Type': 'application/json'

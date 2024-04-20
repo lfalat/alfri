@@ -9,11 +9,9 @@ import { MatButton } from '@angular/material/button';
 import { MatInput } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { NgForOf, NgIf } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
 import { HttpClientModule } from '@angular/common/http';
 import { AuthService } from '../../services/auth.service';
 import type { RegisterUserDto, Role } from '../../types';
-import { ErrorService } from '../../services/error.service';
 
 @Component({
   selector: 'app-registration-form',
@@ -43,12 +41,12 @@ export class RegistrationFormComponent {
     { id: 3, name: 'Návštevník' }
   ];
   public isError = false;
+  public errorText = '';
 
 
   constructor(private formBuilder: FormBuilder,
               private router: Router,
-              private authService: AuthService,
-              private errorService: ErrorService) {
+              private authService: AuthService) {
     this.registerForm = this.formBuilder.group({
       name: ['', [Validators.required]],
       surname: ['', [Validators.required]],
@@ -92,16 +90,20 @@ export class RegistrationFormComponent {
       password: this.registerForm.value.password
     };
 
-    this.authService.postUser(userData).subscribe(
-      response => {
-        console.log('Backend response:', response);
-        console.log('Backend response:', response.type);
-        this.router.navigate(['/home']);
-      },
-      _ => {
+    this.authService.postUser(userData).subscribe({
+      next: _ => this.router.navigate(['/home']),
+      error: error => {
         this.isError = true;
+        switch (error.status) {
+        case 409:
+          this.errorText = 'Používateľ už existuje.';
+          break;
+        default:
+          this.errorText = 'Neznáma chyba.';
+          break;
+        }
       }
-    );
+    });
   }
 
   hideError() {
