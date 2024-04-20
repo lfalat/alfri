@@ -1,6 +1,9 @@
-<div>
+<div class="registration-form">
   <mat-card class="center container-sm py-3">
     <h1 class="text-center">Registrácia</h1>
+    <div *ngIf="isError" class="alert alert-danger" role="alert">
+      Chyba!
+    </div>
     <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="d-flex flex-column gap-2">
       <mat-form-field appearance="outline">
         <mat-label>Meno</mat-label>
@@ -49,6 +52,7 @@
         </mat-select>
       </mat-form-field>
       <button mat-stroked-button color="primary" type="submit">Registrovať</button>
+
     </form>
   </mat-card>
 </div>

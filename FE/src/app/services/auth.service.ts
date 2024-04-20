@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import type { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { HttpHeaders } from '@angular/common/http';
+import type {RegisterUserDto, UserDto } from '../types';
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +13,7 @@ export class AuthService {
   constructor(private http: HttpClient) {
   }
 
-  postUser(userData: any): Observable<any> {
+  postUser(userData: RegisterUserDto): Observable<any> {
     console.log(userData);
     const httpOptions = {
       headers: new HttpHeaders({

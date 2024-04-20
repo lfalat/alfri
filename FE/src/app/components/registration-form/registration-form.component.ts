@@ -41,6 +41,8 @@ export class RegistrationFormComponent {
     { id: 2, name: 'Učiteľ' },
     { id: 3, name: 'Návštevník' }
   ];
+  public isError = false;
+
 
   constructor(private formBuilder: FormBuilder,
               private router: Router,
@@ -91,10 +93,11 @@ export class RegistrationFormComponent {
     this.authService.postUser(userData).subscribe(
       response => {
         console.log('Backend response:', response);
+        console.log('Backend response:', response.type);
         this.router.navigate(['/home']);
       },
-      error => {
-        console.error('Error:', error);
+      _ => {
+        this.isError = true;
       }
     );
   }

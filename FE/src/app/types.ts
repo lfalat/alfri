@@ -9,3 +9,11 @@ export interface RegisterUserDto {
   email: string,
   password: string
 }
+
+export interface UserDto {
+  userId: number,
+  firstName: string,
+  lastName: string,
+  role: Role,
+  email: string
+}
