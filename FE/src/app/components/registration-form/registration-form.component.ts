@@ -13,6 +13,8 @@ import { HttpClientModule } from '@angular/common/http';
 import { AuthService } from '../../services/auth.service';
 import type { RegisterUserDto, Role } from '../../types';
 import { ErrorService } from '../../services/error.service';
+import { UserService } from '../../services/user.service';
+import { JwtService } from '../../services/jwt.service';
 
 @Component({
   selector: 'app-registration-form',
@@ -48,7 +50,9 @@ export class RegistrationFormComponent {
   constructor(private formBuilder: FormBuilder,
               private router: Router,
               private authService: AuthService,
-              private errorService: ErrorService) {
+              private errorService: ErrorService,
+              private userService: UserService,
+              private jwtService: JwtService,) {
     this.registerForm = this.formBuilder.group({
       name: ['', [Validators.required]],
       surname: ['', [Validators.required]],
@@ -93,21 +97,41 @@ export class RegistrationFormComponent {
     };
 
     this.authService.postUser(userData).subscribe({
-      next: _ => this.router.navigate(['/home']).then(() => {
-        this.errorService.showError('Registrácia prebehla úspešne.');
-      }),
-      error: error => {
+      next: (response) => {
+        this.userService.saveUserId(response.userId);
+
+        const authBody = {
+          email: this.registerForm.value.email,
+          password: this.registerForm.value.password
+        };
+
+        this.authService.authenticate(authBody).subscribe({
+          next: (authResponse) => {
+            const token = authResponse.jwtToken;
+            this.jwtService.saveToken(token);
+
+            this.router.navigate(['/home']).then(() => {
+              this.errorService.showError('Registrácia prebehla úspešne.');
+            });
+          },
+          error: (authError) => {
+            this.router.navigate(['/404']);
+          }
+        });
+      },
+      error: (error) => {
         this.isError = true;
         switch (error.status) {
-        case 409:
-          this.errorText = 'Používateľ už existuje.';
-          break;
-        default:
-          this.errorText = 'Neznáma chyba.';
-          break;
+          case 409:
+            this.errorText = 'Používateľ už existuje.';
+            break;
+          default:
+            this.errorText = 'Neznáma chyba.';
+            break;
         }
       }
     });
+
   }
 
   hideError() {
