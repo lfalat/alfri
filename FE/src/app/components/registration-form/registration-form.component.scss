@@ -41,8 +41,26 @@ $padding-medium: 15px;
   }
 
   .hero-wrapper {
+    min-height: 200px;
+    background-image: url('../../../assets/images/ai-backdrop.jpg');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    position: relative;
+
     align-items: center;
     flex-direction: column;
+
+    ::after {
+      content: "";
+      background: rgba(0, 0, 0, 0.3);
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      pointer-events: none;
+    }
   }
 
   .divider {

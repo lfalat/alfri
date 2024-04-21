@@ -1,19 +1,18 @@
-import { Component, OnInit } from '@angular/core';
-import { ErrorService } from '../services/error.service';
+import { Component } from '@angular/core';
+import { MatDrawer, MatDrawerContainer } from '@angular/material/sidenav';
+import { MatButton } from '@angular/material/button';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [],
+  imports: [
+    MatDrawerContainer,
+    MatButton,
+    MatDrawer
+  ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss'
 })
-export class HomeComponent implements OnInit {
+export class HomeComponent {
 
-  constructor(private errorService: ErrorService) {
-  }
-
-  ngOnInit(): void {
-    this.errorService.showError('Registrácia prebehla úspešne.');
-  }
 }

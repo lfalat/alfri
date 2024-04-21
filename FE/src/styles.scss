@@ -6,3 +6,8 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
 .cdk-overlay-pane { background-color: $white; }
+
+.error-snackbar {
+  position: absolute;
+  top: 10%
+}

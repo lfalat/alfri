@@ -12,6 +12,7 @@ import { NgForOf, NgIf } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { AuthService } from '../../services/auth.service';
 import type { RegisterUserDto, Role } from '../../types';
+import { ErrorService } from '../../services/error.service';
 
 @Component({
   selector: 'app-registration-form',
@@ -46,7 +47,8 @@ export class RegistrationFormComponent {
 
   constructor(private formBuilder: FormBuilder,
               private router: Router,
-              private authService: AuthService) {
+              private authService: AuthService,
+              private errorService: ErrorService) {
     this.registerForm = this.formBuilder.group({
       name: ['', [Validators.required]],
       surname: ['', [Validators.required]],
@@ -91,7 +93,9 @@ export class RegistrationFormComponent {
     };
 
     this.authService.postUser(userData).subscribe({
-      next: _ => this.router.navigate(['/home']),
+      next: _ => this.router.navigate(['/home']).then(() => {
+        this.errorService.showError('Registrácia prebehla úspešne.');
+      }),
       error: error => {
         this.isError = true;
         switch (error.status) {

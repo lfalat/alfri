@@ -1,24 +1,12 @@
-<div class="registration-form col-12 col-md-10 col-lg-8 col-xl-6  col-xxl-6">
+<div class="registration-form col-12 col-md-10 col-lg-8 col-xl-6  col-xxl-6 position-relative">
   <mat-card class="d-flex registration-form-wrapper">
-    <div class="p-3 hero-wrapper d-flex col-12 col-md-6">
-      <img src="assets/images/register_illustration.png" alt="" class="img-fluid w-75 align-self-center">
-      <h3 class="text-center error-snackbar">Registrácia</h3>
-      <p id="heroText" class="text-justify m-0">Praesent urna purus, imperdiet et neque quis, elementum viverra magna. Morbi sodales feugiat eros sed bibendum.
-        Pellentesque scelerisque tortor quis tellus mollis, at malesuada arcu porta. Aenean eu lorem ut risus lacinia
-        facilisis eu quis lectus. Curabitur ullamcorper rutrum cursus. Morbi eu nunc scelerisque, bibendum purus id,
-        mattis tortor. Sed ultrices faucibus hendrerit. Maecenas ac nunc imperdiet, vehicula nunc ac, maximus arcu.
-        Suspendisse bibendum pretium diam, rutrum sollicitudin mauris pharetra et. Nam feugiat augue nec neque sodales,
-        a tristique nibh venenatis. Etiam vel lorem ante. Mauris quis odio tortor. Integer et magna diam.</p>
-    </div>
-
-    <div class="vr my-4 divider"></div>
-
+    <div class="p-3 hero-wrapper d-flex col-12 col-md-6"></div>
 
     <div class="container-fluid p-3 form-wrapper d-flex col-12 col-md-6 m-0">
-      <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="d-flex flex-column row-gap-2 w-100">
-        <div *ngIf="isError" class="alert alert-danger alert-dismissible fade show" role="alert">
+      <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="d-flex flex-column row-gap-2 w-100 m-1">
+        <div [class.invisible]="!isError" class="alert alert-danger alert-dismissible fade show" role="alert">
           {{errorText}}
-          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" (click)="hideError()"></button>
+          <button type="button" class="btn-close" aria-label="Close" (click)="hideError()"></button>
         </div>
         <mat-form-field  appearance="outline">
           <mat-label>Meno</mat-label>
@@ -49,7 +37,7 @@
           <input matInput formControlName="password" type="password" required
                  pattern="^(?=.*[A-Z])(?=.*[0-9])(?=.*[a-z]).{8,}$">
           <mat-error *ngIf="registerForm.controls['password'].invalid">
-            Heslo musí mať aspoň 9 znakov.
+            Heslo nie je príliš komplexné.
           </mat-error>
         </mat-form-field>
 
