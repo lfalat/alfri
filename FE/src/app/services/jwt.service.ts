@@ -5,9 +5,11 @@ import { Injectable } from '@angular/core';
 })
 export class JwtService {
 
-  constructor() { }
-
   saveToken(token: string) {
     localStorage.setItem('access_token', token);
+  }
+
+  removeToken() {
+    localStorage.removeItem('access_token');
   }
 }

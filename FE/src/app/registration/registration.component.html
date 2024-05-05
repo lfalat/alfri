@@ -1,8 +1,12 @@
-<div class="registration-form col-12 col-md-10 col-lg-8 col-xl-6 col-xxl-6 position-relative">
+<div class="registration-form col-12 col-md-10 col-lg-8 col-xl-8 col-xxl-6 position-relative">
   <mat-card class="d-flex registration-form-wrapper">
-    <div class="p-3 hero-wrapper d-flex col-12 col-md-6"></div>
+    <div class="p-3  d-flex col-12 col-md-6 justify-content-center flex-column align-items-center info-wrapper">
+      <h2>Registrácia</h2>
+      <img src="assets/images/register_illustration.png" class="img-fluid registration-image"/>
+      <h5>Prvý inteligentý asistent pre študentov UNIZA.</h5>
+    </div>
 
-    <div class="container-fluid p-3 form-wrapper d-flex col-12 col-md-6 m-0">
+    <div class="container-fluid p-3 form-wrapper d-flex col-12 col-md-6 m-0 align-items-center">
       <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="d-flex flex-column row-gap-2 w-100 m-1">
         <div [class.invisible]="!isError" class="alert alert-danger alert-dismissible fade show" role="alert">
           {{errorText}}
@@ -55,6 +59,10 @@
             <mat-option *ngFor="let role of roles" [value]="role.id">{{ role.name }}</mat-option>
           </mat-select>
         </mat-form-field>
+
+        <div class="text-center">
+          <p>Už máte účet ? <a href="javascript:void(0)" class="text-primary" (click)="redirectToLogin()">Prihláste sa</a></p>
+        </div>
 
         <button mat-stroked-button color="primary" type="submit">Registrovať</button>
 

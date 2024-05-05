@@ -10,11 +10,11 @@ import { MatInput } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { NgForOf, NgIf } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
-import { AuthService } from '../../services/auth.service';
-import type { RegisterUserDto, Role } from '../../types';
-import { ErrorService } from '../../services/error.service';
-import { UserService } from '../../services/user.service';
-import { JwtService } from '../../services/jwt.service';
+import { AuthService } from '../services/auth.service';
+import type { RegisterUserDto, Role } from '../types';
+import { ErrorService } from '../services/error.service';
+import { UserService } from '../services/user.service';
+import { JwtService } from '../services/jwt.service';
 
 @Component({
   selector: 'app-registration-form',
@@ -33,10 +33,10 @@ import { JwtService } from '../../services/jwt.service';
     HttpClientModule
   ],
   providers: [ HttpClientModule],
-  templateUrl: './registration-form.component.html',
-  styleUrl: './registration-form.component.scss'
+  templateUrl: './registration.component.html',
+  styleUrl: './registration.component.scss'
 })
-export class RegistrationFormComponent {
+export class RegistrationComponent {
   registerForm: FormGroup;
   roles: Role[] = [
     { id: 1, name: 'Študent' },
@@ -114,7 +114,7 @@ export class RegistrationFormComponent {
               this.errorService.showError('Registrácia prebehla úspešne.');
             });
           },
-          error: (authError) => {
+          error: (_) => {
             this.router.navigate(['/404']);
           }
         });
@@ -131,10 +131,13 @@ export class RegistrationFormComponent {
         }
       }
     });
-
   }
 
   hideError() {
     this.isError = false;
+  }
+
+  redirectToLogin() {
+    this.router.navigate(['/login']);
   }
 }

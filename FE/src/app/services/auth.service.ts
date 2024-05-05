@@ -3,6 +3,7 @@ import type { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { HttpHeaders } from '@angular/common/http';
 import { AuthResponseDto, LoginUserDto, RegisterUserDto, UserDto } from '../types';
+import { JwtService } from './jwt.service';
 
 @Injectable({
   providedIn: 'root'
@@ -10,7 +11,7 @@ import { AuthResponseDto, LoginUserDto, RegisterUserDto, UserDto } from '../type
 export class AuthService {
   url = 'http://localhost:8080/api/auth';
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private jwtService: JwtService) {
   }
 
   postUser(userData: RegisterUserDto): Observable<UserDto> {
@@ -31,5 +32,12 @@ export class AuthService {
     };
 
     return this.http.post<AuthResponseDto>(`${this.url}/authenticate`, userData, httpOptions);
+  }
+
+  logOut(): Promise<void> {
+    return new Promise((resolve, _) => {
+      this.jwtService.removeToken();
+      resolve();
+    });
   }
 }

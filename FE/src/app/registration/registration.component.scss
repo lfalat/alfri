@@ -1,4 +1,4 @@
-@import "../../../../node_modules/bootstrap/scss/bootstrap";
+@import "../../../node_modules/bootstrap/scss/bootstrap";
 
 $primary-color: #007bff;
 $secondary-color: #d5e9fd;
@@ -17,10 +17,10 @@ $padding-medium: 15px;
     color: $gray-600;
   }
 
-  h3 {
-    color: $primary-color;
-    margin-bottom: $padding-medium;
-  }
+  //h3 {
+  //  color: $primary-color;
+  //  margin-bottom: $padding-medium;
+  //}
 
   form {
     display: flex;
@@ -42,10 +42,6 @@ $padding-medium: 15px;
 
   .hero-wrapper {
     min-height: 200px;
-    background-image: url('../../../assets/images/ai-backdrop.jpg');
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: cover;
     position: relative;
 
     align-items: center;
