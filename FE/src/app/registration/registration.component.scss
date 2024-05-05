@@ -1,0 +1,76 @@
+@import "../../../node_modules/bootstrap/scss/bootstrap";
+
+$primary-color: #007bff;
+$secondary-color: #d5e9fd;
+$font-family: Arial, sans-serif;
+$padding-medium: 15px;
+
+.registration-form {
+  font-family: $font-family;
+  padding: $padding-medium;
+
+  #heroText {
+    text-align: justify;
+  }
+
+  .divider {
+    color: $gray-600;
+  }
+
+  //h3 {
+  //  color: $primary-color;
+  //  margin-bottom: $padding-medium;
+  //}
+
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: $padding-medium;
+  }
+
+  mat-form-field {
+    width: 100%;
+  }
+
+  .registration-form-wrapper {
+    flex-direction: column;
+
+    @include media-breakpoint-up(md) {
+      flex-direction: row;
+    }
+  }
+
+  .hero-wrapper {
+    min-height: 200px;
+    position: relative;
+
+    align-items: center;
+    flex-direction: column;
+
+    ::after {
+      content: "";
+      background: rgba(0, 0, 0, 0.3);
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      pointer-events: none;
+    }
+  }
+
+  .divider {
+    display: none;
+    @include media-breakpoint-up(md) {
+      display: block;
+    }
+  }
+
+  @include media-breakpoint-up(md) {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    flex-direction: row;
+  }
+}
