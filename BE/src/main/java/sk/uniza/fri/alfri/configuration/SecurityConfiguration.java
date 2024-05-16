@@ -42,10 +42,10 @@ public class SecurityConfiguration {
                 authorizationManagerRequestMatcherRegistry
                     .requestMatchers("/api/auth/**")
                     .permitAll()
-                    .anyRequest()
+                    .requestMatchers("/**")
                     .authenticated())
-        .authenticationProvider(authenticationProvider)
         .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+        .authenticationProvider(authenticationProvider)
         .sessionManagement(
             httpSecuritySessionManagementConfigurer ->
                 httpSecuritySessionManagementConfigurer.sessionCreationPolicy(
