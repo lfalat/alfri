@@ -9,7 +9,7 @@ import sk.uniza.fri.alfri.dto.user.UserDto;
 import sk.uniza.fri.alfri.entity.Role;
 import sk.uniza.fri.alfri.entity.User;
 
-@Mapper(componentModel = "spring")
+@Mapper
 public interface UserMapper {
   UserMapper INSTANCE = Mappers.getMapper(UserMapper.class);
 

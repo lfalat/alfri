@@ -15,7 +15,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 import sk.uniza.fri.alfri.exception.InvalidCredentialsException;
 import sk.uniza.fri.alfri.exception.UserAlreadyRegisteredException;
 
-@ControllerAdvice()
+@ControllerAdvice
 @Slf4j
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
