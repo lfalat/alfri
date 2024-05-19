@@ -45,7 +45,6 @@ export class SubjectsComponent implements OnInit, OnDestroy {
     'abbreviation',
     'obligation',
   ];
-  public loading$ = this._loadingSubject.asObservable();
   public readonly pageData: Page<SubjectDto> = {
     content: [],
     totalElements: 0,
