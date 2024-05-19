@@ -5,12 +5,22 @@ import { RegistrationComponent } from './registration/registration.component';
 import { AuthGuard } from './auth-guard';
 import { ErrorPageComponent } from './error-page/error-page.component';
 import { inject } from '@angular/core';
+import { SubjectsComponent } from './subjects/subjects.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
-  { path: 'home', component: HomeComponent, canActivate: [() => inject(AuthGuard).canActivate()] },
+  {
+    path: 'home',
+    component: HomeComponent,
+    canActivate: [() => inject(AuthGuard).canActivate()],
+  },
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegistrationComponent },
+  {
+    path: 'subjects',
+    component: SubjectsComponent,
+    canActivate: [() => inject(AuthGuard).canActivate()],
+  },
   { path: '404', component: ErrorPageComponent },
-  { path: '**', redirectTo: 'login' }
+  { path: '**', redirectTo: 'login' },
 ];
