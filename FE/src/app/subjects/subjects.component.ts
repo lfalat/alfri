@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatTableModule } from '@angular/material/table';
 import {
   EMPTY,
@@ -33,7 +33,7 @@ import { MatSelectModule } from '@angular/material/select';
   templateUrl: './subjects.component.html',
   styleUrl: './subjects.component.scss',
 })
-export class SubjectsComponent {
+export class SubjectsComponent implements OnInit, OnDestroy {
   private readonly _destroy$: Subject<void> = new Subject();
   private _loadingSubject = new Subject<boolean>();
   private _dataSource$!: Observable<Page<SubjectDto>>;
