@@ -1,4 +1,4 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Page, SubjectDto } from '../types';
 import { Observable } from 'rxjs';
@@ -17,6 +17,12 @@ export class SubjectService {
     pageNumber: number,
     pageSize: number
   ): Observable<Page<SubjectDto>> {
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json'
+      })
+    };
+
     let urlParameters: HttpParams = new HttpParams();
     urlParameters = urlParameters
       .append('page', pageNumber)
@@ -24,11 +30,17 @@ export class SubjectService {
       .append('search', `id.studyProgramId:${ studyProgramId }`);
 
     return this.http.get<Page<SubjectDto>>(`${ this.URL }`, {
-      params: urlParameters,
+      params: urlParameters, headers: httpOptions.headers
     });
   }
 
   public filterSubject(mathFocus: string, studyProgramId: number, pageNumber: number, pageSize: number): Observable<Page<SubjectDto>> {
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json'
+      })
+    };
+
     let urlParameters: HttpParams = new HttpParams();
     urlParameters = urlParameters
       .append('page', pageNumber)
@@ -36,7 +48,7 @@ export class SubjectService {
       .append('search', `id.studyProgramId:${ studyProgramId },id.subject.focus.mathFocus>${mathFocus}`);
 
     return this.http.get<Page<SubjectDto>>(`${ this.URL }`, {
-      params: urlParameters,
+      params: urlParameters, headers: httpOptions.headers
     });
   }
 }

@@ -2,6 +2,7 @@ package sk.uniza.fri.alfri.controller;
 
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,7 +25,7 @@ public class StudyProgramController {
     this.studyProgramMapper = studyProgramMapper;
   }
 
-  @GetMapping
+  @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<List<StudyProgramDto>> findAll() {
     log.info("Find all study programs requested");
     List<StudyProgram> studyProgramList = studyProgramService.findAll();

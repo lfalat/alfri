@@ -1,6 +1,7 @@
 package sk.uniza.fri.alfri.controller;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,7 +30,7 @@ public class StudentController {
     this.studyProgramMapper = studyProgramMapper;
   }
 
-  @GetMapping("/current/studyProgram")
+  @GetMapping(value = "/current/studyProgram", produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<StudyProgramDto> getCurrentStudentsStudyProgram() {
     log.info("STARTARAOJDAOIFHAIF");
     String userEmail =
