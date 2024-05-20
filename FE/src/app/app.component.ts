@@ -12,7 +12,7 @@ import { HeaderComponent } from './components/header/header.component';
   templateUrl: './app.component.html',
 })
 export class AppComponent {
-  title = 'FE';
+  title = 'Alfri';
   public showFooter = false;
   noFooterRoutes = ['login', 'register', '404'];
 

@@ -1,40 +1,33 @@
-import { Component, OnInit } from '@angular/core';
-import { MatToolbar } from '@angular/material/toolbar';
+import { Component } from '@angular/core';
+import { AsyncPipe, NgClass, NgIf } from '@angular/common';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatButtonModule } from '@angular/material/button';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatListModule } from '@angular/material/list';
+import { MatIconModule } from '@angular/material/icon';
+import { JwtService } from '../../services/jwt.service';
 import { UserService } from '../../services/user.service';
-import { MatButton } from '@angular/material/button';
-import { NgIf } from '@angular/common';
-import { NavigationEnd, Router } from '@angular/router';
-import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-header',
+  templateUrl: './header.component.html',
+  styleUrl: './header.component.scss',
   standalone: true,
   imports: [
-    MatToolbar,
-    MatButton,
-    NgIf
-  ],
-  templateUrl: './header.component.html',
-  styleUrl: './header.component.scss'
+    MatToolbarModule,
+    MatButtonModule,
+    MatSidenavModule,
+    MatListModule,
+    MatIconModule,
+    AsyncPipe,
+    NgClass,
+    NgIf,
+  ]
 })
-export class HeaderComponent implements OnInit {
-  public isLoggedIn = false;
-
-  constructor(private userService: UserService, private router: Router, private authService: AuthService) {
-    this.isLoggedIn = this.userService.loggedIn();
+export class HeaderComponent {
+  constructor(private userService: UserService) {
   }
-
-  ngOnInit() {
-    this.router.events.subscribe((event) => {
-      if (event instanceof NavigationEnd) {
-        this.isLoggedIn = this.userService.loggedIn();
-      }
-    });
-  }
-
-  logOut() {
-    this.authService.logOut().then(() => {
-      this.router.navigate(['login']);
-    });
+  loggedIn() {
+    return this.userService.loggedIn();
   }
 }

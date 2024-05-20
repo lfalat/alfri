@@ -1,72 +1,75 @@
-<div class="registration-form col-12 col-md-10 col-lg-8 col-xl-8 col-xxl-6 position-relative">
-  <mat-card class="d-flex registration-form-wrapper">
-    <div class="p-3  d-flex col-12 col-md-6 justify-content-center flex-column align-items-center info-wrapper">
-      <h2>Registrácia</h2>
-      <img src="assets/images/register_illustration.png" class="img-fluid registration-image"/>
-      <h5>Prvý inteligentý asistent pre študentov UNIZA.</h5>
-    </div>
+<div class="vw-100 h-100 d-flex justify-content-center align-items-center">
+  <div class="registration-form col-12 col-md-10 col-lg-8 col-xl-8 col-xxl-6 container">
+    <mat-card class="d-flex registration-form-wrapper">
+      <div class="d-flex col-12 col-md-6 justify-content-center flex-column align-items-center info-wrapper p-3">
+        <h2>Registrácia</h2>
+        <img src="assets/images/register_illustration.png" class="img-fluid w-75" alt="logo"/>
+        <h5>Prvý inteligentý asistent pre študentov UNIZA.</h5>
+      </div>
 
-    <div class="container-fluid p-3 form-wrapper d-flex col-12 col-md-6 m-0 align-items-center">
-      <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="d-flex flex-column row-gap-2 w-100 m-1">
-        <div [class.invisible]="!isError" class="alert alert-danger alert-dismissible fade show" role="alert">
-          {{errorText}}
-          <button type="button" class="btn-close" aria-label="Close" (click)="hideError()"></button>
-        </div>
-        <mat-form-field  appearance="outline">
-          <mat-label>Meno</mat-label>
-          <input matInput formControlName="name" required>
-          <mat-error *ngIf="registerForm.controls['name'].invalid">
-            Neplatné meno.
-          </mat-error>
-        </mat-form-field>
+      <div class="container-fluid p-3 form-wrapper d-flex col-12 col-md-6 m-0 align-items-center">
+        <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="d-flex flex-column row-gap-2 w-100 m-1">
+          <div [class.invisible]="!isError" class="alert alert-danger alert-dismissible fade show" role="alert">
+            {{ errorText }}
+            <button type="button" class="btn-close" aria-label="Close" (click)="hideError()"></button>
+          </div>
+          <mat-form-field appearance="outline">
+            <mat-label>Meno</mat-label>
+            <input matInput formControlName="name" required>
+            <mat-error *ngIf="registerForm.controls['name'].invalid">
+              Neplatné meno.
+            </mat-error>
+          </mat-form-field>
 
-        <mat-form-field appearance="outline">
-          <mat-label>Priezvisko</mat-label>
-          <input matInput formControlName="surname" required>
-          <mat-error *ngIf="registerForm.controls['surname'].invalid">
-            Neplatné priezvisko.
-          </mat-error>
-        </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Priezvisko</mat-label>
+            <input matInput formControlName="surname" required>
+            <mat-error *ngIf="registerForm.controls['surname'].invalid">
+              Neplatné priezvisko.
+            </mat-error>
+          </mat-form-field>
 
-        <mat-form-field appearance="outline">
-          <mat-label>Email</mat-label>
-          <input matInput formControlName="email" required type="email">
-          <mat-error *ngIf="registerForm.controls['email'].invalid">
-            Neplatná emailová adresa.
-          </mat-error>
-        </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Email</mat-label>
+            <input matInput formControlName="email" required type="email">
+            <mat-error *ngIf="registerForm.controls['email'].invalid">
+              Neplatná emailová adresa.
+            </mat-error>
+          </mat-form-field>
 
-        <mat-form-field appearance="outline">
-          <mat-label>Heslo</mat-label>
-          <input matInput formControlName="password" type="password" required
-                 pattern="^(?=.*[A-Z])(?=.*[0-9])(?=.*[a-z]).{8,}$">
-          <mat-error *ngIf="registerForm.controls['password'].invalid">
-            Heslo nie je príliš komplexné.
-          </mat-error>
-        </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Heslo</mat-label>
+            <input matInput formControlName="password" type="password" required
+                   pattern="^(?=.*[A-Z])(?=.*[0-9])(?=.*[a-z]).{8,}$">
+            <mat-error *ngIf="registerForm.controls['password'].invalid">
+              Heslo nie je príliš komplexné.
+            </mat-error>
+          </mat-form-field>
 
-        <mat-form-field appearance="outline">
-          <mat-label>Potvrď heslo</mat-label>
-          <input matInput formControlName="confirmPassword" type="password" required>
-          <mat-error *ngIf="registerForm.controls['confirmPassword'].invalid">
-            Heslá sa nezhodujú.
-          </mat-error>
-        </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Potvrď heslo</mat-label>
+            <input matInput formControlName="confirmPassword" type="password" required>
+            <mat-error *ngIf="registerForm.controls['confirmPassword'].invalid">
+              Heslá sa nezhodujú.
+            </mat-error>
+          </mat-form-field>
 
-        <mat-form-field appearance="outline">
-          <mat-label>Rola</mat-label>
-          <mat-select formControlName="roleId" required>
-            <mat-option *ngFor="let role of roles" [value]="role.id">{{ role.name }}</mat-option>
-          </mat-select>
-        </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Rola</mat-label>
+            <mat-select formControlName="roleId" required>
+              <mat-option *ngFor="let role of roles" [value]="role.id">{{ role.name }}</mat-option>
+            </mat-select>
+          </mat-form-field>
 
-        <div class="text-center">
-          <p>Už máte účet ? <a href="javascript:void(0)" class="text-primary" (click)="redirectToLogin()">Prihláste sa</a></p>
-        </div>
+          <div class="text-center">
+            <p>Už máte účet ? <a href="javascript:void(0)" class="text-primary" (click)="redirectToLogin()">Prihláste
+              sa</a></p>
+          </div>
 
-        <button mat-stroked-button color="primary" type="submit">Registrovať</button>
+          <button mat-raised-button color="primary" type="submit">Registrovať</button>
 
-      </form>
-    </div>
-  </mat-card>
+        </form>
+      </div>
+    </mat-card>
+  </div>
 </div>

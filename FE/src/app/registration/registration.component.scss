@@ -2,30 +2,23 @@
 
 $primary-color: #007bff;
 $secondary-color: #d5e9fd;
-$font-family: Arial, sans-serif;
-$padding-medium: 15px;
 
 .registration-form {
-  font-family: $font-family;
-  padding: $padding-medium;
-
   #heroText {
     text-align: justify;
   }
 
   .divider {
     color: $gray-600;
+    display: none;
+    @include media-breakpoint-up(md) {
+      display: block;
+    }
   }
-
-  //h3 {
-  //  color: $primary-color;
-  //  margin-bottom: $padding-medium;
-  //}
 
   form {
     display: flex;
     flex-direction: column;
-    gap: $padding-medium;
   }
 
   mat-form-field {
@@ -59,18 +52,7 @@ $padding-medium: 15px;
     }
   }
 
-  .divider {
-    display: none;
-    @include media-breakpoint-up(md) {
-      display: block;
-    }
-  }
-
   @include media-breakpoint-up(md) {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
     flex-direction: row;
   }
 }
