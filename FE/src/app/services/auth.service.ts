@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import type { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { HttpHeaders } from '@angular/common/http';
-import { AuthResponseDto, LoginUserDto, RegisterUserDto, UserDto } from '../types';
+import {AuthResponseDto, ChangePasswordDto, LoginUserDto, RegisterUserDto, UserDto} from '../types';
 import { JwtService } from './jwt.service';
 
 @Injectable({
@@ -39,5 +39,15 @@ export class AuthService {
       this.jwtService.removeToken();
       resolve();
     });
+  }
+
+  changePassword(passwordData: ChangePasswordDto): Observable<ChangePasswordDto> {
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json'
+      })
+    };
+    console.log(passwordData);
+    return this.http.post<ChangePasswordDto>(`${this.url}/change-password`, passwordData, httpOptions);
   }
 }

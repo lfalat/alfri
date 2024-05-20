@@ -7,6 +7,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import sk.uniza.fri.alfri.dto.user.ChangePasswordDto;
 import sk.uniza.fri.alfri.entity.Role;
 import sk.uniza.fri.alfri.entity.User;
 import sk.uniza.fri.alfri.exception.InvalidCredentialsException;
@@ -14,6 +15,8 @@ import sk.uniza.fri.alfri.exception.UserAlreadyRegisteredException;
 import sk.uniza.fri.alfri.repository.RoleRepository;
 import sk.uniza.fri.alfri.repository.UserRepository;
 import sk.uniza.fri.alfri.service.IAuthService;
+
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -91,4 +94,21 @@ public class AuthService implements IAuthService {
                         "Cannot authenticate user with email %s",
                         userToAutentificate.getUsername())));
   }
+
+
+  //TODO: add validation requirements for passwords - check old password
+  @Override
+  public void changePassword(ChangePasswordDto changePasswordDto) {
+    if (changePasswordDto.getNewPassword().equals(changePasswordDto.getOldPassword())) {
+      return;
+    }
+    Optional<User> foundUser = this.userRepository.findByEmail(changePasswordDto.getEmail());
+    if (foundUser.isEmpty()) {
+      return;
+    }
+    User user = foundUser.get();
+    user.setPassword(passwordEncoder.encode(changePasswordDto.getNewPassword()));
+    this.userRepository.save(user);
+  }
+
 }

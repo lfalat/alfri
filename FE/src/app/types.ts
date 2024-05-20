@@ -23,6 +23,12 @@ export interface LoginUserDto {
   password: string
 }
 
+export interface ChangePasswordDto {
+  email: string,
+  oldPassword: string
+  newPassword: string
+}
+
 export interface AuthResponseDto {
   jwtToken: string,
   expiresIn: number

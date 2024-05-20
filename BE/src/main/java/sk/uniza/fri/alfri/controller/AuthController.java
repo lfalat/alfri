@@ -6,10 +6,7 @@ import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import sk.uniza.fri.alfri.dto.user.AuthResponseDto;
-import sk.uniza.fri.alfri.dto.user.RegisterUserDto;
-import sk.uniza.fri.alfri.dto.user.UserCredentialsDto;
-import sk.uniza.fri.alfri.dto.user.UserDto;
+import sk.uniza.fri.alfri.dto.user.*;
 import sk.uniza.fri.alfri.entity.User;
 import sk.uniza.fri.alfri.exception.InvalidCredentialsException;
 import sk.uniza.fri.alfri.exception.UserAlreadyRegisteredException;
@@ -36,7 +33,7 @@ public class AuthController {
   public ResponseEntity<AuthResponseDto> authenticateUser(
       @RequestBody @Valid UserCredentialsDto credentialsDTO) throws InvalidCredentialsException {
     // Authenticate user
-    log.info("AuthentificateUser of user {} started!", credentialsDTO);
+    log.info("AuthenticateUser of user {} started!", credentialsDTO);
 
     User user = UserMapper.INSTANCE.userCredentialsDtoToUser(credentialsDTO);
 
@@ -46,7 +43,7 @@ public class AuthController {
     // Generate JWT token for the authenticated user
     String token = jwtService.generateToken(authenticatedUser);
 
-    log.info("User {} was authentificated!", user.getUsername());
+    log.info("User {} was authenticated!", user.getUsername());
     return ResponseEntity.ok(new AuthResponseDto(token, jwtService.getExpirationTime()));
   }
 
@@ -61,9 +58,22 @@ public class AuthController {
 
     User registeredUser = authService.registerUser(userToRegister);
 
-    log.info("User {} was successfuly registered!", registeredUser.getEmail());
+    log.info("User {} was successfully registered!", registeredUser.getEmail());
     UserDto userDto = UserMapper.INSTANCE.userToUserDto(registeredUser);
 
     return ResponseEntity.ok(userDto);
   }
+
+  @PostMapping(
+          value = "/change-password",
+          consumes = APPLICATION_JSON_VALUE
+  )
+  public void changePassword(@RequestBody @Valid ChangePasswordDto changePasswordDto)
+          throws UserAlreadyRegisteredException {
+    log.info("Starting password change of user with email {}", changePasswordDto.getEmail());
+    this.authService.changePassword(changePasswordDto);
+
+    log.info("Password for user {} was successfully changed!", changePasswordDto.getEmail());
+  }
+
 }
