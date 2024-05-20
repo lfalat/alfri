@@ -1,15 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatTableModule } from '@angular/material/table';
-import {
-  EMPTY,
-  Observable,
-  Subject,
-  catchError,
-  map,
-  shareReplay,
-  takeUntil,
-  tap,
-} from 'rxjs';
+import { catchError, map, Observable, of, shareReplay, Subject, takeUntil, tap, } from 'rxjs';
 import { Page, StudyProgramDto, SubjectDto } from '../types';
 import { SubjectService } from '../services/subject.service';
 import { StudyProgramService } from '../services/study-program.service';
@@ -43,12 +34,10 @@ import { MatButton } from '@angular/material/button';
 export class SubjectsComponent implements OnInit, OnDestroy {
 
   private readonly _destroy$: Subject<void> = new Subject();
-  private _loadingSubject = new Subject<boolean>();
   private _dataSource$!: Observable<Page<SubjectDto>>;
   private _studyPrograms$!: Observable<StudyProgramDto[]>;
-  private _selectedStudyProgramId = 3;
+  private _selectedStudyProgramId!: number;
   public filterForm: FormGroup;
-  private isFilterActive = false;
 
   public readonly columnsToDisplay: string[] = [
     'name',
@@ -122,11 +111,11 @@ export class SubjectsComponent implements OnInit, OnDestroy {
   }
 
   private init(): void {
-    this._dataSource$ = this.getSubjects(0, 10, this._selectedStudyProgramId);
-
     this._studyPrograms$ = this.studyProgramService
       .getAll()
       .pipe(takeUntil(this._destroy$));
+
+    this._dataSource$ = this.getSubjects(0, 10, this._selectedStudyProgramId ? 1 : 0);
   }
 
   private getSubjects(
@@ -134,25 +123,6 @@ export class SubjectsComponent implements OnInit, OnDestroy {
     pageSize: number,
     studyProgramId: number
   ): Observable<Page<SubjectDto>> {
-    if (this.isFilterActive) {
-      return this.subjectService
-        .filterSubject(this.filterForm.value.mathFocus, studyProgramId, pageNumber, pageSize)
-        .pipe(
-          tap((page: Page<SubjectDto>) => {
-            this.pageData.size = page.size;
-            this.pageData.totalElements = page.totalElements;
-            this.pageData.number = page.number;
-            this.isLoading = false;
-          }),
-          takeUntil(this._destroy$),
-          catchError((error: HttpErrorResponse) => {
-            this.errorService.showError(error.error.detail);
-            return EMPTY;
-          }),
-          shareReplay(1)
-        );
-    }
-
     return this.subjectService
       .getSubjectsByStudyProgramId(studyProgramId, pageNumber, pageSize)
       .pipe(
@@ -165,7 +135,7 @@ export class SubjectsComponent implements OnInit, OnDestroy {
         takeUntil(this._destroy$),
         catchError((error: HttpErrorResponse) => {
           this.errorService.showError(error.error.detail);
-          return EMPTY;
+          return of();
         }),
         shareReplay(1)
       );
@@ -193,11 +163,5 @@ export class SubjectsComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this._destroy$.next();
     this._destroy$.complete();
-  }
-
-  // TODO make more dynamic
-  filterByMathThreshold() {
-    this.isFilterActive = true;
-    this._dataSource$ = this.getSubjects(0, 10, this._selectedStudyProgramId);
   }
 }

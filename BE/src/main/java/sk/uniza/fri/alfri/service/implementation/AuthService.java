@@ -1,10 +1,14 @@
 package sk.uniza.fri.alfri.service.implementation;
 
 import jakarta.persistence.EntityNotFoundException;
+import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import sk.uniza.fri.alfri.entity.Role;
@@ -90,5 +94,15 @@ public class AuthService implements IAuthService {
                     String.format(
                         "Cannot authenticate user with email %s",
                         userToAutentificate.getUsername())));
+  }
+
+  @Override
+  public Optional<String> getCurrentUserEmail() {
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    if (authentication != null
+        && authentication.getPrincipal() instanceof UserDetails userDetails) {
+      return Optional.ofNullable(userDetails.getUsername()); // Handle null username
+    }
+    return Optional.empty();
   }
 }

@@ -6,6 +6,7 @@ import { AuthGuard } from './auth-guard';
 import { ErrorPageComponent } from './error-page/error-page.component';
 import { inject } from '@angular/core';
 import { SubjectsComponent } from './subjects/subjects.component';
+import { RecommendationComponent } from './recommendation/recommendation.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -19,6 +20,11 @@ export const routes: Routes = [
   {
     path: 'subjects',
     component: SubjectsComponent,
+    canActivate: [() => inject(AuthGuard).canActivate()],
+  },
+  {
+    path: 'recommendation',
+    component: RecommendationComponent,
     canActivate: [() => inject(AuthGuard).canActivate()],
   },
   { path: '404', component: ErrorPageComponent },

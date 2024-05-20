@@ -33,7 +33,7 @@ export class SubjectService {
     urlParameters = urlParameters
       .append('page', pageNumber)
       .append('size', pageSize)
-      .append('search', `id.studyProgramId:${ studyProgramId },id.subject.focus.mathFocus<${mathFocus}`);
+      .append('search', `id.studyProgramId:${ studyProgramId },id.subject.focus.mathFocus>${mathFocus}`);
 
     return this.http.get<Page<SubjectDto>>(`${ this.URL }`, {
       params: urlParameters,
