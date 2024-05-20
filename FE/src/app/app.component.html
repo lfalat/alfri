@@ -1,5 +1,10 @@
-<app-header></app-header>
+<div id="main-container">
+  <app-header></app-header>
 
-<router-outlet></router-outlet>
+  <main id="main-main">
+    <router-outlet></router-outlet>
+  </main>
 
-<app-footer *ngIf="showFooter"></app-footer>
+  <app-footer *ngIf="showFooter"></app-footer>
+</div>
+
