@@ -19,6 +19,9 @@ import { ErrorService } from '../services/error.service';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSelectModule } from '@angular/material/select';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { MatInput } from '@angular/material/input';
+import { MatButton } from '@angular/material/button';
 
 @Component({
   selector: 'app-subjects',
@@ -29,22 +32,31 @@ import { MatSelectModule } from '@angular/material/select';
     MatPaginatorModule,
     MatProgressBarModule,
     MatSelectModule,
+    FormsModule,
+    MatInput,
+    ReactiveFormsModule,
+    MatButton,
   ],
   templateUrl: './subjects.component.html',
   styleUrl: './subjects.component.scss',
 })
 export class SubjectsComponent implements OnInit, OnDestroy {
+
   private readonly _destroy$: Subject<void> = new Subject();
   private _loadingSubject = new Subject<boolean>();
   private _dataSource$!: Observable<Page<SubjectDto>>;
   private _studyPrograms$!: Observable<StudyProgramDto[]>;
-  private _selectedStudyProgramId = 1;
+  private _selectedStudyProgramId = 3;
+  public filterForm: FormGroup;
+  private isFilterActive = false;
+
   public readonly columnsToDisplay: string[] = [
     'name',
     'code',
     'abbreviation',
     'obligation',
   ];
+
   public readonly pageData: Page<SubjectDto> = {
     content: [],
     totalElements: 0,
@@ -95,8 +107,15 @@ export class SubjectsComponent implements OnInit, OnDestroy {
   constructor(
     private subjectService: SubjectService,
     private studyProgramService: StudyProgramService,
-    private errorService: ErrorService
-  ) {}
+    private errorService: ErrorService,
+    private formBuilder: FormBuilder
+  ) {
+    this.filterForm = this.formBuilder.group(
+      {
+        mathFocus: ['', [Validators.required]]
+      }
+    );
+  }
 
   ngOnInit() {
     this.init();
@@ -115,6 +134,25 @@ export class SubjectsComponent implements OnInit, OnDestroy {
     pageSize: number,
     studyProgramId: number
   ): Observable<Page<SubjectDto>> {
+    if (this.isFilterActive) {
+      return this.subjectService
+        .filterSubject(this.filterForm.value.mathFocus, studyProgramId, pageNumber, pageSize)
+        .pipe(
+          tap((page: Page<SubjectDto>) => {
+            this.pageData.size = page.size;
+            this.pageData.totalElements = page.totalElements;
+            this.pageData.number = page.number;
+            this.isLoading = false;
+          }),
+          takeUntil(this._destroy$),
+          catchError((error: HttpErrorResponse) => {
+            this.errorService.showError(error.error.detail);
+            return EMPTY;
+          }),
+          shareReplay(1)
+        );
+    }
+
     return this.subjectService
       .getSubjectsByStudyProgramId(studyProgramId, pageNumber, pageSize)
       .pipe(
@@ -144,6 +182,7 @@ export class SubjectsComponent implements OnInit, OnDestroy {
 
   public onPageChange($event: PageEvent) {
     this.isLoading = true;
+
     this._dataSource$ = this.getSubjects(
       $event.pageIndex,
       $event.pageSize,
@@ -154,5 +193,11 @@ export class SubjectsComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this._destroy$.next();
     this._destroy$.complete();
+  }
+
+  // TODO make more dynamic
+  filterByMathThreshold() {
+    this.isFilterActive = true;
+    this._dataSource$ = this.getSubjects(0, 10, this._selectedStudyProgramId);
   }
 }

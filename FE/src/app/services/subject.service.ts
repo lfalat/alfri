@@ -9,7 +9,8 @@ import { Observable } from 'rxjs';
 export class SubjectService {
   private readonly URL = 'http://localhost:8080/api/subject';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {
+  }
 
   public getSubjectsByStudyProgramId(
     studyProgramId: number,
@@ -18,10 +19,23 @@ export class SubjectService {
   ): Observable<Page<SubjectDto>> {
     let urlParameters: HttpParams = new HttpParams();
     urlParameters = urlParameters
-      .append('pageNumber', pageNumber)
-      .append('pageSize', pageSize);
+      .append('page', pageNumber)
+      .append('size', pageSize)
+      .append('search', `id.studyProgramId:${ studyProgramId }`);
 
-    return this.http.get<Page<SubjectDto>>(`${this.URL}/${studyProgramId}`, {
+    return this.http.get<Page<SubjectDto>>(`${ this.URL }`, {
+      params: urlParameters,
+    });
+  }
+
+  public filterSubject(mathFocus: string, studyProgramId: number, pageNumber: number, pageSize: number): Observable<Page<SubjectDto>> {
+    let urlParameters: HttpParams = new HttpParams();
+    urlParameters = urlParameters
+      .append('page', pageNumber)
+      .append('size', pageSize)
+      .append('search', `id.studyProgramId:${ studyProgramId },id.subject.focus.mathFocus<${mathFocus}`);
+
+    return this.http.get<Page<SubjectDto>>(`${ this.URL }`, {
       params: urlParameters,
     });
   }
