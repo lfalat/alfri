@@ -1,10 +1,11 @@
-<div id="main-container">
-  <app-header></app-header>
+<app-header>
+  <div id="main-container">
+    <main id="main-main">
+      <router-outlet></router-outlet>
+    </main>
 
-  <main id="main-main">
-    <router-outlet></router-outlet>
-  </main>
+    <app-footer *ngIf="showFooter"></app-footer>
+  </div>
 
-  <app-footer *ngIf="showFooter"></app-footer>
-</div>
+</app-header>
 
