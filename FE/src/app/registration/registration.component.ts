@@ -1,15 +1,22 @@
 import { Component } from '@angular/core';
-import { FormGroup, FormBuilder } from '@angular/forms';
-import { ReactiveFormsModule } from '@angular/forms';
+import {
+  FormGroup,
+  FormBuilder,
+  Validators,
+  ReactiveFormsModule,
+  AbstractControlOptions,
+  ValidationErrors,
+  ValidatorFn,
+  AbstractControl,
+} from '@angular/forms';
 import { Router } from '@angular/router';
-import { Validators } from '@angular/forms';
 import { MatCard } from '@angular/material/card';
 import { MatError, MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatButton } from '@angular/material/button';
 import { MatInput } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { NgForOf, NgIf } from '@angular/common';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HttpErrorResponse } from '@angular/common/http';
 import { AuthService } from '../services/auth.service';
 import type { RegisterUserDto, Role } from '../types';
 import { ErrorService } from '../services/error.service';
@@ -30,55 +37,73 @@ import { JwtService } from '../services/jwt.service';
     MatSelectModule,
     NgIf,
     NgForOf,
-    HttpClientModule
+    HttpClientModule,
   ],
-  providers: [ HttpClientModule],
+  providers: [HttpClientModule],
   templateUrl: './registration.component.html',
-  styleUrl: './registration.component.scss'
+  styleUrl: './registration.component.scss',
 })
 export class RegistrationComponent {
   registerForm: FormGroup;
   roles: Role[] = [
     { id: 1, name: 'Študent' },
     { id: 2, name: 'Učiteľ' },
-    { id: 3, name: 'Návštevník' }
+    { id: 3, name: 'Návštevník' },
   ];
   public isError = false;
   public errorText = '';
 
+  constructor(
+    private formBuilder: FormBuilder,
+    private router: Router,
+    private authService: AuthService,
+    private errorService: ErrorService,
+    private userService: UserService,
+    private jwtService: JwtService
+  ) {
+    const formOptions: AbstractControlOptions = {
+      validators: [this.mustMatch('password', 'confirmPassword')],
+    };
 
-  constructor(private formBuilder: FormBuilder,
-              private router: Router,
-              private authService: AuthService,
-              private errorService: ErrorService,
-              private userService: UserService,
-              private jwtService: JwtService,) {
-    this.registerForm = this.formBuilder.group({
-      name: ['', [Validators.required]],
-      surname: ['', [Validators.required]],
-      email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.pattern(/^(?=.*[A-Z])(?=.*[0-9])(?=.*[a-z]).{8,}$/)]],
-      confirmPassword: ['', [Validators.required]],
-      roleId: ['', Validators.required]
-    }, {
-      validator: this.mustMatch('password', 'confirmPassword')
-    });
+    this.registerForm = this.formBuilder.group(
+      {
+        name: ['', [Validators.required]],
+        surname: ['', [Validators.required]],
+        email: ['', [Validators.required, Validators.email]],
+        password: [
+          '',
+          [
+            Validators.required,
+            Validators.pattern(/^(?=.*[A-Z])(?=.*\d)(?=.*[a-z]).{8,}$/),
+          ],
+        ],
+        confirmPassword: ['', [Validators.required]],
+        roleId: ['', Validators.required],
+      },
+      formOptions
+    );
   }
 
   // custom validator to check that two fields match
-  mustMatch(controlName: string, matchingControlName: string) {
-    return (formGroup: FormGroup) => {
-      const control = formGroup.controls[controlName];
-      const matchingControl = formGroup.controls[matchingControlName];
+  mustMatch(controlName: string, matchingControlName: string): ValidatorFn {
+    return (formGroup: AbstractControl): ValidationErrors | null => {
+      const control = formGroup.get(controlName);
+      const matchingControl = formGroup.get(matchingControlName);
+
+      if (!control || !matchingControl) {
+        return null;
+      }
 
       if (matchingControl.errors && !matchingControl.errors['mustMatch']) {
-        return;
+        return null;
       }
 
       if (control.value !== matchingControl.value) {
         matchingControl.setErrors({ mustMatch: true });
+        return { mustMatch: true };
       } else {
         matchingControl.setErrors(null);
+        return null;
       }
     };
   }
@@ -93,7 +118,7 @@ export class RegistrationComponent {
       lastName: this.registerForm.value.surname,
       roleId: this.registerForm.value.roleId,
       email: this.registerForm.value.email,
-      password: this.registerForm.value.password
+      password: this.registerForm.value.password,
     };
 
     this.authService.postUser(userData).subscribe({
@@ -102,7 +127,7 @@ export class RegistrationComponent {
 
         const authBody = {
           email: this.registerForm.value.email,
-          password: this.registerForm.value.password
+          password: this.registerForm.value.password,
         };
 
         this.authService.authenticate(authBody).subscribe({
@@ -116,20 +141,23 @@ export class RegistrationComponent {
           },
           error: (_) => {
             this.router.navigate(['/404']);
-          }
+          },
         });
       },
-      error: (error) => {
+      error: (error: HttpErrorResponse) => {
         this.isError = true;
         switch (error.status) {
           case 409:
             this.errorText = 'Používateľ už existuje.';
             break;
+          case 404:
+            this.errorText = error.error;
+            break;
           default:
             this.errorText = 'Neznáma chyba.';
             break;
         }
-      }
+      },
     });
   }
 

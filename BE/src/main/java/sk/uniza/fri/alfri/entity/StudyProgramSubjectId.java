@@ -1,7 +1,6 @@
 package sk.uniza.fri.alfri.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Embeddable;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import java.io.Serial;
 import java.io.Serializable;
@@ -23,6 +22,14 @@ public class StudyProgramSubjectId implements Serializable {
   @NotNull(message = "StudyProgramSubjetId's study program id id cannot be null!")
   @Column(name = "study_program_id", nullable = false)
   private Integer studyProgramId;
+
+  @ManyToOne(fetch = FetchType.EAGER)
+  @JoinColumn(name = "subject_id", nullable = false, insertable = false, updatable = false)
+  private Subject subject;
+
+  @ManyToOne(fetch = FetchType.EAGER)
+  @JoinColumn(name = "study_program_id", nullable = false, insertable = false, updatable = false)
+  private StudyProgram studyProgram;
 
   @Override
   public boolean equals(Object o) {

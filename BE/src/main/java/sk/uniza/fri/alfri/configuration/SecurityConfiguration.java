@@ -40,12 +40,12 @@ public class SecurityConfiguration {
         .authorizeHttpRequests(
             authorizationManagerRequestMatcherRegistry ->
                 authorizationManagerRequestMatcherRegistry
-                    .requestMatchers("/api/auth/**")
+                    .requestMatchers("/api/**")
                     .permitAll()
-                    .anyRequest()
+                    .requestMatchers("/**")
                     .authenticated())
-        .authenticationProvider(authenticationProvider)
         .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+        .authenticationProvider(authenticationProvider)
         .sessionManagement(
             httpSecuritySessionManagementConfigurer ->
                 httpSecuritySessionManagementConfigurer.sessionCreationPolicy(

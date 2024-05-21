@@ -3,6 +3,8 @@ package sk.uniza.fri.alfri.entity;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import java.io.Serial;
+import java.io.Serializable;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -10,7 +12,9 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(name = "focus")
-public class Focus {
+public class Focus implements Serializable {
+  @Serial private static final long serialVersionUID = -9188932193400358754L;
+
   @Id
   @Column(name = "subject_id", nullable = false)
   private Integer id;

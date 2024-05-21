@@ -1,8 +1,6 @@
 package sk.uniza.fri.alfri.service.implementation;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import java.security.Key;
@@ -13,14 +11,21 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cglib.core.internal.Function;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import sk.uniza.fri.alfri.exceptionhandler.GlobalExceptionHandler;
 
 @Service
 public class JwtService {
+  private final GlobalExceptionHandler globalExceptionHandler;
+
   @Value("${spring.security.jwt.secret-key}")
   private String secretKey;
 
   @Value("${spring.security.jwt.expiration-time}")
   private long jwtExpiration;
+
+  public JwtService(GlobalExceptionHandler globalExceptionHandler) {
+    this.globalExceptionHandler = globalExceptionHandler;
+  }
 
   public String extractUsername(String token) {
     return extractClaim(token, Claims::getSubject);

@@ -1,41 +1,44 @@
-<div class="registration-form col-12 col-md-10 col-lg-8 col-xl-8 col-xxl-6 position-relative">
-  <mat-card class="d-flex registration-form-wrapper">
-    <div class="p-3  d-flex col-12 col-md-6 justify-content-center flex-column align-items-center info-wrapper">
-    <h2>Prihlasenie</h2>
-      <img src="assets/images/register_illustration.png" class="img-fluid registration-image"/>
-      <h5>Prvý inteligentý asistent pre študentov UNIZA.</h5>
-    </div>
+<div class="h-100 d-flex justify-content-center align-items-center">
+  <div class="registration-form col-12 col-md-10 col-lg-8 col-xl-8 col-xxl-6 container">
+    <mat-card class="d-flex registration-form-wrapper">
+      <div class="d-flex col-12 col-md-6 justify-content-center flex-column align-items-center info-wrapper p-3">
+        <h2>Prihlasenie</h2>
+        <img src="assets/images/register_illustration.png" class="img-fluid w-75" alt="logo"/>
+        <h5>Prvý inteligentý asistent pre študentov UNIZA.</h5>
+      </div>
 
-    <div class="container-fluid p-3 form-wrapper d-flex col-12 col-md-6 m-0 align-items-center">
-      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="d-flex flex-column row-gap-2 w-100 m-1">
-        <div [class.invisible]="!isError" class="alert alert-danger alert-dismissible fade show" role="alert">
-          {{errorText}}
-          <button type="button" class="btn-close" aria-label="Close" (click)="hideError()"></button>
-        </div>
-        <mat-form-field appearance="outline">
-          <mat-label>Email</mat-label>
-          <input matInput formControlName="email" required type="email">
-          <mat-error *ngIf="loginForm.controls['email'].invalid">
-            Neplatná emailová adresa.
-          </mat-error>
-        </mat-form-field>
+      <div class="container-fluid p-3 form-wrapper d-flex col-12 col-md-6 m-0 align-items-center">
+        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="d-flex flex-column row-gap-2 w-100 m-1">
+          <div [class.invisible]="!isError" class="alert alert-danger alert-dismissible fade show" role="alert">
+            {{ errorText }}
+            <button type="button" class="btn-close" aria-label="Close" (click)="hideError()"></button>
+          </div>
+          <mat-form-field appearance="outline">
+            <mat-label>Email</mat-label>
+            <input matInput formControlName="email" required type="email">
+            <mat-error *ngIf="loginForm.controls['email'].invalid">
+              Neplatná emailová adresa.
+            </mat-error>
+          </mat-form-field>
 
-        <mat-form-field appearance="outline">
-          <mat-label>Heslo</mat-label>
-          <input matInput formControlName="password" type="password" required
-                 pattern="^(?=.*[A-Z])(?=.*[0-9])(?=.*[a-z]).{8,}$">
-          <mat-error *ngIf="loginForm.controls['password'].invalid">
-            Heslo nie je príliš komplexné.
-          </mat-error>
-        </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Heslo</mat-label>
+            <input matInput formControlName="password" type="password" required
+                   pattern="^(?=.*[A-Z])(?=.*[0-9])(?=.*[a-z]).{8,}$">
+            <mat-error *ngIf="loginForm.controls['password'].invalid">
+              Heslo nie je príliš komplexné.
+            </mat-error>
+          </mat-form-field>
 
-        <div class="text-center">
-          <p>Nemáte účet ? <a class="text-primary" href="javascript:void(0)" (click)="redirectToRegistration()">Registrujte sa</a></p>
-        </div>
+          <div class="text-center">
+            <p>Nemáte účet ? <a class="text-primary" href="javascript:void(0)" (click)="redirectToRegistration()">Registrujte
+              sa</a></p>
+          </div>
 
-        <button mat-stroked-button color="primary" type="submit">Prihlásiť sa</button>
+          <button mat-raised-button color="primary" type="submit">Prihlásiť sa</button>
 
-      </form>
-    </div>
-  </mat-card>
+        </form>
+      </div>
+    </mat-card>
+  </div>
 </div>

@@ -67,12 +67,15 @@ export class LoginComponent {
       error: (error) => {
         this.isError = true;
         switch (error.status) {
-        case 409:
-          this.errorText = 'Používateľ už existuje.';
-          break;
-        default:
-          this.errorText = 'Neznáma chyba.';
-          break;
+          case 409:
+            this.errorText = 'Používateľ už existuje.';
+            break;
+          case 401:
+            this.errorText = 'Boli zadané nesprávne údaje.';
+            break;
+          default:
+            this.errorText = 'Neznáma chyba.';
+            break;
         }
       }
     });
