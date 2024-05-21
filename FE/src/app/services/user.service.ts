@@ -1,5 +1,8 @@
 import { Injectable } from '@angular/core';
 import { JwtHelperService } from '@auth0/angular-jwt';
+import { HttpClient } from '@angular/common/http';
+import type {Observable} from "rxjs";
+import {UserDto} from "../types";
 
 
 @Injectable({
@@ -8,7 +11,7 @@ import { JwtHelperService } from '@auth0/angular-jwt';
 export class UserService {
   public userId: number | undefined;
 
-  constructor(public jwtHelper: JwtHelperService) {
+  constructor(private http: HttpClient, public jwtHelper: JwtHelperService) {
   }
 
   saveUserId(userId: number) {
@@ -17,5 +20,9 @@ export class UserService {
 
   loggedIn() {
     return !this.jwtHelper.isTokenExpired();
+  }
+
+  getUserInfo(): Observable<UserDto> {
+    return this.http.get<UserDto>('http://localhost:8080/api/user/profile');
   }
 }

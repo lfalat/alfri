@@ -1,0 +1,31 @@
+<div *ngIf="!isLoading" class="container mt-5">
+  <h1 class="text-center mb-5 fs-1">Môj profil</h1>
+  <div class="mb-4" >
+    <p class="h5 mb-4 fs-4">Meno: <strong>{{ userData.firstName }}</strong></p>
+    <p class="h5 mb-4 fs-4">Priezvisko: <strong>{{ userData.lastName }}</strong></p>
+    <p class="h5 mb-4 fs-4">Email: &emsp;<strong>{{ userData.email }}</strong></p>
+  </div>
+  <hr>
+  <h3 class="mb-4">Zmena hesla</h3>
+  <form [formGroup]="profileForm" (ngSubmit)="changePassword()" class="mb-3">
+    <div class="form-group mb-3">
+      <mat-form-field appearance="fill" class="w-100">
+        <mat-label>Pôvodné heslo</mat-label>
+        <input matInput type="password" id="currentPassword" formControlName="currentPassword" required>
+      </mat-form-field>
+    </div>
+    <div class="form-group mb-3">
+      <mat-form-field appearance="fill" class="w-100">
+        <mat-label>Nové heslo</mat-label>
+        <input matInput type="password" id="newPassword" formControlName="newPassword" required>
+      </mat-form-field>
+    </div>
+    <div class="form-group mb-4">
+      <mat-form-field appearance="fill" class="w-100">
+        <mat-label>Potvrď nové heslo</mat-label>
+        <input matInput type="password" id="confirmNewPassword" formControlName="confirmNewPassword" required>
+      </mat-form-field>
+    </div>
+    <button mat-raised-button color="primary" type="submit">Zmeň heslo</button>
+  </form>
+</div>
