@@ -20,8 +20,6 @@ import sk.uniza.fri.alfri.repository.RoleRepository;
 import sk.uniza.fri.alfri.repository.UserRepository;
 import sk.uniza.fri.alfri.service.IAuthService;
 
-import java.util.Optional;
-
 @Slf4j
 @Service
 public class AuthService implements IAuthService {
@@ -109,20 +107,24 @@ public class AuthService implements IAuthService {
     return Optional.empty();
   }
 
-
-  //TODO: add validation requirements for passwords - check old password
   @Override
   public void changePassword(ChangePasswordDto changePasswordDto) {
     if (changePasswordDto.getNewPassword().equals(changePasswordDto.getOldPassword())) {
-      return;
+      throw new InvalidCredentialsException(
+          String.format(
+              "Cannot change password for user with email %s, password are not matching!",
+              changePasswordDto.getEmail()));
     }
-    Optional<User> foundUser = this.userRepository.findByEmail(changePasswordDto.getEmail());
-    if (foundUser.isEmpty()) {
-      return;
-    }
-    User user = foundUser.get();
-    user.setPassword(passwordEncoder.encode(changePasswordDto.getNewPassword()));
-    this.userRepository.save(user);
-  }
+    User foundUser =
+        this.userRepository
+            .findByEmail(changePasswordDto.getEmail())
+            .orElseThrow(
+                () ->
+                    new EntityNotFoundException(
+                        String.format(
+                            "User with email %s was not found!", changePasswordDto.getEmail())));
 
+    foundUser.setPassword(passwordEncoder.encode(changePasswordDto.getNewPassword()));
+    this.userRepository.save(foundUser);
+  }
 }
