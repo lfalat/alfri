@@ -5,20 +5,23 @@
   >
     <mat-toolbar>Menu</mat-toolbar>
     <mat-nav-list>
-      <a mat-list-item href="javascript:void(0)">
+      <a mat-list-item href="javascript:void(0)" (click)="navigateToSubjects()">
         <div class="d-flex align-items-center gap-2">
           <mat-icon>book</mat-icon>
           Predmety
         </div>
       </a>
-      <a mat-list-item href="javascript:void(0)">
+      <a mat-list-item href="javascript:void(0)" (click)="navigateToPrediction()">
+        <mat-icon>analytics</mat-icon>
+        Predikcia
+      </a>
+      <a mat-list-item href="javascript:void(0)" (click)="navigateToProfile()">
         <div class="d-flex align-items-center gap-2">
           <mat-icon>account_circle</mat-icon>
           Profil
         </div>
-
       </a>
-      <a mat-list-item href="javascript:void(0)">
+      <a mat-list-item href="javascript:void(0)" (click)="logOut()">
         <div class="d-flex align-items-center gap-2">
           <mat-icon>logout</mat-icon>
           Odhlásiť sa
@@ -40,20 +43,24 @@
           </button>
           <span>Alfri</span>
           <div class="d-none d-md-block">
-            <a href="javascript:void(0)" mat-button>
+            <a href="javascript:void(0)" mat-button (click)="navigateToSubjects()">
               <mat-icon>book</mat-icon>
               Predmety
+            </a>
+            <a href="javascript:void(0)" mat-button (click)="navigateToPrediction()">
+              <mat-icon>analytics</mat-icon>
+              Predikcia
             </a>
           </div>
         </div>
 
         <div class="col-4 d-none d-md-flex justify-content-end">
           <div>
-            <a href="javascript:void(0)" mat-button>
+            <a href="javascript:void(0)" mat-button (click)="navigateToProfile()">
               <mat-icon>account_circle</mat-icon>
               Profil
             </a>
-            <a href="javascript:void(0)" mat-button>
+            <a href="javascript:void(0)" mat-button (click)="logOut()">
               <mat-icon>logout</mat-icon>
               Odhlásiť sa
             </a>

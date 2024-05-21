@@ -5,8 +5,9 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
-import { JwtService } from '../../services/jwt.service';
 import { UserService } from '../../services/user.service';
+import { AuthService } from '../../services/auth.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-header',
@@ -25,9 +26,28 @@ import { UserService } from '../../services/user.service';
   ]
 })
 export class HeaderComponent {
-  constructor(private userService: UserService) {
+  constructor(private userService: UserService, private authService: AuthService, private router: Router) {
   }
+
   loggedIn() {
     return this.userService.loggedIn();
+  }
+
+  logOut() {
+    this.authService.logOut().then(() => {
+      this.router.navigate(['login']);
+    });
+  }
+
+  navigateToSubjects() {
+    this.router.navigate(['subjects']);
+  }
+
+  navigateToPrediction() {
+    this.router.navigate(['recommendation']);
+  }
+
+  navigateToProfile() {
+    this.router.navigate(['profile']);
   }
 }

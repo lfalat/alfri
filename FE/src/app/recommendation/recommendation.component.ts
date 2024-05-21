@@ -133,7 +133,7 @@ export class RecommendationComponent implements OnInit, OnDestroy {
         return this.getSubjects(0, 10, this._userStudyProgramId);
       }),
       catchError((error: HttpErrorResponse) => {
-        this.errorService.showError(error.error.detail);
+        this.errorService.showError(error.error);
         return of({
           content: [],
           totalElements: 0,
