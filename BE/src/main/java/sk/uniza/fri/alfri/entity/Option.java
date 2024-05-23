@@ -14,6 +14,7 @@ import org.hibernate.annotations.ColumnDefault;
 @Entity
 @Table(name = "option")
 public class Option {
+
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @ColumnDefault("nextval('option_option_id_seq'")

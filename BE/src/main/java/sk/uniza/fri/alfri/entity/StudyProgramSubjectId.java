@@ -2,8 +2,6 @@ package sk.uniza.fri.alfri.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import java.io.Serial;
-import java.io.Serializable;
 import java.util.Objects;
 import lombok.Getter;
 import lombok.Setter;
@@ -12,8 +10,7 @@ import org.hibernate.Hibernate;
 @Getter
 @Setter
 @Embeddable
-public class StudyProgramSubjectId implements Serializable {
-  @Serial private static final long serialVersionUID = 8957191210572894102L;
+public class StudyProgramSubjectId {
 
   @NotNull(message = "StudyProgramSubjetId's subject id cannot be null!")
   @Column(name = "subject_id", nullable = false)

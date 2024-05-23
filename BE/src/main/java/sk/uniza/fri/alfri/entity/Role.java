@@ -4,11 +4,10 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
-
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
@@ -18,7 +17,7 @@ import org.hibernate.annotations.ColumnDefault;
 @Entity
 @Table(name = "role")
 public class Role implements Serializable {
-  @Serial private static final long serialVersionUID = 5684886028769478945L;
+  @Serial private static final long serialVersionUID = -5613856421859237857L;
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,5 +32,5 @@ public class Role implements Serializable {
 
   @OneToMany(mappedBy = "role", fetch = FetchType.LAZY)
   @JsonBackReference
-  private Set<User> users = new LinkedHashSet<>();
+  private List<User> users = new ArrayList<>();
 }
