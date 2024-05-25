@@ -10,7 +10,6 @@
     </parent>
     <groupId>sk.uniza.fri</groupId>
     <artifactId>alfri</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
     <name>BE</name>
     <description>BE</description>
     <properties>
@@ -108,6 +107,20 @@
                         </path>
                     </annotationProcessorPaths>
                 </configuration>
+            </plugin>
+
+            <!-- Spring Boot Maven Plugin -->
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>3.2.4</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
