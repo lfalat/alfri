@@ -5,6 +5,8 @@ import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import java.util.Objects;
 import lombok.Getter;
 import lombok.Setter;
@@ -20,6 +22,15 @@ public class StudyProgramSubject {
   @Column(name = "obligation")
   @NotBlank(message = "StudyProgramSubject's obligation cannot be null or blank!")
   private String obligation;
+
+  @Column(name = "recommended_year")
+  @NotNull(message = "Recommended year for subject must not be null!")
+  @Positive(message = "Recommended year for subject must be positive!")
+  private Integer recommendedYear;
+
+  @Column(name = "semester_winter")
+  @NotNull(message = "Semester winter for subject must not be null!")
+  private Boolean semesterWinter;
 
   @Override
   public final boolean equals(Object o) {

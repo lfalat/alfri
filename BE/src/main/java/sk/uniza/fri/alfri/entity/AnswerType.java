@@ -4,8 +4,8 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
@@ -15,6 +15,7 @@ import org.hibernate.annotations.ColumnDefault;
 @Entity
 @Table(name = "answer_type")
 public class AnswerType {
+
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @ColumnDefault("nextval('answer_type_answer_type_id_seq'")
@@ -28,17 +29,17 @@ public class AnswerType {
 
   @OneToMany(mappedBy = "answerType", fetch = FetchType.LAZY)
   @JsonBackReference
-  private Set<NumericAnswer> numericAnswers = new LinkedHashSet<>();
+  private List<NumericAnswer> numericAnswers = new ArrayList<>();
 
   @OneToMany(mappedBy = "answerType", fetch = FetchType.LAZY)
   @JsonBackReference
-  private Set<OptionsAnswer> optionsAnswers = new LinkedHashSet<>();
+  private List<OptionsAnswer> optionsAnswers = new ArrayList<>();
 
   @OneToMany(mappedBy = "answerType", fetch = FetchType.LAZY)
   @JsonBackReference
-  private Set<Question> questions = new LinkedHashSet<>();
+  private List<Question> questions = new ArrayList<>();
 
   @OneToMany(mappedBy = "answerType", fetch = FetchType.LAZY)
   @JsonBackReference
-  private Set<TextAnswer> textAnswers = new LinkedHashSet<>();
+  private List<TextAnswer> textAnswers = new ArrayList<>();
 }

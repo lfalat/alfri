@@ -67,6 +67,8 @@ export class RecommendationComponent implements OnInit, OnDestroy {
     'code',
     'abbreviation',
     'obligation',
+    'recommendedYear',
+    'semester',
   ];
 
   public readonly pageData: Page<SubjectDto> = {

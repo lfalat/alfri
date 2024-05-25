@@ -3,8 +3,6 @@ package sk.uniza.fri.alfri.entity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import jakarta.validation.constraints.NotNull;
-import java.io.Serial;
-import java.io.Serializable;
 import java.util.Objects;
 import lombok.Getter;
 import lombok.Setter;
@@ -13,8 +11,7 @@ import org.hibernate.Hibernate;
 @Getter
 @Setter
 @Embeddable
-public class NumericAnswerId implements Serializable {
-  @Serial private static final long serialVersionUID = -4189442188205556803L;
+public class NumericAnswerId {
 
   @NotNull(message = "Numeric answer id's question id cannot be null!")
   @Column(name = "question_id", nullable = false)

@@ -5,11 +5,10 @@ import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
-import java.time.LocalDate;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.format.annotation.DateTimeFormat;
 
 @Getter
 @Setter
@@ -18,10 +17,10 @@ import org.springframework.format.annotation.DateTimeFormat;
 public class StudentSubject {
   @EmbeddedId private StudentSubjectId id;
 
-  @NotNull(message = "StudentSubject's year cannot be null!")
   @Column(name = "year", nullable = false)
-  @DateTimeFormat(style = "yyyy-mm-dd")
-  private LocalDate year;
+  @NotNull(message = "StudentSubject's year cannot be null!")
+  @Positive(message = "StudentSubject's year must be positive!")
+  private Integer year;
 
   @Size(max = 2)
   @Column(name = "mark", length = 2)

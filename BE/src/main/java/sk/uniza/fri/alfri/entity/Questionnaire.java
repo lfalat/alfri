@@ -6,8 +6,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.time.Instant;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
@@ -17,6 +17,7 @@ import org.hibernate.annotations.ColumnDefault;
 @Entity
 @Table(name = "questionnaire")
 public class Questionnaire {
+
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @ColumnDefault("nextval('questionnaire_questionnaire_id_seq'")
@@ -39,5 +40,5 @@ public class Questionnaire {
 
   @OneToMany(mappedBy = "questionnaire", fetch = FetchType.LAZY)
   @JsonBackReference
-  private Set<Question> questions = new LinkedHashSet<>();
+  private List<Question> questions = new ArrayList<>();
 }

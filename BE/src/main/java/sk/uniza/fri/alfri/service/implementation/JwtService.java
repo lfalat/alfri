@@ -15,7 +15,6 @@ import sk.uniza.fri.alfri.exceptionhandler.GlobalExceptionHandler;
 
 @Service
 public class JwtService {
-  private final GlobalExceptionHandler globalExceptionHandler;
 
   @Value("${spring.security.jwt.secret-key}")
   private String secretKey;
@@ -23,9 +22,7 @@ public class JwtService {
   @Value("${spring.security.jwt.expiration-time}")
   private long jwtExpiration;
 
-  public JwtService(GlobalExceptionHandler globalExceptionHandler) {
-    this.globalExceptionHandler = globalExceptionHandler;
-  }
+  public JwtService(GlobalExceptionHandler globalExceptionHandler) {}
 
   public String extractUsername(String token) {
     return extractClaim(token, Claims::getSubject);

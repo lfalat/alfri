@@ -1,14 +1,12 @@
 package sk.uniza.fri.alfri.common.pagitation;
 
-import sk.uniza.fri.alfri.common.exception.BadConditionException;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
+import sk.uniza.fri.alfri.exception.BadConditionException;
 
 public class SearchDefinition {
     /**
@@ -29,6 +27,24 @@ public class SearchDefinition {
             this.assignSearchDefinitions(searchDefinitions);
         }
     }
+
+  private static String extractConditionalOperator(
+      String match, Pattern pattern, String[] conditionParts) {
+    Matcher matcher = pattern.matcher(match);
+
+    String conditionOperator = matcher.find() ? matcher.group() : null;
+
+    // Check if a condition contains all 2 parts
+    if (conditionParts.length != 2) {
+      String errorDetail =
+          conditionOperator == null
+              ? "Condition doesn't contain operator."
+              : "Condition contains too many operators, only one in each condition is allowed.";
+      throw new BadConditionException(
+          "Search condition: '" + match + "' contains invalid chars. " + errorDetail);
+    }
+    return conditionOperator;
+  }
 
     public List<SearchCriteria> getSearchCriteria() {
         return new ArrayList<>(this.searchCriteriaMap.values());
@@ -53,19 +69,6 @@ public class SearchDefinition {
             this.searchCriteriaMap.put(conditionParts[0] + conditionOperator, searchCriteria);
 
         }
-    }
-
-    private static String extractConditionalOperator(String match, Pattern pattern, String[] conditionParts) {
-        Matcher matcher = pattern.matcher(match);
-
-        String conditionOperator = matcher.find() ? matcher.group() : null;
-
-        // Check if a condition contains all 2 parts
-        if (conditionParts.length != 2) {
-            String errorDetail = conditionOperator == null ? "Condition doesn't contain operator." : "Condition contains too many operators, only one in each condition is allowed.";
-            throw new BadConditionException("Search condition: '" + match + "' contains invalid chars. " + errorDetail);
-        }
-        return conditionOperator;
     }
 
 }

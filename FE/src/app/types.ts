@@ -2,6 +2,7 @@ export interface Role {
   id: number;
   name: string;
 }
+
 export interface RegisterUserDto {
   firstName: string;
   lastName: string;
@@ -39,6 +40,8 @@ export interface SubjectDto {
   code: string;
   abbreviation: string;
   studyProgramName: string;
+  recommendedYear: number;
+  semester: string;
 }
 
 export interface StudyProgramDto {

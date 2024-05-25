@@ -9,23 +9,25 @@ import sk.uniza.fri.alfri.common.pagitation.PageDefinition;
 import sk.uniza.fri.alfri.common.pagitation.SearchDefinition;
 import sk.uniza.fri.alfri.common.pagitation.SearchSpecification;
 import sk.uniza.fri.alfri.entity.StudyProgramSubject;
-import sk.uniza.fri.alfri.entity.Subject;
 
 @Service
 public class StudyProgramSubjectRepositoryImpl implements StudyProgramSubjectRepository {
-    private StudyProgramSubjectSpringDataRepository studyProgramSubjectSpringDataRepository;
+  private final StudyProgramSubjectSpringDataRepository studyProgramSubjectSpringDataRepository;
 
-    public StudyProgramSubjectRepositoryImpl(StudyProgramSubjectSpringDataRepository studyProgramSubjectSpringDataRepository) {
-        this.studyProgramSubjectSpringDataRepository = studyProgramSubjectSpringDataRepository;
-    }
+  public StudyProgramSubjectRepositoryImpl(
+      StudyProgramSubjectSpringDataRepository studyProgramSubjectSpringDataRepository) {
+    this.studyProgramSubjectSpringDataRepository = studyProgramSubjectSpringDataRepository;
+  }
 
-    @Override
-    public Page<StudyProgramSubject> findAllByFilter(SearchDefinition searchDefinition, PageDefinition pageDefinition) {
-        Pageable pageable = PageRequest.of(pageDefinition.getPage(), pageDefinition.getSize(), Sort.by("id"));
+  @Override
+  public Page<StudyProgramSubject> findAllByFilter(
+      SearchDefinition searchDefinition, PageDefinition pageDefinition) {
+    Pageable pageable =
+        PageRequest.of(pageDefinition.getPage(), pageDefinition.getSize(), Sort.by("id"));
 
-        SearchSpecification<StudyProgramSubject> specification = new SearchSpecification<>(searchDefinition.getSearchCriteria());
+    SearchSpecification<StudyProgramSubject> specification =
+        new SearchSpecification<>(searchDefinition.getSearchCriteria());
 
-        var results = this.studyProgramSubjectSpringDataRepository.findAll(specification, pageable);
-        return results;
-    }
+    return this.studyProgramSubjectSpringDataRepository.findAll(specification, pageable);
+  }
 }
