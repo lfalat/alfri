@@ -8,6 +8,7 @@ import { ProfileComponent } from './profile/profile.component';
 import { inject } from '@angular/core';
 import { SubjectsComponent } from './subjects/subjects.component';
 import { RecommendationComponent } from './recommendation/recommendation.component';
+import { GradeFormComponent } from './grade-form/grade-form.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -30,5 +31,6 @@ export const routes: Routes = [
   },
   { path: 'profile', component: ProfileComponent },
   { path: '404', component: ErrorPageComponent },
+  { path: 'grade-form', component: GradeFormComponent },
   { path: '**', redirectTo: 'login' }
 ];
