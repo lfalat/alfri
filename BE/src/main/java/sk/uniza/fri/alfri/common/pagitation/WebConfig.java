@@ -10,7 +10,8 @@ import java.util.List;
 public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
-        // TODO add sort resolver
-        argumentResolvers.add(new PagitationRequestQueryParameterResolver());
+        SortRequestQueryParameterResolver sortResolver = new SortRequestQueryParameterResolver();
+        argumentResolvers.add(new PagitationRequestQueryParameterResolver(sortResolver));
+        argumentResolvers.add(sortResolver);
     }
 }
