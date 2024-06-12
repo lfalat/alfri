@@ -13,6 +13,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatInput } from '@angular/material/input';
 import { MatButton } from '@angular/material/button';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-subjects',
@@ -99,7 +100,9 @@ export class SubjectsComponent implements OnInit, OnDestroy {
     private subjectService: SubjectService,
     private studyProgramService: StudyProgramService,
     private errorService: ErrorService,
-    private formBuilder: FormBuilder
+    private formBuilder: FormBuilder,
+    private router: Router,
+    private activatedRoute: ActivatedRoute
   ) {
     this.filterForm = this.formBuilder.group(
       {
@@ -165,5 +168,9 @@ export class SubjectsComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this._destroy$.next();
     this._destroy$.complete();
+  }
+
+  nagivateToSubjectDetail(code: string) {
+    this.router.navigate([code], { relativeTo: this.activatedRoute });
   }
 }

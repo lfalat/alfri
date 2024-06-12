@@ -12,10 +12,14 @@
 </div>
 
 <div class="subject-table-wrapper">
-  <table mat-table [dataSource]="dataSource$">
+  <table mat-table [dataSource]="dataSource$" aria-description="subject table">
     <ng-container matColumnDef="name">
       <th mat-header-cell *matHeaderCellDef>Názov</th>
-      <td mat-cell *matCellDef="let subject">{{ subject.name }}</td>
+      <td mat-cell *matCellDef="let subject">
+        <a class="text-decoration-none" href="javascript:void(0)" (click)="nagivateToSubjectDetail(subject.code)">
+        {{ subject.name }}
+        </a>
+      </td>
     </ng-container>
 
     <ng-container matColumnDef="code">

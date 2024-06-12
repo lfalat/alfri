@@ -1,6 +1,6 @@
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Page, SubjectDto } from '../types';
+import { Page, SubjectDto, SubjectExtendedDto } from '../types';
 import { Observable } from 'rxjs';
 
 @Injectable({
@@ -16,7 +16,7 @@ export class SubjectService {
     studyProgramId: number,
     pageNumber: number,
     pageSize: number
-  ): Observable<Page<SubjectDto>> {
+  ){
     const httpOptions = {
       headers: new HttpHeaders({
         'Content-Type': 'application/json'
@@ -34,7 +34,7 @@ export class SubjectService {
     });
   }
 
-  public filterSubject(mathFocus: string, studyProgramId: number, pageNumber: number, pageSize: number): Observable<Page<SubjectDto>> {
+  public filterSubject(mathFocus: string, studyProgramId: number, pageNumber: number, pageSize: number) {
     const httpOptions = {
       headers: new HttpHeaders({
         'Content-Type': 'application/json'
@@ -50,5 +50,9 @@ export class SubjectService {
     return this.http.get<Page<SubjectDto>>(`${ this.URL }`, {
       params: urlParameters, headers: httpOptions.headers
     });
+  }
+
+  public getExtendedSubjectByCode(subjectCode: string) {
+    return this.http.get<SubjectExtendedDto>(`${this.URL}/${subjectCode}`);
   }
 }

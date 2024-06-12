@@ -8,6 +8,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { UserService } from '../../services/user.service';
 import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
+import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
+import { MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle } from '@angular/material/expansion';
 
 @Component({
   selector: 'app-header',
@@ -23,6 +25,12 @@ import { Router } from '@angular/router';
     AsyncPipe,
     NgClass,
     NgIf,
+    MatMenu,
+    MatMenuItem,
+    MatMenuTrigger,
+    MatExpansionPanel,
+    MatExpansionPanelTitle,
+    MatExpansionPanelHeader
   ]
 })
 export class HeaderComponent {
@@ -49,5 +57,13 @@ export class HeaderComponent {
 
   navigateToProfile() {
     this.router.navigate(['profile']);
+  }
+
+  navigateToHome() {
+    this.router.navigate(['home']);
+  }
+
+  navigateToSubjectChances() {
+    this.router.navigate(['subjects-chance']);
   }
 }

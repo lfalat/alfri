@@ -9,6 +9,8 @@ import { inject } from '@angular/core';
 import { SubjectsComponent } from './subjects/subjects.component';
 import { RecommendationComponent } from './recommendation/recommendation.component';
 import { GradeFormComponent } from './grade-form/grade-form.component';
+import { SubjectDetailComponent } from './subject-detail/subject-detail.component';
+import { SubjectsChanceComponent } from './subjects-chance/subjects-chance.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -22,6 +24,21 @@ export const routes: Routes = [
   {
     path: 'subjects',
     component: SubjectsComponent,
+    canActivate: [() => inject(AuthGuard).canActivate()],
+  },
+  {
+    path: 'subjects',
+    component: SubjectsComponent,
+    canActivate: [() => inject(AuthGuard).canActivate()]
+  },
+  {
+    path: 'subjects/:subjectCode',
+    component: SubjectDetailComponent,
+    canActivate: [() => inject(AuthGuard).canActivate()],
+  },
+  {
+    path: 'subjects-chance',
+    component: SubjectsChanceComponent,
     canActivate: [() => inject(AuthGuard).canActivate()],
   },
   {
