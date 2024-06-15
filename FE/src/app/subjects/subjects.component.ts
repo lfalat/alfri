@@ -5,8 +5,6 @@ import { Page, StudyProgramDto, SubjectDto } from '../types';
 import { SubjectService } from '../services/subject.service';
 import { StudyProgramService } from '../services/study-program.service';
 import { CommonModule } from '@angular/common';
-import { HttpErrorResponse } from '@angular/common/http';
-import { ErrorService } from '../services/error.service';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSelectModule } from '@angular/material/select';
@@ -14,6 +12,7 @@ import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } 
 import { MatInput } from '@angular/material/input';
 import { MatButton } from '@angular/material/button';
 import { ActivatedRoute, Router } from '@angular/router';
+import { SubjectsTableComponent } from '../components/subjects-table/subjects-table.component';
 
 @Component({
   selector: 'app-subjects',
@@ -28,6 +27,7 @@ import { ActivatedRoute, Router } from '@angular/router';
     MatInput,
     ReactiveFormsModule,
     MatButton,
+    SubjectsTableComponent,
   ],
   templateUrl: './subjects.component.html',
   styleUrl: './subjects.component.scss',
@@ -39,15 +39,6 @@ export class SubjectsComponent implements OnInit, OnDestroy {
   private _studyPrograms$!: Observable<StudyProgramDto[]>;
   private _selectedStudyProgramId!: number;
   public filterForm: FormGroup;
-
-  public readonly columnsToDisplay: string[] = [
-    'name',
-    'code',
-    'abbreviation',
-    'obligation',
-    'recommendedYear',
-    'semester',
-  ];
 
   public readonly pageData: Page<SubjectDto> = {
     content: [],
@@ -99,7 +90,6 @@ export class SubjectsComponent implements OnInit, OnDestroy {
   constructor(
     private subjectService: SubjectService,
     private studyProgramService: StudyProgramService,
-    private errorService: ErrorService,
     private formBuilder: FormBuilder,
     private router: Router,
     private activatedRoute: ActivatedRoute
@@ -138,8 +128,7 @@ export class SubjectsComponent implements OnInit, OnDestroy {
           this.isLoading = false;
         }),
         takeUntil(this._destroy$),
-        catchError((error: HttpErrorResponse) => {
-          this.errorService.showError(error.error.detail);
+        catchError(() => {
           return of();
         }),
         shareReplay(1)
@@ -155,12 +144,12 @@ export class SubjectsComponent implements OnInit, OnDestroy {
     );
   }
 
-  public onPageChange($event: PageEvent) {
+  public onPageChange(event: PageEvent) {
     this.isLoading = true;
 
     this._dataSource$ = this.getSubjects(
-      $event.pageIndex,
-      $event.pageSize,
+      event.pageIndex,
+      event.pageSize,
       this._selectedStudyProgramId
     );
   }
@@ -170,7 +159,7 @@ export class SubjectsComponent implements OnInit, OnDestroy {
     this._destroy$.complete();
   }
 
-  nagivateToSubjectDetail(code: string) {
+  navigateToSubjectDetail(code: string) {
     this.router.navigate([code], { relativeTo: this.activatedRoute });
   }
 }

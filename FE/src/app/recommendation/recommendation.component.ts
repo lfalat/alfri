@@ -27,6 +27,7 @@ import { MatInput } from '@angular/material/input';
 import { MatButton } from '@angular/material/button';
 import { StudentService } from '../services/student.service';
 import { Router } from '@angular/router';
+import { SubjectsTableComponent } from '../components/subjects-table/subjects-table.component';
 
 @Component({
   selector: 'app-recommendation',
@@ -51,7 +52,8 @@ import { Router } from '@angular/router';
     MatHeaderCellDef,
     ReactiveFormsModule,
     MatInput,
-    MatButton
+    MatButton,
+    SubjectsTableComponent
   ],
   templateUrl: './recommendation.component.html',
   styleUrl: './recommendation.component.scss'
@@ -105,12 +107,11 @@ export class RecommendationComponent implements OnInit, OnDestroy {
 
   get dataSource$(): Observable<SubjectDto[]> {
     if (!this._dataSource$) {
-      return of();
+      return of([]);
     }
 
     return this._dataSource$.pipe(map((page) => page.content));
   }
-
 
   constructor(
     private subjectService: SubjectService,
@@ -119,11 +120,9 @@ export class RecommendationComponent implements OnInit, OnDestroy {
     private formBuilder: FormBuilder,
     private router: Router
   ) {
-    this.filterForm = this.formBuilder.group(
-      {
-        mathFocus: ['', [Validators.required]]
-      }
-    );
+    this.filterForm = this.formBuilder.group({
+      mathFocus: ['', [Validators.required]],
+    });
   }
 
   ngOnInit() {
@@ -229,13 +228,12 @@ export class RecommendationComponent implements OnInit, OnDestroy {
     this._destroy$.complete();
   }
 
-  // // TODO make more dynamic
   filterByMathThreshold() {
     this.isFilterActive = true;
     this._dataSource$ = this.getSubjects(0, 10, this._userStudyProgramId);
   }
 
-  public nagivateToSubjectDetail(code: string) {
+  public navigateToSubjectDetail(code: string) {
     this.router.navigate(['/subjects/' + code]);
   }
 }
