@@ -26,6 +26,7 @@ import { MatSelect } from '@angular/material/select';
 import { MatInput } from '@angular/material/input';
 import { MatButton } from '@angular/material/button';
 import { StudentService } from '../services/student.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-recommendation',
@@ -115,7 +116,8 @@ export class RecommendationComponent implements OnInit, OnDestroy {
     private subjectService: SubjectService,
     private studentService: StudentService,
     private errorService: ErrorService,
-    private formBuilder: FormBuilder
+    private formBuilder: FormBuilder,
+    private router: Router
   ) {
     this.filterForm = this.formBuilder.group(
       {
@@ -231,5 +233,9 @@ export class RecommendationComponent implements OnInit, OnDestroy {
   filterByMathThreshold() {
     this.isFilterActive = true;
     this._dataSource$ = this.getSubjects(0, 10, this._userStudyProgramId);
+  }
+
+  public nagivateToSubjectDetail(code: string) {
+    this.router.navigate(['/subjects/' + code]);
   }
 }
