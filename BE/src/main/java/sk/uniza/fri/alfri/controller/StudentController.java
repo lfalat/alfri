@@ -51,7 +51,7 @@ public class StudentController {
   }
 
   @GetMapping(value = "/prediction")
-  public void makePrediction() throws IOException {
+  public void makePrediction() throws IOException, InterruptedException {
     this.studentService.makePrediction();
   }
 }
