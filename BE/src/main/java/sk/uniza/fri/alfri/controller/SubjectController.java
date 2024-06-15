@@ -7,14 +7,20 @@ import org.springframework.http.CacheControl;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import sk.uniza.fri.alfri.common.pagitation.PageDefinition;
 import sk.uniza.fri.alfri.common.pagitation.PagitationRequestQuery;
 import sk.uniza.fri.alfri.common.pagitation.SearchDefinition;
+import sk.uniza.fri.alfri.common.pagitation.SortDefinition;
+import sk.uniza.fri.alfri.common.pagitation.SortRequestQuery;
 import sk.uniza.fri.alfri.dto.subject.SubjectDto;
+import sk.uniza.fri.alfri.dto.subject.SubjectExtendedDto;
 import sk.uniza.fri.alfri.entity.StudyProgramSubject;
+import sk.uniza.fri.alfri.entity.Subject;
 import sk.uniza.fri.alfri.mapper.StudyProgramSubjectMapper;
+import sk.uniza.fri.alfri.mapper.SubjectMapper;
 import sk.uniza.fri.alfri.service.ISubjectService;
 
 @RequestMapping("/api/subject")
@@ -28,7 +34,6 @@ public class SubjectController {
   }
 
   @GetMapping(
-      consumes = MediaType.APPLICATION_JSON_VALUE,
       produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<Page<SubjectDto>> findAllSubjectsByStudyProgramId(
       PagitationRequestQuery pagitationRequestQuery) {
@@ -39,8 +44,9 @@ public class SubjectController {
         pagitationRequestQuery.search);
 
     SearchDefinition searchDefinition = new SearchDefinition(pagitationRequestQuery.search);
+    SortDefinition sortDefinition = SortRequestQuery.from(pagitationRequestQuery.sort);
     PageDefinition pageDefinition =
-        new PageDefinition(pagitationRequestQuery.page, pagitationRequestQuery.size);
+        new PageDefinition(pagitationRequestQuery.page, pagitationRequestQuery.size, sortDefinition);
 
     Page<StudyProgramSubject> subjects =
         subjectService.findAllByStudyProgramId(searchDefinition, pageDefinition);
@@ -60,5 +66,14 @@ public class SubjectController {
     return ResponseEntity.ok()
         .cacheControl(CacheControl.maxAge(Duration.ofHours(6)))
         .body(subjectDtos);
+  }
+
+  @GetMapping("/{subjectCode}")
+  public ResponseEntity<SubjectExtendedDto> getSubjectBySubjectCode(@PathVariable String subjectCode) {
+    Subject subject = this.subjectService.findBySubjectCode(subjectCode);
+
+    SubjectExtendedDto subjectDto = SubjectMapper.INSTANCE.toSubjectExtendedDto(subject);
+
+    return ResponseEntity.ok(subjectDto);
   }
 }

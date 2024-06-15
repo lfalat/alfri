@@ -1,0 +1,20 @@
+<div class="speech-bubble-wrapper">
+  <div speech-bubble
+       [attr.pbottom]="horizontalAllign === 'bottom' ? true : null"
+       [attr.ptop]="horizontalAllign === 'top' ? true : null"
+       [attr.pleft]="horizontalAllign === 'left' ? true : null"
+       [attr.pright]="horizontalAllign === 'right' ? true : null"
+
+
+       [attr.abottom]="verticalAllign === 'bottom' ? true : null"
+       [attr.atop]="verticalAllign === 'top' ? true : null"
+       [attr.aleft]="verticalAllign === 'left' ? true : null"
+       [attr.aright]="verticalAllign === 'right' ? true : null"
+       [attr.acenter]="verticalAllign === 'center' ? true : null"
+       aright [ngStyle]="bubbleStyles">
+    <div>{{text}}</div>
+  </div>
+
+  <ng-content class="middle"></ng-content>
+</div>
+

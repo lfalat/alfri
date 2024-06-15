@@ -6,8 +6,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import sk.uniza.fri.alfri.common.pagitation.PageDefinition;
+import sk.uniza.fri.alfri.common.pagitation.PageableAssembler;
 import sk.uniza.fri.alfri.common.pagitation.SearchDefinition;
 import sk.uniza.fri.alfri.common.pagitation.SearchSpecification;
+import sk.uniza.fri.alfri.common.pagitation.SortAssembler;
 import sk.uniza.fri.alfri.entity.StudyProgramSubject;
 
 @Service
@@ -22,8 +24,8 @@ public class StudyProgramSubjectRepositoryImpl implements StudyProgramSubjectRep
   @Override
   public Page<StudyProgramSubject> findAllByFilter(
       SearchDefinition searchDefinition, PageDefinition pageDefinition) {
-    Pageable pageable =
-        PageRequest.of(pageDefinition.getPage(), pageDefinition.getSize(), Sort.by("id"));
+
+    Pageable pageable = PageableAssembler.from(pageDefinition);
 
     SearchSpecification<StudyProgramSubject> specification =
         new SearchSpecification<>(searchDefinition.getSearchCriteria());

@@ -21,6 +21,12 @@ public class PagitationRequestQueryParameterResolver implements HandlerMethodArg
     // TODO conf variable
     private int defaultPageSizeFromProperties = 20;
 
+    private SortRequestQueryParameterResolver sortRequestQueryParameterResolver;
+
+    public PagitationRequestQueryParameterResolver(SortRequestQueryParameterResolver sortRequestQueryParameterResolver) {
+        this.sortRequestQueryParameterResolver = sortRequestQueryParameterResolver;
+    }
+
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
         return PagitationRequestQuery.class.equals(parameter.getParameterType());
@@ -38,10 +44,14 @@ public class PagitationRequestQueryParameterResolver implements HandlerMethodArg
 
         int page = Integer.parseInt(pageStr);
         int size = Integer.parseInt(sizeStr);
+        SortDefinition sortDefinition = null;
+        try {
+            sortDefinition = sortRequestQueryParameterResolver.resolveArgument(parameter, mavContainer, webRequest, binderFactory);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
 
-        // TODO add sort
-
-        return PagitationRequestQuery.of(page, size, searchStr);
+        return PagitationRequestQuery.of(page, size, searchStr, sortDefinition);
     }
 
     protected String getParameterNameToUse(String source, @Nullable MethodParameter parameter) {

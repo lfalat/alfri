@@ -1,6 +1,8 @@
 package sk.uniza.fri.alfri.service.implementation;
 
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Service;
 import sk.uniza.fri.alfri.entity.Student;
 import sk.uniza.fri.alfri.entity.StudyProgram;
@@ -9,15 +11,22 @@ import sk.uniza.fri.alfri.repository.StudentRepository;
 import sk.uniza.fri.alfri.repository.StudyProgramRepository;
 import sk.uniza.fri.alfri.service.IStudentService;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.List;
+
 @Service
 public class StudentService implements IStudentService {
   private final StudentRepository studentRepository;
   private final StudyProgramRepository studyProgramRepository;
+  private final ResourceLoader resourceLoader;
 
   public StudentService(
-      StudentRepository studentRepository, StudyProgramRepository studyProgramRepository) {
+      StudentRepository studentRepository, StudyProgramRepository studyProgramRepository, ResourceLoader resourceLoader) {
     this.studentRepository = studentRepository;
     this.studyProgramRepository = studyProgramRepository;
+    this.resourceLoader = resourceLoader;
   }
 
   public StudyProgram getUsersStudyProgram(String userEmail) {
@@ -40,5 +49,26 @@ public class StudentService implements IStudentService {
   @Override
   public StudyProgram getUsersStudyProgram(User user) {
     return getUsersStudyProgram(user.getEmail());
+  }
+
+  @Override
+  public void makePrediction() throws IOException {
+    Resource resource = resourceLoader.getResource("classpath:python_scripts/test_script.py");
+    String pythonScriptPath = resource.getFile().getAbsolutePath();
+
+
+    ProcessBuilder processBuilder = new ProcessBuilder("python", pythonScriptPath);
+    processBuilder.redirectErrorStream(true);
+
+    Process process = processBuilder.start();
+    BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+    StringBuilder output = new StringBuilder();
+    String line;
+    while ((line = reader.readLine()) != null) {
+      output.append(line).append("\n");
+    }
+
+    System.out.println(output);
+
   }
 }

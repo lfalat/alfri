@@ -35,6 +35,21 @@ export interface AuthResponseDto {
   expiresIn: number;
 }
 
+export interface FocusDto {
+  mathFocus: number;
+  logicFocus: number;
+  programmingFocus: number;
+  designFocus: number;
+  economicsFocus: number;
+  managementFocus: number;
+  hardwareFocus: number;
+  networkFocus: number;
+  dataFocus: number;
+  testingFocus: number;
+  languageFocus: number;
+  physicalFocus: number;
+}
+
 export interface SubjectDto {
   name: string;
   code: string;
@@ -42,6 +57,10 @@ export interface SubjectDto {
   studyProgramName: string;
   recommendedYear: number;
   semester: string;
+}
+
+export interface SubjectExtendedDto extends SubjectDto {
+  focusDTO: FocusDto
 }
 
 export interface StudyProgramDto {

@@ -13,6 +13,8 @@ import sk.uniza.fri.alfri.mapper.StudyProgramMapper;
 import sk.uniza.fri.alfri.service.IAuthService;
 import sk.uniza.fri.alfri.service.IStudentService;
 
+import java.io.IOException;
+
 @RequestMapping("/api/student")
 @RestController
 @Slf4j
@@ -46,5 +48,10 @@ public class StudentController {
     log.info("Returning study program {} for user with email {}", studyProgram, userEmail);
 
     return ResponseEntity.ok(studyProgramDto);
+  }
+
+  @GetMapping(value = "/prediction")
+  public void makePrediction() throws IOException {
+    this.studentService.makePrediction();
   }
 }
