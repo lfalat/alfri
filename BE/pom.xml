@@ -13,6 +13,7 @@
     <name>BE</name>
     <description>BE</description>
     <properties>
+        <APPLICATION_NAME>Alfri</APPLICATION_NAME>
         <java.version>21</java.version>
     </properties>
     <dependencies>
@@ -114,6 +115,9 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <version>3.2.4</version>
+                <configuration>
+                    <addResources>false</addResources>
+                </configuration>
                 <executions>
                     <execution>
                         <goals>
@@ -123,6 +127,16 @@
                 </executions>
             </plugin>
         </plugins>
+
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>false</filtering>
+                <includes>
+                    <include>**</include>
+                </includes>
+            </resource>
+        </resources>
     </build>
 
 </project>

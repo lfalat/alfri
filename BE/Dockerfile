@@ -1,4 +1,9 @@
-FROM maven:3.9.6-sapmachine-21
+FROM openjdk:21-jdk
+
+# Add python
+RUN microdnf update && \
+    microdnf install -y python38 && \
+    microdnf clean all
 
 # Set the working directory inside the container
 WORKDIR /app

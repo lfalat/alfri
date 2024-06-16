@@ -67,21 +67,21 @@ public class StudentService implements IStudentService {
 
     List<Integer> list = Arrays.asList(1, 2, 3, 4 ,5, 6, 7, 8, 9, 10, 10, 10);
 
-    // Install the required Python modules
-    ProcessBuilder installProcessBuilder = new ProcessBuilder("python", "-m", "pip", "install", "-r", requirementsPath);
-    installProcessBuilder.redirectErrorStream(true);
-    Process installProcess = installProcessBuilder.start();
-    BufferedReader installReader = new BufferedReader(new InputStreamReader(installProcess.getInputStream()));
-    StringBuilder installOutput = new StringBuilder();
-    String installLine;
-    while ((installLine = installReader.readLine()) != null) {
-      installOutput.append(installLine).append("\n");
-    }
-    int installExitCode = installProcess.waitFor();
-    if (installExitCode != 0) {
-      throw new RuntimeException("pip install failed: " + installOutput);
-    }
-    System.out.println(installOutput);
+//    // Install the required Python modules
+//    ProcessBuilder installProcessBuilder = new ProcessBuilder("python", "-m", "pip", "install", "-r", requirementsPath);
+//    installProcessBuilder.redirectErrorStream(true);
+//    Process installProcess = installProcessBuilder.start();
+//    BufferedReader installReader = new BufferedReader(new InputStreamReader(installProcess.getInputStream()));
+//    StringBuilder installOutput = new StringBuilder();
+//    String installLine;
+//    while ((installLine = installReader.readLine()) != null) {
+//      installOutput.append(installLine).append("\n");
+//    }
+//    int installExitCode = installProcess.waitFor();
+//    if (installExitCode != 0) {
+//      throw new RuntimeException("pip install failed: " + installOutput);
+//    }
+//    System.out.println(installOutput);
 
     ProcessBuilder processBuilder = new ProcessBuilder("python", pythonScriptPath, list.toString(), modelPath);
     processBuilder.redirectErrorStream(true);
