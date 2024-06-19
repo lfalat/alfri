@@ -3,7 +3,7 @@ import { SubjectsTableComponent } from '../components/subjects-table/subjects-ta
 import { catchError, finalize, map, Observable, of, shareReplay, Subject, switchMap, takeUntil, tap } from 'rxjs';
 import { Page, StudyProgramDto, SubjectDto, SubjectExtendedDto } from '../types';
 import { SubjectService } from '../services/subject.service';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { PageEvent } from '@angular/material/paginator';
 import { HttpErrorResponse } from '@angular/common/http';
 import { StudentService } from '../services/student.service';
@@ -12,6 +12,7 @@ import { MatButton } from '@angular/material/button';
 import { MatDivider } from '@angular/material/divider';
 import { MatIcon } from '@angular/material/icon';
 import { MatProgressBar } from '@angular/material/progress-bar';
+import { AsyncPipe } from '@angular/common';
 
 @Component({
   selector: 'app-subjects-clustering',
@@ -21,7 +22,8 @@ import { MatProgressBar } from '@angular/material/progress-bar';
     MatButton,
     MatDivider,
     MatIcon,
-    MatProgressBar
+    MatProgressBar,
+    AsyncPipe
   ],
   templateUrl: './subjects-clustering.component.html',
   styleUrl: './subjects-clustering.component.scss'
@@ -62,45 +64,8 @@ export class SubjectsClusteringComponent implements OnInit, OnDestroy {
     empty: false,
   };
 
-  public readonly recommendedSubjectsPageData: Page<SubjectExtendedDto> = {
-    content: [],
-    totalElements: 0,
-    size: 10,
-    number: 0,
-    pageable: {
-      sort: {
-        sorted: false,
-        unsorted: false,
-        empty: false,
-      },
-      offset: 0,
-      pageNumber: 0,
-      pageSize: 0,
-      paged: false,
-      unpaged: false,
-    },
-    last: false,
-    totalPages: 0,
-    sort: {
-      sorted: false,
-      unsorted: false,
-      empty: false,
-    },
-    first: false,
-    numberOfElements: 0,
-    empty: false,
-  };
-
   public isLoadingAllSubjects = false;
   public isLoadingRecommendetSubjects = false;
-
-  get selectedSubjects(): SubjectExtendedDto[] {
-    return this._selectedSubjects;
-  }
-
-  set selectedSubjects(selectedSubjects: SubjectExtendedDto[]) {
-    this._selectedSubjects = selectedSubjects;
-  }
 
   get allSubjectsDataSource$(): Observable<SubjectExtendedDto[]> {
     if (!this._allSubjectsDataSource$) {
@@ -122,8 +87,7 @@ export class SubjectsClusteringComponent implements OnInit, OnDestroy {
     private subjectService: SubjectService,
     private studentService: StudentService,
     private errorService: ErrorService,
-    private router: Router,
-    private activatedRoute: ActivatedRoute
+    private router: Router
   ) {
   }
 
@@ -134,7 +98,6 @@ export class SubjectsClusteringComponent implements OnInit, OnDestroy {
   private init(): void {
     this.getStudentsStudyProgramAndItsSubjects();
 
-    //TODO zmenit
     this._recommendedSubjectsDataSource$ = of();
   }
 
@@ -210,18 +173,6 @@ export class SubjectsClusteringComponent implements OnInit, OnDestroy {
       event.pageSize,
       this._userStudyProgramId
     );
-  }
-
-  public onPageChangeRecommendedSubjects(event: PageEvent) {
-    this.isLoadingRecommendetSubjects = true;
-
-    // this._allSubjectsDataSource$ = this.getAllSubjects(
-    //   event.pageIndex,
-    //   event.pageSize,
-    //   this._userStudyProgramId
-    // );
-
-    //TODO ziskat odporucane predmety | MOZNO ZRUSIT PAGINATION? ALEBO JU NEJAKO MANUALNE TU SPRAVIT
   }
 
   ngOnDestroy() {

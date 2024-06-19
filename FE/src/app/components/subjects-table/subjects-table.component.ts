@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
-import { map, Observable, Subject, takeUntil } from 'rxjs';
+import { Observable, Subject, takeUntil } from 'rxjs';
 import { Page, SubjectDto } from '../../types';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import {
@@ -15,7 +15,7 @@ import {
   MatTable
 } from '@angular/material/table';
 import { MatProgressBar } from '@angular/material/progress-bar';
-import { AsyncPipe, NgIf } from '@angular/common';
+import { AsyncPipe, NgClass, NgIf } from '@angular/common';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { SelectionModel } from '@angular/cdk/collections';
 
@@ -37,7 +37,8 @@ import { SelectionModel } from '@angular/cdk/collections';
     MatRowDef,
     NgIf,
     MatCheckbox,
-    AsyncPipe
+    AsyncPipe,
+    NgClass
   ],
   templateUrl: './subjects-table.component.html',
   styleUrl: './subjects-table.component.scss'
@@ -50,6 +51,7 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
   @Input() isSelectable = false;
   @Input() maxSelectableSubjects = Infinity;
   @Input() isPageable = true;
+  @Input() isScrollable = false;
 
   @Output() pageChange = new EventEmitter<PageEvent>();
   @Output() subjectDetailNavigate = new EventEmitter<string>();
@@ -58,11 +60,13 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
   private readonly _destroy$: Subject<void> = new Subject();
   private _columnsToDisplay!: string[];
   private _selection = new SelectionModel<SubjectDto>(true, []);
-  public selectedSubjectsMap: Map<string, boolean> = new Map();
+  // public selectedSubjectsMap: Map<SubjectDto, boolean> = new Map();
+  public selectedSubjectsMap: Map<string, SubjectDto> = new Map();
 
   public get columnsToDisplay(): string[] {
     return this._columnsToDisplay;
   }
+
   ngOnInit(): void {
     if (this.displayFullInfo) {
       this._columnsToDisplay = [
@@ -85,7 +89,7 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
       this._columnsToDisplay.unshift('select');
     }
 
-    this._selection.changed.subscribe(() => {
+    this._selection.changed.pipe(takeUntil(this._destroy$)).subscribe(() => {
       this.selectedSubjects.emit(this._selection.selected);
     });
   }
@@ -107,21 +111,16 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
     this.subjectDetailNavigate.emit(code);
   }
 
-  public toggleSelection(row: SubjectDto): void {
-    if (this.selectedSubjectsMap.get(row.code)) {
-      this.selectedSubjectsMap.set(row.code, false);
-    } else if (Array.from(this.selectedSubjectsMap.values()).filter(v => v).length < this.maxSelectableSubjects) {
-      this.selectedSubjectsMap.set(row.code, true);
+  public toggleSelection(selectedSubject: SubjectDto): void {
+    if (this.selectedSubjectsMap.get(selectedSubject.code)) {
+      this.selectedSubjectsMap.delete(selectedSubject.code);
+    } else if (Array.from(this.selectedSubjectsMap.values()).length < this.maxSelectableSubjects) {
+      this.selectedSubjectsMap.set(selectedSubject.code, selectedSubject);
     }
-    this.dataSource$.pipe(
-      takeUntil(this._destroy$),
-      map(subjects => Array.from(this.selectedSubjectsMap.entries())
-        .filter(([, isSelected]) => isSelected)
-        .map(([code]) => subjects.find(subject => subject.code === code)))
-    ).subscribe((selelectedSubjects) => {
-      const validSubjects = selelectedSubjects.filter((subject): subject is SubjectDto => subject !== undefined);
-      this.selectedSubjects.emit(validSubjects);
-    });
+
+    const selectedSubjects = Array.from(this.selectedSubjectsMap.values());
+
+    this.selectedSubjects.emit(selectedSubjects);
   }
 
   public getSelectedSubjectsCount(): number {

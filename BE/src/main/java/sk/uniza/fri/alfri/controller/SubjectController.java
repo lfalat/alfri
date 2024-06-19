@@ -127,7 +127,7 @@ public class SubjectController {
     } catch (IOException e) {
       return ResponseEntity.badRequest().build();
     }
-    // TODO odinstalovat joblib, scikitlearn a numpy z PC !!!!!
+
     List<SubjectDto> similarSubjectsDto =
         simillarSubjects.stream()
             .map(StudyProgramSubjectMapper.INSTANCE::studyProgramSubjectToSubjectDto)

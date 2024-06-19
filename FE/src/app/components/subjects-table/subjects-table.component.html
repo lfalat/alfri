@@ -1,13 +1,14 @@
-<div class="subject-table-wrapper">
+<div class="subject-table-wrapper" [ngClass]="{'subject-table-scrollable': isScrollable}">
   <table mat-table [dataSource]="dataSource$" aria-description="subject table">
     <ng-container matColumnDef="select">
       <th mat-header-cell *matHeaderCellDef>
       </th>
-      <td mat-cell *matCellDef="let row">
+      <td mat-cell *matCellDef="let subject">
         <mat-checkbox (click)="$event.stopPropagation()"
-                      (change)="toggleSelection(row)"
-                      [checked]="selectedSubjectsMap.get(row.code)"
-                      [disabled]="(!selectedSubjectsMap.get(row.code) && getSelectedSubjectsCount() >= maxSelectableSubjects)">
+                      (change)="toggleSelection(subject)"
+                      (keyup.enter)="toggleSelection(subject)"
+                      [checked]="selectedSubjectsMap.has(subject.code)"
+                      [disabled]="(!selectedSubjectsMap.has(subject.code) && getSelectedSubjectsCount() >= maxSelectableSubjects)">
         </mat-checkbox>
       </td>
     </ng-container>
@@ -50,7 +51,7 @@
       <td mat-cell colspan="7">No subjects are present</td>
     </ng-container>
 
-    <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
+    <tr mat-header-row *matHeaderRowDef="columnsToDisplay; sticky: true"></tr>
     <tr mat-row *matRowDef="let row; columns: columnsToDisplay"></tr>
   </table>
 
