@@ -66,4 +66,8 @@ export class HeaderComponent {
   navigateToSubjectChances() {
     this.router.navigate(['subjects-chance']);
   }
+
+  public navigateToSubjectsClustering() {
+    this.router.navigate(['clustering']);
+  }
 }

@@ -1,5 +1,6 @@
 package sk.uniza.fri.alfri.controller;
 
+import java.io.IOException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -12,8 +13,6 @@ import sk.uniza.fri.alfri.entity.StudyProgram;
 import sk.uniza.fri.alfri.mapper.StudyProgramMapper;
 import sk.uniza.fri.alfri.service.IAuthService;
 import sk.uniza.fri.alfri.service.IStudentService;
-
-import java.io.IOException;
 
 @RequestMapping("/api/student")
 @RestController
@@ -34,7 +33,6 @@ public class StudentController {
 
   @GetMapping(value = "/current/studyProgram", produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<StudyProgramDto> getCurrentStudentsStudyProgram() {
-    log.info("STARTARAOJDAOIFHAIF");
     String userEmail =
         authService
             .getCurrentUserEmail()

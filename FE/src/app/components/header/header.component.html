@@ -37,6 +37,14 @@
           Predikcia
         </div>
       </a>
+
+      <a mat-list-item href="javascript:void(0)" (click)="navigateToSubjectsClustering()">
+        <div class="d-flex align-items-center gap-2">
+          <mat-icon>thumbs_up_down</mat-icon>
+          Zhlukovanie
+        </div>
+      </a>
+
       <a mat-list-item href="javascript:void(0)" (click)="navigateToProfile()">
         <div class="d-flex align-items-center gap-2">
           <mat-icon>account_circle</mat-icon>
@@ -76,6 +84,11 @@
             <button mat-button (click)="navigateToPrediction()">
               <mat-icon>analytics</mat-icon>
               Predikcia
+            </button>
+
+            <button mat-button (click)="navigateToSubjectsClustering()">
+              <mat-icon>thumbs_up_down</mat-icon>
+              Zhlukovanie
             </button>
           </div>
         </div>

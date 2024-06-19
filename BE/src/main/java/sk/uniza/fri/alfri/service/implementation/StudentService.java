@@ -1,6 +1,7 @@
 package sk.uniza.fri.alfri.service.implementation;
 
 import jakarta.persistence.EntityNotFoundException;
+import java.io.IOException;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Service;
@@ -10,11 +11,7 @@ import sk.uniza.fri.alfri.entity.User;
 import sk.uniza.fri.alfri.repository.StudentRepository;
 import sk.uniza.fri.alfri.repository.StudyProgramRepository;
 import sk.uniza.fri.alfri.service.IStudentService;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.List;
+import sk.uniza.fri.alfri.util.ProcessUtils;
 
 @Service
 public class StudentService implements IStudentService {
@@ -23,7 +20,9 @@ public class StudentService implements IStudentService {
   private final ResourceLoader resourceLoader;
 
   public StudentService(
-      StudentRepository studentRepository, StudyProgramRepository studyProgramRepository, ResourceLoader resourceLoader) {
+      StudentRepository studentRepository,
+      StudyProgramRepository studyProgramRepository,
+      ResourceLoader resourceLoader) {
     this.studentRepository = studentRepository;
     this.studyProgramRepository = studyProgramRepository;
     this.resourceLoader = resourceLoader;
@@ -56,19 +55,9 @@ public class StudentService implements IStudentService {
     Resource resource = resourceLoader.getResource("classpath:python_scripts/test_script.py");
     String pythonScriptPath = resource.getFile().getAbsolutePath();
 
-
-    ProcessBuilder processBuilder = new ProcessBuilder("python", pythonScriptPath);
-    processBuilder.redirectErrorStream(true);
-
-    Process process = processBuilder.start();
-    BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-    StringBuilder output = new StringBuilder();
-    String line;
-    while ((line = reader.readLine()) != null) {
-      output.append(line).append("\n");
-    }
+    ProcessBuilder processBuilder = new ProcessBuilder("python3", pythonScriptPath);
+    String output = ProcessUtils.getOutputFromProces(processBuilder);
 
     System.out.println(output);
-
   }
 }

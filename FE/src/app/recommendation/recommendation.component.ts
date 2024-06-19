@@ -26,6 +26,8 @@ import { MatSelect } from '@angular/material/select';
 import { MatInput } from '@angular/material/input';
 import { MatButton } from '@angular/material/button';
 import { StudentService } from '../services/student.service';
+import { Router } from '@angular/router';
+import { SubjectsTableComponent } from '../components/subjects-table/subjects-table.component';
 
 @Component({
   selector: 'app-recommendation',
@@ -50,7 +52,8 @@ import { StudentService } from '../services/student.service';
     MatHeaderCellDef,
     ReactiveFormsModule,
     MatInput,
-    MatButton
+    MatButton,
+    SubjectsTableComponent
   ],
   templateUrl: './recommendation.component.html',
   styleUrl: './recommendation.component.scss'
@@ -104,24 +107,22 @@ export class RecommendationComponent implements OnInit, OnDestroy {
 
   get dataSource$(): Observable<SubjectDto[]> {
     if (!this._dataSource$) {
-      return of();
+      return of([]);
     }
 
     return this._dataSource$.pipe(map((page) => page.content));
   }
 
-
   constructor(
     private subjectService: SubjectService,
     private studentService: StudentService,
     private errorService: ErrorService,
-    private formBuilder: FormBuilder
+    private formBuilder: FormBuilder,
+    private router: Router
   ) {
-    this.filterForm = this.formBuilder.group(
-      {
-        mathFocus: ['', [Validators.required]]
-      }
-    );
+    this.filterForm = this.formBuilder.group({
+      mathFocus: ['', [Validators.required]],
+    });
   }
 
   ngOnInit() {
@@ -195,7 +196,7 @@ export class RecommendationComponent implements OnInit, OnDestroy {
     }
 
     return this.subjectService
-      .getSubjectsByStudyProgramId(studyProgramId, pageNumber, pageSize)
+      .getSubjectsWithFocusByStudyProgramId(studyProgramId, pageNumber, pageSize)
       .pipe(
         tap((page: Page<SubjectDto>) => {
           this.pageData.size = page.size;
@@ -227,9 +228,12 @@ export class RecommendationComponent implements OnInit, OnDestroy {
     this._destroy$.complete();
   }
 
-  // // TODO make more dynamic
   filterByMathThreshold() {
     this.isFilterActive = true;
     this._dataSource$ = this.getSubjects(0, 10, this._userStudyProgramId);
+  }
+
+  public navigateToSubjectDetail(code: string) {
+    this.router.navigate(['/subjects/' + code]);
   }
 }

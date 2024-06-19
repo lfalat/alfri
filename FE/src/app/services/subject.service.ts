@@ -34,6 +34,28 @@ export class SubjectService {
     });
   }
 
+  public getSubjectsWithFocusByStudyProgramId(
+    studyProgramId: number,
+    pageNumber: number,
+    pageSize: number
+  ) : Observable<Page<SubjectExtendedDto>>{
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json'
+      })
+    };
+
+    let urlParameters: HttpParams = new HttpParams();
+    urlParameters = urlParameters
+      .append('page', pageNumber)
+      .append('size', pageSize)
+      .append('search', `id.studyProgramId:${ studyProgramId }`);
+
+    return this.http.get<Page<SubjectExtendedDto>>(`${ this.URL }/withFocus`, {
+      params: urlParameters, headers: httpOptions.headers
+    });
+  }
+
   public filterSubject(mathFocus: string, studyProgramId: number, pageNumber: number, pageSize: number) {
     const httpOptions = {
       headers: new HttpHeaders({
@@ -54,5 +76,9 @@ export class SubjectService {
 
   public getExtendedSubjectByCode(subjectCode: string) {
     return this.http.get<SubjectExtendedDto>(`${this.URL}/${subjectCode}`);
+  }
+
+  public getSimilarSubjects(subjects: SubjectExtendedDto[]): Observable<SubjectDto[]>{
+    return this.http.post<SubjectDto[]>(`${this.URL}/similarSubjects`, subjects);
   }
 }
