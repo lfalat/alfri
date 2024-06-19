@@ -196,7 +196,7 @@ export class RecommendationComponent implements OnInit, OnDestroy {
     }
 
     return this.subjectService
-      .getSubjectsByStudyProgramId(studyProgramId, pageNumber, pageSize)
+      .getSubjectsWithFocusByStudyProgramId(studyProgramId, pageNumber, pageSize)
       .pipe(
         tap((page: Page<SubjectDto>) => {
           this.pageData.size = page.size;

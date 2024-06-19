@@ -1,15 +1,13 @@
 package sk.uniza.fri.alfri.repository;
 
+import java.util.Optional;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import sk.uniza.fri.alfri.common.pagitation.PageDefinition;
 import sk.uniza.fri.alfri.common.pagitation.PageableAssembler;
 import sk.uniza.fri.alfri.common.pagitation.SearchDefinition;
 import sk.uniza.fri.alfri.common.pagitation.SearchSpecification;
-import sk.uniza.fri.alfri.common.pagitation.SortAssembler;
 import sk.uniza.fri.alfri.entity.StudyProgramSubject;
 
 @Service
@@ -31,5 +29,10 @@ public class StudyProgramSubjectRepositoryImpl implements StudyProgramSubjectRep
         new SearchSpecification<>(searchDefinition.getSearchCriteria());
 
     return this.studyProgramSubjectSpringDataRepository.findAll(specification, pageable);
+  }
+
+  @Override
+  public Optional<StudyProgramSubject> findByIdSubjectId(Integer id) {
+    return studyProgramSubjectSpringDataRepository.findByIdSubjectId(id);
   }
 }

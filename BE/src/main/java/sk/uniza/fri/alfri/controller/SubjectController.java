@@ -1,15 +1,15 @@
 package sk.uniza.fri.alfri.controller;
 
+import jakarta.validation.Valid;
+import java.io.IOException;
 import java.time.Duration;
+import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.CacheControl;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import sk.uniza.fri.alfri.common.pagitation.PageDefinition;
 import sk.uniza.fri.alfri.common.pagitation.PagitationRequestQuery;
 import sk.uniza.fri.alfri.common.pagitation.SearchDefinition;
@@ -33,8 +33,7 @@ public class SubjectController {
     this.subjectService = subjectService;
   }
 
-  @GetMapping(
-      produces = MediaType.APPLICATION_JSON_VALUE)
+  @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<Page<SubjectDto>> findAllSubjectsByStudyProgramId(
       PagitationRequestQuery pagitationRequestQuery) {
     log.info(
@@ -46,7 +45,8 @@ public class SubjectController {
     SearchDefinition searchDefinition = new SearchDefinition(pagitationRequestQuery.search);
     SortDefinition sortDefinition = SortRequestQuery.from(pagitationRequestQuery.sort);
     PageDefinition pageDefinition =
-        new PageDefinition(pagitationRequestQuery.page, pagitationRequestQuery.size, sortDefinition);
+        new PageDefinition(
+            pagitationRequestQuery.page, pagitationRequestQuery.size, sortDefinition);
 
     Page<StudyProgramSubject> subjects =
         subjectService.findAllByStudyProgramId(searchDefinition, pageDefinition);
@@ -68,12 +68,73 @@ public class SubjectController {
         .body(subjectDtos);
   }
 
+  @GetMapping(path = "/withFocus", produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity<Page<SubjectExtendedDto>> findAllSubjectsWithFocusByStudyProgramId(
+      PagitationRequestQuery pagitationRequestQuery) {
+    log.info(
+        "Getting all subjects with focus on page {} with page size {} with filters {}",
+        pagitationRequestQuery.page,
+        pagitationRequestQuery.size,
+        pagitationRequestQuery.search);
+
+    SearchDefinition searchDefinition = new SearchDefinition(pagitationRequestQuery.search);
+    SortDefinition sortDefinition = SortRequestQuery.from(pagitationRequestQuery.sort);
+    PageDefinition pageDefinition =
+        new PageDefinition(
+            pagitationRequestQuery.page, pagitationRequestQuery.size, sortDefinition);
+
+    Page<StudyProgramSubject> subjects =
+        subjectService.findAllByStudyProgramId(searchDefinition, pageDefinition);
+
+    log.info(subjects.getContent().toString());
+
+    log.info(
+        "{} subjects with focus for study program with id {} on page {} with page size {} returned",
+        subjects.getSize(),
+        pagitationRequestQuery.page,
+        pagitationRequestQuery.page,
+        pagitationRequestQuery.size);
+
+    Page<SubjectExtendedDto> subjectDtos =
+        subjects.map(StudyProgramSubjectMapper.INSTANCE::studyProgramSubjectToSubjectExtendedDto);
+
+    return ResponseEntity.ok()
+        .cacheControl(CacheControl.maxAge(Duration.ofHours(6)))
+        .body(subjectDtos);
+  }
+
   @GetMapping("/{subjectCode}")
-  public ResponseEntity<SubjectExtendedDto> getSubjectBySubjectCode(@PathVariable String subjectCode) {
+  public ResponseEntity<SubjectExtendedDto> getSubjectBySubjectCode(
+      @PathVariable String subjectCode) {
     Subject subject = this.subjectService.findBySubjectCode(subjectCode);
 
     SubjectExtendedDto subjectDto = SubjectMapper.INSTANCE.toSubjectExtendedDto(subject);
 
     return ResponseEntity.ok(subjectDto);
+  }
+
+  @PostMapping("/similarSubjects")
+  public ResponseEntity<List<SubjectDto>> getSimilarSubject(
+      @RequestBody @Valid List<SubjectExtendedDto> subjects) {
+    log.info("Getting similar subjects for {} subjects", subjects.size());
+
+    List<Subject> subjectList =
+        subjects.stream().map(SubjectMapper.INSTANCE::fromSubjectExtendedDtotoEntity).toList();
+
+    List<StudyProgramSubject> simillarSubjects = null;
+    try {
+      simillarSubjects = subjectService.getSimillarSubjects(subjectList);
+    } catch (IOException e) {
+      return ResponseEntity.badRequest().build();
+    }
+    // TODO odinstalovat joblib, scikitlearn a numpy z PC !!!!!
+    List<SubjectDto> similarSubjectsDto =
+        simillarSubjects.stream()
+            .map(StudyProgramSubjectMapper.INSTANCE::studyProgramSubjectToSubjectDto)
+            .toList();
+
+    log.info("Returning {} similar subjects", similarSubjectsDto.size());
+
+    return ResponseEntity.ok().body(similarSubjectsDto);
   }
 }
