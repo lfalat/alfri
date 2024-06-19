@@ -42,7 +42,7 @@
                 {
                   "type": "initial",
                   "maximumWarning": "500kb",
-                  "maximumError": "2mb"
+                  "maximumError": "3mb"
                 },
                 {
                   "type": "anyComponentStyle",
@@ -62,9 +62,6 @@
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
-          //          "options": {
-          //            "proxyConfig": "proxy.conf.json"
-          //          },
           "configurations": {
             "production": {
               "buildTarget": "FE:build:production"

@@ -1,4 +1,6 @@
 spring:
+  profiles:
+    active: dev
   application:
     name: ${APPLICATION_NAME:ALFRI_BE}
   datasource:

@@ -18,6 +18,7 @@ public interface SubjectMapper {
   @Mapping(target = "recommendedYear", ignore = true)
   @Mapping(target = "obligation", ignore = true)
   @Mapping(source = "focus", target = "focusDTO")
+
   SubjectExtendedDto toSubjectExtendedDto(Subject studyProgram);
 
   FocusDTO toFocusDTO(Focus focus);

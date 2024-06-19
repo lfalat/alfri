@@ -51,7 +51,7 @@ public class StudentService implements IStudentService {
   }
 
   @Override
-  public void makePrediction() throws IOException {
+  public void  makePrediction() throws IOException {
     Resource resource = resourceLoader.getResource("classpath:python_scripts/test_script.py");
     String pythonScriptPath = resource.getFile().getAbsolutePath();
 

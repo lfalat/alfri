@@ -1,6 +1,10 @@
 spring:
+  config:
+    import: optional:file:.env[.properties]
+  profiles:
+    active: production
   application:
-    name: ${APPLICATION_NAME}
+    name: ${APPLICATION_NAME:ALFRI_BE}
   datasource:
     url: ${DATABASE_PROD_URL}
     username: ${DATABASE_PROD_USER}
