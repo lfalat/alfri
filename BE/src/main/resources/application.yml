@@ -1,12 +1,12 @@
 spring:
   config:
-    import: optional:file:.env[.properties]
+    import: optional:file:BE/src/main/resources/.env[.properties],optional:file:../.env[.properties]
   profiles:
     active: production
   application:
     name: ${APPLICATION_NAME:ALFRI_BE}
   datasource:
-    url: ${DATABASE_PROD_URL}
+    url: ${DATABASE_PROD_URL:jdbc:postgresql://alfri-database.postgres.database.azure.com:5432/alfri}
     username: ${DATABASE_PROD_USER}
     password: ${DATABASE_PROD_PASSWORD}
   jpa:

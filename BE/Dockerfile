@@ -15,4 +15,4 @@ ARG SPRING_PROFILE_ACTIVE
 ENV  SPRING_PROFILE_ACTIVE=$SPRING_PROFILE_ACTIVE
 
 # Command to run the application
-ENTRYPOINT ["sh", "-c", "java -jar app.jar --spring.profiles.active=${SPRING_PROFILE_ACTIVE}"]
+ENTRYPOINT ["sh", "-c", "java -jar app.jar --spring.profiles.active=production"]
