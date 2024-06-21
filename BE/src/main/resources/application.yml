@@ -1,8 +1,6 @@
 spring:
   config:
     import: optional:file:BE/src/main/resources/.env[.properties],optional:file:../.env[.properties]
-  profiles:
-    active: production
   application:
     name: ${APPLICATION_NAME:ALFRI_BE}
   datasource:
