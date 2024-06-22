@@ -1,8 +1,10 @@
 package sk.uniza.fri.alfri.service.implementation;
 
 import jakarta.persistence.EntityNotFoundException;
+
 import java.io.IOException;
-import org.springframework.core.io.Resource;
+
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Service;
 import sk.uniza.fri.alfri.entity.Student;
@@ -52,12 +54,8 @@ public class StudentService implements IStudentService {
 
   @Override
   public void  makePrediction() throws IOException {
-    Resource resource = resourceLoader.getResource("classpath:python_scripts/test_script.py");
-    String pythonScriptPath = resource.getFile().getAbsolutePath();
-
-    ProcessBuilder processBuilder = new ProcessBuilder("python3", pythonScriptPath);
+    ProcessBuilder processBuilder = new ProcessBuilder("python3", "./python_scripts/test_script.py");
     String output = ProcessUtils.getOutputFromProces(processBuilder);
-
     System.out.println(output);
   }
 }
