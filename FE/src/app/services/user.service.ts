@@ -11,7 +11,7 @@ import { environment } from '../../environments/environment';
 })
 export class UserService {
   public userId: number | undefined;
-  private readonly URL = `${environment.API_URL}/user`;
+  private readonly BE_URL = `${environment.API_URL}/user`;
 
   constructor(private http: HttpClient, public jwtHelper: JwtHelperService) {
   }
@@ -25,6 +25,6 @@ export class UserService {
   }
 
   getUserInfo(): Observable<UserDto> {
-    return this.http.get<UserDto>(`${URL}/profile`);
+    return this.http.get<UserDto>(`${this.BE_URL}/profile`);
   }
 }
