@@ -33,6 +33,7 @@ public class StudentController {
 
   @GetMapping(value = "/current/studyProgram", produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<StudyProgramDto> getCurrentStudentsStudyProgram() {
+    log.info("Getting study program started");
     String userEmail =
         authService
             .getCurrentUserEmail()
@@ -50,6 +51,7 @@ public class StudentController {
 
   @GetMapping(value = "/prediction")
   public void makePrediction() throws IOException {
+    log.info("Make prediction started");
     this.studentService.makePrediction();
   }
 }

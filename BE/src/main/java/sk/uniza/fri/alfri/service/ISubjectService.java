@@ -14,7 +14,7 @@ public interface ISubjectService {
 
   Subject findBySubjectCode(String subjectCode);
 
-  List<StudyProgramSubject> getSimillarSubjects(List<Subject> originalSubjects) throws IOException;
+  List<StudyProgramSubject> getSimilarSubjects(List<Subject> originalSubjects) throws IOException;
 
   List<StudyProgramSubject> findSubjectByIds(List<Integer> ids);
 }

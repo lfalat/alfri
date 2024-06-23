@@ -71,7 +71,7 @@ public class SubjectService implements ISubjectService {
   }
 
   @Override
-  public List<StudyProgramSubject> getSimillarSubjects(List<Subject> originalSubjects)
+  public List<StudyProgramSubject> getSimilarSubjects(List<Subject> originalSubjects)
       throws IOException {
     List<Focus> subjectsFocuses = originalSubjects.stream().map(Subject::getFocus).toList();
     List<List<Integer>> focusesAttributes = getFocusesAttributes(subjectsFocuses);
@@ -83,6 +83,7 @@ public class SubjectService implements ISubjectService {
             Arrays.toString(focusesAttributes.toArray()),
             CLUSTERING_PREDICTION_MODEL_PATH);
     String output = ProcessUtils.getOutputFromProces(processBuilder);
+    System.out.println(output);
 
     String cleaned = output.replace("[", "").replace("]", "").replace("\"", "");
     String[] parts = cleaned.split(" ");
