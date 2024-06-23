@@ -38,4 +38,4 @@ COPY target/alfri-3.2.4.jar app.jar
 EXPOSE 8080
 
 # Command to run the application
-ENTRYPOINT ["sh", "-c", "java -jar app.jar --spring.profiles.active=dev"]
+ENTRYPOINT ["sh", "-c", "java -jar app.jar"]

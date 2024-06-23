@@ -34,3 +34,5 @@ build/
 
 ### ENV ###
 target/.env
+.env
+/BE/.env

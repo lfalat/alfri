@@ -1,6 +1,4 @@
 spring:
-  profiles:
-    active: production
   config:
     # The file needs to be optional because in the JAR the file has a different location
     import: optional:file:.env[.properties]

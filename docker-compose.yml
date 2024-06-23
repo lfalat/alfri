@@ -2,6 +2,7 @@ services:
   backend:
     image: groben5558/alfri:alfri-backend
     container_name: alfri_be
+    platform: linux/amd64
     environment:
       PROD_SHOW_SQL: ${PROD_SHOW_SQL}
       DATABASE_PROD_PASSWORD: ${DATABASE_PROD_PASSWORD}
@@ -11,7 +12,6 @@ services:
       JWT_PROD_EXPIRATION_TIME: ${JWT_PROD_EXPIRATION_TIME}
       JWT_PROD_SECRET_KEY: ${JWT_PROD_SECRET_KEY}
       APPLICATION_NAME: ${APPLICATION_NAME}
-      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
     build:
       context: ./BE
     ports:
