@@ -9,7 +9,7 @@ import { environment } from '../../environments/environment';
   providedIn: 'root'
 })
 export class AuthService {
-  private readonly URL = `${environment.apiUrl}/auth`;
+  private readonly URL = `${environment.API_URL}/auth`;
 
   constructor(private http: HttpClient, private jwtService: JwtService) {
   }

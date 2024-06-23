@@ -11,7 +11,7 @@ import { environment } from '../../environments/environment';
 })
 export class UserService {
   public userId: number | undefined;
-  private readonly URL = `${environment.apiUrl}/user`;
+  private readonly URL = `${environment.API_URL}/user`;
 
   constructor(private http: HttpClient, public jwtHelper: JwtHelperService) {
   }

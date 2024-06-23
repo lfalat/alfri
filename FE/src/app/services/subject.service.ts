@@ -8,7 +8,7 @@ import { environment } from '../../environments/environment';
   providedIn: 'root',
 })
 export class SubjectService {
-  private readonly URL = `${environment.apiUrl}/subject`;
+  private readonly URL = `${environment.API_URL}/subject`;
 
   constructor(private http: HttpClient) {
   }
