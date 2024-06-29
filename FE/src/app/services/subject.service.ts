@@ -2,12 +2,13 @@ import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Page, SubjectDto, SubjectExtendedDto } from '../types';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environments-prod';
 
 @Injectable({
   providedIn: 'root',
 })
 export class SubjectService {
-  private readonly URL = 'http://localhost:8080/api/subject';
+  private readonly URL = `${environment.API_URL}/subject`;
 
   constructor(private http: HttpClient) {
   }

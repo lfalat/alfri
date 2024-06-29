@@ -20,7 +20,7 @@ public class Questionnaire {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @ColumnDefault("nextval('questionnaire_questionnaire_id_seq'")
+  @ColumnDefault("nextval('questionnaire_questionnaire_id_seq')")
   @Column(name = "questionnaire_id", nullable = false)
   private Integer id;
 
@@ -38,7 +38,9 @@ public class Questionnaire {
   @Column(name = "date_of_creation", nullable = false)
   private Instant dateOfCreation;
 
-  @OneToMany(mappedBy = "questionnaire", fetch = FetchType.LAZY)
-  @JsonBackReference
-  private List<Question> questions = new ArrayList<>();
+  @OneToMany(mappedBy = "questionnaire", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<QuestionnaireSection> sections = new ArrayList<>();
+
+  @OneToMany(mappedBy = "answerQuestionnaire", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<Answer> answers = new ArrayList<>();
 }

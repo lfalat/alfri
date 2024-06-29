@@ -96,3 +96,45 @@ export interface Page<T> {
   numberOfElements: number;
   empty: boolean;
 }
+
+
+// Questionnaire types
+export interface Option {
+  questionOption: string;
+}
+
+export interface Question {
+  questionTitle: string;
+  answerType: 'RADIO' | 'CHECKBOX' | 'TEXT' | 'NUMBER';
+  optional: boolean;
+  questionIdentifier: string;
+  positionInQuestionnaire: number;
+  options: Option[];
+}
+
+export interface Section {
+  sectionTitle: string;
+  questions: Question[];
+}
+
+export interface Form {
+  id: number;
+  title: string;
+  description: string;
+  dateOfCreation: string;
+  sections: Section[];
+}
+
+export interface AnswerText {
+  answerText: string;
+}
+
+export interface Answer {
+  questionId: number;
+  texts: AnswerText[];
+}
+
+export interface UserFormAnswers {
+  formId: number;
+  answers: Answer[];
+}

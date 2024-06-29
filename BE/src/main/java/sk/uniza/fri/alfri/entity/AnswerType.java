@@ -25,21 +25,5 @@ public class AnswerType {
   @Size(max = 50)
   @NotBlank(message = "Answer type name cannot be blank or empty!")
   @Column(name = "name", nullable = false, length = 50)
-  private String name;
-
-  @OneToMany(mappedBy = "answerType", fetch = FetchType.LAZY)
-  @JsonBackReference
-  private List<NumericAnswer> numericAnswers = new ArrayList<>();
-
-  @OneToMany(mappedBy = "answerType", fetch = FetchType.LAZY)
-  @JsonBackReference
-  private List<OptionsAnswer> optionsAnswers = new ArrayList<>();
-
-  @OneToMany(mappedBy = "answerType", fetch = FetchType.LAZY)
-  @JsonBackReference
-  private List<Question> questions = new ArrayList<>();
-
-  @OneToMany(mappedBy = "answerType", fetch = FetchType.LAZY)
-  @JsonBackReference
-  private List<TextAnswer> textAnswers = new ArrayList<>();
+  private sk.uniza.fri.alfri.dto.questionnaire.AnswerType name;
 }
