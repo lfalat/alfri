@@ -104,8 +104,9 @@ export interface Option {
 }
 
 export interface Question {
+  id: number;
   questionTitle: string;
-  answerType: 'RADIO' | 'CHECKBOX' | 'TEXT' | 'NUMBER';
+  answerType: 'RADIO' | 'CHECKBOX' | 'TEXT' | 'NUMERIC';
   optional: boolean;
   questionIdentifier: string;
   positionInQuestionnaire: number;

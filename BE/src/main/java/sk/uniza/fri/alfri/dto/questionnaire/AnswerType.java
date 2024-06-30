@@ -7,7 +7,8 @@ public enum AnswerType {
     TEXT(1),
     NUMERIC(2),
     RADIO(3),
-    CHECKBOX(4);
+    CHECKBOX(4),
+    DROPDOWN(5);
 
     private final int id;
 
