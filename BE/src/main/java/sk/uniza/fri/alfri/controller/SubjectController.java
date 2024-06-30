@@ -22,8 +22,8 @@ import sk.uniza.fri.alfri.dto.subject.SubjectExtendedDto;
 import sk.uniza.fri.alfri.entity.StudyProgramSubject;
 import sk.uniza.fri.alfri.entity.Subject;
 import sk.uniza.fri.alfri.entity.SubjectGrade;
-import sk.uniza.fri.alfri.entity.SubjectGradeMapper;
 import sk.uniza.fri.alfri.mapper.StudyProgramSubjectMapper;
+import sk.uniza.fri.alfri.mapper.SubjectGradeMapper;
 import sk.uniza.fri.alfri.mapper.SubjectMapper;
 import sk.uniza.fri.alfri.service.ISubjectService;
 

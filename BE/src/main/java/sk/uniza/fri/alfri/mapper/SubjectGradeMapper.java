@@ -1,9 +1,9 @@
-package sk.uniza.fri.alfri.entity;
+package sk.uniza.fri.alfri.mapper;
 
 import org.mapstruct.*;
 import org.mapstruct.factory.Mappers;
 import sk.uniza.fri.alfri.dto.SubjectGradeDto;
-import sk.uniza.fri.alfri.mapper.SubjectMapper;
+import sk.uniza.fri.alfri.entity.SubjectGrade;
 
 @Mapper(uses = SubjectMapper.class)
 public interface SubjectGradeMapper {
