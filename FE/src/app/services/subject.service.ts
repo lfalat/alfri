@@ -1,6 +1,6 @@
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Page, SubjectDto, SubjectExtendedDto } from '../types';
+import { Page, SubjectDto, SubjectExtendedDto, SubjectGradesDto } from '../types';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 
@@ -85,5 +85,9 @@ export class SubjectService {
 
   public getSubjectFocusPrediction(): Observable<SubjectExtendedDto[]> {
     return this.http.get<SubjectExtendedDto[]>(`${this.URL}/focus-prediction`);
+  }
+
+  public getLowestAverageSubjects(numberOfSubjects: number): Observable<SubjectGradesDto[]>{
+    return this.http.get<SubjectGradesDto[]>(`${this.URL}/getHardestSubjects/${numberOfSubjects}`);
   }
 }

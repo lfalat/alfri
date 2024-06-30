@@ -40,8 +40,15 @@
 
       <a mat-list-item href="javascript:void(0)" (click)="navigateToSubjectsClustering()">
         <div class="d-flex align-items-center gap-2">
-          <mat-icon>thumbs_up_down</mat-icon>
+          <mat-icon>bubble_chart</mat-icon>
           Zhlukovanie
+        </div>
+      </a>
+
+      <a mat-list-item href="javascript:void(0)" (click)="navigateToSubjectsReports()">
+        <div class="d-flex align-items-center gap-2">
+          <mat-icon>bar_chart</mat-icon>
+          Reporty predmetov
         </div>
       </a>
 
@@ -82,13 +89,18 @@
             </button>
 
             <button mat-button (click)="navigateToPrediction()">
-              <mat-icon>analytics</mat-icon>
-              Predikcia
+              <mat-icon>interests</mat-icon>
+              Záujmy
             </button>
 
             <button mat-button (click)="navigateToSubjectsClustering()">
-              <mat-icon>thumbs_up_down</mat-icon>
+              <mat-icon>bubble_chart</mat-icon>
               Zhlukovanie
+            </button>
+
+            <button mat-button (click)="navigateToSubjectsReports()">
+              <mat-icon>bar_chart</mat-icon>
+              Reporty predmetov
             </button>
           </div>
         </div>
@@ -110,12 +122,12 @@
 
     <mat-menu #menu="matMenu">
       <button mat-menu-item (click)="navigateToSubjects()">
-        <mat-icon>dialpad</mat-icon>
+        <mat-icon>list_view</mat-icon>
         <span>Prehľad predmetov</span>
       </button>
       <button mat-menu-item (click)="navigateToSubjectChances()">
-        <mat-icon>voicemail</mat-icon>
-        <span>Urobím predmet ?</span>
+        <mat-icon>question_mark</mat-icon>
+        <span>Predikcia</span>
       </button>
     </mat-menu>
 

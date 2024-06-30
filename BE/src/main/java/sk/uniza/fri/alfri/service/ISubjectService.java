@@ -10,6 +10,8 @@ import sk.uniza.fri.alfri.entity.User;
 import java.io.IOException;
 import java.util.List;
 
+import sk.uniza.fri.alfri.entity.SubjectGrade;
+
 public interface ISubjectService {
     Page<StudyProgramSubject> findAllByStudyProgramId(
             SearchDefinition searchDefinition, PageDefinition pageDefinition);
@@ -19,6 +21,8 @@ public interface ISubjectService {
     List<StudyProgramSubject> getSimilarSubjects(List<Subject> originalSubjects) throws IOException;
 
     List<StudyProgramSubject> findSubjectByIds(List<Integer> ids);
+
+    List<SubjectGrade> getHardestSubjects(Integer numberOfSubjects);
 
     List<Subject> makeSubjectsFocusPrediction(User user);
 }
