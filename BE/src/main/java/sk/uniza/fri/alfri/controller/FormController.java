@@ -18,6 +18,7 @@ import sk.uniza.fri.alfri.mapper.QuestionnaireMapper;
 import sk.uniza.fri.alfri.repository.QuestionnaireRepository;
 import sk.uniza.fri.alfri.service.FormService;
 import sk.uniza.fri.alfri.service.UserService;
+import sk.uniza.fri.alfri.service.implementation.AuthService;
 import sk.uniza.fri.alfri.service.implementation.JwtService;
 
 import java.util.Optional;
@@ -34,12 +35,14 @@ public class FormController {
     private final JwtService jwtService;
 
     private final UserService userService;
+    private final AuthService authService;
 
-    public FormController(QuestionnaireRepository questionnaireRepository, FormService formService, JwtService jwtService, UserService userService) {
+    public FormController(QuestionnaireRepository questionnaireRepository, FormService formService, JwtService jwtService, UserService userService, AuthService authService) {
         this.questionnaireRepository = questionnaireRepository;
         this.formService = formService;
         this.jwtService = jwtService;
         this.userService = userService;
+        this.authService = authService;
     }
 
     @PostMapping(value = "/add-form", consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -79,12 +82,14 @@ public class FormController {
     }
 
     @GetMapping(value = "/has-filled-form/{formId}")
-    public void hasUserFilledForm(@RequestHeader(value = "Authorization") String token, @PathVariable int formId) throws IllegalArgumentException {
-        // Get user id
-        String parsedToken = token.replace("Bearer ", "");
-        String username = this.jwtService.extractUsername(parsedToken);
-        User user = this.userService.getUser(username);
+    public void hasUserFilledForm(@PathVariable int formId) throws IllegalArgumentException {
+        Optional<String> email = this.authService.getCurrentUserEmail();
 
+        if (email.isEmpty()) {
+            throw new IllegalArgumentException("Can't parse user email from token");
+        }
+
+        User user = this.userService.getUser(email.get());
         this.formService.hasUserFilledForm(formId, user);
     }
 }

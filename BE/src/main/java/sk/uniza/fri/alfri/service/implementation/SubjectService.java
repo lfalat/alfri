@@ -196,7 +196,7 @@ public class SubjectService implements ISubjectService {
 
     @Override
     public List<SubjectGrade> getHardestSubjects(Integer numberOfSubjects) {
-        Pageable pageable = PageRequest.of(1, numberOfSubjects);
+        Pageable pageable = PageRequest.of(0, numberOfSubjects);
         return subjectGradeRepository
                 .findAllByOrderByGradeAverageDesc(pageable)
                 .orElseThrow(
