@@ -2,8 +2,10 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 16.2 (Debian 16.2-1.pgdg120+2)
--- Dumped by pg_dump version 16.2 (Debian 16.2-1.pgdg120+2)
+-- Dumped from database version 16.2
+-- Dumped by pg_dump version 16.3
+
+-- Started on 2024-06-30 01:50:45
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -20,11 +22,94 @@ SET default_tablespace = '';
 
 SET default_table_access_method = heap;
 
-CREATE USER alfri_be WITH PASSWORD 'password123';
+-- CREATE USER alfri_be WITH PASSWORD 'password123';
 GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO alfri_be;
 GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO alfri_be;
 
 --
+-- TOC entry 240 (class 1259 OID 17971)
+-- Name: answer; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.answer
+(
+    question_id      integer NOT NULL,
+    user_id          integer NOT NULL,
+    answer_id        integer NOT NULL,
+    questionnaire_id integer NOT NULL
+);
+
+
+ALTER TABLE public.answer
+    OWNER TO postgres;
+
+--
+-- TOC entry 241 (class 1259 OID 17991)
+-- Name: answer_answer_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.answer_answer_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.answer_answer_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 3562 (class 0 OID 0)
+-- Dependencies: 241
+-- Name: answer_answer_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.answer_answer_id_seq OWNED BY public.answer.answer_id;
+
+
+--
+-- TOC entry 243 (class 1259 OID 17993)
+-- Name: answer_text; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.answer_text
+(
+    answer_text_id integer NOT NULL,
+    answer_text    text    NOT NULL,
+    answer_id      integer NOT NULL
+);
+
+
+ALTER TABLE public.answer_text
+    OWNER TO postgres;
+
+--
+-- TOC entry 242 (class 1259 OID 17992)
+-- Name: answer_text_answer_text_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.answer_text_answer_text_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.answer_text_answer_text_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 3565 (class 0 OID 0)
+-- Dependencies: 242
+-- Name: answer_text_answer_text_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.answer_text_answer_text_id_seq OWNED BY public.answer_text.answer_text_id;
+
+
+--
+-- TOC entry 215 (class 1259 OID 17608)
 -- Name: answer_type; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -39,6 +124,7 @@ ALTER TABLE public.answer_type
     OWNER TO postgres;
 
 --
+-- TOC entry 216 (class 1259 OID 17611)
 -- Name: answer_type_answer_type_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -54,6 +140,8 @@ CREATE SEQUENCE public.answer_type_answer_type_id_seq
 ALTER SEQUENCE public.answer_type_answer_type_id_seq OWNER TO postgres;
 
 --
+-- TOC entry 3568 (class 0 OID 0)
+-- Dependencies: 216
 -- Name: answer_type_answer_type_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
@@ -61,24 +149,25 @@ ALTER SEQUENCE public.answer_type_answer_type_id_seq OWNED BY public.answer_type
 
 
 --
+-- TOC entry 217 (class 1259 OID 17612)
 -- Name: focus; Type: TABLE; Schema: public; Owner: postgres
 --
 
 CREATE TABLE public.focus
 (
-    math_focus        integer NOT NULL,
-    logic_focus       integer NOT NULL,
+    math_focus       integer NOT NULL,
+    logic_focus      integer NOT NULL,
     programming_focus integer NOT NULL,
-    design_focus      integer NOT NULL,
-    economics_focus   integer NOT NULL,
-    management_focus  integer NOT NULL,
-    hardware_focus    integer NOT NULL,
-    network_focus     integer NOT NULL,
-    data_focus        integer NOT NULL,
-    testing_focus     integer NOT NULL,
-    language_focus    integer NOT NULL,
-    physical_focus    integer NOT NULL,
-    subject_id        integer NOT NULL
+    design_focus     integer NOT NULL,
+    economics_focus  integer NOT NULL,
+    management_focus integer NOT NULL,
+    hardware_focus   integer NOT NULL,
+    network_focus    integer NOT NULL,
+    data_focus       integer NOT NULL,
+    testing_focus    integer NOT NULL,
+    language_focus   integer NOT NULL,
+    physical_focus   integer NOT NULL,
+    subject_id       integer NOT NULL
 );
 
 
@@ -86,6 +175,8 @@ ALTER TABLE public.focus
     OWNER TO postgres;
 
 --
+-- TOC entry 3570 (class 0 OID 0)
+-- Dependencies: 217
 -- Name: TABLE focus; Type: COMMENT; Schema: public; Owner: postgres
 --
 
@@ -93,93 +184,7 @@ COMMENT ON TABLE public.focus IS 'public.subject''s focuses';
 
 
 --
--- Name: numeric_answer; Type: TABLE; Schema: public; Owner: postgres
---
-
-CREATE TABLE public.numeric_answer
-(
-    questionnaire_id integer                                   NOT NULL,
-    question_id      integer                                   NOT NULL,
-    user_id          integer                                   NOT NULL,
-    answer_type_id   integer                                   NOT NULL,
-    answer           numeric                                   NOT NULL,
-    "timestamp"      timestamp without time zone DEFAULT now() NOT NULL
-);
-
-
-ALTER TABLE public.numeric_answer
-    OWNER TO postgres;
-
---
--- Name: option; Type: TABLE; Schema: public; Owner: postgres
---
-
-CREATE TABLE public.option
-(
-    option_id   integer                NOT NULL,
-    question_id integer                NOT NULL,
-    name        character varying(100) NOT NULL
-);
-
-
-ALTER TABLE public.option
-    OWNER TO postgres;
-
---
--- Name: option_option_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
---
-
-CREATE SEQUENCE public.option_option_id_seq
-    AS integer
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
-ALTER SEQUENCE public.option_option_id_seq OWNER TO postgres;
-
---
--- Name: option_option_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
---
-
-ALTER SEQUENCE public.option_option_id_seq OWNED BY public.option.option_id;
-
-
---
--- Name: option_options_answer; Type: TABLE; Schema: public; Owner: postgres
---
-
-CREATE TABLE public.option_options_answer
-(
-    option_id         integer NOT NULL,
-    options_answer_id integer NOT NULL
-);
-
-
-ALTER TABLE public.option_options_answer
-    OWNER TO postgres;
-
---
--- Name: options_answer; Type: TABLE; Schema: public; Owner: postgres
---
-
-CREATE TABLE public.options_answer
-(
-    answer_type_id    integer                                   NOT NULL,
-    questionnaire_id  integer                                   NOT NULL,
-    question_id       integer                                   NOT NULL,
-    user_id           integer                                   NOT NULL,
-    "timestamp"       timestamp without time zone DEFAULT now() NOT NULL,
-    options_answer_id integer                                   NOT NULL
-);
-
-
-ALTER TABLE public.options_answer
-    OWNER TO postgres;
-
---
+-- TOC entry 218 (class 1259 OID 17632)
 -- Name: options_answer_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -194,17 +199,19 @@ CREATE SEQUENCE public.options_answer_seq
 ALTER SEQUENCE public.options_answer_seq OWNER TO postgres;
 
 --
+-- TOC entry 219 (class 1259 OID 17633)
 -- Name: question; Type: TABLE; Schema: public; Owner: postgres
 --
 
 CREATE TABLE public.question
 (
-    question_id               integer NOT NULL,
-    questionnaire_id          integer NOT NULL,
-    answer_type_id            integer NOT NULL,
+    question_id         integer NOT NULL,
+    section_id          integer NOT NULL,
+    answer_type_id      integer NOT NULL,
     position_in_questionnaire integer NOT NULL,
-    content                   text    NOT NULL,
-    optional                  boolean NOT NULL
+    question_title      text    NOT NULL,
+    optional            boolean NOT NULL,
+    question_identifier text    NOT NULL
 );
 
 
@@ -212,6 +219,48 @@ ALTER TABLE public.question
     OWNER TO postgres;
 
 --
+-- TOC entry 238 (class 1259 OID 17894)
+-- Name: question_option; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.question_option
+(
+    question_option_id integer NOT NULL,
+    question_option    text    NOT NULL,
+    question_id        integer NOT NULL
+);
+
+
+ALTER TABLE public.question_option
+    OWNER TO postgres;
+
+--
+-- TOC entry 237 (class 1259 OID 17893)
+-- Name: question_options_question_option_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.question_options_question_option_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.question_options_question_option_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 3575 (class 0 OID 0)
+-- Dependencies: 237
+-- Name: question_options_question_option_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.question_options_question_option_id_seq OWNED BY public.question_option.question_option_id;
+
+
+--
+-- TOC entry 220 (class 1259 OID 17638)
 -- Name: question_question_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -227,6 +276,8 @@ CREATE SEQUENCE public.question_question_id_seq
 ALTER SEQUENCE public.question_question_id_seq OWNER TO postgres;
 
 --
+-- TOC entry 3577 (class 0 OID 0)
+-- Dependencies: 220
 -- Name: question_question_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
@@ -234,14 +285,15 @@ ALTER SEQUENCE public.question_question_id_seq OWNED BY public.question.question
 
 
 --
+-- TOC entry 221 (class 1259 OID 17639)
 -- Name: questionnaire; Type: TABLE; Schema: public; Owner: postgres
 --
 
 CREATE TABLE public.questionnaire
 (
-    questionnaire_id integer                                   NOT NULL,
-    title            character varying(100)                    NOT NULL,
-    description      text                                      NOT NULL,
+    questionnaire_id integer                NOT NULL,
+    title            character varying(100) NOT NULL,
+    description      text                   NOT NULL,
     date_of_creation timestamp without time zone DEFAULT now() NOT NULL
 );
 
@@ -250,6 +302,7 @@ ALTER TABLE public.questionnaire
     OWNER TO postgres;
 
 --
+-- TOC entry 222 (class 1259 OID 17645)
 -- Name: questionnaire_questionnaire_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -265,6 +318,8 @@ CREATE SEQUENCE public.questionnaire_questionnaire_id_seq
 ALTER SEQUENCE public.questionnaire_questionnaire_id_seq OWNER TO postgres;
 
 --
+-- TOC entry 3580 (class 0 OID 0)
+-- Dependencies: 222
 -- Name: questionnaire_questionnaire_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
@@ -272,6 +327,47 @@ ALTER SEQUENCE public.questionnaire_questionnaire_id_seq OWNED BY public.questio
 
 
 --
+-- TOC entry 236 (class 1259 OID 17862)
+-- Name: questionnaire_section; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.questionnaire_section
+(
+    section_id       integer NOT NULL,
+    questionnaire_id integer,
+    section_title    text
+);
+
+
+ALTER TABLE public.questionnaire_section
+    OWNER TO postgres;
+
+--
+-- TOC entry 239 (class 1259 OID 17917)
+-- Name: questionnaire_section_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.questionnaire_section_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.questionnaire_section_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 3583 (class 0 OID 0)
+-- Dependencies: 239
+-- Name: questionnaire_section_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.questionnaire_section_id_seq OWNED BY public.questionnaire_section.section_id;
+
+
+--
+-- TOC entry 223 (class 1259 OID 17646)
 -- Name: role; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -286,6 +382,7 @@ ALTER TABLE public.role
     OWNER TO postgres;
 
 --
+-- TOC entry 224 (class 1259 OID 17649)
 -- Name: role_role_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -301,6 +398,8 @@ CREATE SEQUENCE public.role_role_id_seq
 ALTER SEQUENCE public.role_role_id_seq OWNER TO postgres;
 
 --
+-- TOC entry 3586 (class 0 OID 0)
+-- Dependencies: 224
 -- Name: role_role_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
@@ -308,15 +407,16 @@ ALTER SEQUENCE public.role_role_id_seq OWNED BY public.role.role_id;
 
 
 --
+-- TOC entry 225 (class 1259 OID 17650)
 -- Name: student; Type: TABLE; Schema: public; Owner: postgres
 --
 
 CREATE TABLE public.student
 (
-    student_id       integer NOT NULL,
-    user_id          integer,
+    student_id integer NOT NULL,
+    user_id    integer,
     study_program_id integer NOT NULL,
-    year             integer NOT NULL
+    year       integer NOT NULL
 );
 
 
@@ -324,6 +424,7 @@ ALTER TABLE public.student
     OWNER TO postgres;
 
 --
+-- TOC entry 226 (class 1259 OID 17653)
 -- Name: student_id; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -338,6 +439,8 @@ CREATE SEQUENCE public.student_id
 ALTER SEQUENCE public.student_id OWNER TO postgres;
 
 --
+-- TOC entry 3589 (class 0 OID 0)
+-- Dependencies: 226
 -- Name: student_id; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
@@ -345,6 +448,7 @@ ALTER SEQUENCE public.student_id OWNED BY public.student.student_id;
 
 
 --
+-- TOC entry 227 (class 1259 OID 17654)
 -- Name: student_subject; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -352,8 +456,8 @@ CREATE TABLE public.student_subject
 (
     student_id integer NOT NULL,
     subject_id integer NOT NULL,
-    mark       character varying(2),
-    year       integer NOT NULL
+    mark character varying(2),
+    year integer NOT NULL
 );
 
 
@@ -361,6 +465,7 @@ ALTER TABLE public.student_subject
     OWNER TO postgres;
 
 --
+-- TOC entry 228 (class 1259 OID 17657)
 -- Name: study_program; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -375,6 +480,7 @@ ALTER TABLE public.study_program
     OWNER TO postgres;
 
 --
+-- TOC entry 229 (class 1259 OID 17660)
 -- Name: study_program_id_sequence; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -389,6 +495,8 @@ CREATE SEQUENCE public.study_program_id_sequence
 ALTER SEQUENCE public.study_program_id_sequence OWNER TO postgres;
 
 --
+-- TOC entry 3593 (class 0 OID 0)
+-- Dependencies: 229
 -- Name: study_program_id_sequence; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
@@ -396,6 +504,7 @@ ALTER SEQUENCE public.study_program_id_sequence OWNED BY public.study_program.st
 
 
 --
+-- TOC entry 230 (class 1259 OID 17661)
 -- Name: study_program_subject; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -413,6 +522,7 @@ ALTER TABLE public.study_program_subject
     OWNER TO postgres;
 
 --
+-- TOC entry 231 (class 1259 OID 17664)
 -- Name: subject; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -429,6 +539,29 @@ ALTER TABLE public.subject
     OWNER TO postgres;
 
 --
+-- TOC entry 235 (class 1259 OID 17680)
+-- Name: subject_grades; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.subject_grades
+(
+    subject_id     integer NOT NULL,
+    grade_a        real    NOT NULL,
+    grade_b        real    NOT NULL,
+    grade_c        real    NOT NULL,
+    grade_d        real    NOT NULL,
+    grade_e        real,
+    grade_fx       real,
+    students_count integer NOT NULL,
+    grade_average  real    NOT NULL
+);
+
+
+ALTER TABLE public.subject_grades
+    OWNER TO postgres;
+
+--
+-- TOC entry 232 (class 1259 OID 17669)
 -- Name: subject_subject_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -444,6 +577,8 @@ CREATE SEQUENCE public.subject_subject_id_seq
 ALTER SEQUENCE public.subject_subject_id_seq OWNER TO postgres;
 
 --
+-- TOC entry 3598 (class 0 OID 0)
+-- Dependencies: 232
 -- Name: subject_subject_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
@@ -451,24 +586,7 @@ ALTER SEQUENCE public.subject_subject_id_seq OWNED BY public.subject.subject_id;
 
 
 --
--- Name: text_answer; Type: TABLE; Schema: public; Owner: postgres
---
-
-CREATE TABLE public.text_answer
-(
-    answer_type_id   integer                                   NOT NULL,
-    questionnaire_id integer                                   NOT NULL,
-    question_id      integer                                   NOT NULL,
-    user_id          integer                                   NOT NULL,
-    answer           text                                      NOT NULL,
-    "timestamp"      timestamp without time zone DEFAULT now() NOT NULL
-);
-
-
-ALTER TABLE public.text_answer
-    OWNER TO postgres;
-
---
+-- TOC entry 233 (class 1259 OID 17676)
 -- Name: user; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -487,6 +605,7 @@ ALTER TABLE public."user"
     OWNER TO postgres;
 
 --
+-- TOC entry 234 (class 1259 OID 17679)
 -- Name: user_user_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -502,6 +621,8 @@ CREATE SEQUENCE public.user_user_id_seq
 ALTER SEQUENCE public.user_user_id_seq OWNER TO postgres;
 
 --
+-- TOC entry 3601 (class 0 OID 0)
+-- Dependencies: 234
 -- Name: user_user_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
@@ -509,6 +630,25 @@ ALTER SEQUENCE public.user_user_id_seq OWNED BY public."user".user_id;
 
 
 --
+-- TOC entry 3329 (class 2604 OID 18007)
+-- Name: answer answer_id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.answer
+    ALTER COLUMN answer_id SET DEFAULT nextval('public.answer_answer_id_seq'::regclass);
+
+
+--
+-- TOC entry 3330 (class 2604 OID 17996)
+-- Name: answer_text answer_text_id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.answer_text
+    ALTER COLUMN answer_text_id SET DEFAULT nextval('public.answer_text_answer_text_id_seq'::regclass);
+
+
+--
+-- TOC entry 3318 (class 2604 OID 17683)
 -- Name: answer_type answer_type_id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -517,14 +657,7 @@ ALTER TABLE ONLY public.answer_type
 
 
 --
--- Name: option option_id; Type: DEFAULT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.option
-    ALTER COLUMN option_id SET DEFAULT nextval('public.option_option_id_seq'::regclass);
-
-
---
+-- TOC entry 3319 (class 2604 OID 17685)
 -- Name: question question_id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -533,6 +666,16 @@ ALTER TABLE ONLY public.question
 
 
 --
+-- TOC entry 3328 (class 2604 OID 17897)
+-- Name: question_option question_option_id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.question_option
+    ALTER COLUMN question_option_id SET DEFAULT nextval('public.question_options_question_option_id_seq'::regclass);
+
+
+--
+-- TOC entry 3320 (class 2604 OID 17686)
 -- Name: questionnaire questionnaire_id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -541,6 +684,16 @@ ALTER TABLE ONLY public.questionnaire
 
 
 --
+-- TOC entry 3327 (class 2604 OID 17919)
+-- Name: questionnaire_section section_id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.questionnaire_section
+    ALTER COLUMN section_id SET DEFAULT nextval('public.questionnaire_section_id_seq'::regclass);
+
+
+--
+-- TOC entry 3322 (class 2604 OID 17687)
 -- Name: role role_id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -549,6 +702,7 @@ ALTER TABLE ONLY public.role
 
 
 --
+-- TOC entry 3323 (class 2604 OID 17688)
 -- Name: student student_id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -557,6 +711,7 @@ ALTER TABLE ONLY public.student
 
 
 --
+-- TOC entry 3324 (class 2604 OID 17689)
 -- Name: study_program study_program_id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -565,6 +720,7 @@ ALTER TABLE ONLY public.study_program
 
 
 --
+-- TOC entry 3325 (class 2604 OID 17690)
 -- Name: subject subject_id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -573,6 +729,7 @@ ALTER TABLE ONLY public.subject
 
 
 --
+-- TOC entry 3326 (class 2604 OID 17691)
 -- Name: user user_id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -580,6 +737,26 @@ ALTER TABLE ONLY public."user"
     ALTER COLUMN user_id SET DEFAULT nextval('public.user_user_id_seq'::regclass);
 
 --
+-- TOC entry 3603 (class 0 OID 0)
+-- Dependencies: 241
+-- Name: answer_answer_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.answer_answer_id_seq', 2, true);
+
+
+--
+-- TOC entry 3604 (class 0 OID 0)
+-- Dependencies: 242
+-- Name: answer_text_answer_text_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.answer_text_answer_text_id_seq', 1, true);
+
+
+--
+-- TOC entry 3605 (class 0 OID 0)
+-- Dependencies: 216
 -- Name: answer_type_answer_type_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
@@ -587,13 +764,8 @@ SELECT pg_catalog.setval('public.answer_type_answer_type_id_seq', 3, true);
 
 
 --
--- Name: option_option_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
---
-
-SELECT pg_catalog.setval('public.option_option_id_seq', 2, true);
-
-
---
+-- TOC entry 3606 (class 0 OID 0)
+-- Dependencies: 218
 -- Name: options_answer_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
@@ -601,20 +773,44 @@ SELECT pg_catalog.setval('public.options_answer_seq', 1, false);
 
 
 --
+-- TOC entry 3607 (class 0 OID 0)
+-- Dependencies: 237
+-- Name: question_options_question_option_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.question_options_question_option_id_seq', 48, true);
+
+
+--
+-- TOC entry 3608 (class 0 OID 0)
+-- Dependencies: 220
 -- Name: question_question_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.question_question_id_seq', 4, true);
+SELECT pg_catalog.setval('public.question_question_id_seq', 43, true);
 
 
 --
+-- TOC entry 3609 (class 0 OID 0)
+-- Dependencies: 222
 -- Name: questionnaire_questionnaire_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.questionnaire_questionnaire_id_seq', 2, true);
+SELECT pg_catalog.setval('public.questionnaire_questionnaire_id_seq', 62, true);
 
 
 --
+-- TOC entry 3610 (class 0 OID 0)
+-- Dependencies: 239
+-- Name: questionnaire_section_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.questionnaire_section_id_seq', 45, true);
+
+
+--
+-- TOC entry 3611 (class 0 OID 0)
+-- Dependencies: 224
 -- Name: role_role_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
@@ -622,6 +818,8 @@ SELECT pg_catalog.setval('public.role_role_id_seq', 5, true);
 
 
 --
+-- TOC entry 3612 (class 0 OID 0)
+-- Dependencies: 226
 -- Name: student_id; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
@@ -629,6 +827,8 @@ SELECT pg_catalog.setval('public.student_id', 4, true);
 
 
 --
+-- TOC entry 3613 (class 0 OID 0)
+-- Dependencies: 229
 -- Name: study_program_id_sequence; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
@@ -636,6 +836,8 @@ SELECT pg_catalog.setval('public.study_program_id_sequence', 3, true);
 
 
 --
+-- TOC entry 3614 (class 0 OID 0)
+-- Dependencies: 232
 -- Name: subject_subject_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
@@ -643,6 +845,8 @@ SELECT pg_catalog.setval('public.subject_subject_id_seq', 175, true);
 
 
 --
+-- TOC entry 3615 (class 0 OID 0)
+-- Dependencies: 234
 -- Name: user_user_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
@@ -650,6 +854,25 @@ SELECT pg_catalog.setval('public.user_user_id_seq', 9, true);
 
 
 --
+-- TOC entry 3363 (class 2606 OID 17975)
+-- Name: answer answer_id; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.answer
+    ADD CONSTRAINT answer_id PRIMARY KEY (answer_id);
+
+
+--
+-- TOC entry 3365 (class 2606 OID 18000)
+-- Name: answer_text answer_text_pk; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.answer_text
+    ADD CONSTRAINT answer_text_pk PRIMARY KEY (answer_text_id);
+
+
+--
+-- TOC entry 3332 (class 2606 OID 17693)
 -- Name: answer_type answer_type_pk; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -658,6 +881,7 @@ ALTER TABLE ONLY public.answer_type
 
 
 --
+-- TOC entry 3334 (class 2606 OID 17695)
 -- Name: focus focus_pk; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -666,38 +890,16 @@ ALTER TABLE ONLY public.focus
 
 
 --
--- Name: numeric_answer numeric_answer_pk; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 3361 (class 2606 OID 17899)
+-- Name: question_option question_option_pk; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY public.numeric_answer
-    ADD CONSTRAINT numeric_answer_pk PRIMARY KEY (question_id, questionnaire_id, user_id);
-
-
---
--- Name: option_options_answer option_options_answer_pk; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.option_options_answer
-    ADD CONSTRAINT option_options_answer_pk PRIMARY KEY (options_answer_id, option_id);
+ALTER TABLE ONLY public.question_option
+    ADD CONSTRAINT question_option_pk PRIMARY KEY (question_option_id);
 
 
 --
--- Name: option option_pk; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.option
-    ADD CONSTRAINT option_pk PRIMARY KEY (option_id);
-
-
---
--- Name: options_answer options_answer_pk; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.options_answer
-    ADD CONSTRAINT options_answer_pk PRIMARY KEY (options_answer_id);
-
-
---
+-- TOC entry 3337 (class 2606 OID 17705)
 -- Name: question question_pk; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -706,6 +908,7 @@ ALTER TABLE ONLY public.question
 
 
 --
+-- TOC entry 3339 (class 2606 OID 17707)
 -- Name: questionnaire questionnaire_pk; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -714,6 +917,16 @@ ALTER TABLE ONLY public.questionnaire
 
 
 --
+-- TOC entry 3359 (class 2606 OID 17868)
+-- Name: questionnaire_section questionnaire_section_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.questionnaire_section
+    ADD CONSTRAINT questionnaire_section_pkey PRIMARY KEY (section_id);
+
+
+--
+-- TOC entry 3341 (class 2606 OID 17709)
 -- Name: role role_pk; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -722,6 +935,7 @@ ALTER TABLE ONLY public.role
 
 
 --
+-- TOC entry 3343 (class 2606 OID 17711)
 -- Name: student student_pk; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -730,6 +944,7 @@ ALTER TABLE ONLY public.student
 
 
 --
+-- TOC entry 3345 (class 2606 OID 17713)
 -- Name: student_subject student_subject_pk; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -738,6 +953,7 @@ ALTER TABLE ONLY public.student_subject
 
 
 --
+-- TOC entry 3347 (class 2606 OID 17715)
 -- Name: study_program study_program_pk; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -746,6 +962,7 @@ ALTER TABLE ONLY public.study_program
 
 
 --
+-- TOC entry 3349 (class 2606 OID 17717)
 -- Name: study_program_subject study_program_subject_pk; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -754,6 +971,16 @@ ALTER TABLE ONLY public.study_program_subject
 
 
 --
+-- TOC entry 3357 (class 2606 OID 17727)
+-- Name: subject_grades subject_grades_pk; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.subject_grades
+    ADD CONSTRAINT subject_grades_pk PRIMARY KEY (subject_id);
+
+
+--
+-- TOC entry 3351 (class 2606 OID 17719)
 -- Name: subject subject_pk; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -762,14 +989,7 @@ ALTER TABLE ONLY public.subject
 
 
 --
--- Name: text_answer text_answer_pk; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.text_answer
-    ADD CONSTRAINT text_answer_pk PRIMARY KEY (questionnaire_id, question_id, user_id);
-
-
---
+-- TOC entry 3353 (class 2606 OID 17723)
 -- Name: user user_email_unique; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -778,6 +998,7 @@ ALTER TABLE ONLY public."user"
 
 
 --
+-- TOC entry 3355 (class 2606 OID 17725)
 -- Name: user user_pk; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -786,6 +1007,24 @@ ALTER TABLE ONLY public."user"
 
 
 --
+-- TOC entry 3335 (class 1259 OID 17925)
+-- Name: fki_questionnaire_section_id_fk; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX fki_questionnaire_section_id_fk ON public.question USING btree (section_id);
+
+
+--
+-- TOC entry 3382 (class 2606 OID 18001)
+-- Name: answer_text answer_text_answer_id___fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.answer_text
+    ADD CONSTRAINT answer_text_answer_id___fk FOREIGN KEY (answer_id) REFERENCES public.answer (answer_id);
+
+
+--
+-- TOC entry 3366 (class 2606 OID 17728)
 -- Name: focus focus_subject_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -794,94 +1033,7 @@ ALTER TABLE ONLY public.focus
 
 
 --
--- Name: numeric_answer numeric_answer__question_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.numeric_answer
-    ADD CONSTRAINT numeric_answer__question_fk FOREIGN KEY (question_id) REFERENCES public.question (question_id);
-
-
---
--- Name: numeric_answer numeric_answer__questionnaire_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.numeric_answer
-    ADD CONSTRAINT numeric_answer__questionnaire_fk FOREIGN KEY (questionnaire_id) REFERENCES public.questionnaire (questionnaire_id);
-
-
---
--- Name: numeric_answer numeric_answer__user_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.numeric_answer
-    ADD CONSTRAINT numeric_answer__user_fk FOREIGN KEY (user_id) REFERENCES public."user" (user_id);
-
-
---
--- Name: numeric_answer numeric_answer_answer_type_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.numeric_answer
-    ADD CONSTRAINT numeric_answer_answer_type_id_fk FOREIGN KEY (answer_type_id) REFERENCES public.answer_type (answer_type_id);
-
-
---
--- Name: option_options_answer option_options_answer__answer_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.option_options_answer
-    ADD CONSTRAINT option_options_answer__answer_fk FOREIGN KEY (options_answer_id) REFERENCES public.options_answer (options_answer_id);
-
-
---
--- Name: option_options_answer option_options_answer__option_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.option_options_answer
-    ADD CONSTRAINT option_options_answer__option_fk FOREIGN KEY (option_id) REFERENCES public.option (option_id);
-
-
---
--- Name: option option_question_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.option
-    ADD CONSTRAINT option_question_id_fk FOREIGN KEY (question_id) REFERENCES public.question (question_id);
-
-
---
--- Name: options_answer options_answer_answer_type_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.options_answer
-    ADD CONSTRAINT options_answer_answer_type_id_fk FOREIGN KEY (answer_type_id) REFERENCES public.answer_type (answer_type_id);
-
-
---
--- Name: options_answer options_answer_question_question_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.options_answer
-    ADD CONSTRAINT options_answer_question_question_id_fk FOREIGN KEY (question_id) REFERENCES public.question (question_id);
-
-
---
--- Name: options_answer options_answer_questionnaire_questionnaire_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.options_answer
-    ADD CONSTRAINT options_answer_questionnaire_questionnaire_id_fk FOREIGN KEY (questionnaire_id) REFERENCES public.questionnaire (questionnaire_id);
-
-
---
--- Name: options_answer options_answer_user_user_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.options_answer
-    ADD CONSTRAINT options_answer_user_user_id_fk FOREIGN KEY (user_id) REFERENCES public."user" (user_id);
-
-
---
+-- TOC entry 3367 (class 2606 OID 17788)
 -- Name: question question_answer_type_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -890,14 +1042,52 @@ ALTER TABLE ONLY public.question
 
 
 --
--- Name: question question_questionnaire_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 3379 (class 2606 OID 17976)
+-- Name: answer question_id; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.answer
+    ADD CONSTRAINT question_id FOREIGN KEY (question_id) REFERENCES public.question (question_id);
+
+
+--
+-- TOC entry 3378 (class 2606 OID 17931)
+-- Name: question_option question_id___fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.question_option
+    ADD CONSTRAINT question_id___fk FOREIGN KEY (question_id) REFERENCES public.question (question_id);
+
+
+--
+-- TOC entry 3377 (class 2606 OID 17869)
+-- Name: questionnaire_section questionnaire_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.questionnaire_section
+    ADD CONSTRAINT questionnaire_fk FOREIGN KEY (questionnaire_id) REFERENCES public.questionnaire (questionnaire_id) NOT VALID;
+
+
+--
+-- TOC entry 3368 (class 2606 OID 17920)
+-- Name: question questionnaire_section_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.question
-    ADD CONSTRAINT question_questionnaire_fk FOREIGN KEY (questionnaire_id) REFERENCES public.questionnaire (questionnaire_id);
+    ADD CONSTRAINT questionnaire_section_id_fk FOREIGN KEY (section_id) REFERENCES public.questionnaire_section (section_id);
 
 
 --
+-- TOC entry 3380 (class 2606 OID 17986)
+-- Name: answer questionnaireid___fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.answer
+    ADD CONSTRAINT questionnaireid___fk FOREIGN KEY (questionnaire_id) REFERENCES public.questionnaire (questionnaire_id);
+
+
+--
+-- TOC entry 3369 (class 2606 OID 17798)
 -- Name: student student_study_program_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -906,6 +1096,7 @@ ALTER TABLE ONLY public.student
 
 
 --
+-- TOC entry 3371 (class 2606 OID 17803)
 -- Name: student_subject student_subject__student_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -914,6 +1105,7 @@ ALTER TABLE ONLY public.student_subject
 
 
 --
+-- TOC entry 3372 (class 2606 OID 17808)
 -- Name: student_subject student_subject__subject_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -922,6 +1114,7 @@ ALTER TABLE ONLY public.student_subject
 
 
 --
+-- TOC entry 3370 (class 2606 OID 17813)
 -- Name: student student_user_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -930,6 +1123,7 @@ ALTER TABLE ONLY public.student
 
 
 --
+-- TOC entry 3373 (class 2606 OID 17818)
 -- Name: study_program_subject study_program_subject__study_program_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -938,6 +1132,7 @@ ALTER TABLE ONLY public.study_program_subject
 
 
 --
+-- TOC entry 3374 (class 2606 OID 17823)
 -- Name: study_program_subject study_program_subject__subject_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -946,14 +1141,25 @@ ALTER TABLE ONLY public.study_program_subject
 
 
 --
--- Name: text_answer text_answer_answer_type_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 3376 (class 2606 OID 17838)
+-- Name: subject_grades subject_grades__subject_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY public.text_answer
-    ADD CONSTRAINT text_answer_answer_type_id_fk FOREIGN KEY (answer_type_id) REFERENCES public.answer_type (answer_type_id);
+ALTER TABLE ONLY public.subject_grades
+    ADD CONSTRAINT subject_grades__subject_id_fk FOREIGN KEY (subject_id) REFERENCES public.subject (subject_id);
 
 
 --
+-- TOC entry 3381 (class 2606 OID 17981)
+-- Name: answer user_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.answer
+    ADD CONSTRAINT user_fk FOREIGN KEY (user_id) REFERENCES public."user" (user_id);
+
+
+--
+-- TOC entry 3375 (class 2606 OID 17833)
 -- Name: user user_role_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -962,6 +1168,53 @@ ALTER TABLE ONLY public."user"
 
 
 --
+-- TOC entry 3560 (class 0 OID 0)
+-- Dependencies: 5
+-- Name: SCHEMA public; Type: ACL; Schema: -; Owner: pg_database_owner
+--
+
+GRANT USAGE ON SCHEMA public TO alfri_be;
+
+
+--
+-- TOC entry 3561 (class 0 OID 0)
+-- Dependencies: 240
+-- Name: TABLE answer; Type: ACL; Schema: public; Owner: postgres
+--
+
+GRANT ALL ON TABLE public.answer TO alfri_be;
+
+
+--
+-- TOC entry 3563 (class 0 OID 0)
+-- Dependencies: 241
+-- Name: SEQUENCE answer_answer_id_seq; Type: ACL; Schema: public; Owner: postgres
+--
+
+GRANT ALL ON SEQUENCE public.answer_answer_id_seq TO alfri_be;
+
+
+--
+-- TOC entry 3564 (class 0 OID 0)
+-- Dependencies: 243
+-- Name: TABLE answer_text; Type: ACL; Schema: public; Owner: postgres
+--
+
+GRANT ALL ON TABLE public.answer_text TO alfri_be;
+
+
+--
+-- TOC entry 3566 (class 0 OID 0)
+-- Dependencies: 242
+-- Name: SEQUENCE answer_text_answer_text_id_seq; Type: ACL; Schema: public; Owner: postgres
+--
+
+GRANT ALL ON SEQUENCE public.answer_text_answer_text_id_seq TO alfri_be;
+
+
+--
+-- TOC entry 3567 (class 0 OID 0)
+-- Dependencies: 215
 -- Name: TABLE answer_type; Type: ACL; Schema: public; Owner: postgres
 --
 
@@ -969,6 +1222,8 @@ GRANT ALL ON TABLE public.answer_type TO alfri_be;
 
 
 --
+-- TOC entry 3569 (class 0 OID 0)
+-- Dependencies: 216
 -- Name: SEQUENCE answer_type_answer_type_id_seq; Type: ACL; Schema: public; Owner: postgres
 --
 
@@ -976,6 +1231,8 @@ GRANT ALL ON SEQUENCE public.answer_type_answer_type_id_seq TO alfri_be;
 
 
 --
+-- TOC entry 3571 (class 0 OID 0)
+-- Dependencies: 217
 -- Name: TABLE focus; Type: ACL; Schema: public; Owner: postgres
 --
 
@@ -983,41 +1240,17 @@ GRANT ALL ON TABLE public.focus TO alfri_be;
 
 
 --
--- Name: TABLE numeric_answer; Type: ACL; Schema: public; Owner: postgres
+-- TOC entry 3572 (class 0 OID 0)
+-- Dependencies: 218
+-- Name: SEQUENCE options_answer_seq; Type: ACL; Schema: public; Owner: postgres
 --
 
-GRANT ALL ON TABLE public.numeric_answer TO alfri_be;
-
-
---
--- Name: TABLE option; Type: ACL; Schema: public; Owner: postgres
---
-
-GRANT ALL ON TABLE public.option TO alfri_be;
+GRANT ALL ON SEQUENCE public.options_answer_seq TO alfri_be;
 
 
 --
--- Name: SEQUENCE option_option_id_seq; Type: ACL; Schema: public; Owner: postgres
---
-
-GRANT ALL ON SEQUENCE public.option_option_id_seq TO alfri_be;
-
-
---
--- Name: TABLE option_options_answer; Type: ACL; Schema: public; Owner: postgres
---
-
-GRANT ALL ON TABLE public.option_options_answer TO alfri_be;
-
-
---
--- Name: TABLE options_answer; Type: ACL; Schema: public; Owner: postgres
---
-
-GRANT ALL ON TABLE public.options_answer TO alfri_be;
-
-
---
+-- TOC entry 3573 (class 0 OID 0)
+-- Dependencies: 219
 -- Name: TABLE question; Type: ACL; Schema: public; Owner: postgres
 --
 
@@ -1025,6 +1258,26 @@ GRANT ALL ON TABLE public.question TO alfri_be;
 
 
 --
+-- TOC entry 3574 (class 0 OID 0)
+-- Dependencies: 238
+-- Name: TABLE question_option; Type: ACL; Schema: public; Owner: postgres
+--
+
+GRANT ALL ON TABLE public.question_option TO alfri_be;
+
+
+--
+-- TOC entry 3576 (class 0 OID 0)
+-- Dependencies: 237
+-- Name: SEQUENCE question_options_question_option_id_seq; Type: ACL; Schema: public; Owner: postgres
+--
+
+GRANT ALL ON SEQUENCE public.question_options_question_option_id_seq TO alfri_be;
+
+
+--
+-- TOC entry 3578 (class 0 OID 0)
+-- Dependencies: 220
 -- Name: SEQUENCE question_question_id_seq; Type: ACL; Schema: public; Owner: postgres
 --
 
@@ -1032,6 +1285,8 @@ GRANT ALL ON SEQUENCE public.question_question_id_seq TO alfri_be;
 
 
 --
+-- TOC entry 3579 (class 0 OID 0)
+-- Dependencies: 221
 -- Name: TABLE questionnaire; Type: ACL; Schema: public; Owner: postgres
 --
 
@@ -1039,6 +1294,8 @@ GRANT ALL ON TABLE public.questionnaire TO alfri_be;
 
 
 --
+-- TOC entry 3581 (class 0 OID 0)
+-- Dependencies: 222
 -- Name: SEQUENCE questionnaire_questionnaire_id_seq; Type: ACL; Schema: public; Owner: postgres
 --
 
@@ -1046,6 +1303,26 @@ GRANT ALL ON SEQUENCE public.questionnaire_questionnaire_id_seq TO alfri_be;
 
 
 --
+-- TOC entry 3582 (class 0 OID 0)
+-- Dependencies: 236
+-- Name: TABLE questionnaire_section; Type: ACL; Schema: public; Owner: postgres
+--
+
+GRANT ALL ON TABLE public.questionnaire_section TO alfri_be;
+
+
+--
+-- TOC entry 3584 (class 0 OID 0)
+-- Dependencies: 239
+-- Name: SEQUENCE questionnaire_section_id_seq; Type: ACL; Schema: public; Owner: postgres
+--
+
+GRANT ALL ON SEQUENCE public.questionnaire_section_id_seq TO alfri_be;
+
+
+--
+-- TOC entry 3585 (class 0 OID 0)
+-- Dependencies: 223
 -- Name: TABLE role; Type: ACL; Schema: public; Owner: postgres
 --
 
@@ -1053,6 +1330,8 @@ GRANT ALL ON TABLE public.role TO alfri_be;
 
 
 --
+-- TOC entry 3587 (class 0 OID 0)
+-- Dependencies: 224
 -- Name: SEQUENCE role_role_id_seq; Type: ACL; Schema: public; Owner: postgres
 --
 
@@ -1060,6 +1339,8 @@ GRANT ALL ON SEQUENCE public.role_role_id_seq TO alfri_be;
 
 
 --
+-- TOC entry 3588 (class 0 OID 0)
+-- Dependencies: 225
 -- Name: TABLE student; Type: ACL; Schema: public; Owner: postgres
 --
 
@@ -1067,6 +1348,8 @@ GRANT ALL ON TABLE public.student TO alfri_be;
 
 
 --
+-- TOC entry 3590 (class 0 OID 0)
+-- Dependencies: 226
 -- Name: SEQUENCE student_id; Type: ACL; Schema: public; Owner: postgres
 --
 
@@ -1074,6 +1357,8 @@ GRANT ALL ON SEQUENCE public.student_id TO alfri_be;
 
 
 --
+-- TOC entry 3591 (class 0 OID 0)
+-- Dependencies: 227
 -- Name: TABLE student_subject; Type: ACL; Schema: public; Owner: postgres
 --
 
@@ -1081,6 +1366,8 @@ GRANT ALL ON TABLE public.student_subject TO alfri_be;
 
 
 --
+-- TOC entry 3592 (class 0 OID 0)
+-- Dependencies: 228
 -- Name: TABLE study_program; Type: ACL; Schema: public; Owner: postgres
 --
 
@@ -1088,6 +1375,17 @@ GRANT ALL ON TABLE public.study_program TO alfri_be;
 
 
 --
+-- TOC entry 3594 (class 0 OID 0)
+-- Dependencies: 229
+-- Name: SEQUENCE study_program_id_sequence; Type: ACL; Schema: public; Owner: postgres
+--
+
+GRANT ALL ON SEQUENCE public.study_program_id_sequence TO alfri_be;
+
+
+--
+-- TOC entry 3595 (class 0 OID 0)
+-- Dependencies: 230
 -- Name: TABLE study_program_subject; Type: ACL; Schema: public; Owner: postgres
 --
 
@@ -1095,6 +1393,8 @@ GRANT ALL ON TABLE public.study_program_subject TO alfri_be;
 
 
 --
+-- TOC entry 3596 (class 0 OID 0)
+-- Dependencies: 231
 -- Name: TABLE subject; Type: ACL; Schema: public; Owner: postgres
 --
 
@@ -1102,6 +1402,17 @@ GRANT ALL ON TABLE public.subject TO alfri_be;
 
 
 --
+-- TOC entry 3597 (class 0 OID 0)
+-- Dependencies: 235
+-- Name: TABLE subject_grades; Type: ACL; Schema: public; Owner: postgres
+--
+
+GRANT ALL ON TABLE public.subject_grades TO alfri_be;
+
+
+--
+-- TOC entry 3599 (class 0 OID 0)
+-- Dependencies: 232
 -- Name: SEQUENCE subject_subject_id_seq; Type: ACL; Schema: public; Owner: postgres
 --
 
@@ -1109,13 +1420,8 @@ GRANT ALL ON SEQUENCE public.subject_subject_id_seq TO alfri_be;
 
 
 --
--- Name: TABLE text_answer; Type: ACL; Schema: public; Owner: postgres
---
-
-GRANT ALL ON TABLE public.text_answer TO alfri_be;
-
-
---
+-- TOC entry 3600 (class 0 OID 0)
+-- Dependencies: 233
 -- Name: TABLE "user"; Type: ACL; Schema: public; Owner: postgres
 --
 
@@ -1123,19 +1429,22 @@ GRANT ALL ON TABLE public."user" TO alfri_be;
 
 
 --
+-- TOC entry 3602 (class 0 OID 0)
+-- Dependencies: 234
 -- Name: SEQUENCE user_user_id_seq; Type: ACL; Schema: public; Owner: postgres
 --
 
 GRANT ALL ON SEQUENCE public.user_user_id_seq TO alfri_be;
 
+insert into public.answer_type (answer_type_id, name)
+values (2, 'NUMERIC');
+insert into public.answer_type (answer_type_id, name)
+values (3, 'RADIO');
+insert into public.answer_type (answer_type_id, name)
+values (1, 'TEXT');
+insert into public.answer_type (answer_type_id, name)
+values (4, 'CHECKBOX');
 
-
-INSERT INTO public.answer_type (answer_type_id, name)
-VALUES (1, 'numeric');
-INSERT INTO public.answer_type (answer_type_id, name)
-VALUES (2, 'option');
-INSERT INTO public.answer_type (answer_type_id, name)
-VALUES (3, 'text');
 
 
 INSERT INTO public.role (role_id, name)
@@ -1903,26 +2212,338 @@ INSERT INTO public.focus (math_focus, logic_focus, programming_focus, design_foc
                           subject_id)
 VALUES (0, 4, 0, 4, 0, 10, 0, 0, 0, 0, 8, 0, 175);
 
-INSERT INTO public.question (question_id, questionnaire_id, answer_type_id, position_in_questionnaire, content,
-                             optional)
-VALUES (1, 2, 1, 1, '2 plus 2', false);
-INSERT INTO public.question (question_id, questionnaire_id, answer_type_id, position_in_questionnaire, content,
-                             optional)
-VALUES (4, 2, 2, 2, 'Ako sa máš?', true);
 
-INSERT INTO public.option (option_id, question_id, name)
-VALUES (1, 4, 'áno');
-INSERT INTO public.option (option_id, question_id, name)
-VALUES (2, 4, 'nie');
-
-INSERT INTO public.numeric_answer (questionnaire_id, question_id, user_id, answer_type_id, answer, timestamp)
-VALUES (2, 1, 1, 1, 4, '2024-05-23 09:15:54.977290');
+INSERT INTO public.subject_grades (subject_id, grade_a, grade_b, grade_c, grade_d, grade_e, grade_fx, students_count,
+                                   grade_average)
+VALUES ((SELECT subject_id FROM public.subject WHERE code = '6BI0021'), 0.00, 0.00, 5.88, 0.00, 8.82, 85.29, 34,
+        5.7348);
+INSERT INTO public.subject_grades (subject_id, grade_a, grade_b, grade_c, grade_d, grade_e, grade_fx, students_count,
+                                   grade_average)
+VALUES ((SELECT subject_id FROM public.subject WHERE code = '6BI0011'), 3.10, 7.36, 6.98, 14.34, 19.19, 49.03, 516,
+        4.8625);
+INSERT INTO public.subject_grades (subject_id, grade_a, grade_b, grade_c, grade_d, grade_e, grade_fx, students_count,
+                                   grade_average)
+VALUES ((SELECT subject_id FROM public.subject WHERE code = '6BI0038'), 5.43, 4.35, 8.70, 20.65, 33.70, 27.17, 92,
+        4.5435);
+INSERT INTO public.subject_grades (subject_id, grade_a, grade_b, grade_c, grade_d, grade_e, grade_fx, students_count,
+                                   grade_average)
+VALUES ((SELECT subject_id FROM public.subject WHERE code = '6BA0010'), 2.08, 5.21, 13.54, 35.42, 16.67, 27.08, 96,
+        4.4063);
+INSERT INTO public.subject_grades (subject_id, grade_a, grade_b, grade_c, grade_d, grade_e, grade_fx, students_count,
+                                   grade_average)
+VALUES ((SELECT subject_id FROM public.subject WHERE code = '6BA0004'), 10.81, 2.70, 21.62, 16.22, 10.81, 37.84, 37,
+        4.2704);
+INSERT INTO public.subject_grades (subject_id, grade_a, grade_b, grade_c, grade_d, grade_e, grade_fx, students_count,
+                                   grade_average)
+VALUES ((SELECT subject_id FROM public.subject WHERE code = '6BA0006'), 8.54, 5.38, 11.39, 14.87, 48.42, 11.39, 316,
+        4.2339);
+INSERT INTO public.subject_grades (subject_id, grade_a, grade_b, grade_c, grade_d, grade_e, grade_fx, students_count,
+                                   grade_average)
+VALUES ((SELECT subject_id FROM public.subject WHERE code = '6BL0001'), 2.65, 5.30, 19.21, 33.11, 26.49, 13.25, 151,
+        4.152699999999999);
+INSERT INTO public.subject_grades (subject_id, grade_a, grade_b, grade_c, grade_d, grade_e, grade_fx, students_count,
+                                   grade_average)
+VALUES ((SELECT subject_id FROM public.subject WHERE code = '6UM0002'), 4.76, 14.29, 14.29, 23.81, 28.57, 14.29, 21,
+        4.0004);
+INSERT INTO public.subject_grades (subject_id, grade_a, grade_b, grade_c, grade_d, grade_e, grade_fx, students_count,
+                                   grade_average)
+VALUES ((SELECT subject_id FROM public.subject WHERE code = '6UI0012'), 5.83, 3.33, 20.83, 30.00, 37.50, 2.50, 120,
+        3.9748);
+INSERT INTO public.subject_grades (subject_id, grade_a, grade_b, grade_c, grade_d, grade_e, grade_fx, students_count,
+                                   grade_average)
+VALUES ((SELECT subject_id FROM public.subject WHERE code = '6BI0034'), 5.86, 12.55, 18.83, 17.57, 33.89, 11.30, 239,
+        3.9498);
+INSERT INTO public.subject_grades (subject_id, grade_a, grade_b, grade_c, grade_d, grade_e, grade_fx, students_count,
+                                   grade_average)
+VALUES ((SELECT subject_id FROM public.subject WHERE code = '6UA0001'), 13.08, 11.21, 14.02, 15.89, 29.91, 15.89, 107,
+        3.8601000000000005);
+INSERT INTO public.subject_grades (subject_id, grade_a, grade_b, grade_c, grade_d, grade_e, grade_fx, students_count,
+                                   grade_average)
+VALUES ((SELECT subject_id FROM public.subject WHERE code = '6UA0002'), 16.28, 5.43, 14.73, 17.83, 35.66, 10.08, 129,
+        3.8142999999999994);
+INSERT INTO public.subject_grades (subject_id, grade_a, grade_b, grade_c, grade_d, grade_e, grade_fx, students_count,
+                                   grade_average)
+VALUES ((SELECT subject_id FROM public.subject WHERE code = '6BA0001'), 12.58, 9.20, 15.34, 22.70, 30.37, 9.82, 326,
+        3.7857);
+INSERT INTO public.subject_grades (subject_id, grade_a, grade_b, grade_c, grade_d, grade_e, grade_fx, students_count,
+                                   grade_average)
+VALUES ((SELECT subject_id FROM public.subject WHERE code = '6BI0012'), 8.70, 8.70, 21.74, 23.91, 30.43, 6.52, 46,
+        3.7823);
+INSERT INTO public.subject_grades (subject_id, grade_a, grade_b, grade_c, grade_d, grade_e, grade_fx, students_count,
+                                   grade_average)
+VALUES ((SELECT subject_id FROM public.subject WHERE code = '6BI0005'), 4.41, 4.41, 44.12, 22.06, 8.82, 16.18, 68,
+        3.7500999999999998);
+INSERT INTO public.subject_grades (subject_id, grade_a, grade_b, grade_c, grade_d, grade_e, grade_fx, students_count,
+                                   grade_average)
+VALUES ((SELECT subject_id FROM public.subject WHERE code = '6BA0009'), 7.50, 15.62, 20.00, 23.44, 18.75, 14.69, 320,
+        3.7439);
+INSERT INTO public.subject_grades (subject_id, grade_a, grade_b, grade_c, grade_d, grade_e, grade_fx, students_count,
+                                   grade_average)
+VALUES ((SELECT subject_id FROM public.subject WHERE code = '6UI0004'), 1.89, 16.98, 26.42, 30.19, 15.09, 9.43, 53,
+        3.6790000000000003);
+INSERT INTO public.subject_grades (subject_id, grade_a, grade_b, grade_c, grade_d, grade_e, grade_fx, students_count,
+                                   grade_average)
+VALUES ((SELECT subject_id FROM public.subject WHERE code = '6BT0007'), 46.88, 0.00, 0.00, 0.00, 0.00, 53.12, 64,
+        3.6559999999999997);
+INSERT INTO public.subject_grades (subject_id, grade_a, grade_b, grade_c, grade_d, grade_e, grade_fx, students_count,
+                                   grade_average)
+VALUES ((SELECT subject_id FROM public.subject WHERE code = '6BI0026'), 11.76, 13.24, 19.12, 24.26, 22.06, 9.56, 136,
+        3.603);
+INSERT INTO public.subject_grades (subject_id, grade_a, grade_b, grade_c, grade_d, grade_e, grade_fx, students_count,
+                                   grade_average)
+VALUES ((SELECT subject_id FROM public.subject WHERE code = '6BI0016'), 6.67, 13.33, 20.00, 33.33, 26.67, 0.00, 15,
+        3.6);
+INSERT INTO public.subject_grades (subject_id, grade_a, grade_b, grade_c, grade_d, grade_e, grade_fx, students_count,
+                                   grade_average)
+VALUES ((SELECT subject_id FROM public.subject WHERE code = '6BA0008'), 23.08, 7.69, 15.38, 7.69, 38.46, 7.69, 13,
+        3.5380000000000003);
+INSERT INTO public.subject_grades (subject_id, grade_a, grade_b, grade_c, grade_d, grade_e, grade_fx, students_count,
+                                   grade_average)
+VALUES ((SELECT subject_id FROM public.subject WHERE code = '6BI0035'), 3.82, 14.01, 33.12, 29.94, 13.38, 5.73, 157,
+        3.5224);
+INSERT INTO public.subject_grades (subject_id, grade_a, grade_b, grade_c, grade_d, grade_e, grade_fx, students_count,
+                                   grade_average)
+VALUES ((SELECT subject_id FROM public.subject WHERE code = '6BI0046'), 9.68, 16.13, 16.13, 38.71, 12.90, 6.45, 31,
+        3.4837000000000002);
+INSERT INTO public.subject_grades (subject_id, grade_a, grade_b, grade_c, grade_d, grade_e, grade_fx, students_count,
+                                   grade_average)
+VALUES ((SELECT subject_id FROM public.subject WHERE code = '6BI0027'), 21.74, 14.49, 11.59, 15.94, 18.84, 17.39, 69,
+        3.4779);
+INSERT INTO public.subject_grades (subject_id, grade_a, grade_b, grade_c, grade_d, grade_e, grade_fx, students_count,
+                                   grade_average)
+VALUES ((SELECT subject_id FROM public.subject WHERE code = '6BI0055'), 11.48, 13.93, 25.41, 27.05, 9.02, 13.11, 122,
+        3.4753);
+INSERT INTO public.subject_grades (subject_id, grade_a, grade_b, grade_c, grade_d, grade_e, grade_fx, students_count,
+                                   grade_average)
+VALUES ((SELECT subject_id FROM public.subject WHERE code = '6UI0010'), 7.49, 11.73, 32.57, 27.69, 15.31, 5.21, 307,
+        3.4723);
+INSERT INTO public.subject_grades (subject_id, grade_a, grade_b, grade_c, grade_d, grade_e, grade_fx, students_count,
+                                   grade_average)
+VALUES ((SELECT subject_id FROM public.subject WHERE code = '6BI0039'), 21.76, 11.92, 16.58, 11.40, 23.83, 14.51, 193,
+        3.4715);
+INSERT INTO public.subject_grades (subject_id, grade_a, grade_b, grade_c, grade_d, grade_e, grade_fx, students_count,
+                                   grade_average)
+VALUES ((SELECT subject_id FROM public.subject WHERE code = '6BM0020'), 20.29, 18.84, 20.29, 5.80, 7.25, 27.54, 69,
+        3.4353000000000002);
+INSERT INTO public.subject_grades (subject_id, grade_a, grade_b, grade_c, grade_d, grade_e, grade_fx, students_count,
+                                   grade_average)
+VALUES ((SELECT subject_id FROM public.subject WHERE code = '6UM0004'), 16.28, 13.95, 20.93, 23.26, 11.63, 13.95, 43,
+        3.4186);
+INSERT INTO public.subject_grades (subject_id, grade_a, grade_b, grade_c, grade_d, grade_e, grade_fx, students_count,
+                                   grade_average)
+VALUES ((SELECT subject_id FROM public.subject WHERE code = '6BI0041'), 0.00, 0.00, 66.67, 33.33, 0.00, 0.00, 3,
+        3.3333);
+INSERT INTO public.subject_grades (subject_id, grade_a, grade_b, grade_c, grade_d, grade_e, grade_fx, students_count,
+                                   grade_average)
+VALUES ((SELECT subject_id FROM public.subject WHERE code = '6BI0040'), 16.88, 7.79, 18.18, 40.26, 16.88, 0.00, 77,
+        3.3244);
+INSERT INTO public.subject_grades (subject_id, grade_a, grade_b, grade_c, grade_d, grade_e, grade_fx, students_count,
+                                   grade_average)
+VALUES ((SELECT subject_id FROM public.subject WHERE code = '6UI0002'), 22.73, 9.09, 13.64, 22.73, 31.82, 0.00, 22,
+        3.3185000000000002);
+INSERT INTO public.subject_grades (subject_id, grade_a, grade_b, grade_c, grade_d, grade_e, grade_fx, students_count,
+                                   grade_average)
+VALUES ((SELECT subject_id FROM public.subject WHERE code = '6BI0042'), 30.77, 15.38, 7.69, 7.69, 15.38, 23.08, 13,
+        3.3074);
+INSERT INTO public.subject_grades (subject_id, grade_a, grade_b, grade_c, grade_d, grade_e, grade_fx, students_count,
+                                   grade_average)
+VALUES ((SELECT subject_id FROM public.subject WHERE code = '6UI0005'), 7.14, 17.86, 30.95, 29.76, 10.71, 3.57, 84,
+        3.2972);
+INSERT INTO public.subject_grades (subject_id, grade_a, grade_b, grade_c, grade_d, grade_e, grade_fx, students_count,
+                                   grade_average)
+VALUES ((SELECT subject_id FROM public.subject WHERE code = '6UM0007'), 13.48, 16.85, 19.10, 34.83, 11.24, 4.49, 89,
+        3.2694);
+INSERT INTO public.subject_grades (subject_id, grade_a, grade_b, grade_c, grade_d, grade_e, grade_fx, students_count,
+                                   grade_average)
+VALUES ((SELECT subject_id FROM public.subject WHERE code = '6BA0005'), 8.90, 22.51, 31.41, 15.18, 15.18, 6.81, 191,
+        3.2563);
+INSERT INTO public.subject_grades (subject_id, grade_a, grade_b, grade_c, grade_d, grade_e, grade_fx, students_count,
+                                   grade_average)
+VALUES ((SELECT subject_id FROM public.subject WHERE code = '6BJ0005'), 5.33, 25.00, 31.97, 23.77, 8.20, 5.74, 244,
+        3.2176);
+INSERT INTO public.subject_grades (subject_id, grade_a, grade_b, grade_c, grade_d, grade_e, grade_fx, students_count,
+                                   grade_average)
+VALUES ((SELECT subject_id FROM public.subject WHERE code = '6BI0028'), 8.70, 20.29, 34.78, 15.94, 18.84, 1.45, 69,
+        3.2028);
+INSERT INTO public.subject_grades (subject_id, grade_a, grade_b, grade_c, grade_d, grade_e, grade_fx, students_count,
+                                   grade_average)
+VALUES ((SELECT subject_id FROM public.subject WHERE code = '6BA0002'), 19.84, 15.87, 23.02, 15.08, 20.63, 5.56, 126,
+        3.1746999999999996);
+INSERT INTO public.subject_grades (subject_id, grade_a, grade_b, grade_c, grade_d, grade_e, grade_fx, students_count,
+                                   grade_average)
+VALUES ((SELECT subject_id FROM public.subject WHERE code = '6UA0003'), 10.93, 21.31, 30.05, 21.86, 10.93, 4.92, 183,
+        3.1531000000000002);
+INSERT INTO public.subject_grades (subject_id, grade_a, grade_b, grade_c, grade_d, grade_e, grade_fx, students_count,
+                                   grade_average)
+VALUES ((SELECT subject_id FROM public.subject WHERE code = '6BJ0006'), 11.92, 21.85, 27.15, 22.52, 12.58, 3.97, 151,
+        3.1387);
+INSERT INTO public.subject_grades (subject_id, grade_a, grade_b, grade_c, grade_d, grade_e, grade_fx, students_count,
+                                   grade_average)
+VALUES ((SELECT subject_id FROM public.subject WHERE code = '6BM0019'), 22.97, 27.03, 12.16, 6.76, 16.22, 14.86, 74,
+        3.1081);
+INSERT INTO public.subject_grades (subject_id, grade_a, grade_b, grade_c, grade_d, grade_e, grade_fx, students_count,
+                                   grade_average)
+VALUES ((SELECT subject_id FROM public.subject WHERE code = '6BM0027'), 21.03, 13.10, 29.37, 18.25, 11.90, 6.35, 252,
+        3.0594);
+INSERT INTO public.subject_grades (subject_id, grade_a, grade_b, grade_c, grade_d, grade_e, grade_fx, students_count,
+                                   grade_average)
+VALUES ((SELECT subject_id FROM public.subject WHERE code = '6UM0005'), 11.76, 23.53, 29.41, 17.65, 17.65, 0.00, 17,
+        3.0589999999999997);
+INSERT INTO public.subject_grades (subject_id, grade_a, grade_b, grade_c, grade_d, grade_e, grade_fx, students_count,
+                                   grade_average)
+VALUES ((SELECT subject_id FROM public.subject WHERE code = '6BI0003'), 9.09, 18.79, 39.39, 26.67, 6.06, 0.00, 165,
+        3.0181999999999998);
+INSERT INTO public.subject_grades (subject_id, grade_a, grade_b, grade_c, grade_d, grade_e, grade_fx, students_count,
+                                   grade_average)
+VALUES ((SELECT subject_id FROM public.subject WHERE code = '6BZ0001'), 0.00, 0.00, 100.00, 0.00, 0.00, 0.00, 1, 3.0);
+INSERT INTO public.subject_grades (subject_id, grade_a, grade_b, grade_c, grade_d, grade_e, grade_fx, students_count,
+                                   grade_average)
+VALUES ((SELECT subject_id FROM public.subject WHERE code = '6BI0050'), 25.00, 37.50, 0.00, 12.50, 0.00, 25.00, 8, 3.0);
+INSERT INTO public.subject_grades (subject_id, grade_a, grade_b, grade_c, grade_d, grade_e, grade_fx, students_count,
+                                   grade_average)
+VALUES ((SELECT subject_id FROM public.subject WHERE code = '6BI0013'), 28.47, 13.17, 16.01, 21.00, 20.64, 0.71, 281,
+        2.943);
+INSERT INTO public.subject_grades (subject_id, grade_a, grade_b, grade_c, grade_d, grade_e, grade_fx, students_count,
+                                   grade_average)
+VALUES ((SELECT subject_id FROM public.subject WHERE code = '6BH0003'), 15.44, 23.54, 32.66, 16.71, 8.61, 3.04, 395,
+        2.8863);
+INSERT INTO public.subject_grades (subject_id, grade_a, grade_b, grade_c, grade_d, grade_e, grade_fx, students_count,
+                                   grade_average)
+VALUES ((SELECT subject_id FROM public.subject WHERE code = '6BI0001'), 27.33, 19.77, 16.86, 15.12, 18.31, 2.62, 344,
+        2.852);
+INSERT INTO public.subject_grades (subject_id, grade_a, grade_b, grade_c, grade_d, grade_e, grade_fx, students_count,
+                                   grade_average)
+VALUES ((SELECT subject_id FROM public.subject WHERE code = '6BI0048'), 30.00, 16.67, 13.33, 26.67, 6.67, 6.67, 30,
+        2.8338);
+INSERT INTO public.subject_grades (subject_id, grade_a, grade_b, grade_c, grade_d, grade_e, grade_fx, students_count,
+                                   grade_average)
+VALUES ((SELECT subject_id FROM public.subject WHERE code = '6BA0011'), 10.00, 60.00, 10.00, 0.00, 0.00, 20.00, 10,
+        2.8);
+INSERT INTO public.subject_grades (subject_id, grade_a, grade_b, grade_c, grade_d, grade_e, grade_fx, students_count,
+                                   grade_average)
+VALUES ((SELECT subject_id FROM public.subject WHERE code = '6BI0019'), 30.41, 17.97, 21.20, 11.98, 17.05, 1.38, 217,
+        2.714);;
+INSERT INTO public.subject_grades (subject_id, grade_a, grade_b, grade_c, grade_d, grade_e, grade_fx, students_count,
+                                   grade_average)
+VALUES ((SELECT subject_id FROM public.subject WHERE code = '6BJ0001'), 21.77, 33.58, 27.31, 15.13, 1.48, 0.74, 271,
+        2.4322);
+INSERT INTO public.subject_grades (subject_id, grade_a, grade_b, grade_c, grade_d, grade_e, grade_fx, students_count,
+                                   grade_average)
+VALUES ((SELECT subject_id FROM public.subject WHERE code = '6BI0032'), 31.91, 28.72, 17.02, 12.77, 8.51, 1.06, 94,
+        2.404);
+INSERT INTO public.subject_grades (subject_id, grade_a, grade_b, grade_c, grade_d, grade_e, grade_fx, students_count,
+                                   grade_average)
+VALUES ((SELECT subject_id FROM public.subject WHERE code = '6BA0012'), 51.69, 15.25, 10.59, 4.66, 10.59, 7.20, 236,
+        2.2875);
+INSERT INTO public.subject_grades (subject_id, grade_a, grade_b, grade_c, grade_d, grade_e, grade_fx, students_count,
+                                   grade_average)
+VALUES ((SELECT subject_id FROM public.subject WHERE code = '6BA0007'), 41.67, 25.00, 12.50, 10.42, 6.25, 4.17, 48,
+        2.2712);
+INSERT INTO public.subject_grades (subject_id, grade_a, grade_b, grade_c, grade_d, grade_e, grade_fx, students_count,
+                                   grade_average)
+VALUES ((SELECT subject_id FROM public.subject WHERE code = '6BI0033'), 40.00, 24.00, 20.00, 6.00, 6.00, 4.00, 50,
+        2.26);
+INSERT INTO public.subject_grades (subject_id, grade_a, grade_b, grade_c, grade_d, grade_e, grade_fx, students_count,
+                                   grade_average)
+VALUES ((SELECT subject_id FROM public.subject WHERE code = '6BH0002'), 42.22, 22.22, 20.00, 2.22, 11.11, 2.22, 45,
+        2.2441);
+INSERT INTO public.subject_grades (subject_id, grade_a, grade_b, grade_c, grade_d, grade_e, grade_fx, students_count,
+                                   grade_average)
+VALUES ((SELECT subject_id FROM public.subject WHERE code = '6UI0006'), 40.74, 29.63, 14.81, 3.70, 3.70, 7.41, 27,
+        2.2218999999999998);
+INSERT INTO public.subject_grades (subject_id, grade_a, grade_b, grade_c, grade_d, grade_e, grade_fx, students_count,
+                                   grade_average)
+VALUES ((SELECT subject_id FROM public.subject WHERE code = '6BA0013'), 48.00, 20.00, 8.00, 20.00, 4.00, 0.00, 25,
+        2.12);
+INSERT INTO public.subject_grades (subject_id, grade_a, grade_b, grade_c, grade_d, grade_e, grade_fx, students_count,
+                                   grade_average)
+VALUES ((SELECT subject_id FROM public.subject WHERE code = '6BJ0002'), 34.71, 36.36, 19.42, 4.96, 0.83, 3.72, 242,
+        2.12);
+INSERT INTO public.subject_grades (subject_id, grade_a, grade_b, grade_c, grade_d, grade_e, grade_fx, students_count,
+                                   grade_average)
+VALUES ((SELECT subject_id FROM public.subject WHERE code = '6BI0049'), 0.00, 100.00, 0.00, 0.00, 0.00, 0.00, 1, 2.0);
+INSERT INTO public.subject_grades (subject_id, grade_a, grade_b, grade_c, grade_d, grade_e, grade_fx, students_count,
+                                   grade_average)
+VALUES ((SELECT subject_id FROM public.subject WHERE code = '6BA0014'), 28.07, 54.39, 15.79, 0.00, 1.75, 0.00, 57,
+        1.9297);
+INSERT INTO public.subject_grades (subject_id, grade_a, grade_b, grade_c, grade_d, grade_e, grade_fx, students_count,
+                                   grade_average)
+VALUES ((SELECT subject_id FROM public.subject WHERE code = '6BI0024'), 61.54, 15.38, 7.69, 7.69, 7.69, 0.00, 13,
+        1.8458);
+INSERT INTO public.subject_grades (subject_id, grade_a, grade_b, grade_c, grade_d, grade_e, grade_fx, students_count,
+                                   grade_average)
+VALUES ((SELECT subject_id FROM public.subject WHERE code = '6BM0003'), 69.70, 18.18, 0.00, 3.03, 0.00, 9.09, 33,
+        1.7272);
+INSERT INTO public.subject_grades (subject_id, grade_a, grade_b, grade_c, grade_d, grade_e, grade_fx, students_count,
+                                   grade_average)
+VALUES ((SELECT subject_id FROM public.subject WHERE code = '6BI0037'), 76.19, 2.38, 5.95, 7.14, 7.14, 1.19, 84, 1.702);
+INSERT INTO public.subject_grades (subject_id, grade_a, grade_b, grade_c, grade_d, grade_e, grade_fx, students_count,
+                                   grade_average)
+VALUES ((SELECT subject_id FROM public.subject WHERE code = '6BI0009'), 68.42, 21.05, 0.00, 5.26, 0.00, 5.26, 19,
+        1.6312);
+INSERT INTO public.subject_grades (subject_id, grade_a, grade_b, grade_c, grade_d, grade_e, grade_fx, students_count,
+                                   grade_average)
+VALUES ((SELECT subject_id FROM public.subject WHERE code = '6BI0045'), 67.27, 18.18, 3.64, 7.27, 3.64, 0.00, 55,
+        1.6182999999999998);
+INSERT INTO public.subject_grades (subject_id, grade_a, grade_b, grade_c, grade_d, grade_e, grade_fx, students_count,
+                                   grade_average)
+VALUES ((SELECT subject_id FROM public.subject WHERE code = '6BI0054'), 57.14, 42.86, 0.00, 0.00, 0.00, 0.00, 7,
+        1.4286);
+INSERT INTO public.subject_grades (subject_id, grade_a, grade_b, grade_c, grade_d, grade_e, grade_fx, students_count,
+                                   grade_average)
+VALUES ((SELECT subject_id FROM public.subject WHERE code = '6BI0023'), 72.73, 22.73, 0.00, 0.00, 4.55, 0.00, 22,
+        1.4094);
+INSERT INTO public.subject_grades (subject_id, grade_a, grade_b, grade_c, grade_d, grade_e, grade_fx, students_count,
+                                   grade_average)
+VALUES ((SELECT subject_id FROM public.subject WHERE code = '6BI0018'), 81.16, 14.01, 3.86, 0.97, 0.00, 0.00, 207,
+        1.2464);
+INSERT INTO public.subject_grades (subject_id, grade_a, grade_b, grade_c, grade_d, grade_e, grade_fx, students_count,
+                                   grade_average)
+VALUES ((SELECT subject_id FROM public.subject WHERE code = '6BT0001'), 96.12, 0.97, 0.00, 0.49, 0.49, 1.94, 206,
+        1.1411);
+INSERT INTO public.subject_grades (subject_id, grade_a, grade_b, grade_c, grade_d, grade_e, grade_fx, students_count,
+                                   grade_average)
+VALUES ((SELECT subject_id FROM public.subject WHERE code = '6BI0007'), 90.71, 6.56, 2.73, 0.00, 0.00, 0.00, 183,
+        1.1201999999999999);
+INSERT INTO public.subject_grades (subject_id, grade_a, grade_b, grade_c, grade_d, grade_e, grade_fx, students_count,
+                                   grade_average)
+VALUES ((SELECT subject_id FROM public.subject WHERE code = '6BT0003'), 97.27, 0.00, 0.45, 0.45, 0.00, 1.82, 220,
+        1.1134);
+INSERT INTO public.subject_grades (subject_id, grade_a, grade_b, grade_c, grade_d, grade_e, grade_fx, students_count,
+                                   grade_average)
+VALUES ((SELECT subject_id FROM public.subject WHERE code = '6BT0005'), 98.03, 0.00, 0.00, 0.00, 0.00, 1.97, 152,
+        1.0985);
+INSERT INTO public.subject_grades (subject_id, grade_a, grade_b, grade_c, grade_d, grade_e, grade_fx, students_count,
+                                   grade_average)
+VALUES ((SELECT subject_id FROM public.subject WHERE code = '6BT0006'), 98.33, 0.83, 0.00, 0.00, 0.00, 0.83, 120,
+        1.0497);
+INSERT INTO public.subject_grades (subject_id, grade_a, grade_b, grade_c, grade_d, grade_e, grade_fx, students_count,
+                                   grade_average)
+VALUES ((SELECT subject_id FROM public.subject WHERE code = '6BT0002'), 97.96, 1.36, 0.00, 0.00, 0.00, 0.68, 147,
+        1.0475999999999999);
+INSERT INTO public.subject_grades (subject_id, grade_a, grade_b, grade_c, grade_d, grade_e, grade_fx, students_count,
+                                   grade_average)
+VALUES ((SELECT subject_id FROM public.subject WHERE code = '6UI0007'), 99.20, 0.00, 0.80, 0.00, 0.00, 0.00, 125,
+        1.016);
+INSERT INTO public.subject_grades (subject_id, grade_a, grade_b, grade_c, grade_d, grade_e, grade_fx, students_count,
+                                   grade_average)
+VALUES ((SELECT subject_id FROM public.subject WHERE code = '6BT0004'), 99.32, 0.68, 0.00, 0.00, 0.00, 0.00, 148,
+        1.0068);
+INSERT INTO public.subject_grades (subject_id, grade_a, grade_b, grade_c, grade_d, grade_e, grade_fx, students_count,
+                                   grade_average)
+VALUES ((SELECT subject_id FROM public.subject WHERE code = '6BT0008'), 100.00, 0.00, 0.00, 0.00, 0.00, 0.00, 13, 1.0);
+INSERT INTO public.subject_grades (subject_id, grade_a, grade_b, grade_c, grade_d, grade_e, grade_fx, students_count,
+                                   grade_average)
+VALUES ((SELECT subject_id FROM public.subject WHERE code = '6BX0001'), 100.00, 0.00, 0.00, 0.00, 0.00, 0.00, 309, 1.0);
+INSERT INTO public.subject_grades (subject_id, grade_a, grade_b, grade_c, grade_d, grade_e, grade_fx, students_count,
+                                   grade_average)
+VALUES ((SELECT subject_id FROM public.subject WHERE code = '6BI0052'), 100.00, 0.00, 0.00, 0.00, 0.00, 0.00, 31, 1.0);
+INSERT INTO public.subject_grades (subject_id, grade_a, grade_b, grade_c, grade_d, grade_e, grade_fx, students_count,
+                                   grade_average)
+VALUES ((SELECT subject_id FROM public.subject WHERE code = '6BM0029'), 0, 0, 0, 0, 0, 0, 0, 0.0);
+INSERT INTO public.subject_grades (subject_id, grade_a, grade_b, grade_c, grade_d, grade_e, grade_fx, students_count,
+                                   grade_average)
+VALUES ((SELECT subject_id FROM public.subject WHERE code = '6BA0003'), 0, 0, 0, 0, 0, 0, 0, 0.0);
 
 INSERT INTO public.answer_type (answer_type_id, name)
 VALUES (5, 'DROPDOWN');
-
-
---
--- PostgreSQL database dump complete
---
-
