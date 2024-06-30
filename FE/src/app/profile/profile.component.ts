@@ -8,6 +8,9 @@ import { AuthService } from '../services/auth.service';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { MatButton } from '@angular/material/button';
+import { ErrorService } from '../services/error.service';
+import { Router } from '@angular/router';
+
 
 @Component({
   selector: 'app-profile',
@@ -30,7 +33,12 @@ export class ProfileComponent {
   private _userData: UserDto | undefined;
   isLoading = true;
 
-  constructor(private fb: FormBuilder, private us: UserService, private as: AuthService) {
+  constructor(
+    private fb: FormBuilder,
+    private us: UserService,
+    private as: AuthService,
+    private es: ErrorService,
+    private router: Router) {
     this.profileForm = this.fb.group({
       currentPassword: ['', Validators.required],
       newPassword: ['', Validators.required],
@@ -73,7 +81,8 @@ export class ProfileComponent {
       };
       this.as.changePassword(passwordData).subscribe();
       this.profileForm.reset();
-
+      this.es.showError('Heslo bolo úspešne zmenené!', '', 3000);
+      this.router.navigate(['/home']);
     }
   }
 

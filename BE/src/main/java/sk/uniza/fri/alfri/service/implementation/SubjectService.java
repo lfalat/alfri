@@ -3,6 +3,8 @@ package sk.uniza.fri.alfri.service.implementation;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import sk.uniza.fri.alfri.common.pagitation.PageDefinition;
 import sk.uniza.fri.alfri.common.pagitation.SearchDefinition;
@@ -11,10 +13,12 @@ import sk.uniza.fri.alfri.entity.AnswerText;
 import sk.uniza.fri.alfri.entity.Focus;
 import sk.uniza.fri.alfri.entity.StudyProgramSubject;
 import sk.uniza.fri.alfri.entity.Subject;
+import sk.uniza.fri.alfri.entity.SubjectGrade;
 import sk.uniza.fri.alfri.entity.User;
 import sk.uniza.fri.alfri.repository.AnswerRepository;
 import sk.uniza.fri.alfri.repository.FocusRepository;
 import sk.uniza.fri.alfri.repository.StudyProgramSubjectRepository;
+import sk.uniza.fri.alfri.repository.SubjectGradeRepository;
 import sk.uniza.fri.alfri.repository.SubjectRepository;
 import sk.uniza.fri.alfri.service.ISubjectService;
 import sk.uniza.fri.alfri.util.ProcessUtils;
@@ -30,23 +34,25 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 public class SubjectService implements ISubjectService {
-    public static final String CLUSTERING_PREDICTION_SCRIPT_PATH =
-            "./python_scripts/predict.py";
-    public static final String CLUSTERING_PREDICTION_MODEL_PATH =
-            "./python_scripts/kmeans_model.pkl";
+    public static final String CLUSTERING_PREDICTION_SCRIPT_PATH = "./python_scripts/predict.py";
+    public static final String CLUSTERING_PREDICTION_MODEL_PATH = "./python_scripts/kmeans_model.pkl";
 
     private final StudyProgramSubjectRepository studyProgramSubjectRepository;
     private final SubjectRepository subjectRepository;
     private final AnswerRepository answerRepository;
     private final FocusRepository focusRepository;
+    private final SubjectGradeRepository subjectGradeRepository;
 
     public SubjectService(
-
             StudyProgramSubjectRepository studyProgramSubjectRepository,
-            SubjectRepository subjectRepository, AnswerRepository answerRepository, FocusRepository focusRepository) {
+            SubjectRepository subjectRepository,
+            AnswerRepository answerRepository,
+            FocusRepository focusRepository,
+            SubjectGradeRepository subjectGradeRepository) {
 
         this.studyProgramSubjectRepository = studyProgramSubjectRepository;
         this.subjectRepository = subjectRepository;
+        this.subjectGradeRepository = subjectGradeRepository;
         this.answerRepository = answerRepository;
         this.focusRepository = focusRepository;
     }
@@ -88,7 +94,6 @@ public class SubjectService implements ISubjectService {
     @Override
     public List<StudyProgramSubject> getSimilarSubjects(List<Subject> originalSubjects)
             throws IOException {
-
 
         List<Focus> subjectsFocuses = originalSubjects.stream().map(Subject::getFocus).toList();
         List<List<Integer>> focusesAttributes = getFocusesAttributes(subjectsFocuses);
@@ -187,5 +192,17 @@ public class SubjectService implements ISubjectService {
                 economicsFocus, managementFocus, hardwareFocus,
                 networkFocus, dataFocus, testingFocus,
                 languageFocus, physicalFocus);
+    }
+
+    @Override
+    public List<SubjectGrade> getHardestSubjects(Integer numberOfSubjects) {
+        Pageable pageable = PageRequest.of(1, numberOfSubjects);
+        return subjectGradeRepository
+                .findAllByOrderByGradeAverageDesc(pageable)
+                .orElseThrow(
+                        () ->
+                                new EntityNotFoundException(
+                                        String.format("No top %d hardest subjects found!", numberOfSubjects)))
+                .toList();
     }
 }

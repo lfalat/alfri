@@ -1,6 +1,7 @@
 package sk.uniza.fri.alfri.controller;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
 import java.io.IOException;
 import java.time.Duration;
 import java.util.List;
@@ -15,12 +16,15 @@ import sk.uniza.fri.alfri.common.pagitation.PagitationRequestQuery;
 import sk.uniza.fri.alfri.common.pagitation.SearchDefinition;
 import sk.uniza.fri.alfri.common.pagitation.SortDefinition;
 import sk.uniza.fri.alfri.common.pagitation.SortRequestQuery;
+import sk.uniza.fri.alfri.dto.SubjectGradeDto;
 import sk.uniza.fri.alfri.dto.subject.SubjectDto;
 import sk.uniza.fri.alfri.dto.subject.SubjectExtendedDto;
 import sk.uniza.fri.alfri.entity.StudyProgramSubject;
 import sk.uniza.fri.alfri.entity.Subject;
+import sk.uniza.fri.alfri.entity.SubjectGrade;
 import sk.uniza.fri.alfri.entity.User;
 import sk.uniza.fri.alfri.mapper.StudyProgramSubjectMapper;
+import sk.uniza.fri.alfri.mapper.SubjectGradeMapper;
 import sk.uniza.fri.alfri.mapper.SubjectMapper;
 import sk.uniza.fri.alfri.service.ISubjectService;
 import sk.uniza.fri.alfri.service.UserService;
@@ -160,5 +164,19 @@ public class SubjectController {
     log.info("Returning {} similar subjects", similarSubjectsDto.size());
 
     return ResponseEntity.ok().body(similarSubjectsDto);
+  }
+
+  @GetMapping("/getHardestSubjects/{numberOfSubjects}")
+  public ResponseEntity<List<SubjectGradeDto>> getHardestSubjects(
+      @PathVariable @Positive Integer numberOfSubjects) {
+    log.info("Getting top {} hardest subjects!", numberOfSubjects);
+
+    List<SubjectGrade> hardestSubjects = subjectService.getHardestSubjects(numberOfSubjects);
+    log.info("{} hardest subjects returned", hardestSubjects.size());
+
+    List<SubjectGradeDto> subjectGradeDtos =
+        hardestSubjects.stream().map(SubjectGradeMapper.INSTANCE::toDto).toList();
+
+    return ResponseEntity.ok().body(subjectGradeDtos);
   }
 }
