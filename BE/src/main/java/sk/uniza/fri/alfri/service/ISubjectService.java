@@ -24,7 +24,5 @@ public interface ISubjectService {
 
     List<SubjectGrade> getHardestSubjects(Integer numberOfSubjects);
 
-    List<StudyProgramSubject> findSubjectByIds(List<Integer> ids);
-
     List<Subject> makeSubjectsFocusPrediction(User user);
 }
