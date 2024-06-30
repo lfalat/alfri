@@ -62,7 +62,7 @@
 
   <mat-sidenav-content>
     <div *ngIf="loggedIn(); else loggedOut">
-      <mat-toolbar color="primary" class="row">
+      <mat-toolbar color="secondary" class="row">
         <div class="col-12 col-md-8 d-flex align-items-center gap-3 p-0">
           <button
             class="d-block d-md-none"
@@ -111,16 +111,16 @@
     <mat-menu #menu="matMenu">
       <button mat-menu-item (click)="navigateToSubjects()">
         <mat-icon>dialpad</mat-icon>
-        <span>Prehlad predmetov</span>
+        <span>Prehľad predmetov</span>
       </button>
       <button mat-menu-item (click)="navigateToSubjectChances()">
         <mat-icon>voicemail</mat-icon>
-        <span>Urobim predmet ?</span>
+        <span>Urobím predmet ?</span>
       </button>
     </mat-menu>
 
     <ng-template #loggedOut>
-      <mat-toolbar color="primary" class="row">
+      <mat-toolbar color="secondary" class="row">
         <span>Alfri</span>
       </mat-toolbar>
     </ng-template>

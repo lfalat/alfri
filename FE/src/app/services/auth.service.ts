@@ -1,14 +1,15 @@
 import { Injectable } from '@angular/core';
 import type { Observable } from 'rxjs';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import {AuthResponseDto, ChangePasswordDto, LoginUserDto, RegisterUserDto, UserDto} from '../types';
+import { AuthResponseDto, ChangePasswordDto, LoginUserDto, RegisterUserDto, UserDto } from '../types';
 import { JwtService } from './jwt.service';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  url = 'http://localhost:8080/api/auth';
+  private readonly URL = `${environment.API_URL}/auth`;
 
   constructor(private http: HttpClient, private jwtService: JwtService) {
   }
@@ -20,7 +21,7 @@ export class AuthService {
       })
     };
 
-    return this.http.post<UserDto>(`${ this.url }/register`, userData, httpOptions);
+    return this.http.post<UserDto>(`${ this.URL }/register`, userData, httpOptions);
   }
 
   authenticate(userData: LoginUserDto): Observable<AuthResponseDto> {
@@ -30,7 +31,7 @@ export class AuthService {
       })
     };
 
-    return this.http.post<AuthResponseDto>(`${ this.url }/authenticate`, userData, httpOptions);
+    return this.http.post<AuthResponseDto>(`${ this.URL }/authenticate`, userData, httpOptions);
   }
 
   logOut(): Promise<void> {
@@ -46,7 +47,6 @@ export class AuthService {
         'Content-Type': 'application/json'
       })
     };
-    console.log(passwordData);
-    return this.http.post<ChangePasswordDto>(`${this.url}/change-password`, passwordData, httpOptions);
+    return this.http.post<ChangePasswordDto>(`${this.URL}/change-password`, passwordData, httpOptions);
   }
 }

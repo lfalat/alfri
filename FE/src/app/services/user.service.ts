@@ -3,6 +3,7 @@ import { JwtHelperService } from '@auth0/angular-jwt';
 import { HttpClient } from '@angular/common/http';
 import type { Observable } from 'rxjs';
 import { UserDto } from '../types';
+import { environment } from '../../environments/environment';
 
 
 @Injectable({
@@ -10,6 +11,7 @@ import { UserDto } from '../types';
 })
 export class UserService {
   public userId: number | undefined;
+  private readonly BE_URL = `${environment.API_URL}/user`;
 
   constructor(private http: HttpClient, public jwtHelper: JwtHelperService) {
   }
@@ -23,6 +25,6 @@ export class UserService {
   }
 
   getUserInfo(): Observable<UserDto> {
-    return this.http.get<UserDto>('http://localhost:8080/api/user/profile');
+    return this.http.get<UserDto>(`${this.BE_URL}/profile`);
   }
 }

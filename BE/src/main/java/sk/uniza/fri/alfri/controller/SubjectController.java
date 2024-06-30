@@ -106,6 +106,7 @@ public class SubjectController {
   @GetMapping("/{subjectCode}")
   public ResponseEntity<SubjectExtendedDto> getSubjectBySubjectCode(
       @PathVariable String subjectCode) {
+    log.info("Getting subject by cubject code {}", subjectCode);
     Subject subject = this.subjectService.findBySubjectCode(subjectCode);
 
     SubjectExtendedDto subjectDto = SubjectMapper.INSTANCE.toSubjectExtendedDto(subject);
@@ -121,15 +122,15 @@ public class SubjectController {
     List<Subject> subjectList =
         subjects.stream().map(SubjectMapper.INSTANCE::fromSubjectExtendedDtotoEntity).toList();
 
-    List<StudyProgramSubject> simillarSubjects = null;
+    List<StudyProgramSubject> similarSubjects = null;
     try {
-      simillarSubjects = subjectService.getSimillarSubjects(subjectList);
+      similarSubjects = subjectService.getSimilarSubjects(subjectList);
     } catch (IOException e) {
       return ResponseEntity.badRequest().build();
     }
 
     List<SubjectDto> similarSubjectsDto =
-        simillarSubjects.stream()
+        similarSubjects.stream()
             .map(StudyProgramSubjectMapper.INSTANCE::studyProgramSubjectToSubjectDto)
             .toList();
 
