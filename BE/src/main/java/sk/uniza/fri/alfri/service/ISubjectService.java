@@ -7,6 +7,7 @@ import sk.uniza.fri.alfri.common.pagitation.PageDefinition;
 import sk.uniza.fri.alfri.common.pagitation.SearchDefinition;
 import sk.uniza.fri.alfri.entity.StudyProgramSubject;
 import sk.uniza.fri.alfri.entity.Subject;
+import sk.uniza.fri.alfri.entity.SubjectGrade;
 
 public interface ISubjectService {
   Page<StudyProgramSubject> findAllByStudyProgramId(
@@ -17,4 +18,6 @@ public interface ISubjectService {
   List<StudyProgramSubject> getSimilarSubjects(List<Subject> originalSubjects) throws IOException;
 
   List<StudyProgramSubject> findSubjectByIds(List<Integer> ids);
+
+  List<SubjectGrade> getHardestSubjects(Integer numberOfSubjects);
 }
