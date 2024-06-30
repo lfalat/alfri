@@ -1,70 +1,32 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { catchError, map, Observable, of, shareReplay, Subject, switchMap, takeUntil, tap } from 'rxjs';
-import { Page, StudyProgramDto, SubjectDto } from '../types';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
+import { HttpErrorResponse } from '@angular/common/http';
 import { SubjectService } from '../services/subject.service';
 import { ErrorService } from '../services/error.service';
-import { HttpErrorResponse } from '@angular/common/http';
-import { MatPaginator, PageEvent } from '@angular/material/paginator';
-import { AsyncPipe } from '@angular/common';
-import {
-  MatCell,
-  MatCellDef,
-  MatColumnDef,
-  MatHeaderCell,
-  MatHeaderCellDef,
-  MatHeaderRow,
-  MatHeaderRowDef,
-  MatRow,
-  MatRowDef,
-  MatTable
-} from '@angular/material/table';
-import { MatFormField, MatLabel } from '@angular/material/form-field';
-import { MatOption } from '@angular/material/autocomplete';
-import { MatProgressBar } from '@angular/material/progress-bar';
-import { MatSelect } from '@angular/material/select';
-import { MatInput } from '@angular/material/input';
-import { MatButton } from '@angular/material/button';
 import { StudentService } from '../services/student.service';
-import { Router } from '@angular/router';
+import { PageEvent } from '@angular/material/paginator';
+import { map, Observable, of, Subject } from 'rxjs';
+import { catchError, switchMap, takeUntil, tap } from 'rxjs/operators';
+import { Page, StudyProgramDto, SubjectDto } from '../types';
 import { SubjectsTableComponent } from '../components/subjects-table/subjects-table.component';
+import { MatButton } from '@angular/material/button';
+import { AsyncPipe } from '@angular/common';
 
 @Component({
   selector: 'app-recommendation',
+  templateUrl: './recommendation.component.html',
   standalone: true,
   imports: [
-    AsyncPipe,
-    MatCell,
-    MatCellDef,
-    MatColumnDef,
-    MatFormField,
-    MatHeaderCell,
-    MatHeaderRow,
-    MatHeaderRowDef,
-    MatLabel,
-    MatOption,
-    MatPaginator,
-    MatProgressBar,
-    MatRow,
-    MatRowDef,
-    MatSelect,
-    MatTable,
-    MatHeaderCellDef,
-    ReactiveFormsModule,
-    MatInput,
+    SubjectsTableComponent,
     MatButton,
-    SubjectsTableComponent
+    AsyncPipe
   ],
-  templateUrl: './recommendation.component.html',
-  styleUrl: './recommendation.component.scss'
+  styleUrls: ['./recommendation.component.scss']
 })
 export class RecommendationComponent implements OnInit, OnDestroy {
   private readonly _destroy$: Subject<void> = new Subject();
-  private _dataSource$!: Observable<Page<SubjectDto>>;
+  private _dataSource$!: Observable<SubjectDto[]>;
   private _userStudyProgramId!: number;
-  public filterForm: FormGroup;
-  private isFilterActive = false;
-
   public readonly columnsToDisplay: string[] = [
     'name',
     'code',
@@ -74,7 +36,15 @@ export class RecommendationComponent implements OnInit, OnDestroy {
     'semester',
   ];
 
-  public readonly pageData: Page<SubjectDto> = {
+  get dataSource$(): Observable<SubjectDto[]> {
+    if (!this._dataSource$) {
+      return of([]);
+    }
+
+    return this._dataSource$.pipe(map((page) => page));
+  }
+
+  public pageData: Page<SubjectDto> = {
     content: [],
     totalElements: 0,
     size: 10,
@@ -100,29 +70,21 @@ export class RecommendationComponent implements OnInit, OnDestroy {
     },
     first: false,
     numberOfElements: 0,
-    empty: false,
+    empty: true,
   };
 
+
+  public readonly pageSizeOptions: number[] = [5, 10, 20]; // Static number of elements per page
+  public pageSize = 10; // Default page size
+
   public isLoading = false;
-
-  get dataSource$(): Observable<SubjectDto[]> {
-    if (!this._dataSource$) {
-      return of([]);
-    }
-
-    return this._dataSource$.pipe(map((page) => page.content));
-  }
 
   constructor(
     private subjectService: SubjectService,
     private studentService: StudentService,
     private errorService: ErrorService,
-    private formBuilder: FormBuilder,
     private router: Router
   ) {
-    this.filterForm = this.formBuilder.group({
-      mathFocus: ['', [Validators.required]],
-    });
   }
 
   ngOnInit() {
@@ -133,41 +95,14 @@ export class RecommendationComponent implements OnInit, OnDestroy {
     this.studentService.getStudyProgramOfCurrentUser().pipe(
       switchMap((studyProgram: StudyProgramDto) => {
         this._userStudyProgramId = studyProgram.id;
-        return this.getSubjects(0, 10, this._userStudyProgramId);
+        return this.getSubjects(0, this.pageSize, this._userStudyProgramId);
       }),
       catchError((error: HttpErrorResponse) => {
         this.errorService.showError(error.error);
-        return of({
-          content: [],
-          totalElements: 0,
-          size: 10,
-          number: 0,
-          pageable: {
-            sort: {
-              sorted: false,
-              unsorted: false,
-              empty: false,
-            },
-            offset: 0,
-            pageNumber: 0,
-            pageSize: 0,
-            paged: false,
-            unpaged: false,
-          },
-          last: false,
-          totalPages: 0,
-          sort: {
-            sorted: false,
-            unsorted: false,
-            empty: false,
-          },
-          first: false,
-          numberOfElements: 0,
-          empty: true,
-        });
+        return of([]);
       })
-    ).subscribe(page => {
-      this._dataSource$ = of(page);
+    ).subscribe(subjects => {
+      this._dataSource$ = of(subjects);
     });
   }
 
@@ -175,62 +110,40 @@ export class RecommendationComponent implements OnInit, OnDestroy {
     pageNumber: number,
     pageSize: number,
     studyProgramId: number
-  ): Observable<Page<SubjectDto>> {
-    if (this.isFilterActive) {
-      return this.subjectService
-        .filterSubject(this.filterForm.value.mathFocus, studyProgramId, pageNumber, pageSize)
-        .pipe(
-          tap((page: Page<SubjectDto>) => {
-            this.pageData.size = page.size;
-            this.pageData.totalElements = page.totalElements;
-            this.pageData.number = page.number;
-            this.isLoading = false;
-          }),
-          takeUntil(this._destroy$),
-          catchError((error: HttpErrorResponse) => {
-            this.errorService.showError(error.error.detail);
-            return of();
-          }),
-          shareReplay(1)
-        );
-    }
-
+  ): Observable<SubjectDto[]> {
+    this.isLoading = true;
     return this.subjectService
-      .getSubjectsWithFocusByStudyProgramId(studyProgramId, pageNumber, pageSize)
+      .getSubjectFocusPrediction()
       .pipe(
-        tap((page: Page<SubjectDto>) => {
-          this.pageData.size = page.size;
-          this.pageData.totalElements = page.totalElements;
-          this.pageData.number = page.number;
+        tap((subjects: SubjectDto[]) => {
           this.isLoading = false;
+          return subjects;
         }),
         takeUntil(this._destroy$),
         catchError((error: HttpErrorResponse) => {
+          this.isLoading = false;
           this.errorService.showError(error.error.detail);
-          return of();
-        }),
-        shareReplay(1)
+          return of([]);
+        })
       );
   }
 
   public onPageChange($event: PageEvent) {
     this.isLoading = true;
+    this.pageSize = $event.pageSize;
 
-    this._dataSource$ = this.getSubjects(
+    this.getSubjects(
       $event.pageIndex,
       $event.pageSize,
       this._userStudyProgramId
-    );
+    ).subscribe(subjects => {
+      this._dataSource$ = of(subjects);
+    });
   }
 
   ngOnDestroy() {
     this._destroy$.next();
     this._destroy$.complete();
-  }
-
-  filterByMathThreshold() {
-    this.isFilterActive = true;
-    this._dataSource$ = this.getSubjects(0, 10, this._userStudyProgramId);
   }
 
   public navigateToSubjectDetail(code: string) {

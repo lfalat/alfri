@@ -1,10 +1,9 @@
-<div class="container">
-  <div class="row">
-    <div class="col-md-5">
-      <div class="d-flex flex-column clustering-max-height-70vh">
-        <div class="text-center fw-bold">Vyber si 3 predmety a my ti ukážeme podobné predmety</div>
+<div class="container-fluid m-0">
+  <div class="row m-0 p-0">
+    <div class="col-12 col-md-5 m-0">
+      <h2>Vyber si 3 predmety a my ti ukážeme podobné predmety</h2>
+      <div class="overflow-x-auto">
         <app-subjects-table
-          class="w-100 h-100"
           [dataSource$]="allSubjectsDataSource$"
           [pageData]="allSubjectsPageData"
           [isLoading]="isLoadingAllSubjects"

@@ -1,9 +1,13 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { MatDrawer, MatDrawerContainer } from '@angular/material/sidenav';
 import { MatButton } from '@angular/material/button';
-import { NgOptimizedImage } from '@angular/common';
+import { NgIf, NgOptimizedImage } from '@angular/common';
 import { Router } from '@angular/router';
 import { SpeechBubbleComponent } from '../components/speech-bubble/speech-bubble.component';
+import { ReactiveFormsModule } from '@angular/forms';
+import { FormService } from '../services/form.service';
+
+export const USER_FORM_ID = 69;
 
 @Component({
   selector: 'app-home',
@@ -13,15 +17,28 @@ import { SpeechBubbleComponent } from '../components/speech-bubble/speech-bubble
     MatButton,
     MatDrawer,
     NgOptimizedImage,
-    SpeechBubbleComponent
+    SpeechBubbleComponent,
+    ReactiveFormsModule,
+    NgIf
   ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss'
 })
-export class HomeComponent {
+export class HomeComponent implements OnInit {
+  hasUserFilledForm = true;
 
-  constructor(private router: Router) {
+  constructor(private router: Router, private formService: FormService) {
   }
+
+  ngOnInit() {
+    this.formService.hasUserFilledForm(USER_FORM_ID).subscribe({
+      next: () => {
+        this.hasUserFilledForm = true;
+      }
+    });
+  }
+
+
   redirectToUserForm() {
     this.router.navigate(['/grade-form']);
   }

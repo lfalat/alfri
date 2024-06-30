@@ -1,33 +1,80 @@
-<mat-horizontal-stepper>
+<mat-horizontal-stepper linear>
   <mat-step *ngFor="let section of form?.sections; let i = index" [stepControl]="formGroups[i]">
     <form [formGroup]="formGroups[i]">
       <ng-template matStepLabel>{{ section.sectionTitle }}</ng-template>
-      <div *ngFor="let question of section.questions">
-        <div [ngSwitch]="question.answerType">
-          <div *ngSwitchCase="'TEXT'">
-            <mat-form-field appearance="fill">
-              <mat-label>{{ question.questionTitle }}</mat-label>
-              <input matInput [formControlName]="question.questionIdentifier" [required]="!question.optional">
-            </mat-form-field>
-          </div>
-          <div *ngSwitchCase="'NUMERIC'">
-            <mat-slider [formControlName]="question.questionIdentifier" min="0" max="10" step="1" [required]="!question.optional"></mat-slider>
-          </div>
-          <div *ngSwitchCase="'RADIO'">
-            <label>{{ question.questionTitle }}</label>
-            <mat-radio-group [formControlName]="question.questionIdentifier" [required]="!question.optional">
-              <mat-radio-button *ngFor="let option of question.options" [value]="option.questionOption">{{ option.questionOption }}</mat-radio-button>
-            </mat-radio-group>
-          </div>
-          <div *ngSwitchCase="'CHECKBOX'">
-            <h3>{{ question.questionTitle }}</h3>
-            <mat-list>
-              <mat-list-item *ngFor="let option of question.options; let optionIndex = index">
-                <mat-checkbox [formControlName]="question.questionIdentifier + optionIndex.toString()">
-                  {{ option.questionOption }}
-                </mat-checkbox>
-              </mat-list-item>
-            </mat-list>
+      <div class="row">
+        <div class="col-12 col-md-6 col-lg-4" *ngFor="let question of section.questions">
+          <div [ngSwitch]="question.answerType">
+            <div *ngSwitchCase="'TEXT'">
+              <div>
+                <mat-form-field appearance="fill" style="width: 100%">
+                  <mat-label>{{ question.questionTitle }}</mat-label>
+                  <input matInput [formControlName]="question.questionIdentifier" [required]="!question.optional">
+                  <mat-error
+                    *ngIf="formGroups[i].get(question.questionIdentifier)?.hasError('required') && formGroups[i].get(question.questionIdentifier)?.touched">
+                    {{ question.questionTitle }} is required
+                  </mat-error>
+                </mat-form-field>
+              </div>
+            </div>
+            <div *ngSwitchCase="'NUMERIC'">
+              <div>
+                <p>{{ question.questionTitle }}: {{ formGroups[i].get(question.questionIdentifier)?.value }}</p>
+                <mat-slider min="0" max="10" step="1" style="width: 100%">
+                  <input matSliderThumb value="1.5" [formControlName]="question.questionIdentifier" [required]="!question.optional">
+                </mat-slider>
+                <mat-error
+                  *ngIf="formGroups[i].get(question.questionIdentifier)?.hasError('required') && formGroups[i].get(question.questionIdentifier)?.touched">
+                  {{ question.questionTitle }} is required
+                </mat-error>
+              </div>
+            </div>
+            <div *ngSwitchCase="'RADIO'">
+              <div style="width: 100%">
+                <label>{{ question.questionTitle }}</label>
+                <mat-radio-group [formControlName]="question.questionIdentifier" [required]="!question.optional">
+                  <mat-radio-button *ngFor="let option of question.options" [value]="option.questionOption">
+                    {{ option.questionOption }}
+                  </mat-radio-button>
+                </mat-radio-group>
+                <mat-error
+                  *ngIf="formGroups[i].get(question.questionIdentifier)?.hasError('required') && formGroups[i].get(question.questionIdentifier)?.touched">
+                  {{ question.questionTitle }} is required
+                </mat-error>
+              </div>
+            </div>
+            <div *ngSwitchCase="'CHECKBOX'">
+              <div style="width: 100%">
+                <h3>{{ question.questionTitle }}</h3>
+                <mat-list>
+                  <mat-list-item *ngFor="let option of question.options; let optionIndex = index">
+                    <mat-checkbox [formControlName]="question.questionIdentifier + optionIndex.toString()">
+                      {{ option.questionOption }}
+                    </mat-checkbox>
+                  </mat-list-item>
+                </mat-list>
+                <mat-error
+                  *ngIf="formGroups[i].get(question.questionIdentifier + '0')?.hasError('required') && formGroups[i].get(question.questionIdentifier + '0')?.touched">
+                  {{ question.questionTitle }} is required
+                </mat-error>
+              </div>
+            </div>
+            <div *ngSwitchCase="'DROPDOWN'">
+              <div>
+                <mat-form-field appearance="fill" style="width: 100%">
+                  <mat-label>{{ question.questionTitle }}</mat-label>
+                  <mat-select [formControlName]="question.questionIdentifier" [required]="!question.optional">
+                    <mat-option *ngFor="let option of question.options" [value]="option.questionOption">
+                      {{ option.questionOption }}
+                    </mat-option>
+                  </mat-select>
+                  <mat-error
+                    *ngIf="formGroups[i].get(question.questionIdentifier)?.hasError('required') && formGroups[i].get(question.questionIdentifier)?.touched">
+                    {{ question.questionTitle }} is required
+                  </mat-error>
+                </mat-form-field>
+              </div>
+            </div>
           </div>
         </div>
       </div>

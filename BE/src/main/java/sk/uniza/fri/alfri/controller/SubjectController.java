@@ -22,19 +22,26 @@ import sk.uniza.fri.alfri.dto.subject.SubjectExtendedDto;
 import sk.uniza.fri.alfri.entity.StudyProgramSubject;
 import sk.uniza.fri.alfri.entity.Subject;
 import sk.uniza.fri.alfri.entity.SubjectGrade;
+import sk.uniza.fri.alfri.entity.User;
 import sk.uniza.fri.alfri.mapper.StudyProgramSubjectMapper;
 import sk.uniza.fri.alfri.mapper.SubjectGradeMapper;
 import sk.uniza.fri.alfri.mapper.SubjectMapper;
 import sk.uniza.fri.alfri.service.ISubjectService;
+import sk.uniza.fri.alfri.service.UserService;
+import sk.uniza.fri.alfri.service.implementation.JwtService;
 
 @RequestMapping("/api/subject")
 @RestController
 @Slf4j
 public class SubjectController {
   private final ISubjectService subjectService;
+  private final JwtService jwtService;
+  private final UserService userService;
 
-  public SubjectController(ISubjectService subjectService) {
+  public SubjectController(ISubjectService subjectService, JwtService jwtService, UserService userService) {
     this.subjectService = subjectService;
+      this.jwtService = jwtService;
+      this.userService = userService;
   }
 
   @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
@@ -70,6 +77,22 @@ public class SubjectController {
     return ResponseEntity.ok()
         .cacheControl(CacheControl.maxAge(Duration.ofHours(6)))
         .body(subjectDtos);
+  }
+
+  @GetMapping(path = "/focus-prediction", produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity<List<SubjectExtendedDto>> getAllSubjectsFromFocusPrediction(@RequestHeader(value = "Authorization") String token) {
+
+    String parsedToken = token.replace("Bearer ", "");
+    String username = jwtService.extractUsername(parsedToken);
+    User user = userService.getUser(username);
+
+    List<Subject> subjects = this.subjectService.makeSubjectsFocusPrediction(user);
+
+    List<SubjectExtendedDto> similarSubjectsDto =
+            subjects.stream()
+                    .map(SubjectMapper.INSTANCE::toSubjectExtendedDto).toList();
+
+    return ResponseEntity.ok(similarSubjectsDto);
   }
 
   @GetMapping(path = "/withFocus", produces = MediaType.APPLICATION_JSON_VALUE)

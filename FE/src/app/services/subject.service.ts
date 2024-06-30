@@ -79,8 +79,12 @@ export class SubjectService {
     return this.http.get<SubjectExtendedDto>(`${this.URL}/${subjectCode}`);
   }
 
-  public getSimilarSubjects(subjects: SubjectExtendedDto[]): Observable<SubjectDto[]>{
+  public getSimilarSubjects(subjects: SubjectExtendedDto[]): Observable<SubjectDto[]> {
     return this.http.post<SubjectDto[]>(`${this.URL}/similarSubjects`, subjects);
+  }
+
+  public getSubjectFocusPrediction(): Observable<SubjectExtendedDto[]> {
+    return this.http.get<SubjectExtendedDto[]>(`${this.URL}/focus-prediction`);
   }
 
   public getLowestAverageSubjects(numberOfSubjects: number): Observable<SubjectGradesDto[]>{

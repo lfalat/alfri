@@ -77,4 +77,14 @@ public class FormController {
 
         this.formService.updateFormAnswers(userFormAnswersDTO, user);
     }
+
+    @GetMapping(value = "/has-filled-form/{formId}")
+    public void hasUserFilledForm(@RequestHeader(value = "Authorization") String token, @PathVariable int formId) throws IllegalArgumentException {
+        // Get user id
+        String parsedToken = token.replace("Bearer ", "");
+        String username = this.jwtService.extractUsername(parsedToken);
+        User user = this.userService.getUser(username);
+
+        this.formService.hasUserFilledForm(formId, user);
+    }
 }

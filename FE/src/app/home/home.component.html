@@ -1,5 +1,5 @@
 <div class="container my-2">
-  <div class="row">
+  <div class="row" *ngIf="!hasUserFilledForm">
     <div class="col-12">
       <app-speech-bubble text="Nemate vyplneni dotaznik! Povedzte nam nieco o sebe." horizontalAllign="bottom"
                          verticalAllign="left" color="#3f51b5" textColor="#FFF">
