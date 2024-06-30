@@ -1,12 +1,5 @@
 <div class="mt-2 d-flex gap-2 align-items-center">
-  <form class="px-2" [formGroup]="filterForm" (ngSubmit)="filterByMathThreshold()">
-    <mat-form-field appearance="outline">
-      <mat-label>Math focus threshold</mat-label>
-      <input matInput formControlName="mathFocus">
-    </mat-form-field>
-
-    <button mat-stroked-button class="m-3" color="primary" type="submit">Filtrovať</button>
-  </form>
+  <h2>Predikcia predmetov na základe focusov predmetov</h2>
 </div>
 
 <app-subjects-table
@@ -14,5 +7,8 @@
   [pageData]="pageData"
   [isLoading]="isLoading"
   (pageChange)="onPageChange($event)"
-  (subjectDetailNavigate)="navigateToSubjectDetail($event)">
+  (subjectDetailNavigate)="navigateToSubjectDetail($event)"
+  [displayFullInfo]="false"
+  [isPageable]="false"
+>
 </app-subjects-table>

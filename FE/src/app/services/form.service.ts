@@ -36,6 +36,10 @@ export class FormService {
       })
     };
 
-    return this.http.post(`${URL}/replace-form`, userFormAnswers, httpOptions);
+    return this.http.post(`${this.URL}/replace-form`, userFormAnswers, httpOptions);
+  }
+
+  hasUserFilledForm(formId: number): Observable<void> {
+    return this.http.get<void>(`${this.URL}/has-filled-form/${formId}`);
   }
 }

@@ -16,6 +16,7 @@ public interface SubjectMapper {
   @Mapping(target = "studyProgramName", ignore = true)
   @Mapping(target = "semester", ignore = true)
   @Mapping(target = "recommendedYear", ignore = true)
+
   @Mapping(target = "obligation", ignore = true)
   @Mapping(source = "focus", target = "focusDTO")
 
