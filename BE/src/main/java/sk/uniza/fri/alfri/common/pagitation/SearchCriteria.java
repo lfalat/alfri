@@ -33,7 +33,7 @@ public class SearchCriteria implements Serializable {
   // TODO implement other data types than string and number
   public <T> Object getFirstValue(Class<T> objectType) {
     boolean isNumeric =
-        Stream.of(this.values.getFirst())
+        Stream.of(this.values.get(0))
             .filter(s -> s != null && !s.isEmpty())
             .filter(Pattern.compile("\\D").asPredicate().negate())
             .mapToLong(Long::valueOf)
@@ -45,7 +45,7 @@ public class SearchCriteria implements Serializable {
       try {
         Constructor<T> constructor;
         constructor = objectType.getConstructor(String.class);
-        return constructor.newInstance(this.values.getFirst());
+        return constructor.newInstance(this.values.get(0));
       } catch (NoSuchMethodException
           | SecurityException
           | InstantiationException
@@ -54,15 +54,15 @@ public class SearchCriteria implements Serializable {
           | InvocationTargetException e) {
         throw new BadConditionException(
             "Value: '"
-                + this.values.getFirst()
+                + this.values.get(0)
                 + "' cant be convert to number. Value must have number format");
       }
     }
 
-    return this.values.getFirst();
+    return this.values.get(0);
   }
 
   public String getFirstValue() {
-    return this.values.getFirst();
+    return this.values.get(0);
   }
 }

@@ -31,6 +31,7 @@ public class UserController {
             produces = APPLICATION_JSON_VALUE)
 
     public UserDto getUser(@RequestHeader(value = "Authorization") String token) {
+        log.info("aiuodhaoiufhadioudfh");
         String parsedToken = token.replace("Bearer ", "");
         String username = this.jwtService.extractUsername(parsedToken);
         User user = this.userService.getUser(username);

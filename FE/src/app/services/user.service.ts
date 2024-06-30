@@ -3,7 +3,7 @@ import { JwtHelperService } from '@auth0/angular-jwt';
 import { HttpClient } from '@angular/common/http';
 import type { Observable } from 'rxjs';
 import { UserDto } from '../types';
-import { environment } from '../../environments/environments-prod';
+import { environment } from '../../environments/environment';
 
 
 @Injectable({

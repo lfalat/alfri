@@ -3,7 +3,7 @@ import type { Observable } from 'rxjs';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { AuthResponseDto, ChangePasswordDto, LoginUserDto, RegisterUserDto, UserDto } from '../types';
 import { JwtService } from './jwt.service';
-import { environment } from '../../environments/environments-prod';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'

@@ -38,12 +38,11 @@ export class ProfileComponent {
     }, {
       validator: this.mustMatch('newPassword', 'confirmNewPassword')
     });
-    this.us.getUserInfo().subscribe(
+    this.us.getUserInfo().pipe(takeUntil(this.destroy)).subscribe(
       value => {
         this._userData = value;
         this.isLoading = false;
-      },
-      takeUntil(this.destroy));
+      });
   }
 
 
@@ -74,8 +73,6 @@ export class ProfileComponent {
       };
       this.as.changePassword(passwordData).subscribe();
       this.profileForm.reset();
-
-    } else {
 
     }
   }

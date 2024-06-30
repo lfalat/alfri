@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
@@ -24,18 +23,18 @@ import sk.uniza.fri.alfri.util.ProcessUtils;
 @Slf4j
 public class SubjectService implements ISubjectService {
     public static final String CLUSTERING_PREDICTION_SCRIPT_PATH =
-            "classpath:python_scripts/predict.py";
+            "./python_scripts/predict.py";
     public static final String CLUSTERING_PREDICTION_MODEL_PATH =
-            "classpath:python_scripts/kmeans_model.pkl";
-    private final ResourceLoader resourceLoader;
+            "./python_scripts/kmeans_model.pkl";
+
     private final StudyProgramSubjectRepository studyProgramSubjectRepository;
     private final SubjectRepository subjectRepository;
 
     public SubjectService(
-            ResourceLoader resourceLoader,
+
             StudyProgramSubjectRepository studyProgramSubjectRepository,
             SubjectRepository subjectRepository) {
-        this.resourceLoader = resourceLoader;
+
         this.studyProgramSubjectRepository = studyProgramSubjectRepository;
         this.subjectRepository = subjectRepository;
     }
@@ -75,14 +74,9 @@ public class SubjectService implements ISubjectService {
     }
 
     @Override
-    public List<StudyProgramSubject> getSimillarSubjects(List<Subject> originalSubjects)
+    public List<StudyProgramSubject> getSimilarSubjects(List<Subject> originalSubjects)
             throws IOException {
-        Resource resourceClusteringScript =
-                resourceLoader.getResource(CLUSTERING_PREDICTION_SCRIPT_PATH);
-        Resource resourceClusteringModel = resourceLoader.getResource(CLUSTERING_PREDICTION_MODEL_PATH);
 
-        String pythonScriptPath = resourceClusteringScript.getFile().getAbsolutePath();
-        String pythonModelPath = resourceClusteringModel.getFile().getAbsolutePath();
 
         List<Focus> subjectsFocuses = originalSubjects.stream().map(Subject::getFocus).toList();
         List<List<Integer>> focusesAttributes = getFocusesAttributes(subjectsFocuses);
@@ -90,10 +84,10 @@ public class SubjectService implements ISubjectService {
         ProcessBuilder processBuilder =
                 new ProcessBuilder(
                         "python3",
-                        pythonScriptPath,
+                        CLUSTERING_PREDICTION_SCRIPT_PATH,
                         Arrays.toString(focusesAttributes.toArray()),
-                        pythonModelPath);
-        String output = ProcessUtils.getOutputFromProces(processBuilder);
+                        CLUSTERING_PREDICTION_MODEL_PATH);
+        String output = ProcessUtils.getOutputFromProces(processBuilder);System.out.println(output);
 
         String cleaned = output.replace("[", "").replace("]", "").replace("\"", "");
         String[] parts = cleaned.split(" ");

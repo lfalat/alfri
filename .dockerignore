@@ -1,0 +1,6 @@
+target/
+!target/alfri-3.2.4.jar
+*.log
+*.tmp
+.git
+node_modules
