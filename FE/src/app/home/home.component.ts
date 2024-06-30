@@ -25,7 +25,7 @@ export const USER_FORM_ID = 69;
   styleUrl: './home.component.scss'
 })
 export class HomeComponent implements OnInit {
-  hasUserFilledForm = true;
+  hasUserFilledForm = false;
 
   constructor(private router: Router, private formService: FormService) {
   }
