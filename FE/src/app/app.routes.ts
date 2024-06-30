@@ -11,7 +11,8 @@ import { RecommendationComponent } from './recommendation/recommendation.compone
 import { GradeFormComponent } from './grade-form/grade-form.component';
 import { SubjectDetailComponent } from './subject-detail/subject-detail.component';
 import { SubjectsChanceComponent } from './subjects-chance/subjects-chance.component';
-import {SubjectsClusteringComponent} from './subjects-clustering/subjects-clustering.component';
+import { SubjectsClusteringComponent } from './subjects-clustering/subjects-clustering.component';
+import { SubjectReportsComponent } from './subject-reports/subject-reports.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -50,6 +51,11 @@ export const routes: Routes = [
   {
     path: 'clustering',
     component: SubjectsClusteringComponent,
+    canActivate: [() => inject(AuthGuard).canActivate()]
+  },
+  {
+    path: 'subject-reports',
+    component: SubjectReportsComponent,
     canActivate: [() => inject(AuthGuard).canActivate()]
   },
   { path: 'profile', component: ProfileComponent },

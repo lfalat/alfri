@@ -138,3 +138,15 @@ export interface UserFormAnswers {
   formId: number;
   answers: Answer[];
 }
+
+export interface SubjectGradesDto {
+  subject: SubjectDto;
+  studentsCount: number;
+  gradeA: number;
+  gradeB: number;
+  gradeC: number;
+  gradeD: number;
+  gradeE: number;
+  gradeFx: number;
+  gradeAverage: number;
+}

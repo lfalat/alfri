@@ -70,4 +70,8 @@ export class HeaderComponent {
   public navigateToSubjectsClustering() {
     this.router.navigate(['clustering']);
   }
+
+  navigateToSubjectsReports() {
+    this.router.navigate(['subject-reports']);
+  }
 }
