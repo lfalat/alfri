@@ -151,3 +151,11 @@ export interface SubjectGradesDto {
   gradeFx: number;
   gradeAverage: number;
 }
+
+export interface SubjectPassingPrediction {
+  subjectName: string;
+  subjectCode: string;
+  passingProbability: number;
+  mark: string;
+  recommendations?: string[];
+}
