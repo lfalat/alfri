@@ -116,7 +116,7 @@ ALTER SEQUENCE public.answer_text_answer_text_id_seq OWNED BY public.answer_text
 CREATE TABLE public.answer_type
 (
     answer_type_id integer               NOT NULL,
-    name           character varying(50) NOT NULL
+    name           varchar(50)           NOT NULL
 );
 
 
@@ -292,7 +292,7 @@ ALTER SEQUENCE public.question_question_id_seq OWNED BY public.question.question
 CREATE TABLE public.questionnaire
 (
     questionnaire_id integer                NOT NULL,
-    title            character varying(100) NOT NULL,
+    title            varchar(100)           NOT NULL,
     description      text                   NOT NULL,
     date_of_creation timestamp without time zone DEFAULT now() NOT NULL
 );
@@ -374,7 +374,7 @@ ALTER SEQUENCE public.questionnaire_section_id_seq OWNED BY public.questionnaire
 CREATE TABLE public.role
 (
     role_id integer               NOT NULL,
-    name    character varying(50) NOT NULL
+    name    varchar(50)           NOT NULL
 );
 
 
@@ -456,7 +456,7 @@ CREATE TABLE public.student_subject
 (
     student_id integer NOT NULL,
     subject_id integer NOT NULL,
-    mark character varying(2),
+    mark varchar(2),
     year integer NOT NULL
 );
 
@@ -472,7 +472,7 @@ ALTER TABLE public.student_subject
 CREATE TABLE public.study_program
 (
     study_program_id integer                NOT NULL,
-    name             character varying(100) NOT NULL
+    name             varchar(100)           NOT NULL
 );
 
 
@@ -512,7 +512,7 @@ CREATE TABLE public.study_program_subject
 (
     study_program_id integer              NOT NULL,
     subject_id       integer              NOT NULL,
-    obligation       character varying(4) NOT NULL,
+    obligation       varchar(4)           NOT NULL,
     recommended_year integer              NOT NULL,
     semester_winter  boolean              NOT NULL
 );
@@ -529,8 +529,8 @@ ALTER TABLE public.study_program_subject
 CREATE TABLE public.subject
 (
     subject_id   integer                NOT NULL,
-    name         character varying(100) NOT NULL,
-    code         character varying(50)  NOT NULL,
+    name         varchar(100)           NOT NULL,
+    code         varchar(50)            NOT NULL,
     abbreviation text                   NOT NULL
 );
 
@@ -594,10 +594,10 @@ CREATE TABLE public."user"
 (
     user_id    integer                NOT NULL,
     role_id    integer                NOT NULL,
-    email      character varying(100) NOT NULL,
-    first_name character varying(50)  NOT NULL,
-    last_name  character varying(50)  NOT NULL,
-    password   character varying(72)  NOT NULL
+    email      varchar(100)           NOT NULL,
+    first_name varchar(50)            NOT NULL,
+    last_name  varchar(50)            NOT NULL,
+    password   varchar(72)            NOT NULL
 );
 
 
@@ -2579,3 +2579,349 @@ INSERT INTO public.question (question_id, section_id, answer_type_id, position_i
 INSERT INTO public.question (question_id, section_id, answer_type_id, position_in_questionnaire, question_title, optional, question_identifier) VALUES (126, 63, 2, 12, 'Fyzická aktivita', false, 'question_fyzicka_aktivita_focus');
 INSERT INTO public.question (question_id, section_id, answer_type_id, position_in_questionnaire, question_title, optional, question_identifier) VALUES (127, 64, 4, 1, 'Voľnočasové aktivity', false, 'question_two');
 
+-- newly added - not all inserts work as intended because not all of the subject codes are inserted in the subject table
+ALTER TABLE subject ADD CONSTRAINT unique_code UNIQUE (code);
+
+CREATE TABLE subject_keyword (
+     keyword VARCHAR(255),
+     subject_code1 VARCHAR(255),
+     subject_code2 VARCHAR(255),
+     subject_code3 VARCHAR(255),
+     FOREIGN KEY (subject_code1) REFERENCES subject(code),
+     FOREIGN KEY (subject_code2) REFERENCES subject(code),
+     FOREIGN KEY (subject_code3) REFERENCES subject(code)
+);
+
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('dát', '6UI0002', '6BI0005', '6BA0003');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('analýza', '6BM0004', '6UI0010', '6BA0003');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('sietí', '6BI0053', '6BI0034', '6BI0026');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('pravdepodobnosti', '6BA0005', '6BA0015', '6UA0002');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('programovania', '6BM0028', '6BI0032', '6BA0004');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('systémy', '6BA0001', '6BI0051', '6BI0019');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('modelovanie', '6BE0002', '6BI0038', '6UA0003');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('operačného', '6BI0046', '6BI0009', '6BI0035');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('športoch', '6BT0001', null, null);
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('algoritmy', '6BA0002', '6BA0004', '6BI0042');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('aplikácií', '6BI0050', '6UI0012', '6BI0048');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('sql', '6BI0005', '6BI0047', '6BI0006');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('grafov', '6BA0002', '6UI0006', '6UI0002');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('komunikácie', '6BM0012', '6BI0003', '6BI0034');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('rovníc', '6BA0008', '6BA0001', '6BA0011');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('analyzovať', '6BA0008', '6BA0007', '6BF0001');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('kódu', '6BI0032', '6BH0003', '6BI0006');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('podnikových', '6UM0007', '6BI0027', '6BL0001');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('derivácia', '6BA0006', '6BA0014', '6BA0007');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('lineárnych', '6BA0001', '6BI0043', '6BA0008');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('sieťach', '6BI0034', '6BI0027', '6BI0028');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('manažmentu', '6UM0008', '6BM0021', '6BM0010');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('telovýchovných', '6BT0001', '6BT0007', null);
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('tabuľky', '6UI0006', '6UI0004', '6BI0034');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('linux', '6BI0018', '6BI0046', '6BI0028');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('testovanie', '6BI0032', '6BI0011', '6BI0034');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('informačné', '6UI0001', '6BA0013', '6BI0005');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('rozhrania', '6BI0046', '6BI0051', '6BI0033');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('komunikácia', '6UM0005', '6BI0035', '6BI0051');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('polia', '6BI0013', '6BA0001', '6BI0039');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('lineárna', '6BA0001', '6BA0015', '6UI0005');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('rovnice', '6BA0012', '6BA0007', '6BA0011');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('návrh', '6BE0002', '6BI0019', '6UI0010');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('lineárne', '6BI0008', '6BA0012', '6BA0007');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('algoritmov', '6BI0041', '6BA0009', '6BA0006');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('siete', '6BI0053', '6BI0034', '6BI0052');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('navrhnúť', '6BM0010', '6BI0018', '6BI0026');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('systéme', '6BI0046', '6BM0014', '6UI0006');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('výkonnosti', '6BM0004', '6BM0027', '6BT0001');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('pravdepodobnosť', '6BA0013', '6BA0005', '6BA0015');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('funkcia', '6BA0013', '6BA0005', '6BA0006');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('podnikania', '6BM0003', '6BM0019', '6BM0017');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('sieťové', '6BI0034', '6BA0013', '6BI0027');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('manažment', '6UM0008', '6BH0003', '6BJ0005');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('lan', '6BI0026', '6BI0034', null);
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('matematická', '6BA0014', '6BA0013', '6BA0007');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('ict', '6BJ0006', '6BJ0005', '6BJ0002');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('informatika', '6BA0013', '6BM0027', '6BJ0005');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('analýzu', '6UI0002', '6BH0003', '6UI0005');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('náhodnej', '6BA0005', '6UA0002', '6BA0013');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('internet', '6BI0034', '6BJ0006', '6UI0007');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('zariadenia', '6BI0034', '6BI0048', '6BI0052');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('protokoly', '6BI0034', '6BI0026', '6BI0028');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('programovanie', '6BI0051', '6BI0048', '6UI0010');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('matice', '6BA0001', '6BA0013', null);
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('matematických', '6UI0006', '6BA0009', '6BA0006');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('matematické', '6BA0009', '6UI0006', '6BA0013');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('premenné', '6BI0032', '6BA0005', '6BI0011');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('objekty', '6BI0013', '6BI0011', '6BI0032');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('športových', '6BM0025', '6BT0001', null);
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('výpočtovej', '6BA0015', '6UI0004', '6BI0013');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('protokolov', '6BI0027', '6BI0034', '6BI0026');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('os', '6BI0018', '6BI0027', '6BI0048');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('komplexné', '6BA0001', '6BI0011', '6BA0012');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('športové', '6BT0001', '6BM0025', null);
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('ip', '6BI0028', '6BI0034', '6BI0027');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('adries', '6BI0039', '6BI0034', '6BI0026');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('bezpečnosti', '6BI0052', '6BI0034', '6BI0007');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('derivácie', '6BA0006', '6BA0013', '6BA0007');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('spracovanie', '6BM0024', '6BA0015', '6BI0033');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('ms', '6BI0006', '6UI0006', '6BM0006');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('komponentov', '6BI0040', '6BA0003', '6UI0005');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('správy', '6BI0046', '6UM0004', '6BI0011');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('zdravému', '6BT0001', null, null);
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('hry', '6BT0001', null, null);
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('športovom', '6BT0001', null, null);
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('telesnej', '6BT0001', null, null);
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('pohybovej', '6BT0001', null, null);
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('bezpečnosť', '6BI0026', '6BI0028', '6UI0012');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('uml', '6BI0038', '6UI0010', null);
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('projektov', '6BM0018', '6BH0003', '6BM0019');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('overenie', '6BI0032', '6BH0003', '6BI0033');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('architektúra', '6BI0039', '6BI0046', '6BI0003');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('limita', '6BA0006', '6BA0014', null);
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('select', '6BI0005', '6BI0047', null);
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('inštrukcie', '6BI0039', null, null);
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('tímovej', '6BM0027', '6BH0003', '6BM0014');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('parciálne', '6BA0006', '6BA0013', '6BA0001');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('zapúzdrenia', '6BI0033', '6BI0034', null);
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('sieťových', '6BI0034', '6BI0027', '6BI0052');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('windows', '6BI0054', '6BI0046', '6BI0039');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('integrál', '6BA0006', '6BA0008', '6BA0014');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('tlač', '6BI0001', null, null);
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('navrhovať', '6BI0047', '6BA0007', '6BH0002');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('informácie', '6BI0038', '6BI0057', '6BM0012');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('riadenia', '6BM0021', '6BM0010', '6BM0025');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('sociológie', '6BH0002', null, null);
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('bmc', '6BM0019', null, null);
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('informatiky', '6BH0003', '6BA0009', '6BA0013');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('diskrétna', '6BA0013', '6BA0008', '6BA0005');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('sieti', '6BI0052', '6BI0028', '6BI0034');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('dedičnosť', '6BI0012', '6BI0033', '6BI0013');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('polymorfizmus', '6BI0012', '6BI0033', '6BI0013');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('komunikačné', '6BI0051', '6UM0005', '6UI0001');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('pc', '6BI0040', '6BI0018', '6BJ0006');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('rozhodovanie', '6BM0014', '6UM0007', '6BM0029');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('marketingu', '6BM0002', '6BM0011', '6BM0019');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('softvéru', '6BI0038', '6UI0010', '6UI0001');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('ekonomických', '6BM0014', '6BM0024', '6BM0027');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('informatike', '6BH0003', '6BA0009', '6BA0006');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('cyklus', '6BI0011', '6BI0032', '6BI0003');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('ladenie', '6BI0032', '6BI0006', '6BI0041');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('protokol', '6BI0026', '6BI0027', '6BI0028');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('diagnostika', '6BI0028', '6BI0052', '6BI0034');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('štatistika', '6UA0002', '6BA0013', '6BM0006');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('štatistické', '6BM0006', '6BA0017', '6BM0028');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('lyžovanie', '6BT0007', null, null);
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('ferraty', '6BT0007', null, null);
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('teréne', '6BT0007', null, null);
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('jazdy', '6BT0007', null, null);
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('biznis', '6BM0020', '6UI0010', '6BM0019');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('python', '6BI0037', '6BI0021', '6BI0045');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('geodát', '6BI0024', '6BI0023', null);
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('osm', '6BI0023', null, null);
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('testovania', '6BI0055', '6UA0002', '6BI0016');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('latexu', '6UI0006', null, null);
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('ekonomickej', '6UM0002', '6BM0027', '6BM0003');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('počítačových', '6BI0034', '6BL0001', '6BI0003');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('komponenty', '6BI0046', '6BI0018', '6BI0007');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('spojitosť', '6BA0006', '6BA0014', null);
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('vzorce', '6UI0006', '6BA0006', '6UI0002');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('financií', '6UM0004', '6UM0007', '6BM0019');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('klasifikácia', '6BI0040', '6UM0004', '6BA0017');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('jazykové', '6BJ0003', '6BJ0004', '6BJ0002');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('dynamické', '6BI0013', '6BI0021', '6BA0004');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('digitálnych', '6BI0007', '6BI0020', null);
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('prezentuje', '6BM0027', '6BJ0007', '6UM0002');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('štatistických', '6BM0027', '6UA0002', '6BI0047');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('odhady', '6UA0002', '6BA0009', '6BM0006');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('algoritmus', '6BI0032', '6BI0033', '6BM0028');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('systémoch', '6UI0006', '6BL0001', '6BI0020');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('finančná', '6BL0001', '6UM0007', '6BM0017');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('hospodárenia', '6BM0017', '6BL0001', '6BM0004');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('smerovacích', '6BI0027', '6BI0034', '6BI0026');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('operačných', '6BI0035', '6BI0046', '6BI0008');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('extrémy', '6BA0006', null, null);
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('regresia', '6BA0015', '6UI0005', '6BA0003');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('visual', '6BI0006', '6BI0054', '6BI0016');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('mien', '6BI0007', '6BI0028', null);
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('dokumentov', '6UI0006', '6UM0008', null);
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('dane', '6UM0004', '6BM0027', null);
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('matíc', '6BA0001', '6BA0011', null);
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('matica', '6BA0001', '6BA0005', null);
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('informatických', '6BA0013', '6BA0009', '6BH0003');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('čísel', '6BA0009', '6BA0007', '6UA0002');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('objektového', '6BI0011', '6BI0032', '6BI0033');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('objektovej', '6BI0012', '6BI0011', '6BI0038');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('príkazov', '6BI0046', '6BI0011', '6UI0009');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('tíme', '6BH0003', '6BF0001', '6UM0005');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('výpočty', '6BA0005', '6BL0001', '6BA0007');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('výroba', '6BL0001', '6BM0014', '6UM0003');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('literatúry', '6BI0034', '6UM0002', '6BI0026');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('program', '6BA0013', '6BI0003', '6BI0019');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('tlače', '6BI0001', '6UI0006', null);
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('dáta', '6BA0015', '6BF0001', '6BM0024');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('procesy', '6BA0015', '6BM0019', '6UI0005');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('daní', '6UM0004', null, null);
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('aplikácia', '6BI0055', '6BI0047', '6BI0023');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('suffixes', '6BJ0005', '6BJ0006', null);
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('implementovať', '6BI0026', '6BM0014', '6BI0027');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('sociológia', '6BH0002', null, null);
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('web', '6BI0024', '6BJ0006', '6BI0023');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('simulácia', '6BE0002', '6UA0003', '6BI0019');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('podnikové', '6BM0003', '6BM0017', '6BI0053');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('qgis', '6BI0023', '6BI0024', null);
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('údajových', '6UI0004', '6UI0009', '6BI0042');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('analýze', '6UI0002', '6BM0027', '6UA0002');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('transformácia', '6UI0005', '6BA0008', '6BA0015');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('lineárneho', '6BM0028', '6BA0010', '6BA0001');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('informačných', '6BH0003', '6BL0001', '6BM0003');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('simulácie', '6BA0013', '6UA0003', '6BI0008');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('majetková', '6BL0001', '6UM0007', '6BM0017');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('architektúry', '6BI0034', '6BI0003', '6BI0026');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('komunikačných', '6BI0027', '6BI0034', '6BI0053');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('technológia', '6BI0034', '6BI0026', '6UI0006');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('sieťovej', '6BI0052', '6BI0034', '6BI0027');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('počítačové', '6BA0013', '6BI0023', '6BI0024');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('používateľského', '6BI0046', '6BI0033', '6BI0050');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('limity', '6BA0014', '6BA0006', null);
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('finančného', '6UM0007', '6UM0001', '6BI0007');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('komunikácii', '6BJ0008', '6BJ0005', '6BJ0007');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('podnikateľských', '6BM0020', '6BM0019', '6BM0011');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('is', '6UI0001', '6BJ0005', null);
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('podnikov', '6BM0017', '6BM0024', '6BM0003');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('logických', '6BI0019', '6BE0001', null);
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('rozpočet', '6UM0004', '6BM0027', '6BM0017');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('algebry', '6BA0001', '6BI0019', '6BI0047');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('algebraické', '6BA0001', '6BA0014', null);
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('vektory', '6BA0001', '6BA0013', '6BA0014');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('programy', '6BA0013', '6BI0011', '6BI0035');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('právne', '6BM0017', '6BH0003', '6BM0003');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('objektové', '6BI0032', '6BI0048', '6BI0021');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('pole', '6BI0032', '6BF0001', '6BA0007');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('počítači', '6BI0003', '6BA0005', '6BA0011');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('reprezentácia', '6BA0002', '6BI0003', '6UI0004');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('plán', '6BI0034', '6BL0001', '6BM0017');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('ipv', '6BI0034', '6BI0026', '6BI0037');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('rozhraním', '6BI0046', '6BI0033', '6BI0048');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('sieťová', '6BI0018', '6BI0026', '6BI0037');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('konvergencia', '6BA0011', '6BA0006', '6BA0007');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('derivácií', '6BA0006', '6BA0014', null);
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('technické', '6BI0040', '6BI0001', '6BI0035');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('diferenciálnych', '6BA0007', '6BA0008', '6BA0011');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('sociálne', '6BH0002', '6BM0002', '6BM0012');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('online', '6BM0002', '6BJ0008', '6BJ0006');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('tabuliek', '6BI0006', '6UI0006', '6BI0047');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('knižnice', '6BI0047', '6BI0037', '6BI0045');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('dátový', '6BI0005', '6BI0047', '6BI0013');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('jazyk', '6UI0012', '6BI0047', '6BI0041');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('číslicových', '6BI0003', '6BI0019', '6BI0020');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('optimalizačné', '6BA0004', '6BA0010', '6BA0011');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('obvodov', '6BI0036', '6BI0043', '6BE0004');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('testov', '6BI0055', '6UI0010', null);
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('politika', '6BM0027', '6UM0002', '6BH0002');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('vektorového', '6BA0001', null, null);
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('polynómy', '6BA0001', '6BA0013', null);
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('determinantu', '6BA0001', null, null);
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('objektovo', '6BI0011', '6BI0032', '6BI0038');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('atribúty', '6BI0032', '6BI0011', null);
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('konštruktory', '6BI0013', '6BI0011', null);
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('postupnosť', '6BI0011', '6BA0012', '6BA0013');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('asociácia', '6BI0011', '6BI0032', '6BI0013');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('technológií', '6BI0053', '6BH0003', '6BA0008');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('nerovnice', '6BA0012', null, null);
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('preťažovanie', '6BI0013', '6BI0032', null);
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('plánovania', '6UM0008', '6BA0002', '6BI0057');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('programu', '6BI0012', '6BM0012', '6BI0039');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('ošetrovanie', '6BI0033', '6BI0012', '6BI0013');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('internetu', '6UI0007', '6BI0034', '6BI0027');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('ethernet', '6BI0034', null, null);
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('icmpv', '6BI0034', null, null);
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('náhodná', '6UA0002', '6BA0015', '6BM0006');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('procesora', '6BI0039', '6BA0013', '6BI0003');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('výnimiek', '6BI0033', '6BI0013', null);
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('integrály', '6BA0007', '6BA0006', '6BA0008');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('tlačiarni', '6BI0001', null, null);
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('diskusia', '6BI0001', '6BH0002', '6BM0001');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('procesom', '6UI0010', '6BI0001', '6BM0022');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('finančné', '6UM0007', '6UM0001', '6BM0020');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('kapitálu', '6UM0007', null, null);
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('plánovanie', '6UM0003', '6BI0035', '6UM0008');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('softvérové', '6BA0010', '6BM0003', '6BI0027');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('business', '6BM0003', '6BJ0005', '6BM0024');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('tenses', '6BJ0005', '6BJ0001', '6BJ0002');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('geografických', '6BI0024', '6BI0023', null);
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('geoserver', '6BI0024', '6BI0023', null);
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('dml', '6BI0005', null, null);
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('java', '6BI0041', '6BI0021', null);
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('rastrových', '6BI0024', null, null);
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('office', '6UI0006', null, null);
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('libreoffice', '6UI0006', null, null);
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('latex', '6UI0006', null, null);
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('kreslenie', '6UI0006', null, null);
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('sadzba', '6UI0006', null, null);
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('aritmetika', '6BA0001', '6BA0009', '6BI0039');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('vektorov', '6BA0001', '6BA0011', null);
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('závislosť', '6BA0001', '6BI0012', '6UA0002');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('počítanie', '6BA0009', '6BA0012', '6BA0006');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('údajové', '6UI0009', '6BI0032', '6UI0004');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('náhodných', '6BA0005', '6BA0013', '6BA0015');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('generiká', '6BI0033', '6BI0012', '6BI0016');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('prezentácia', '6BL0001', '6BI0047', '6BM0007');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('tcpip', '6BI0034', '6BI0026', null);
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('zabezpečenie', '6BI0034', '6BI0026', '6BM0003');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('súborov', '6BI0046', '6BA0015', '6BI0034');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('premenná', '6UA0002', '6BA0013', '6BM0006');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('grafického', '6BI0046', '6BI0033', '6BI0050');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('operačný', '6BI0046', '6BI0018', '6BI0009');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('open', '6BI0018', '6UI0006', null);
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('source', '6BI0018', '6UI0006', null);
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('automatizácia', '6BI0027', '6BI0046', '6BI0055');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('diferenciálneho', '6BA0006', '6BA0007', null);
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('určitého', '6BA0006', '6BA0007', null);
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('integrálu', '6BA0006', '6BA0007', null);
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('numerické', '6BA0007', '6BA0004', '6BA0011');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('charakteristika', '6UM0007', '6UM0001', '6UM0008');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('kontrola', '6BM0018', '6BH0002', '6UM0007');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('sociálnej', '6BH0002', '6BU0001', null);
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('manažéra', '6UM0008', '6BI0047', '6BM0014');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('marketing', '6BM0012', '6BM0002', '6BU0001');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('populárnovedeckých', '6BJ0007', '6BJ0008', '6BJ0005');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('speech', '6BJ0005', '6BJ0001', null);
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('história', '6BI0007', '6BI0003', '6BH0002');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('procedúry', '6BI0005', '6BI0039', null);
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('matematiky', '6BA0009', '6BA0012', null);
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('alokácia', '6UM0007', '6BH0003', null);
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('riadiacich', '6BI0032', '6BI0001', '6BM0010');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('logické', '6BE0001', '6BI0032', '6BI0020');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('cykly', '6BI0032', '6BI0039', '6BI0047');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('diskrétne', '6BA0005', '6BA0015', null);
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('balíčkov', '6BI0018', '6BI0012', '6BI0047');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('manažérske', '6BL0001', '6BM0025', '6BM0021');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('majetok', '6UM0001', '6BL0001', '6BM0003');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('sieť', '6BI0034', '6BI0026', '6BI0053');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('zabezpečenia', '6BI0034', '6BI0007', '6BM0024');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('wifi', '6BI0053', '6BI0034', '6BI0026');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('dns', '6BI0028', '6BI0034', '6BI0037');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('príkazový', '6BI0046', '6BI0018', null);
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('pohybu', '6BT0007', '6BF0001', null);
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('grafickým', '6BI0046', '6BI0050', '6UI0006');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('modelovania', '6BI0001', '6BI0008', '6UA0003');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('vstavaných', '6BI0051', '6UI0009', '6BI0022');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('pripojenie', '6BI0027', '6BI0051', '6BI0048');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('podsystém', '6BI0040', '6BI0051', '6BI0003');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('komplexných', '6BA0007', '6UA0003', '6BA0008');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('účtovníctva', '6UM0001', '6BM0004', '6BM0024');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('účtovné', '6UM0001', null, null);
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('finančný', '6UM0007', '6UM0003', null);
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('it', '6BM0018', '6UI0007', '6UI0001');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('kvality', '6BM0018', '6BM0021', '6BI0027');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('výpočtové', '6BA0014', '6BI0043', '6BI0036');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('presentations', '6BJ0005', null, null);
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('numbers', '6BJ0006', '6BJ0005', null);
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('graphs', '6BJ0006', '6BJ0005', null);
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('sociologického', '6BH0002', null, null);
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('kultúra', '6BH0002', null, null);
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('prednesenie', '6BH0002', null, null);
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('diskusie', '6BH0002', null, null);
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('pamäti', '6UI0004', '6BI0039', '6UI0009');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('implicitné', '6UI0004', '6BI0013', null);
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('agregácia', '6BI0026', '6BI0013', null);
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('virtuálne', '6BI0045', '6BI0026', '6BI0052');
+INSERT INTO subject_keyword (keyword, subject_code1, subject_code2, subject_code3) VALUES ('manažmente', '6UM0008', '6UM0003', null);
