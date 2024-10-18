@@ -5,10 +5,12 @@
 
 .subject-mark-section {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
   margin-bottom: 20px;
   flex-wrap: wrap;
+  row-gap: 10px;
 }
 
 .subject-name {
@@ -17,15 +19,11 @@
   color: #3f51b5;
 }
 
-.mark-section {
-  margin-left: auto;
-}
-
 .mark-card {
   padding: 8px 16px;
-  background-color: #f1f1f1;
   font-weight: bold;
-  color: #333;
+  background-color: #3f51b5;
+  color: white;
 }
 
 .progress-section-wide {
