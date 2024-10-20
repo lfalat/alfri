@@ -151,3 +151,8 @@ export interface SubjectGradesDto {
   gradeFx: number;
   gradeAverage: number;
 }
+
+export interface KeywordDto {
+  keyword: string;
+  subjects: SubjectDto[];
+}

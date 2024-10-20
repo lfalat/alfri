@@ -74,4 +74,8 @@ export class HeaderComponent {
   navigateToSubjectsReports() {
     this.router.navigate(['subject-reports']);
   }
+
+  navigateToKeywords() {
+    this.router.navigate(['keywords']);
+  }
 }

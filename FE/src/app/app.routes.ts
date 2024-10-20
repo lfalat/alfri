@@ -13,6 +13,7 @@ import { SubjectDetailComponent } from './subject-detail/subject-detail.componen
 import { SubjectsChanceComponent } from './subjects-chance/subjects-chance.component';
 import { SubjectsClusteringComponent } from './subjects-clustering/subjects-clustering.component';
 import { SubjectReportsComponent } from './subject-reports/subject-reports.component';
+import { KeywordsComponent } from './keywords/keywords.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -56,6 +57,11 @@ export const routes: Routes = [
   {
     path: 'subject-reports',
     component: SubjectReportsComponent,
+    canActivate: [() => inject(AuthGuard).canActivate()]
+  },
+  {
+    path: 'keywords',
+    component: KeywordsComponent,
     canActivate: [() => inject(AuthGuard).canActivate()]
   },
   { path: 'profile', component: ProfileComponent },

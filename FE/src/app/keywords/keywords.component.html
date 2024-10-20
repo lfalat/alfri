@@ -1,0 +1,54 @@
+<div class="chips-container">
+  <mat-chip-listbox multiple>
+    <mat-chip-option *ngFor="let keyword of keywords"
+              (click)="onKeywordSelect(keyword)"
+              [selected]="selectedKeywords.includes(keyword)">
+      {{ keyword.keyword }}
+    </mat-chip-option>
+  </mat-chip-listbox>
+</div>
+
+<div *ngFor="let keyword of selectedKeywords" class="table-container">
+  <h3>{{ keyword.keyword }}</h3>
+  <div *ngIf="getSubjectsForKeyword(keyword).length > 0">
+    <table mat-table [dataSource]="getSubjectsForKeyword(keyword)" class="mat-elevation-z8">
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef>Názov</th>
+        <td mat-cell *matCellDef="let subject">
+          <a class="text-decoration-none" href="javascript:void(0)" (click)="navigateToSubjectDetail(subject.subject.code)">
+            {{ subject.name }}
+          </a>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="code">
+        <th mat-header-cell *matHeaderCellDef> Kód Predmetu </th>
+        <td mat-cell *matCellDef="let subject"> {{ subject.code }} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="abbreviation">
+        <th mat-header-cell *matHeaderCellDef> Skratka </th>
+        <td mat-cell *matCellDef="let subject"> {{ subject.abbreviation }} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="studyProgramName">
+        <th mat-header-cell *matHeaderCellDef> Študijný Program </th>
+        <td mat-cell *matCellDef="let subject"> {{ subject.studyProgramName }} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="recommendedYear">
+        <th mat-header-cell *matHeaderCellDef> Ročník </th>
+        <td mat-cell *matCellDef="let subject"> {{ subject.recommendedYear }} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="semester">
+        <th mat-header-cell *matHeaderCellDef> Semester </th>
+        <td mat-cell *matCellDef="let subject"> {{ subject.semester }} </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
+      <tr mat-row *matRowDef="let row; columns: columnsToDisplay;"></tr>
+
+    </table>
+  </div>
+</div>
