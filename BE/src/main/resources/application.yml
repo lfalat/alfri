@@ -18,3 +18,4 @@ spring:
       secret-key: ${JWT_PROD_SECRET_KEY}
       expiration-time: ${JWT_PROD_EXPIRATION_TIME}
 frontend-url: ${FRONTEND_PROD_URL}
+external-model-server-url: ${MODEL_SERVER_URL}

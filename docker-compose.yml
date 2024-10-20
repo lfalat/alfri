@@ -25,3 +25,11 @@ services:
       - "80:80"
     depends_on:
       - backend
+  model_server:
+    container_name: alfri_model_server
+    build:
+      context: ./ModelsFlaskServer
+    ports:
+      - "5000:5000"
+    depends_on:
+      - backend
