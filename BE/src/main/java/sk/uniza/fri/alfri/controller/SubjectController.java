@@ -166,17 +166,20 @@ public class SubjectController {
     return ResponseEntity.ok().body(similarSubjectsDto);
   }
 
-  @GetMapping("/getHardestSubjects/{numberOfSubjects}")
-  public ResponseEntity<List<SubjectGradeDto>> getHardestSubjects(
-      @PathVariable @Positive Integer numberOfSubjects) {
-    log.info("Getting top {} hardest subjects!", numberOfSubjects);
+  @GetMapping("/subjectReport")
+  public ResponseEntity<List<SubjectGradeDto>> getReport(
+          @RequestParam String sortCriteria,
+          @RequestParam @Positive Integer count) {
+    log.info("Getting top {} subjects sorted by: {}", count, sortCriteria);
 
-    List<SubjectGrade> hardestSubjects = subjectService.getHardestSubjects(numberOfSubjects);
-    log.info("{} hardest subjects returned", hardestSubjects.size());
+    List<SubjectGrade> subjects = subjectService.getFilteredSubjects(sortCriteria, count);
+    log.info("{} subjects returned", subjects.size());
 
-    List<SubjectGradeDto> subjectGradeDtos =
-        hardestSubjects.stream().map(SubjectGradeMapper.INSTANCE::toDto).toList();
+    List<SubjectGradeDto> subjectGradeDtos = subjects.stream()
+            .map(SubjectGradeMapper.INSTANCE::toDto)
+            .toList();
 
     return ResponseEntity.ok().body(subjectGradeDtos);
   }
+
 }

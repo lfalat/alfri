@@ -195,14 +195,36 @@ public class SubjectService implements ISubjectService {
     }
 
     @Override
-    public List<SubjectGrade> getHardestSubjects(Integer numberOfSubjects) {
+    public List<SubjectGrade> getFilteredSubjects(String sortCriteria, Integer numberOfSubjects) {
         Pageable pageable = PageRequest.of(0, numberOfSubjects);
-        return subjectGradeRepository
-                .findAllByOrderByGradeAverageDesc(pageable)
-                .orElseThrow(
-                        () ->
-                                new EntityNotFoundException(
-                                        String.format("No top %d hardest subjects found!", numberOfSubjects)))
-                .toList();
+
+        Page<SubjectGrade> subjectPage;
+
+        switch (sortCriteria) {
+            case "lowestAverage":
+                subjectPage = subjectGradeRepository.findAllByOrderByGradeAverageAsc(pageable)
+                        .orElseThrow(() -> new EntityNotFoundException("No subjects found!"));
+                break;
+
+            case "highestAverage":
+                subjectPage = subjectGradeRepository.findAllByOrderByGradeAverageDesc(pageable)
+                        .orElseThrow(() -> new EntityNotFoundException("No subjects found!"));
+                break;
+
+            case "mostAGrades":
+                subjectPage = subjectGradeRepository.findAllByOrderByGradeADesc(pageable)
+                        .orElseThrow(() -> new EntityNotFoundException("No subjects found!"));
+                break;
+
+            case "mostFXGrades":
+                subjectPage = subjectGradeRepository.findAllByOrderByGradeFxDesc(pageable)
+                        .orElseThrow(() -> new EntityNotFoundException("No subjects found!"));
+                break;
+
+            default:
+                throw new IllegalArgumentException("Invalid sorting criteria");
+        }
+
+        return subjectPage.getContent();
     }
 }
