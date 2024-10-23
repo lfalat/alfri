@@ -87,6 +87,10 @@ export class SubjectService {
     return this.http.get<SubjectExtendedDto[]>(`${this.URL}/focus-prediction`);
   }
 
+  getFilteredSubjects(sortCriteria: string, subjectCount: number): Observable<SubjectGradesDto[]> {
+    return this.http.get<SubjectGradesDto[]>(`${this.URL}/subjectReport?sortCriteria=${sortCriteria}&count=${subjectCount}`);
+  }
+
   public getLowestAverageSubjects(numberOfSubjects: number): Observable<SubjectGradesDto[]>{
     return this.http.get<SubjectGradesDto[]>(`${this.URL}/getHardestSubjects/${numberOfSubjects}`);
   }
