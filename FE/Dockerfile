@@ -13,14 +13,17 @@ RUN npm install
 # Copy the rest of the application code
 COPY . .
 
-# Build the Angular application
-RUN npm run build --prod
+# Build the Angular application with production configuration
+RUN npm run build
 
 # Stage 2: Serve the Angular application using Nginx
 FROM nginx:alpine
 
 # Copy the built files from the previous stage to the Nginx container
-COPY --from=build app/dist/fe/browser /usr/share/nginx/html
+COPY --from=build /app/dist/fe/browser /usr/share/nginx/html
+
+# Copy custom Nginx configuration (see below)
+COPY nginx.conf /etc/nginx/nginx.conf
 
 # Expose port 80
 EXPOSE 80
