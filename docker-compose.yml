@@ -8,7 +8,7 @@ services:
     environment:
       PROD_SHOW_SQL: ${PROD_SHOW_SQL}
       DATABASE_PROD_PASSWORD: ${DATABASE_PROD_PASSWORD}
-      FRONTEND_PROD_URL: http://frontend:80 # Use the service name as the URL
+      FRONTEND_PROD_URL: ${FRONTEND_PROD_URL}
       DATABASE_PROD_USER: ${DATABASE_PROD_USER}
       DATABASE_PROD_URL: ${DATABASE_PROD_URL}
       JWT_PROD_EXPIRATION_TIME: ${JWT_PROD_EXPIRATION_TIME}
@@ -31,3 +31,5 @@ services:
 networks:
   alfri-network:
     driver: bridge
+
+# buildovanie a pushovanie amd64 imagov na macu - docker buildx build --platform linux/amd64 -t groben5558/alfri:alfri-frontend -f Dockerfile . --push
