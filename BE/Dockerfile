@@ -31,7 +31,7 @@ RUN python --version && pip --version
 # JAVA
 
 # Copy the jar file from the host machine to the container
-COPY target/alfri-3.2.4.jar app.jar
+COPY target/alfri-3.3.3.jar app.jar
 
 
 # Expose the port that the application will run on
