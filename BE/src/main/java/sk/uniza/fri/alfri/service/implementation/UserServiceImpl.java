@@ -1,18 +1,22 @@
 package sk.uniza.fri.alfri.service.implementation;
 
+import java.util.List;
+import java.util.Optional;
 import org.springframework.stereotype.Service;
+import sk.uniza.fri.alfri.entity.Role;
 import sk.uniza.fri.alfri.entity.User;
+import sk.uniza.fri.alfri.repository.RoleRepository;
 import sk.uniza.fri.alfri.repository.UserRepository;
 import sk.uniza.fri.alfri.service.UserService;
-
-import java.util.Optional;
 
 @Service
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
+  private final RoleRepository roleRepository;
 
-    public UserServiceImpl(UserRepository userRepository) {
+  public UserServiceImpl(UserRepository userRepository, RoleRepository roleRepository) {
         this.userRepository = userRepository;
+    this.roleRepository = roleRepository;
     }
 
     @Override
@@ -21,5 +25,8 @@ public class UserServiceImpl implements UserService {
         return user.orElse(null);
     }
 
-
+  @Override
+  public List<Role> getRoles() {
+    return roleRepository.findAll();
+  }
 }
