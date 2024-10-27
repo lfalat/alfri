@@ -5,6 +5,8 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -18,10 +20,15 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import sk.uniza.fri.alfri.service.implementation.JwtService;
 
 @Component
+@Slf4j
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
   public static final int BEGIN_INDEX_OF_JWT = 7;
+  public static final String DEV_PROFILE = "dev";
   private final JwtService jwtService;
   private final UserDetailsService userDetailsService;
+
+  @Value("${spring.profiles.active}")
+  private String activeProfile;
 
   public JwtAuthenticationFilter(JwtService jwtService, UserDetailsService userDetailsService) {
     this.jwtService = jwtService;
@@ -36,6 +43,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
       throws IOException, java.io.IOException, ServletException {
     final String authHeader = request.getHeader("Authorization");
 
+    // in dev profile, allow request from everyone
+    if (activeProfile.equals(DEV_PROFILE)) {
+      filterChain.doFilter(request, response);
+      return;
+    }
+
+    // TODO ak bude cas, je potrebne prerobit security config, aby tam fungovali endpointy, ktore
+    // TODO nepotrebuju autentifikaciu. Teraz je potrebne ich specifikovat tu
     if (request.getServletPath().startsWith("/api/auth")
         || request.getServletPath().startsWith("/api/user/roles")) {
       filterChain.doFilter(request, response);
