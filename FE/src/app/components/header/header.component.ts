@@ -74,4 +74,8 @@ export class HeaderComponent {
   navigateToSubjectsReports() {
     this.router.navigate(['subject-reports']);
   }
+
+  navigateToSubjectGradeCorrelation() {
+    this.router.navigate(['subjects-grades-correlation']);
+  }
 }
