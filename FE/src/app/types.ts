@@ -1,3 +1,13 @@
+import {
+  ApexAxisChartSeries,
+  ApexChart,
+  ApexDataLabels,
+  ApexPlotOptions,
+  ApexResponsive,
+  ApexTitleSubtitle,
+  ApexXAxis
+} from 'ng-apexcharts';
+
 export interface Role {
   id: number;
   name: string;
@@ -158,4 +168,21 @@ export interface SubjectPassingPrediction {
   passingProbability: number;
   mark: string;
   recommendations?: string[];
+}
+
+export interface SubjectGradeCorrelation {
+  firstSubject: SubjectDto;
+  secondSubject: SubjectDto;
+  correlation: number;
+}
+
+export interface ApexChartOptions {
+  series: ApexAxisChartSeries;
+  chart: ApexChart;
+  dataLabels: ApexDataLabels;
+  title: ApexTitleSubtitle;
+  colors: any;
+  plotOptions: ApexPlotOptions,
+  xAxis: ApexXAxis,
+  responsive: ApexResponsive[]
 }
