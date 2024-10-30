@@ -2630,6 +2630,13 @@ INSERT INTO public.question (question_id, section_id, answer_type_id, position_i
                              optional, question_identifier)
 VALUES (127, 64, 4, 1, 'Voľnočasové aktivity', false, 'question_two');
 
+CREATE SEQUENCE subject_grade_correlation_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
 create table public.subject_grade_correlation
 (
     first_subject  integer,
