@@ -5,8 +5,10 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.Arrays;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -27,16 +29,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
   public static final String DEV_PROFILE = "dev";
   private final JwtService jwtService;
   private final UserDetailsService userDetailsService;
-
-  @Value("${spring.profiles.active}")
-  private String activeProfile;
+  private final Environment environment;
 
   @Value("${default-user-email}")
   private String defaultUserEmail;
 
-  public JwtAuthenticationFilter(JwtService jwtService, UserDetailsService userDetailsService) {
+  public JwtAuthenticationFilter(
+      JwtService jwtService, UserDetailsService userDetailsService, Environment environment) {
     this.jwtService = jwtService;
     this.userDetailsService = userDetailsService;
+    this.environment = environment;
   }
 
   @Override
@@ -47,13 +49,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
       throws IOException, java.io.IOException, ServletException {
     final String authHeader = request.getHeader("Authorization");
 
-    // in dev profile, allow request from everyone
-    if (activeProfile.equals(DEV_PROFILE)) {
+    if (environment.getActiveProfiles().length != 0
+        && Arrays.stream(environment.getActiveProfiles())
+            .allMatch(profile -> profile.equals(DEV_PROFILE))) {
+      log.info(Arrays.toString(environment.getActiveProfiles()));
 
       UserDetails devUserDetails =
           User.builder()
               .username(defaultUserEmail)
-              .password("") // Empty password, it is not needed here
+              .password("") // Empty password as it's not needed here
               .build();
 
       UsernamePasswordAuthenticationToken devAuthToken =
