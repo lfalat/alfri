@@ -2579,3 +2579,53 @@ INSERT INTO public.question (question_id, section_id, answer_type_id, position_i
 INSERT INTO public.question (question_id, section_id, answer_type_id, position_in_questionnaire, question_title, optional, question_identifier) VALUES (126, 63, 2, 12, 'Fyzická aktivita', false, 'question_fyzicka_aktivita_focus');
 INSERT INTO public.question (question_id, section_id, answer_type_id, position_in_questionnaire, question_title, optional, question_identifier) VALUES (127, 64, 4, 1, 'Voľnočasové aktivity', false, 'question_two');
 
+--new
+
+alter table public."user"
+    add admin_rights boolean not null default false;
+
+UPDATE public."user"
+SET admin_rights = true
+WHERE user_id IN (1, 2, 3);
+
+CREATE TABLE public.department (
+                                   department_id SERIAL PRIMARY KEY,
+                                   name VARCHAR(255) NOT NULL,
+                                   abbreviation VARCHAR(10) NOT NULL
+);
+
+CREATE TABLE public.teacher (
+                                teacher_id SERIAL PRIMARY KEY,
+                                user_id INT REFERENCES public."user"(user_id) ON DELETE CASCADE,
+                                department_id INT REFERENCES public.department(department_id) ON DELETE SET NULL
+);
+
+CREATE TABLE public.teacher_subject (
+                                        teacher_id INT REFERENCES public.teacher(teacher_id) ON DELETE CASCADE,
+                                        subject_id INT REFERENCES public.subject(subject_id) ON DELETE CASCADE,
+                                        PRIMARY KEY (teacher_id, subject_id)
+);
+
+INSERT INTO public."user" (user_id, role_id, email, first_name, last_name, password, admin_rights) VALUES (11, 2, 'lukas.falat@fri.uniza.sk', 'Lukáš', 'Falát', '$2a$10$UQMrrb2DVEF/Gqj26QbVoe4Kshn2XUBz4r6NpKQfkuhTrD8RqaHVa', false);
+INSERT INTO public."user" (user_id, role_id, email, first_name, last_name, password, admin_rights) VALUES (12, 2, 'michal.kvet@fri.uniza.sk', 'Michal', 'Kvet', '$2a$10$XU5FXvQvpS9ga.qgZvZAruYeWu1xehZZFH6n8VyJh.PXL14JuXx3m', false);
+INSERT INTO public."user" (user_id, role_id, email, first_name, last_name, password, admin_rights) VALUES (13, 2, 'tomas.majer@fri.uniza.sk', 'Tomáš', 'Majer', '$2a$10$aEl.HnC27oRo7WVKSVk5mOLqziyC4FQVkxpxOvffHgYawTdYMuN8G', false);
+INSERT INTO public."user" (user_id, role_id, email, first_name, last_name, password, admin_rights) VALUES (14, 2, 'peter.jankovic@fri.uniza.sk', 'Peter', 'Jankovič', '$2a$10$dz0.JBq48tAR6n1oVKXdT.tSUiDdnO8dEfRHFqF7VU8gVHrSmLiqe', false);
+INSERT INTO public."user" (user_id, role_id, email, first_name, last_name, password, admin_rights) VALUES (15, 2, 'jozef.kostolny@fri.uniza.sk', 'Jozef', 'Kostolný', '$2a$10$pdGP545Fg/0mrm.sWytWr.WPjLnlF2Dx2d721gWVTw0zWdhAVDur2', false);
+
+
+INSERT INTO public.department (department_id, name, abbreviation) VALUES (1, 'Katedra informatiky', 'KI');
+INSERT INTO public.department (department_id, name, abbreviation) VALUES (2, 'Katedra makro a mikroekonomiky', 'KMME');
+INSERT INTO public.department (department_id, name, abbreviation) VALUES (3, 'Katedra matematických metód a operačnej analýzy', 'FRDSA');
+
+INSERT INTO public.teacher (teacher_id, user_id, department_id) VALUES (1, 11, 2);
+INSERT INTO public.teacher (teacher_id, user_id, department_id) VALUES (2, 12, 1);
+INSERT INTO public.teacher (teacher_id, user_id, department_id) VALUES (3, 13, 3);
+INSERT INTO public.teacher (teacher_id, user_id, department_id) VALUES (4, 14, 3);
+INSERT INTO public.teacher (teacher_id, user_id, department_id) VALUES (5, 15, 1);
+
+INSERT INTO public.teacher_subject (teacher_id, subject_id) VALUES (2, 128);
+INSERT INTO public.teacher_subject (teacher_id, subject_id) VALUES (1, 154);
+INSERT INTO public.teacher_subject (teacher_id, subject_id) VALUES (3, 98);
+INSERT INTO public.teacher_subject (teacher_id, subject_id) VALUES (4, 149);
+INSERT INTO public.teacher_subject (teacher_id, subject_id) VALUES (5, 92);
+INSERT INTO public.teacher_subject (teacher_id, subject_id) VALUES (5, 100);
