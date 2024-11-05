@@ -4148,10 +4148,10 @@ INSERT INTO public.teacher (user_id, department_id) VALUES ( 12, 3);
 INSERT INTO public.teacher (user_id, department_id) VALUES ( 13, 3);
 INSERT INTO public.teacher (user_id, department_id) VALUES ( 14, 1);
 
-INSERT INTO public.teacher_subject (teacher_id, subject_id) VALUES (7, 128);
-INSERT INTO public.teacher_subject (teacher_id, subject_id) VALUES (6, 154);
-INSERT INTO public.teacher_subject (teacher_id, subject_id) VALUES (8, 98);
-INSERT INTO public.teacher_subject (teacher_id, subject_id) VALUES (9, 149);
-INSERT INTO public.teacher_subject (teacher_id, subject_id) VALUES (10, 92);
-INSERT INTO public.teacher_subject (teacher_id, subject_id) VALUES (10, 100);
+INSERT INTO public.teacher_subject (teacher_id, subject_id) VALUES (2, 128);
+INSERT INTO public.teacher_subject (teacher_id, subject_id) VALUES (1, 154);
+INSERT INTO public.teacher_subject (teacher_id, subject_id) VALUES (3, 98);
+INSERT INTO public.teacher_subject (teacher_id, subject_id) VALUES (4, 149);
+INSERT INTO public.teacher_subject (teacher_id, subject_id) VALUES (5, 92);
+INSERT INTO public.teacher_subject (teacher_id, subject_id) VALUES (5, 100);
 
