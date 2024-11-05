@@ -1,41 +1,33 @@
-FROM maven:3.9.6-sapmachine-21
+# Start with the Maven base image for building the Java application
+FROM maven:3.9.6-sapmachine-21 AS build
 
-# Install Python
+# Copy the Java Spring Boot project files and build the application
+COPY . /app
+WORKDIR /app
+COPY python_scripts /app/python_scripts
+RUN mvn clean package -DskipTests
+
+# Use a lighter JDK base image for running the built application
+FROM openjdk:21-jdk-slim
+
+# Install Python (default version for Debian Bookworm) and required dependencies
 RUN apt-get update && \
-    apt-get install -y --fix-missing python3.8 python3-pip python3-venv && \
+    apt-get install -y --no-install-recommends python3 python3-pip python3-venv && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-# Set Python3 as the default python
-RUN update-alternatives --install /usr/bin/python python /usr/bin/python3 1
+# Set up a Python virtual environment and install Python libraries
+RUN python3 -m venv /opt/venv && \
+    /opt/venv/bin/pip install --upgrade pip setuptools joblib numpy scikit-learn
 
+# Set the virtual environment as default for Python and pip commands
+ENV PATH="/opt/venv/bin:$PATH"
 
-# Set the working directory inside the container
-WORKDIR /app
+# Copy the built jar file from the build stage
+COPY --from=build /app/target/alfri-3.3.3.jar /app/app.jar
 
-# Create a virtual environment
-RUN python3 -m venv /opt/venv
-
-COPY python_scripts /app/python_scripts
-
-# Activate the virtual environment and install the Python dependencies
-RUN /opt/venv/bin/pip install --upgrade pip && \
-    /opt/venv/bin/pip install --upgrade setuptools && \
-    /opt/venv/bin/pip install --upgrade joblib && \
-    /opt/venv/bin/pip install --upgrade numpy && \
-    /opt/venv/bin/pip install --upgrade scikit-learn
-
-# Verify Python and pip installation
-RUN python --version && pip --version
-
-# JAVA
-
-# Copy the jar file from the host machine to the container
-COPY target/alfri-3.2.4.jar app.jar
-
-
-# Expose the port that the application will run on
+# Expose the port for the Spring Boot application
 EXPOSE 8080
 
-# Command to run the application
-ENTRYPOINT ["sh", "-c", "java -jar app.jar"]
+# Command to run the Spring Boot application
+ENTRYPOINT ["java", "-jar", "/app/app.jar"]

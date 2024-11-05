@@ -22,7 +22,7 @@ public interface ISubjectService {
 
     List<StudyProgramSubject> findSubjectByIds(List<Integer> ids);
 
-    List<SubjectGrade> getHardestSubjects(Integer numberOfSubjects);
+    List<SubjectGrade> getFilteredSubjects(String sortCriteria, Integer numberOfSubjects);
 
     List<Subject> makeSubjectsFocusPrediction(User user);
 }

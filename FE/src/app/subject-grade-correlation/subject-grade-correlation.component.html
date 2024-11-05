@@ -1,0 +1,17 @@
+@if (this.dataLoaded) {
+  <div style="width: 100%" id="chart">
+    <h1>Korelácia medzi známkami jednotlivých predmetov</h1>
+    <apx-chart
+      [series]="chartOptions.series"
+      [chart]="chartOptions.chart"
+      [dataLabels]="chartOptions.dataLabels"
+      [title]="chartOptions.title"
+      [colors]="chartOptions.colors"
+      [xaxis]="chartOptions.xAxis"
+      [plotOptions]="chartOptions.plotOptions"
+      [responsive]="chartOptions.responsive"
+    ></apx-chart>
+  </div>
+} @else {
+  <mat-spinner></mat-spinner>
+}

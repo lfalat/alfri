@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { HttpClient } from '@angular/common/http';
 import type { Observable } from 'rxjs';
-import { UserDto } from '../types';
+import { Role, UserDto } from '../types';
 import { environment } from '../../environments/environment';
 
 
@@ -26,5 +26,9 @@ export class UserService {
 
   getUserInfo(): Observable<UserDto> {
     return this.http.get<UserDto>(`${this.BE_URL}/profile`);
+  }
+
+  public getRoles(): Observable<Role[]> {
+    return this.http.get<Role[]>(`${this.BE_URL}/roles`);
   }
 }

@@ -1,13 +1,13 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import {
-  FormGroup,
-  FormBuilder,
-  Validators,
-  ReactiveFormsModule,
+  AbstractControl,
   AbstractControlOptions,
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
   ValidationErrors,
   ValidatorFn,
-  AbstractControl,
+  Validators,
 } from '@angular/forms';
 import { Router } from '@angular/router';
 import { MatCard } from '@angular/material/card';
@@ -22,6 +22,7 @@ import type { RegisterUserDto, Role } from '../types';
 import { ErrorService } from '../services/error.service';
 import { UserService } from '../services/user.service';
 import { JwtService } from '../services/jwt.service';
+import { ReplaySubject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-registration-form',
@@ -43,15 +44,12 @@ import { JwtService } from '../services/jwt.service';
   templateUrl: './registration.component.html',
   styleUrl: './registration.component.scss',
 })
-export class RegistrationComponent {
+export class RegistrationComponent implements OnInit, OnDestroy {
   registerForm: FormGroup;
-  roles: Role[] = [
-    { id: 1, name: 'Študent' },
-    { id: 2, name: 'Učiteľ' },
-    { id: 3, name: 'Návštevník' },
-  ];
+  roles: Role[] = [];
   public isError = false;
   public errorText = '';
+  private destroyed$: ReplaySubject<void> = new ReplaySubject(1);
 
   constructor(
     private formBuilder: FormBuilder,
@@ -84,6 +82,17 @@ export class RegistrationComponent {
     );
   }
 
+  ngOnInit() {
+    this.userService.getRoles().pipe(takeUntil(this.destroyed$)).subscribe((roles: Role[]) => {
+      this.roles = roles;
+    });
+  }
+
+  ngOnDestroy() {
+    this.destroyed$.next();
+    this.destroyed$.complete();
+  }
+
   // custom validator to check that two fields match
   mustMatch(controlName: string, matchingControlName: string): ValidatorFn {
     return (formGroup: AbstractControl): ValidationErrors | null => {
@@ -99,8 +108,8 @@ export class RegistrationComponent {
       }
 
       if (control.value !== matchingControl.value) {
-        matchingControl.setErrors({ mustMatch: true });
-        return { mustMatch: true };
+        matchingControl.setErrors({mustMatch: true});
+        return {mustMatch: true};
       } else {
         matchingControl.setErrors(null);
         return null;

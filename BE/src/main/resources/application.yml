@@ -8,6 +8,7 @@ spring:
     url: ${DATABASE_PROD_URL}
     username: ${DATABASE_PROD_USER}
     password: ${DATABASE_PROD_PASSWORD}
+    driver-class-name: org.postgresql.Driver
   jpa:
     show-sql: ${PROD_SHOW_SQL}
     hibernate:
@@ -18,3 +19,4 @@ spring:
       secret-key: ${JWT_PROD_SECRET_KEY}
       expiration-time: ${JWT_PROD_EXPIRATION_TIME}
 frontend-url: ${FRONTEND_PROD_URL}
+default-user-email: "-" # no default user in production
