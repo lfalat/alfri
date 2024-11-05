@@ -69,6 +69,7 @@ public class AuthService implements IAuthService {
             .lastName(userToRegister.getLastName())
             .email(userToRegister.getEmail())
             .password(passwordEncoder.encode(userToRegister.getPassword()))
+            .adminRights(false)
             .build();
 
     log.info("User with email {} was registered!", user.getEmail());

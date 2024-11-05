@@ -597,7 +597,8 @@ CREATE TABLE public."user"
     email      character varying(100) NOT NULL,
     first_name character varying(50)  NOT NULL,
     last_name  character varying(50)  NOT NULL,
-    password   character varying(72)  NOT NULL
+    password   character varying(72)  NOT NULL,
+    admin_rights boolean              NOT NULL default false
 );
 
 
@@ -2636,6 +2637,40 @@ CREATE SEQUENCE subject_grade_correlation_id_seq
     NO MINVALUE
     NO MAXVALUE
     CACHE 1;
+--new
+
+UPDATE public."user"
+SET admin_rights = true
+WHERE user_id IN (1, 2, 3);
+
+CREATE TABLE public.department (
+                                   department_id SERIAL PRIMARY KEY,
+                                   name VARCHAR(255) NOT NULL,
+                                   abbreviation VARCHAR(10) NOT NULL
+);
+
+CREATE TABLE public.teacher (
+                                teacher_id SERIAL PRIMARY KEY,
+                                user_id INT REFERENCES public."user"(user_id) ON DELETE CASCADE,
+                                department_id INT REFERENCES public.department(department_id) ON DELETE SET NULL
+);
+
+CREATE TABLE public.teacher_subject (
+                                        teacher_id INT REFERENCES public.teacher(teacher_id) ON DELETE CASCADE,
+                                        subject_id INT REFERENCES public.subject(subject_id) ON DELETE CASCADE,
+                                        PRIMARY KEY (teacher_id, subject_id)
+);
+
+INSERT INTO public."user" ( role_id, email, first_name, last_name, password, admin_rights) VALUES ( 2, 'lukas.falat@fri.uniza.sk', 'Lukáš', 'Falát', '$2a$10$UQMrrb2DVEF/Gqj26QbVoe4Kshn2XUBz4r6NpKQfkuhTrD8RqaHVa', false);
+INSERT INTO public."user" ( role_id, email, first_name, last_name, password, admin_rights) VALUES ( 2, 'michal.kvet@fri.uniza.sk', 'Michal', 'Kvet', '$2a$10$XU5FXvQvpS9ga.qgZvZAruYeWu1xehZZFH6n8VyJh.PXL14JuXx3m', false);
+INSERT INTO public."user" ( role_id, email, first_name, last_name, password, admin_rights) VALUES ( 2, 'tomas.majer@fri.uniza.sk', 'Tomáš', 'Majer', '$2a$10$aEl.HnC27oRo7WVKSVk5mOLqziyC4FQVkxpxOvffHgYawTdYMuN8G', false);
+INSERT INTO public."user" ( role_id, email, first_name, last_name, password, admin_rights) VALUES ( 2, 'peter.jankovic@fri.uniza.sk', 'Peter', 'Jankovič', '$2a$10$dz0.JBq48tAR6n1oVKXdT.tSUiDdnO8dEfRHFqF7VU8gVHrSmLiqe', false);
+INSERT INTO public."user" ( role_id, email, first_name, last_name, password, admin_rights) VALUES ( 2, 'jozef.kostolny@fri.uniza.sk', 'Jozef', 'Kostolný', '$2a$10$pdGP545Fg/0mrm.sWytWr.WPjLnlF2Dx2d721gWVTw0zWdhAVDur2', false);
+
+
+INSERT INTO public.department ( name, abbreviation) VALUES ('Katedra informatiky', 'KI');
+INSERT INTO public.department (name, abbreviation) VALUES ('Katedra makro a mikroekonomiky', 'KMME');
+INSERT INTO public.department ( name, abbreviation) VALUES ('Katedra matematických metód a operačnej analýzy', 'FRDSA');
 
 create table public.subject_grade_correlation
 (
@@ -4107,3 +4142,15 @@ INSERT INTO public.subject_grade_correlation (first_subject, second_subject, cor
 VALUES (169, 154, -0.07317711019495152);
 INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
 VALUES (169, 169, 1);
+INSERT INTO public.teacher (user_id, department_id) VALUES ( 11, 2);
+INSERT INTO public.teacher (user_id, department_id) VALUES ( 12, 1);
+INSERT INTO public.teacher (user_id, department_id) VALUES ( 13, 3);
+INSERT INTO public.teacher (user_id, department_id) VALUES ( 14, 3);
+INSERT INTO public.teacher (user_id, department_id) VALUES ( 15, 1);
+
+INSERT INTO public.teacher_subject (teacher_id, subject_id) VALUES (2, 128);
+INSERT INTO public.teacher_subject (teacher_id, subject_id) VALUES (1, 154);
+INSERT INTO public.teacher_subject (teacher_id, subject_id) VALUES (3, 98);
+INSERT INTO public.teacher_subject (teacher_id, subject_id) VALUES (4, 149);
+INSERT INTO public.teacher_subject (teacher_id, subject_id) VALUES (5, 92);
+INSERT INTO public.teacher_subject (teacher_id, subject_id) VALUES (5, 100);
