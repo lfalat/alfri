@@ -2631,7 +2631,7 @@ INSERT INTO public.question (question_id, section_id, answer_type_id, position_i
                              optional, question_identifier)
 VALUES (127, 64, 4, 1, 'Voľnočasové aktivity', false, 'question_two');
 
-CREATE SEQUENCE subject_grade_correlation_id_seq
+CREATE SEQUENCE public.subject_grade_correlation_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -2677,7 +2677,7 @@ create table public.subject_grade_correlation
     first_subject  integer,
     second_subject integer,
     correlation    double precision    not null,
-    id             integer primary key not null default nextval('subject_grade_correlation_id_seq'::regclass),
+    id             integer primary key not null default nextval('public.subject_grade_correlation_id_seq'::regclass),
     foreign key (first_subject) references public.subject (subject_id)
         match simple on update no action on delete no action,
     foreign key (second_subject) references public.subject (subject_id)
@@ -4142,15 +4142,16 @@ INSERT INTO public.subject_grade_correlation (first_subject, second_subject, cor
 VALUES (169, 154, -0.07317711019495152);
 INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
 VALUES (169, 169, 1);
-INSERT INTO public.teacher (user_id, department_id) VALUES ( 11, 2);
-INSERT INTO public.teacher (user_id, department_id) VALUES ( 12, 1);
+INSERT INTO public.teacher (user_id, department_id) VALUES ( 10, 2);
+INSERT INTO public.teacher (user_id, department_id) VALUES ( 11, 1);
+INSERT INTO public.teacher (user_id, department_id) VALUES ( 12, 3);
 INSERT INTO public.teacher (user_id, department_id) VALUES ( 13, 3);
-INSERT INTO public.teacher (user_id, department_id) VALUES ( 14, 3);
-INSERT INTO public.teacher (user_id, department_id) VALUES ( 15, 1);
+INSERT INTO public.teacher (user_id, department_id) VALUES ( 14, 1);
 
-INSERT INTO public.teacher_subject (teacher_id, subject_id) VALUES (2, 128);
-INSERT INTO public.teacher_subject (teacher_id, subject_id) VALUES (1, 154);
-INSERT INTO public.teacher_subject (teacher_id, subject_id) VALUES (3, 98);
-INSERT INTO public.teacher_subject (teacher_id, subject_id) VALUES (4, 149);
-INSERT INTO public.teacher_subject (teacher_id, subject_id) VALUES (5, 92);
-INSERT INTO public.teacher_subject (teacher_id, subject_id) VALUES (5, 100);
+INSERT INTO public.teacher_subject (teacher_id, subject_id) VALUES (7, 128);
+INSERT INTO public.teacher_subject (teacher_id, subject_id) VALUES (6, 154);
+INSERT INTO public.teacher_subject (teacher_id, subject_id) VALUES (8, 98);
+INSERT INTO public.teacher_subject (teacher_id, subject_id) VALUES (9, 149);
+INSERT INTO public.teacher_subject (teacher_id, subject_id) VALUES (10, 92);
+INSERT INTO public.teacher_subject (teacher_id, subject_id) VALUES (10, 100);
+
