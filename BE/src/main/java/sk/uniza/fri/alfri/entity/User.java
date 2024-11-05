@@ -62,7 +62,7 @@ public class User implements UserDetails {
   @Column(name = "password", nullable = false, length = 72)
   private String password;
 
-  @Column(name = "admin_rights", nullable = false, length = 5)
+  @Column(name = "admin_rights", nullable = false)
   private boolean adminRights;
 
   @OneToOne(mappedBy = "user")
