@@ -7,6 +7,7 @@ import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { MatInput } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
 import { MatCheckbox } from '@angular/material/checkbox';
+import { MatTab, MatTabGroup } from '@angular/material/tabs';
 
 @Component({
   selector: 'app-subject-grade-correlation',
@@ -16,7 +17,9 @@ import { MatCheckbox } from '@angular/material/checkbox';
     MatProgressSpinner,
     MatInput,
     FormsModule,
-    MatCheckbox
+    MatCheckbox,
+    MatTabGroup,
+    MatTab
   ],
   templateUrl: './subject-grade-correlation.component.html',
   styleUrl: './subject-grade-correlation.component.scss'
@@ -28,11 +31,11 @@ export class SubjectGradeCorrelationComponent implements OnInit, OnDestroy {
 
   public dataLoaded = false;
 
-  private _chartOptions: ApexChartOptions;
-  private _destroy$: ReplaySubject<void> = new ReplaySubject(1);
+  private readonly _chartOptions: ApexChartOptions;
+  private readonly _destroy$: ReplaySubject<void> = new ReplaySubject(1);
 
 
-  constructor(private subjectGradeCorrelationService: SubjectGradeCorrelationService) {
+  constructor(private readonly subjectGradeCorrelationService: SubjectGradeCorrelationService) {
     this._chartOptions = {
       series: [],
       chart: {
@@ -112,11 +115,11 @@ export class SubjectGradeCorrelationComponent implements OnInit, OnDestroy {
         // Group data by first subject
         const groupedData = this.groupByFirstSubject(data);
 
+        groupedData.sort((a, b) => a[0].firstSubject.name.localeCompare(b[0].firstSubject.name));
         groupedData.forEach((subjectCorrelation: SubjectGradeCorrelation[]) => {
+          subjectCorrelation.sort((a, b) => a.secondSubject.name.localeCompare(b.secondSubject.name));
           const subjectName: string = subjectCorrelation[0].firstSubject?.name;
           const dataPoints: { x: string; y: string }[] = [];
-
-          this.chartOptions.xAxis.categories.push(subjectName);
 
           subjectCorrelation.forEach((correlation: SubjectGradeCorrelation) => {
             dataPoints.push({ x: correlation.secondSubject.name, y: correlation.correlation.toFixed(2) });
