@@ -14,7 +14,7 @@ export class SubjectGradeCorrelationService {
   constructor(private http: HttpClient) {
   }
 
-  public getSubjectGradeCorrelationService(correlationTreshold?: number, operator?: Operator): Observable<SubjectGradeCorrelation[]> {
+  public getSubjectGradeCorrelation(correlationTreshold?: number, operator?: Operator): Observable<SubjectGradeCorrelation[]> {
     let params: HttpParams = new HttpParams();
     if (correlationTreshold && operator) {
       params = params.append('correlationTreshold', correlationTreshold).append('operator', operator);
