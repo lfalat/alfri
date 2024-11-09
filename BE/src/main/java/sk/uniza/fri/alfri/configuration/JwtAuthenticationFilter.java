@@ -58,6 +58,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
           User.builder()
               .username(defaultUserEmail)
               .password("") // Empty password as it's not needed here
+                  .roles() //TODO dat env na role a dat sem
               .build();
 
       UsernamePasswordAuthenticationToken devAuthToken =

@@ -34,8 +34,9 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 public class SubjectService implements ISubjectService {
-    public static final String CLUSTERING_PREDICTION_SCRIPT_PATH = "./python_scripts/predict.py";
-    public static final String CLUSTERING_PREDICTION_MODEL_PATH = "./python_scripts/kmeans_model.pkl";
+    public static final String CLUSTERING_PREDICTION_SCRIPT_PATH = "/app/python_scripts/predict.py";
+    public static final String CLUSTERING_PREDICTION_MODEL_PATH = "/app/python_scripts/kmeans_model.pkl";
+
 
     private final StudyProgramSubjectRepository studyProgramSubjectRepository;
     private final SubjectRepository subjectRepository;
@@ -100,7 +101,7 @@ public class SubjectService implements ISubjectService {
 
         ProcessBuilder processBuilder =
                 new ProcessBuilder(
-                        "python3",
+                        "/opt/venv/bin/python3",
                         CLUSTERING_PREDICTION_SCRIPT_PATH,
                         Arrays.toString(focusesAttributes.toArray()),
                         CLUSTERING_PREDICTION_MODEL_PATH);

@@ -4,6 +4,7 @@ import java.io.IOException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,6 +17,7 @@ import sk.uniza.fri.alfri.service.IStudentService;
 
 @RequestMapping("/api/student")
 @RestController
+@PreAuthorize("hasAnyRole({'ROLE_STUDENT', 'ROLE_TEACHER'})")
 @Slf4j
 public class StudentController {
   private final IAuthService authService;
