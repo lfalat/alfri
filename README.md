@@ -40,6 +40,7 @@ V termináli musíme byť v zložke FE.
    `docker buildx build --platform linux/amd64 -t groben5558/alfri:alfri-frontend -f Dockerfile . --push`
 
 ## Po uploadnutí nových imagov je potrebné reštartovať Azure Web app
+Po spustení aplikácie je potrebné otvoriť URL adresu nasadenej aplikácie kvôli jej naštartovaniu, kedže sa jedná o cold-start systém.
 Aplikácia sa štartuje niekoľko minút kvôli nízkemu hardvéru servera. FE sa spustí takmer hneď, no BE sa púšťa o niekoľko minút neskôr. Ak je BE spustený, jeho logy vidíme v `Log stream` alebo v sekcii `Monitoring/Health-check/Instances`, kde aplikáciu vidíme ako "healthy".
 
 # Prvé nasadenie aplikácie
