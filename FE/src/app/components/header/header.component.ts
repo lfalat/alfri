@@ -78,4 +78,8 @@ export class HeaderComponent {
   navigateToSubjectGradeCorrelation() {
     this.router.navigate(['subjects-grades-correlation']);
   }
+
+  navigateToAverageGradeAnalysis() {
+    this.router.navigate(['average-grade-analysis']);
+  }
 }

@@ -162,6 +162,11 @@ export interface SubjectGradesDto {
   gradeAverage: number;
 }
 
+export interface AverageGradeDto {
+  year: number;
+  averageGrade: number;
+}
+
 export interface SubjectPassingPrediction {
   subjectName: string;
   subjectCode: string;

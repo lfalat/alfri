@@ -1,0 +1,15 @@
+<div>
+  <label for="programSelect">Vyberte študijný program: </label>
+  <select id="programSelect" [(ngModel)]="selectedProgram" (change)="onProgramChange()">
+    <option *ngFor="let program of studyPrograms" [value]="program">{{ program }}</option>
+  </select>
+</div>
+
+<div style="display: block;">
+  <canvas baseChart
+          [data]="lineChartData"
+          [options]="lineChartOptions"
+          [type]="lineChartType">
+  </canvas>
+</div>
+
