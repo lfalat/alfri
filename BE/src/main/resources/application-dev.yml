@@ -15,4 +15,7 @@ spring:
       secret-key: ${JWT_DEV_SECRET_KEY:3cfa76ef14937c1c0ea519f8fc057a80fcd04a7420f8e8bcd0a7567c272e007b}
       expiration-time: ${JWT_DEV_EXPIRATION_TIME:3600000}
 frontend-url: ${FRONTEND_DEV_URL:*}
+# email of user that you want to act as
 default-user-email: szathmary@stud.uniza.sk
+# roles that you want to have - upper case with comma in between them
+default-user-roles: STUDENT, TEACHER, VISITOR
