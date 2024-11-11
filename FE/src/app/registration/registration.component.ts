@@ -19,7 +19,7 @@ import { NgForOf, NgIf } from '@angular/common';
 import { HttpClientModule, HttpErrorResponse } from '@angular/common/http';
 import { AuthService } from '../services/auth.service';
 import type { RegisterUserDto, Role } from '../types';
-import { ErrorService } from '../services/error.service';
+import { NotificationService } from '../services/notification-servie.service';
 import { UserService } from '../services/user.service';
 import { JwtService } from '../services/jwt.service';
 import { ReplaySubject, takeUntil } from 'rxjs';
@@ -55,7 +55,7 @@ export class RegistrationComponent implements OnInit, OnDestroy {
     private formBuilder: FormBuilder,
     private router: Router,
     private authService: AuthService,
-    private errorService: ErrorService,
+    private errorService: NotificationService,
     private userService: UserService,
     private jwtService: JwtService
   ) {
