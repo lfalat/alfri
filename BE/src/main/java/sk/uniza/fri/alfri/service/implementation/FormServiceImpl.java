@@ -1,6 +1,10 @@
 package sk.uniza.fri.alfri.service.implementation;
 
 import jakarta.transaction.Transactional;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
@@ -16,17 +20,13 @@ import sk.uniza.fri.alfri.entity.QuestionOption;
 import sk.uniza.fri.alfri.entity.Questionnaire;
 import sk.uniza.fri.alfri.entity.QuestionnaireSection;
 import sk.uniza.fri.alfri.entity.User;
+import sk.uniza.fri.alfri.exception.QuestionnaireNotFilledException;
 import sk.uniza.fri.alfri.mapper.AnswerMapper;
 import sk.uniza.fri.alfri.mapper.QuestionnaireMapper;
 import sk.uniza.fri.alfri.repository.AnswerRepository;
 import sk.uniza.fri.alfri.repository.QuestionRepository;
 import sk.uniza.fri.alfri.repository.QuestionnaireRepository;
 import sk.uniza.fri.alfri.service.FormService;
-
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
 
 @Service
 @Slf4j
@@ -213,7 +213,10 @@ public class FormServiceImpl implements FormService {
         }
 
         if (!this.answerRepository.existsByAnswerQuestionnaireAndUserId(questionnaire.get(), user)) {
-            throw new IllegalArgumentException(String.format("User with id %d has not filled form with id %d", user.getId(), questionnaire.get().getId()));
+      throw new QuestionnaireNotFilledException(
+          String.format(
+              "User with id %d has not filled form with id %d",
+              user.getId(), questionnaire.get().getId()));
         }
     }
 

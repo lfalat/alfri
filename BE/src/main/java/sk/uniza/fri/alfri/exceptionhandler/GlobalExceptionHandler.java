@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import sk.uniza.fri.alfri.exception.InvalidCredentialsException;
+import sk.uniza.fri.alfri.exception.QuestionnaireNotFilledException;
 import sk.uniza.fri.alfri.exception.UserAlreadyRegisteredException;
 
 @ControllerAdvice
@@ -48,6 +49,14 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     log.error(ex.getMessage());
     return handleExceptionInternal(
         ex, ex.getMessage(), new HttpHeaders(), HttpStatus.NOT_FOUND, request);
+  }
+
+  @ExceptionHandler(QuestionnaireNotFilledException.class)
+  public ResponseEntity<Object> handleQuestionnaireNotFilledException(
+      QuestionnaireNotFilledException ex, WebRequest request) {
+    log.error(ex.getMessage());
+    return handleExceptionInternal(
+        ex, ex.getMessage(), new HttpHeaders(), HttpStatus.I_AM_A_TEAPOT, request);
   }
 
   @ExceptionHandler(ResourceNotFoundException.class)

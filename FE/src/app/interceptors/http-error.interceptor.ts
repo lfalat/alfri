@@ -9,8 +9,11 @@ export const httpErrorInterceptor: HttpInterceptorFn = (req, next) => {
   return next(req).pipe(
     catchError((error: HttpErrorResponse) => {
       if (error.status === 403) {
-        // Show notification
-        notificationService.showError('You do not have privileges for this action', '');
+        notificationService.showError('Na vykonanie akcie nemáte oprávnenie', '');
+      }
+
+      if (error.status === 418) {
+        notificationService.showWarning('Nevyplnili ste dotazník', 'OK');
       }
       throw error;
     })

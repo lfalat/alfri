@@ -18,5 +18,11 @@ spring:
     jwt:
       secret-key: ${JWT_PROD_SECRET_KEY}
       expiration-time: ${JWT_PROD_EXPIRATION_TIME}
+
+python:
+  executable_path: ${PYTHON_PROD_EXECUTABLE_PATH}
+  clustering_prediction_script_path: ${PROD_CLUSTERING_PREDICTION_SCRIPT_PATH}
+  clustering_prediction_model_path: ${PROD_CLUSTERING_PREDICTION_MODEL_PATH}
+
 frontend-url: ${FRONTEND_PROD_URL}
 default-user-email: "-" # no default user in production
