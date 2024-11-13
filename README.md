@@ -70,9 +70,12 @@ Po vytvorení Web app:
    - `JWT_PROD_EXPIRATION_TIME` - čas expirácie JWT tokenu v ms
    - `JWT_PROD_SECRET_KEY` - privátny kľúč pre šifrovanie a podpisovanie JWT kľúčov (64 znakov)
    - `PROD_SHOW_SQL` - bool pre zobrazenie SQL selectov v logoch (TRUE/FALSE)
+   - `PYTHON_PROD_EXECUTABLE_PATH` - cesta k python executable
+   - `PROD_CLUSTERING_PREDICTION_SCRIPT_PATH` - cesta k scriptu pre zhlukovanie predmetov
+   - `PROD_CLUSTERING_PREDICTION_MODEL_PATH` - cesta k modelu pre zhlukvoanie predmetov
 
 2. Sekcia **Monitoring/Health-check** - nastaviť health-check aplikácie na `backend/actuator/health`.
 
-Server reštartujeme a čakáme.
+Server reštartujeme a čakáme. Po spustení aplikácie je potrebné otvoriť URL adresu nasadenej aplikácie kvôli jej naštartovaniu, kedže sa jedná o cold-start systém.
 
 URL aplikácie nájdeme v **Overview - Default domain**.
