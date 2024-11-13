@@ -15,7 +15,7 @@ import sk.uniza.fri.alfri.service.IStudyProgramService;
 
 @RequestMapping("/api/studyProgram")
 @RestController
-@PreAuthorize("hasAnyRole({'ROLE_STUDENT', 'ROLE_TEACHER'})")
+@PreAuthorize("hasAnyRole({'ROLE_STUDENT', 'ROLE_TEACHER', 'ROLE_ADMIN'})")
 @Slf4j
 public class StudyProgramController {
   private final StudyProgramMapper studyProgramMapper;

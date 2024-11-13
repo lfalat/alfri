@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { HttpClient } from '@angular/common/http';
-import type { Observable } from 'rxjs';
+import { Observable, ReplaySubject, take } from 'rxjs';
 import { Role, UserDto } from '../types';
 import { environment } from '../../environments/environment';
 
@@ -10,10 +10,22 @@ import { environment } from '../../environments/environment';
   providedIn: 'root'
 })
 export class UserService {
+  get userData(): Observable<UserDto> {
+    return this._userData.asObservable();
+  }
+
   public userId: number | undefined;
+
+  private readonly _userData: ReplaySubject<UserDto> = new ReplaySubject(1);
   private readonly BE_URL = `${environment.API_URL}/user`;
 
-  constructor(private http: HttpClient, public jwtHelper: JwtHelperService) {
+  constructor(private readonly http: HttpClient, public jwtHelper: JwtHelperService) {}
+
+  public loadUserData() {
+    this.loadUserInfo().pipe(take(1)).subscribe((userData: UserDto) => {
+      console.log(userData);
+      this._userData.next(userData);
+    });
   }
 
   saveUserId(userId: number) {
@@ -24,7 +36,7 @@ export class UserService {
     return !this.jwtHelper.isTokenExpired();
   }
 
-  getUserInfo(): Observable<UserDto> {
+  loadUserInfo(): Observable<UserDto> {
     return this.http.get<UserDto>(`${this.BE_URL}/profile`);
   }
 

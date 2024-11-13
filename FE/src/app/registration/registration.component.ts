@@ -49,15 +49,15 @@ export class RegistrationComponent implements OnInit, OnDestroy {
   roles: Role[] = [];
   public isError = false;
   public errorText = '';
-  private destroyed$: ReplaySubject<void> = new ReplaySubject(1);
+  private readonly destroyed$: ReplaySubject<void> = new ReplaySubject(1);
 
   constructor(
-    private formBuilder: FormBuilder,
-    private router: Router,
-    private authService: AuthService,
-    private errorService: NotificationService,
-    private userService: UserService,
-    private jwtService: JwtService
+    private readonly formBuilder: FormBuilder,
+    private readonly router: Router,
+    private readonly authService: AuthService,
+    private readonly errorService: NotificationService,
+    private readonly userService: UserService,
+    private readonly jwtService: JwtService
   ) {
     const formOptions: AbstractControlOptions = {
       validators: [this.mustMatch('password', 'confirmPassword')],
@@ -108,8 +108,8 @@ export class RegistrationComponent implements OnInit, OnDestroy {
       }
 
       if (control.value !== matchingControl.value) {
-        matchingControl.setErrors({mustMatch: true});
-        return {mustMatch: true};
+        matchingControl.setErrors({ mustMatch: true });
+        return { mustMatch: true };
       } else {
         matchingControl.setErrors(null);
         return null;
@@ -125,7 +125,7 @@ export class RegistrationComponent implements OnInit, OnDestroy {
     const userData: RegisterUserDto = {
       firstName: this.registerForm.value.name,
       lastName: this.registerForm.value.surname,
-      roleId: this.registerForm.value.roleId,
+      rolesIds: [this.registerForm.value.roleId],
       email: this.registerForm.value.email,
       password: this.registerForm.value.password,
     };

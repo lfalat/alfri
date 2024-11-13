@@ -26,3 +26,4 @@ python:
 
 frontend-url: ${FRONTEND_PROD_URL}
 default-user-email: "-" # no default user in production
+default-user-roles:

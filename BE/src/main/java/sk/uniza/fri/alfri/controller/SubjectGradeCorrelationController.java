@@ -15,7 +15,7 @@ import sk.uniza.fri.alfri.service.SubjectGradeCorrelationService;
 
 @RestController
 @RequestMapping("/api/subject-grade-correlation-controller")
-@PreAuthorize("hasAnyRole({'ROLE_STUDENT', 'ROLE_TEACHER'})")
+@PreAuthorize("hasAnyRole({'ROLE_STUDENT', 'ROLE_TEACHER', 'ROLE_ADMIN'})")
 @Slf4j
 public class SubjectGradeCorrelationController {
   private final SubjectGradeCorrelationMapper subjectGradeCorrelationMapper;

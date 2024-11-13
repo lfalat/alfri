@@ -10,6 +10,8 @@ import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle } from '@angular/material/expansion';
+import { UserDto } from '../../types';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-header',
@@ -34,7 +36,23 @@ import { MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle } fr
   ]
 })
 export class HeaderComponent {
-  constructor(private userService: UserService, private authService: AuthService, private router: Router) {
+  private userData: UserDto | undefined;
+
+  private readonly ROLE_STUDENT = 'ROLE_STUDENT';
+  private readonly ROLE_TEACHER = 'ROLE_TEACHER';
+
+  get issUserStudent(): boolean {
+    return this.userData?.roles.map((role) => role.name).includes(this.ROLE_STUDENT) ?? false;
+  }
+
+  get isUserTeacher(): boolean {
+    return this.userData?.roles.map((role) => role.name).includes(this.ROLE_TEACHER) ?? false;
+  }
+
+  constructor(private readonly userService: UserService, private readonly authService: AuthService, private readonly router: Router) {
+    this.userService.userData.pipe(takeUntilDestroyed()).subscribe((userData: UserDto) => {
+      this.userData = userData;
+    });
   }
 
   loggedIn() {

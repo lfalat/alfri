@@ -33,7 +33,7 @@ import sk.uniza.fri.alfri.service.implementation.JwtService;
 
 @RequestMapping("/api/subject")
 @RestController
-@PreAuthorize("hasAnyRole({'ROLE_STUDENT', 'ROLE_TEACHER'})")
+@PreAuthorize("hasAnyRole({'ROLE_STUDENT', 'ROLE_TEACHER', 'ROLE_ADMIN'})")
 @Slf4j
 public class SubjectController {
   private final ISubjectService subjectService;

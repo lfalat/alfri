@@ -46,7 +46,7 @@ export class ProfileComponent {
     }, {
       validator: this.mustMatch('newPassword', 'confirmNewPassword')
     });
-    this.us.getUserInfo().pipe(takeUntil(this.destroy)).subscribe(
+    this.us.loadUserInfo().pipe(takeUntil(this.destroy)).subscribe(
       value => {
         this._userData = value;
         this.isLoading = false;

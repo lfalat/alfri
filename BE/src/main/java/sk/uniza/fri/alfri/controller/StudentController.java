@@ -17,7 +17,7 @@ import sk.uniza.fri.alfri.service.IStudentService;
 
 @RequestMapping("/api/student")
 @RestController
-@PreAuthorize("hasAnyRole({'ROLE_STUDENT', 'ROLE_TEACHER'})")
+@PreAuthorize("hasAnyRole({'ROLE_STUDENT', 'ROLE_TEACHER', 'ROLE_ADMIN'})")
 @Slf4j
 public class StudentController {
   private final IAuthService authService;
