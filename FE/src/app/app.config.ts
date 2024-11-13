@@ -3,8 +3,9 @@ import { provideRouter } from '@angular/router';
 
 import { routes } from './app.routes';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
-import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { provideHttpClient, withInterceptors, withInterceptorsFromDi } from '@angular/common/http';
 import { JwtModule } from '@auth0/angular-jwt';
+import { httpErrorInterceptor } from './interceptors/http-error.interceptor';
 
 export const tokenGetter = () => {
   return localStorage.getItem('access_token');
@@ -23,6 +24,7 @@ export const appConfig: ApplicationConfig = {
       }),
     ),
     provideHttpClient(
-      withInterceptorsFromDi()
-    ), ]
+      withInterceptorsFromDi(),
+      withInterceptors([httpErrorInterceptor])
+    ), ],
 };

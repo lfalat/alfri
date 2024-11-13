@@ -15,10 +15,12 @@
           (subjectDetailNavigate)="navigateToSubjectDetail($event)">
         </app-subjects-table>
       </div>
-      <button color="primary" mat-stroked-button class="mt-5 w-100" (click)="getSimilarSubjects()">Potvrdiť</button>
-      @if (isLoadingRecommendetSubjects) {
-        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
-      }
+      <div class="mb-3">
+        <button color="primary" mat-stroked-button class="mt-5 w-100" (click)="getSimilarSubjects()">Potvrdiť</button>
+        @if (isLoadingRecommendetSubjects) {
+          <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+        }
+      </div>
     </div>
     <div class="col-md-2 d-flex align-items-center justify-content-center">
       <mat-icon>arrow_forward</mat-icon>

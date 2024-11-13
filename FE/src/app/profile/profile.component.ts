@@ -8,7 +8,7 @@ import { AuthService } from '../services/auth.service';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { MatButton } from '@angular/material/button';
-import { ErrorService } from '../services/error.service';
+import { NotificationService } from '../services/notification-servie.service';
 import { Router } from '@angular/router';
 
 
@@ -37,7 +37,7 @@ export class ProfileComponent {
     private fb: FormBuilder,
     private us: UserService,
     private as: AuthService,
-    private es: ErrorService,
+    private es: NotificationService,
     private router: Router) {
     this.profileForm = this.fb.group({
       currentPassword: ['', Validators.required],
@@ -46,7 +46,7 @@ export class ProfileComponent {
     }, {
       validator: this.mustMatch('newPassword', 'confirmNewPassword')
     });
-    this.us.getUserInfo().pipe(takeUntil(this.destroy)).subscribe(
+    this.us.loadUserInfo().pipe(takeUntil(this.destroy)).subscribe(
       value => {
         this._userData = value;
         this.isLoading = false;

@@ -13,7 +13,7 @@ import { MatRadioButton, MatRadioGroup } from '@angular/material/radio';
 import { MatList, MatListItem } from '@angular/material/list';
 import { MatOption, MatSelect } from '@angular/material/select';
 import { Router } from '@angular/router';
-import { ErrorService } from '../services/error.service';
+import { NotificationService } from '../services/notification-servie.service';
 import { USER_FORM_ID } from '../home/home.component';
 
 @Component({
@@ -53,7 +53,10 @@ export class GradeFormComponent implements OnInit {
   form!: Form;
   formGroups: FormGroup[] = [];
 
-  constructor(private fb: FormBuilder, private formService: FormService, private router: Router, private errorService: ErrorService) {
+  constructor(private fb: FormBuilder,
+              private formService: FormService,
+              private router: Router,
+              private errorService: NotificationService) {
   }
 
   ngOnInit(): void {
@@ -105,7 +108,7 @@ export class GradeFormComponent implements OnInit {
           };
           if (question.answerType === 'CHECKBOX') {
             question.options.forEach((option: Option, index) => {
-              if (group.get(`${ question.questionIdentifier }${ index }`)?.value) {
+              if (group.get(`${question.questionIdentifier}${index}`)?.value) {
                 answer.texts.push({ answerText: option.questionOption });
               }
             });

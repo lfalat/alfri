@@ -1,7 +1,15 @@
 package sk.uniza.fri.alfri.service.implementation;
 
 import jakarta.persistence.EntityNotFoundException;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -23,25 +31,23 @@ import sk.uniza.fri.alfri.repository.SubjectRepository;
 import sk.uniza.fri.alfri.service.ISubjectService;
 import sk.uniza.fri.alfri.util.ProcessUtils;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
 @Service
 @Slf4j
 public class SubjectService implements ISubjectService {
-    public static final String CLUSTERING_PREDICTION_SCRIPT_PATH = "./python_scripts/predict.py";
-    public static final String CLUSTERING_PREDICTION_MODEL_PATH = "./python_scripts/kmeans_model.pkl";
-
     private final StudyProgramSubjectRepository studyProgramSubjectRepository;
     private final SubjectRepository subjectRepository;
     private final AnswerRepository answerRepository;
     private final FocusRepository focusRepository;
     private final SubjectGradeRepository subjectGradeRepository;
+
+    @Value("${python.executable_path}")
+    private String pythonExcecutablePath;
+
+    @Value("${python.clustering_prediction_script_path}")
+    private String clusteringPredictionScriptPath;
+
+    @Value("${python.clustering_prediction_model_path}")
+    private String clusteringPredictionModelPath;
 
     public SubjectService(
             StudyProgramSubjectRepository studyProgramSubjectRepository,
@@ -100,12 +106,12 @@ public class SubjectService implements ISubjectService {
 
         ProcessBuilder processBuilder =
                 new ProcessBuilder(
-                        "python3",
-                        CLUSTERING_PREDICTION_SCRIPT_PATH,
+                        pythonExcecutablePath,
+                        clusteringPredictionScriptPath,
                         Arrays.toString(focusesAttributes.toArray()),
-                        CLUSTERING_PREDICTION_MODEL_PATH);
+                        clusteringPredictionModelPath);
         String output = ProcessUtils.getOutputFromProces(processBuilder);
-        System.out.println(output);
+        log.info("Output of clustering: {}", output);
 
         String cleaned = output.replace("[", "").replace("]", "").replace("\"", "");
         String[] parts = cleaned.split(" ");

@@ -10,6 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.CacheControl;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import sk.uniza.fri.alfri.common.pagitation.PageDefinition;
 import sk.uniza.fri.alfri.common.pagitation.PagitationRequestQuery;
@@ -32,16 +33,18 @@ import sk.uniza.fri.alfri.service.implementation.JwtService;
 
 @RequestMapping("/api/subject")
 @RestController
+@PreAuthorize("hasAnyRole({'ROLE_STUDENT', 'ROLE_TEACHER', 'ROLE_ADMIN'})")
 @Slf4j
 public class SubjectController {
   private final ISubjectService subjectService;
   private final JwtService jwtService;
   private final UserService userService;
 
-  public SubjectController(ISubjectService subjectService, JwtService jwtService, UserService userService) {
+  public SubjectController(
+      ISubjectService subjectService, JwtService jwtService, UserService userService) {
     this.subjectService = subjectService;
-      this.jwtService = jwtService;
-      this.userService = userService;
+    this.jwtService = jwtService;
+    this.userService = userService;
   }
 
   @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
@@ -80,7 +83,8 @@ public class SubjectController {
   }
 
   @GetMapping(path = "/focus-prediction", produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<List<SubjectExtendedDto>> getAllSubjectsFromFocusPrediction(@RequestHeader(value = "Authorization") String token) {
+  public ResponseEntity<List<SubjectExtendedDto>> getAllSubjectsFromFocusPrediction(
+      @RequestHeader(value = "Authorization") String token) {
 
     String parsedToken = token.replace("Bearer ", "");
     String username = jwtService.extractUsername(parsedToken);
@@ -89,8 +93,7 @@ public class SubjectController {
     List<Subject> subjects = this.subjectService.makeSubjectsFocusPrediction(user);
 
     List<SubjectExtendedDto> similarSubjectsDto =
-            subjects.stream()
-                    .map(SubjectMapper.INSTANCE::toSubjectExtendedDto).toList();
+        subjects.stream().map(SubjectMapper.INSTANCE::toSubjectExtendedDto).toList();
 
     return ResponseEntity.ok(similarSubjectsDto);
   }
@@ -168,18 +171,15 @@ public class SubjectController {
 
   @GetMapping("/subjectReport")
   public ResponseEntity<List<SubjectGradeDto>> getReport(
-          @RequestParam String sortCriteria,
-          @RequestParam @Positive Integer count) {
+      @RequestParam String sortCriteria, @RequestParam @Positive Integer count) {
     log.info("Getting top {} subjects sorted by: {}", count, sortCriteria);
 
     List<SubjectGrade> subjects = subjectService.getFilteredSubjects(sortCriteria, count);
     log.info("{} subjects returned", subjects.size());
 
-    List<SubjectGradeDto> subjectGradeDtos = subjects.stream()
-            .map(SubjectGradeMapper.INSTANCE::toDto)
-            .toList();
+    List<SubjectGradeDto> subjectGradeDtos =
+        subjects.stream().map(SubjectGradeMapper.INSTANCE::toDto).toList();
 
     return ResponseEntity.ok().body(subjectGradeDtos);
   }
-
 }

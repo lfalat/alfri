@@ -1,6 +1,7 @@
 package sk.uniza.fri.alfri.service.implementation;
 
 import jakarta.persistence.EntityNotFoundException;
+import java.util.List;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 import sk.uniza.fri.alfri.dto.user.ChangePasswordDto;
 import sk.uniza.fri.alfri.entity.Role;
 import sk.uniza.fri.alfri.entity.User;
+import sk.uniza.fri.alfri.entity.UserRole;
 import sk.uniza.fri.alfri.exception.InvalidCredentialsException;
 import sk.uniza.fri.alfri.exception.UserAlreadyRegisteredException;
 import sk.uniza.fri.alfri.repository.RoleRepository;
@@ -43,34 +45,38 @@ public class AuthService implements IAuthService {
   }
 
   @Override
-  public User registerUser(User userToRegister) throws UserAlreadyRegisteredException {
-
+  public User registerUser(User userToRegister, List<Integer> rolesIds)
+      throws UserAlreadyRegisteredException {
     log.info("Trying to register user with email {}", userToRegister.getEmail());
 
-    String userToRegisterEmail = userToRegister.getUsername();
+    // Check if a user with the same email is already registered
     if (userRepository.findByEmail(userToRegister.getEmail()).isPresent()) {
       throw new UserAlreadyRegisteredException(
-          String.format("User with email %s is already registered!", userToRegisterEmail));
+          String.format("User with email %s is already registered!", userToRegister.getEmail()));
     }
 
-    Integer roleId = userToRegister.getRole().getId();
-    Role userRole =
-        roleRepository
-            .findById(roleId)
-            .orElseThrow(
-                () ->
-                    new EntityNotFoundException(
-                        String.format("Role with id %d was not found!", roleId)));
+    List<Role> roles =
+        rolesIds.stream()
+            .map(
+                roleId ->
+                    roleRepository
+                        .findById(roleId)
+                        .orElseThrow(
+                            () ->
+                                new EntityNotFoundException(
+                                    String.format("Role with id %d was not found", roleId))))
+            .toList();
 
     User user =
         User.builder()
-            .role(userRole)
             .firstName(userToRegister.getFirstName())
             .lastName(userToRegister.getLastName())
             .email(userToRegister.getEmail())
             .password(passwordEncoder.encode(userToRegister.getPassword()))
-            .adminRights(false)
             .build();
+
+    List<UserRole> userRoles = roles.stream().map(role -> new UserRole(null, user, role)).toList();
+    user.setUserRoles(userRoles);
 
     log.info("User with email {} was registered!", user.getEmail());
 

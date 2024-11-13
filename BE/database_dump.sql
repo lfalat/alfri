@@ -155,19 +155,19 @@ ALTER SEQUENCE public.answer_type_answer_type_id_seq OWNED BY public.answer_type
 
 CREATE TABLE public.focus
 (
-    math_focus       integer NOT NULL,
-    logic_focus      integer NOT NULL,
+    math_focus        integer NOT NULL,
+    logic_focus       integer NOT NULL,
     programming_focus integer NOT NULL,
-    design_focus     integer NOT NULL,
-    economics_focus  integer NOT NULL,
-    management_focus integer NOT NULL,
-    hardware_focus   integer NOT NULL,
-    network_focus    integer NOT NULL,
-    data_focus       integer NOT NULL,
-    testing_focus    integer NOT NULL,
-    language_focus   integer NOT NULL,
-    physical_focus   integer NOT NULL,
-    subject_id       integer NOT NULL
+    design_focus      integer NOT NULL,
+    economics_focus   integer NOT NULL,
+    management_focus  integer NOT NULL,
+    hardware_focus    integer NOT NULL,
+    network_focus     integer NOT NULL,
+    data_focus        integer NOT NULL,
+    testing_focus     integer NOT NULL,
+    language_focus    integer NOT NULL,
+    physical_focus    integer NOT NULL,
+    subject_id        integer NOT NULL
 );
 
 
@@ -205,13 +205,13 @@ ALTER SEQUENCE public.options_answer_seq OWNER TO postgres;
 
 CREATE TABLE public.question
 (
-    question_id         integer NOT NULL,
-    section_id          integer NOT NULL,
-    answer_type_id      integer NOT NULL,
+    question_id               integer NOT NULL,
+    section_id                integer NOT NULL,
+    answer_type_id            integer NOT NULL,
     position_in_questionnaire integer NOT NULL,
-    question_title      text    NOT NULL,
-    optional            boolean NOT NULL,
-    question_identifier text    NOT NULL
+    question_title            text    NOT NULL,
+    optional                  boolean NOT NULL,
+    question_identifier       text    NOT NULL
 );
 
 
@@ -291,9 +291,9 @@ ALTER SEQUENCE public.question_question_id_seq OWNED BY public.question.question
 
 CREATE TABLE public.questionnaire
 (
-    questionnaire_id integer                NOT NULL,
-    title            character varying(100) NOT NULL,
-    description      text                   NOT NULL,
+    questionnaire_id integer                                   NOT NULL,
+    title            character varying(100)                    NOT NULL,
+    description      text                                      NOT NULL,
     date_of_creation timestamp without time zone DEFAULT now() NOT NULL
 );
 
@@ -413,10 +413,10 @@ ALTER SEQUENCE public.role_role_id_seq OWNED BY public.role.role_id;
 
 CREATE TABLE public.student
 (
-    student_id integer NOT NULL,
-    user_id    integer,
+    student_id       integer NOT NULL,
+    user_id          integer,
     study_program_id integer NOT NULL,
-    year       integer NOT NULL
+    year             integer NOT NULL
 );
 
 
@@ -456,8 +456,8 @@ CREATE TABLE public.student_subject
 (
     student_id integer NOT NULL,
     subject_id integer NOT NULL,
-    mark character varying(2),
-    year integer NOT NULL
+    mark       character varying(2),
+    year       integer NOT NULL
 );
 
 
@@ -593,17 +593,12 @@ ALTER SEQUENCE public.subject_subject_id_seq OWNED BY public.subject.subject_id;
 CREATE TABLE public."user"
 (
     user_id    integer                NOT NULL,
-    role_id    integer                NOT NULL,
     email      character varying(100) NOT NULL,
     first_name character varying(50)  NOT NULL,
     last_name  character varying(50)  NOT NULL,
-    password   character varying(72)  NOT NULL,
-    admin_rights boolean              NOT NULL default false
+    password   character varying(72)  NOT NULL
 );
 
-
-ALTER TABLE public."user"
-    OWNER TO postgres;
 
 --
 -- TOC entry 234 (class 1259 OID 17679)
@@ -1160,15 +1155,6 @@ ALTER TABLE ONLY public.answer
 
 
 --
--- TOC entry 3375 (class 2606 OID 17833)
--- Name: user user_role_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public."user"
-    ADD CONSTRAINT user_role_id_fk FOREIGN KEY (role_id) REFERENCES public.role (role_id);
-
-
---
 -- TOC entry 3560 (class 0 OID 0)
 -- Dependencies: 5
 -- Name: SCHEMA public; Type: ACL; Schema: -; Owner: pg_database_owner
@@ -1437,6 +1423,35 @@ GRANT ALL ON TABLE public."user" TO alfri_be;
 
 GRANT ALL ON SEQUENCE public.user_user_id_seq TO alfri_be;
 
+ALTER TABLE public."user"
+    OWNER TO postgres;
+
+CREATE SEQUENCE public.user_role_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+create table public.user_role
+(
+    id      integer primary key not null default nextval('public.user_role_id_seq'::regclass),
+    user_id integer,
+    role_id integer,
+    foreign key (role_id) references public.role (role_id)
+        match simple on update no action on delete no action,
+    foreign key (user_id) references public."user" (user_id)
+        match simple on update no action on delete no action
+);
+
+ALTER TABLE public.user_role
+    OWNER TO postgres;
+
+GRANT ALL ON TABLE public.user_role TO alfri_be;
+GRANT ALL ON SEQUENCE public.user_role_id_seq TO alfri_be;
+
+
 insert into public.answer_type (answer_type_id, name)
 values (2, 'NUMERIC');
 insert into public.answer_type (answer_type_id, name)
@@ -1454,6 +1469,8 @@ INSERT INTO public.role (role_id, name)
 VALUES (1, 'student');
 INSERT INTO public.role (role_id, name)
 VALUES (3, 'visitor');
+INSERT INTO public.role (role_id, name)
+VALUES (4, 'admin');
 
 INSERT INTO public.study_program (study_program_id, name)
 VALUES (3, 'informatika');
@@ -1461,12 +1478,12 @@ VALUES (3, 'informatika');
 INSERT INTO public.questionnaire (questionnaire_id, title, description, date_of_creation)
 VALUES (2, 'Úvodný dotazník', 'úvod', '2024-05-23 11:11:21.000000');
 
-INSERT INTO public."user" (user_id, role_id, email, first_name, last_name, password)
-VALUES (1, 1, 'nagy1@stud.uniza.sk', 'Adam', 'Nagy', '$2a$10$FWZ7zGzeQGdlMX3Bd.nTTOYyY0n8GtsGdgq53a414w65OPHgOv8Me');
-INSERT INTO public."user" (user_id, role_id, email, first_name, last_name, password)
-VALUES (2, 1, 'majba@stud.uniza.sk', 'Maroš', 'Majba', '$2a$10$.s7derW1HlXmpRLyTEJjGOZEV6nZEuYYZqAWYXrIauIHLPm9u5mI6');
-INSERT INTO public."user" (user_id, role_id, email, first_name, last_name, password)
-VALUES (3, 1, 'szathmary@stud.uniza.sk', 'Peter', 'Szathmáry',
+INSERT INTO public."user" (user_id, email, first_name, last_name, password)
+VALUES (1, 'nagy1@stud.uniza.sk', 'Adam', 'Nagy', '$2a$10$FWZ7zGzeQGdlMX3Bd.nTTOYyY0n8GtsGdgq53a414w65OPHgOv8Me');
+INSERT INTO public."user" (user_id, email, first_name, last_name, password)
+VALUES (2, 'majba@stud.uniza.sk', 'Maroš', 'Majba', '$2a$10$.s7derW1HlXmpRLyTEJjGOZEV6nZEuYYZqAWYXrIauIHLPm9u5mI6');
+INSERT INTO public."user" (user_id, email, first_name, last_name, password)
+VALUES (3, 'szathmary@stud.uniza.sk', 'Peter', 'Szathmáry',
         '$2a$10$rcn.t1DBfl67OcbY/5bqmeRGLuSVkueYmp19I/CgfMz0sQuS1UbM2');
 
 INSERT INTO public.subject (subject_id, name, code, abbreviation)
@@ -2637,40 +2654,51 @@ CREATE SEQUENCE public.subject_grade_correlation_id_seq
     NO MINVALUE
     NO MAXVALUE
     CACHE 1;
+
+GRANT ALL ON SEQUENCE public.subject_grade_correlation_id_seq TO alfri_be;
 --new
 
-UPDATE public."user"
-SET admin_rights = true
-WHERE user_id IN (1, 2, 3);
-
-CREATE TABLE public.department (
-                                   department_id SERIAL PRIMARY KEY,
-                                   name VARCHAR(255) NOT NULL,
-                                   abbreviation VARCHAR(10) NOT NULL
+CREATE TABLE public.department
+(
+    department_id SERIAL PRIMARY KEY,
+    name          VARCHAR(255) NOT NULL,
+    abbreviation  VARCHAR(10)  NOT NULL
 );
 
-CREATE TABLE public.teacher (
-                                teacher_id SERIAL PRIMARY KEY,
-                                user_id INT REFERENCES public."user"(user_id) ON DELETE CASCADE,
-                                department_id INT REFERENCES public.department(department_id) ON DELETE SET NULL
+CREATE TABLE public.teacher
+(
+    teacher_id    SERIAL PRIMARY KEY,
+    user_id       INT REFERENCES public."user" (user_id) ON DELETE CASCADE,
+    department_id INT REFERENCES public.department (department_id) ON DELETE SET NULL
 );
 
-CREATE TABLE public.teacher_subject (
-                                        teacher_id INT REFERENCES public.teacher(teacher_id) ON DELETE CASCADE,
-                                        subject_id INT REFERENCES public.subject(subject_id) ON DELETE CASCADE,
-                                        PRIMARY KEY (teacher_id, subject_id)
+CREATE TABLE public.teacher_subject
+(
+    teacher_id INT REFERENCES public.teacher (teacher_id) ON DELETE CASCADE,
+    subject_id INT REFERENCES public.subject (subject_id) ON DELETE CASCADE,
+    PRIMARY KEY (teacher_id, subject_id)
 );
 
-INSERT INTO public."user" ( role_id, email, first_name, last_name, password, admin_rights) VALUES ( 2, 'lukas.falat@fri.uniza.sk', 'Lukáš', 'Falát', '$2a$10$UQMrrb2DVEF/Gqj26QbVoe4Kshn2XUBz4r6NpKQfkuhTrD8RqaHVa', false);
-INSERT INTO public."user" ( role_id, email, first_name, last_name, password, admin_rights) VALUES ( 2, 'michal.kvet@fri.uniza.sk', 'Michal', 'Kvet', '$2a$10$XU5FXvQvpS9ga.qgZvZAruYeWu1xehZZFH6n8VyJh.PXL14JuXx3m', false);
-INSERT INTO public."user" ( role_id, email, first_name, last_name, password, admin_rights) VALUES ( 2, 'tomas.majer@fri.uniza.sk', 'Tomáš', 'Majer', '$2a$10$aEl.HnC27oRo7WVKSVk5mOLqziyC4FQVkxpxOvffHgYawTdYMuN8G', false);
-INSERT INTO public."user" ( role_id, email, first_name, last_name, password, admin_rights) VALUES ( 2, 'peter.jankovic@fri.uniza.sk', 'Peter', 'Jankovič', '$2a$10$dz0.JBq48tAR6n1oVKXdT.tSUiDdnO8dEfRHFqF7VU8gVHrSmLiqe', false);
-INSERT INTO public."user" ( role_id, email, first_name, last_name, password, admin_rights) VALUES ( 2, 'jozef.kostolny@fri.uniza.sk', 'Jozef', 'Kostolný', '$2a$10$pdGP545Fg/0mrm.sWytWr.WPjLnlF2Dx2d721gWVTw0zWdhAVDur2', false);
+INSERT INTO public."user" (email, first_name, last_name, password)
+VALUES ('lukas.falat@fri.uniza.sk', 'Lukáš', 'Falát', '$2a$10$UQMrrb2DVEF/Gqj26QbVoe4Kshn2XUBz4r6NpKQfkuhTrD8RqaHVa');
+INSERT INTO public."user" (email, first_name, last_name, password)
+VALUES ('michal.kvet@fri.uniza.sk', 'Michal', 'Kvet', '$2a$10$XU5FXvQvpS9ga.qgZvZAruYeWu1xehZZFH6n8VyJh.PXL14JuXx3m');
+INSERT INTO public."user" (email, first_name, last_name, password)
+VALUES ('tomas.majer@fri.uniza.sk', 'Tomáš', 'Majer', '$2a$10$aEl.HnC27oRo7WVKSVk5mOLqziyC4FQVkxpxOvffHgYawTdYMuN8G');
+INSERT INTO public."user" (email, first_name, last_name, password)
+VALUES ('peter.jankovic@fri.uniza.sk', 'Peter', 'Jankovič',
+        '$2a$10$dz0.JBq48tAR6n1oVKXdT.tSUiDdnO8dEfRHFqF7VU8gVHrSmLiqe');
+INSERT INTO public."user" (email, first_name, last_name, password)
+VALUES ('jozef.kostolny@fri.uniza.sk', 'Jozef', 'Kostolný',
+        '$2a$10$pdGP545Fg/0mrm.sWytWr.WPjLnlF2Dx2d721gWVTw0zWdhAVDur2');
 
 
-INSERT INTO public.department ( name, abbreviation) VALUES ('Katedra informatiky', 'KI');
-INSERT INTO public.department (name, abbreviation) VALUES ('Katedra makro a mikroekonomiky', 'KMME');
-INSERT INTO public.department ( name, abbreviation) VALUES ('Katedra matematických metód a operačnej analýzy', 'FRDSA');
+INSERT INTO public.department (name, abbreviation)
+VALUES ('Katedra informatiky', 'KI');
+INSERT INTO public.department (name, abbreviation)
+VALUES ('Katedra makro a mikroekonomiky', 'KMME');
+INSERT INTO public.department (name, abbreviation)
+VALUES ('Katedra matematických metód a operačnej analýzy', 'FRDSA');
 
 create table public.subject_grade_correlation
 (
@@ -2683,6 +2711,8 @@ create table public.subject_grade_correlation
     foreign key (second_subject) references public.subject (subject_id)
         match simple on update no action on delete no action
 );
+
+GRANT ALL ON TABLE public.subject_grade_correlation TO alfri_be;
 
 INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
 VALUES (89, 89, 1);
@@ -4142,16 +4172,34 @@ INSERT INTO public.subject_grade_correlation (first_subject, second_subject, cor
 VALUES (169, 154, -0.07317711019495152);
 INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
 VALUES (169, 169, 1);
-INSERT INTO public.teacher (user_id, department_id) VALUES ( 10, 2);
-INSERT INTO public.teacher (user_id, department_id) VALUES ( 11, 1);
-INSERT INTO public.teacher (user_id, department_id) VALUES ( 12, 3);
-INSERT INTO public.teacher (user_id, department_id) VALUES ( 13, 3);
-INSERT INTO public.teacher (user_id, department_id) VALUES ( 14, 1);
+INSERT INTO public.teacher (user_id, department_id)
+VALUES (10, 2);
+INSERT INTO public.teacher (user_id, department_id)
+VALUES (11, 1);
+INSERT INTO public.teacher (user_id, department_id)
+VALUES (12, 3);
+INSERT INTO public.teacher (user_id, department_id)
+VALUES (13, 3);
+INSERT INTO public.teacher (user_id, department_id)
+VALUES (14, 1);
 
-INSERT INTO public.teacher_subject (teacher_id, subject_id) VALUES (2, 128);
-INSERT INTO public.teacher_subject (teacher_id, subject_id) VALUES (1, 154);
-INSERT INTO public.teacher_subject (teacher_id, subject_id) VALUES (3, 98);
-INSERT INTO public.teacher_subject (teacher_id, subject_id) VALUES (4, 149);
-INSERT INTO public.teacher_subject (teacher_id, subject_id) VALUES (5, 92);
-INSERT INTO public.teacher_subject (teacher_id, subject_id) VALUES (5, 100);
+INSERT INTO public.teacher_subject (teacher_id, subject_id)
+VALUES (2, 128);
+INSERT INTO public.teacher_subject (teacher_id, subject_id)
+VALUES (1, 154);
+INSERT INTO public.teacher_subject (teacher_id, subject_id)
+VALUES (3, 98);
+INSERT INTO public.teacher_subject (teacher_id, subject_id)
+VALUES (4, 149);
+INSERT INTO public.teacher_subject (teacher_id, subject_id)
+VALUES (5, 92);
+INSERT INTO public.teacher_subject (teacher_id, subject_id)
+VALUES (5, 100);
+
+INSERT INTO public.user_role (user_id, role_id)
+VALUES (1, 4);
+INSERT INTO public.user_role (user_id, role_id)
+VALUES (2, 4);
+INSERT INTO public.user_role (user_id, role_id)
+VALUES (3, 4);
 

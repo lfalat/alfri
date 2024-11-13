@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import { SubjectService } from '../services/subject.service';
-import { ErrorService } from '../services/error.service';
+import { NotificationService } from '../services/notification-servie.service';
 import { StudentService } from '../services/student.service';
 import { PageEvent } from '@angular/material/paginator';
 import { map, Observable, of, Subject } from 'rxjs';
@@ -82,7 +82,7 @@ export class RecommendationComponent implements OnInit, OnDestroy {
   constructor(
     private subjectService: SubjectService,
     private studentService: StudentService,
-    private errorService: ErrorService,
+    private errorService: NotificationService,
     private router: Router
   ) {
   }

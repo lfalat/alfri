@@ -34,6 +34,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
   @Value("${default-user-email}")
   private String defaultUserEmail;
 
+  @Value("${default-user-roles}")
+  private String[] defaultUserRoles;
+
   public JwtAuthenticationFilter(
       JwtService jwtService, UserDetailsService userDetailsService, Environment environment) {
     this.jwtService = jwtService;
@@ -58,6 +61,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
           User.builder()
               .username(defaultUserEmail)
               .password("") // Empty password as it's not needed here
+              .roles(defaultUserRoles)
               .build();
 
       UsernamePasswordAuthenticationToken devAuthToken =

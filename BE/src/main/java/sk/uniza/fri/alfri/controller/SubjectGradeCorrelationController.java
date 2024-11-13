@@ -2,10 +2,9 @@ package sk.uniza.fri.alfri.controller;
 
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.query.sqm.ComparisonOperator;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -16,6 +15,7 @@ import sk.uniza.fri.alfri.service.SubjectGradeCorrelationService;
 
 @RestController
 @RequestMapping("/api/subject-grade-correlation-controller")
+@PreAuthorize("hasAnyRole({'ROLE_STUDENT', 'ROLE_TEACHER', 'ROLE_ADMIN'})")
 @Slf4j
 public class SubjectGradeCorrelationController {
   private final SubjectGradeCorrelationMapper subjectGradeCorrelationMapper;

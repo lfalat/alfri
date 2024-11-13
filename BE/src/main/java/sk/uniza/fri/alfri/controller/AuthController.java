@@ -4,13 +4,14 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
+import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import sk.uniza.fri.alfri.dto.user.*;
 import sk.uniza.fri.alfri.entity.User;
 import sk.uniza.fri.alfri.exception.InvalidCredentialsException;
 import sk.uniza.fri.alfri.exception.UserAlreadyRegisteredException;
-import sk.uniza.fri.alfri.mapper.UserMapper;
 import sk.uniza.fri.alfri.service.IAuthService;
 import sk.uniza.fri.alfri.service.implementation.JwtService;
 
@@ -20,10 +21,12 @@ import sk.uniza.fri.alfri.service.implementation.JwtService;
 public class AuthController {
   private final IAuthService authService;
   private final JwtService jwtService;
+  private final ModelMapper modelMapper;
 
-  public AuthController(IAuthService authService, JwtService jwtService) {
+  public AuthController(IAuthService authService, JwtService jwtService, ModelMapper modelMapper) {
     this.authService = authService;
     this.jwtService = jwtService;
+    this.modelMapper = modelMapper;
   }
 
   @PostMapping(
@@ -35,7 +38,7 @@ public class AuthController {
     // Authenticate user
     log.info("AuthenticateUser of user {} started!", credentialsDTO);
 
-    User user = UserMapper.INSTANCE.userCredentialsDtoToUser(credentialsDTO);
+    User user = this.modelMapper.map(credentialsDTO, User.class);
 
     User authenticatedUser;
     authenticatedUser = authService.verifyUser(user);
@@ -54,26 +57,23 @@ public class AuthController {
   public ResponseEntity<UserDto> register(@RequestBody @Valid RegisterUserDto registerUserDto)
       throws UserAlreadyRegisteredException {
     log.info("Starting registration of user with email {}", registerUserDto.getEmail());
-    User userToRegister = UserMapper.INSTANCE.registerUserDtoToUser(registerUserDto);
+    User userToRegister = modelMapper.map(registerUserDto, User.class);
 
-    User registeredUser = authService.registerUser(userToRegister);
+    User registeredUser = authService.registerUser(userToRegister, registerUserDto.getRolesIds());
 
     log.info("User {} was successfully registered!", registeredUser.getEmail());
-    UserDto userDto = UserMapper.INSTANCE.userToUserDto(registeredUser);
+    UserDto userDto = this.modelMapper.map(registeredUser, UserDto.class);
 
     return ResponseEntity.ok(userDto);
   }
 
-  @PostMapping(
-          value = "/change-password",
-          consumes = APPLICATION_JSON_VALUE
-  )
+  @PreAuthorize("hasAnyRole({'ROLE_STUDENT', 'ROLE_TEACHER', 'ROLE_ADMIN', 'ROLE_VISITOR'})")
+  @PostMapping(value = "/change-password", consumes = APPLICATION_JSON_VALUE)
   public void changePassword(@RequestBody @Valid ChangePasswordDto changePasswordDto)
-          throws UserAlreadyRegisteredException {
+      throws UserAlreadyRegisteredException {
     log.info("Starting password change of user with email {}", changePasswordDto.getEmail());
     this.authService.changePassword(changePasswordDto);
 
     log.info("Password for user {} was successfully changed!", changePasswordDto.getEmail());
   }
-
 }
