@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { AdminService } from '../services/admin.service';
 import { UserService } from '../services/user.service';
 import { Role, UserDto } from '../types';
-import {NgForOf} from "@angular/common";
+import { NgForOf } from '@angular/common';
 
 @Component({
   selector: 'app-admin',
