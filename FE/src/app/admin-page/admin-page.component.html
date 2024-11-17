@@ -1,0 +1,35 @@
+<div class="admin-page">
+  <h1>User Management</h1>
+  <table>
+    <thead>
+    <tr>
+      <th>ID</th>
+      <th>First Name</th>
+      <th>Last Name</th>
+      <th>Email</th>
+      <th>Role</th>
+      <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let user of users">
+      <td>{{ user.userId }}</td>
+      <td>{{ user.firstName }}</td>
+      <td>{{ user.lastName }}</td>
+      <td>
+        <div *ngFor="let role of availableRoles">
+          <input
+            type="checkbox"
+            [checked]="userHasRole(user, role)"
+            (change)="onRoleToggle(user, role, $event)"
+          />
+          {{ role.name }}
+        </div>
+      </td>
+      <td>
+        <button (click)="deleteUser(user.userId)">Delete</button>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</div>

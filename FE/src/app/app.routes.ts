@@ -14,6 +14,7 @@ import { SubjectsChanceComponent } from './subjects-chance/subjects-chance.compo
 import { SubjectsClusteringComponent } from './subjects-clustering/subjects-clustering.component';
 import { SubjectReportsComponent } from './subject-reports/subject-reports.component';
 import { SubjectGradeCorrelationComponent } from './subject-grade-correlation/subject-grade-correlation.component';
+import {AdminPageComponent} from "./admin-page/admin-page.component";
 
 export const routes: Routes = [
   {path: '', redirectTo: 'login', pathMatch: 'full'},
@@ -62,6 +63,11 @@ export const routes: Routes = [
   {
     path: 'subjects-grades-correlation',
     component: SubjectGradeCorrelationComponent,
+    canActivate: [() => inject(AuthGuard).canActivate()]
+  },
+  {
+    path: 'admin-page',
+    component: AdminPageComponent,
     canActivate: [() => inject(AuthGuard).canActivate()]
   },
   {path: 'profile', component: ProfileComponent},

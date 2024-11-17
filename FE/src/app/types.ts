@@ -78,6 +78,12 @@ export interface StudyProgramDto {
   name: string;
 }
 
+export interface TeacherDto {
+  teacher_id: number;
+  name: string;
+  subjects: SubjectDto[];
+}
+
 export interface Page<T> {
   content: T[];
   pageable: {

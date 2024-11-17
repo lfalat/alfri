@@ -96,4 +96,8 @@ export class HeaderComponent {
   navigateToSubjectGradeCorrelation() {
     this.router.navigate(['subjects-grades-correlation']);
   }
+
+  navigateToAdminPage() {
+    this.router.navigate(['admin-page']);
+  }
 }
