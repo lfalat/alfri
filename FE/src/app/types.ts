@@ -79,8 +79,9 @@ export interface StudyProgramDto {
 }
 
 export interface TeacherDto {
-  teacher_id: number;
-  name: string;
+  teacherId: number;
+  userId: number;
+  department: string;
   subjects: SubjectDto[];
 }
 

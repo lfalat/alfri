@@ -32,11 +32,11 @@ export class AdminService {
     return this.http.get<SubjectDto[]>(`${this.BE_URL}/subjects`);
   }
 
-  getTeacherSubjects(teacherId: number): Observable<SubjectDto[]> {
-    return this.http.get<SubjectDto[]>(`${this.BE_URL}/teachers/${teacherId}/subjects`);
+  getTeacherSubjects(userId: number): Observable<SubjectDto[]> {
+    return this.http.get<SubjectDto[]>(`${this.BE_URL}/teachers/${userId}/subjects`);
   }
 
-  updateTeacherSubjects(teacherId: string, subjects: string[]): Observable<any> {
+  updateTeacherSubjects(teacherId: number, subjects: string[]): Observable<any> {
     return this.http.put(`${this.BE_URL}/teachers/${teacherId}/subjects`, { subjects });
   }
 }

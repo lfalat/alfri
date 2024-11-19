@@ -1,14 +1,14 @@
 <div class="admin-page">
-  <h1>User Management</h1>
+  <h1>Administrácia</h1>
   <table>
     <thead>
     <tr>
       <th>ID</th>
-      <th>First Name</th>
-      <th>Last Name</th>
+      <th>Meno</th>
+      <th>Priezvisko</th>
       <th>Email</th>
-      <th>Role</th>
-      <th>Actions</th>
+      <th>Rola</th>
+      <th>Možnosti</th>
     </tr>
     </thead>
     <tbody>
@@ -16,20 +16,83 @@
       <td>{{ user.userId }}</td>
       <td>{{ user.firstName }}</td>
       <td>{{ user.lastName }}</td>
+      <td>{{ user.email }}</td>
       <td>
-        <div *ngFor="let role of availableRoles">
-          <input
-            type="checkbox"
-            [checked]="userHasRole(user, role)"
-            (change)="onRoleToggle(user, role, $event)"
-          />
-          {{ role.name }}
+        <div class="roles-container">
+          <label *ngFor="let role of availableRoles" class="role-label">
+            <input
+              type="checkbox"
+              [checked]="userHasRole(user, role)"
+              (change)="onRoleToggle(user, role, $event)"
+            />
+            {{ role.name }}
+          </label>
         </div>
       </td>
       <td>
-        <button (click)="deleteUser(user.userId)">Delete</button>
+        <button (click)="deleteUser(user.userId)" class="delete-button">Odstrániť</button>
+        <button
+          *ngIf="userHasRole(user, { id: 2, name: 'teacher' })"
+          (click)="openSubjectModal(user.userId)"
+          class="adjust-subjects-button"
+        >
+          Zmena predmetov
+        </button>
       </td>
     </tr>
     </tbody>
   </table>
+
+  <div *ngIf="showSubjectModal" class="modal-overlay">
+    <div class="modal">
+      <h2>Zmena predmetov pre {{ selectedUser?.firstName }} {{ selectedUser?.lastName }}</h2>
+
+      <h3>Priradené predmety</h3>
+      <table>
+        <thead>
+        <tr>
+          <th>Predmet</th>
+          <th>Priradenie</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let subject of selectedTeacherSubjects">
+          <td>{{ subject.name }}</td>
+          <td>
+            <input
+              type="checkbox"
+              [checked]="true"
+              (change)="onAssignedSubjectToggle(subject, $event)" />
+          </td>
+        </tr>
+        </tbody>
+      </table>
+
+      <h3>Ostatné predmety</h3>
+      <table>
+        <thead>
+        <tr>
+          <th>Predmet</th>
+          <th>Priradenie</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let subject of availableSubjects">
+          <td>{{ subject.name }}</td>
+          <td>
+            <input
+              type="checkbox"
+              [checked]="isSubjectAssigned(subject)"
+              (change)="onUnassignedSubjectToggle(subject, $event)" />
+          </td>
+        </tr>
+        </tbody>
+      </table>
+      <div class="modal-buttons">
+        <button (click)="saveTeacherSubjects()" class="save-button">Uložiť</button>
+        <button (click)="closeSubjectModal()" class="close-modal-button">Zavrieť</button>
+      </div>
+    </div>
+  </div>
+
 </div>
