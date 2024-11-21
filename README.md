@@ -68,7 +68,7 @@ Po vytvorení Web app:
    - `DATABASE_PROD_USER` - meno používateľa v databáze pre BE server
    - `FRONTEND_PROD_URL` - URL link na frontend, napr. `alfri-whole-ezhhdydubxf7c9gk.westeurope-01.azurewebsites.net`
    - `JWT_PROD_EXPIRATION_TIME` - čas expirácie JWT tokenu v ms
-   - `JWT_PROD_SECRET_KEY` - privátny kľúč pre šifrovanie a podpisovanie JWT kľúčov (64 znakov)
+   - `JWT_PROD_SECRET_KEY` - privátny kľúč pre šifrovanie a podpisovanie JWT kľúčov (64 znakov) - **Vygenerovať NÁHODNE!**
    - `PROD_SHOW_SQL` - bool pre zobrazenie SQL selectov v logoch (TRUE/FALSE)
    - `PYTHON_PROD_EXECUTABLE_PATH` - cesta k python executable
    - `PROD_CLUSTERING_PREDICTION_SCRIPT_PATH` - cesta k scriptu pre zhlukovanie predmetov
@@ -79,3 +79,11 @@ Po vytvorení Web app:
 Server reštartujeme a čakáme. Po spustení aplikácie je potrebné otvoriť URL adresu nasadenej aplikácie kvôli jej naštartovaniu, kedže sa jedná o cold-start systém.
 
 URL aplikácie nájdeme v **Overview - Default domain**.
+
+
+# CI/CD
+Aplikácia má funkčné CI/CD systém.
+## Pri vytvorení Pull requestu do vetvy `develop`
+Pri každom Pull requeste do vetvy `develop` sa FE aj BE vybuilduje a spustia sa testy. Kód sa bude dať mergnut, iba ak tieto testy prejdú.
+## Pri merge do vetvy `master`
+Pri kaźdom merge do vetvy `master` sa vybuildujú Docker image a pushnú sa do registry. Aplikácia sa prenasadí na najnovšiu verziu.
