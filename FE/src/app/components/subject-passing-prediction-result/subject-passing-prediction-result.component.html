@@ -1,0 +1,28 @@
+<mat-card class="prediction-card" *ngIf="passingPrediction$ | async as data">
+  <div class="subject-mark-section">
+    <mat-card-title class="subject-name">Predmet: {{ data.subjectName }}</mat-card-title>
+    <div class="mark-section">
+      <mat-card class="mark-card">Známka: {{ data.mark }}</mat-card>
+    </div>
+  </div>
+
+  <span>Pravdepodobnosť absolvovania predmetu:</span>
+  <div class="progress-section-wide" matTooltip="Pravdepodobnosť absolvovania predmetu">
+    <mat-progress-bar
+      mode="determinate"
+      [value]="data.passingProbability"
+      [color]="getProgressColor(data.passingProbability)">
+    </mat-progress-bar>
+    <div class="percentage-label">{{ data.passingProbability }}%</div>
+  </div>
+
+  <div class="recommendations-section">
+    <mat-card-subtitle>Typy pre zlepšenie úspechu:</mat-card-subtitle>
+    <mat-list>
+      <mat-list-item *ngFor="let recommendation of data.recommendations">
+        <mat-icon matListItemIcon>lightbulb</mat-icon>
+        <p matLine>{{ recommendation }}</p>
+      </mat-list-item>
+    </mat-list>
+  </div>
+</mat-card>

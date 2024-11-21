@@ -1,4 +1,62 @@
 /* You can add global styles to this file, and also import other style files */
+@import "../node_modules/bootstrap/scss/bootstrap";
+
 
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+.mat-mdc-snack-bar-container.error-snackbar,
+.mdc-snackbar__surface.error-snackbar {
+  --mdc-snackbar-container-color: #f44336 !important;
+  --mdc-snackbar-supporting-text-color: #ffffff !important;
+  --mat-mdc-snack-bar-button-color: #ffffff !important;
+}
+
+.mat-mdc-snack-bar-container.error-snackbar .mat-mdc-button, /* Ensures button color */
+.mdc-snackbar__surface.error-snackbar .mat-mdc-button {
+  color: #ffffff !important;
+}
+
+.mat-mdc-snack-bar-container.success-snackbar,
+.mdc-snackbar__surface.success-snackbar {
+  --mdc-snackbar-container-color: #4caf50 !important;
+  --mdc-snackbar-supporting-text-color: #ffffff !important;
+  --mat-mdc-snack-bar-button-color: #ffffff !important;
+}
+
+.mat-mdc-snack-bar-container.success-snackbar .mat-mdc-button,
+.mdc-snackbar__surface.success-snackbar .mat-mdc-button {
+  color: #ffffff !important;
+}
+
+.mat-mdc-snack-bar-container.warning-snackbar,
+.mdc-snackbar__surface.warning-snackbar {
+  --mdc-snackbar-container-color: #ff9800 !important;
+  --mdc-snackbar-supporting-text-color: #ffffff !important;
+  --mat-mdc-snack-bar-button-color: #ffffff !important;
+}
+
+.mat-mdc-snack-bar-container.warning-snackbar .mat-mdc-button,
+.mdc-snackbar__surface.warning-snackbar .mat-mdc-button {
+  color: #ffffff !important;
+}
+
+
+.info-wrapper {
+  background-color: rgba(229, 229, 247, 0.1); /* 0.5 is the opacity (50%) */
+  background-image:  repeating-radial-gradient( circle at 0 0, transparent 0, rgba(229, 229, 247, 0.5) 10px ), repeating-linear-gradient( rgba(126, 129, 194, 0.5), rgba(126, 129, 194, 0.5) );
+}
+
+#main-container {
+  display: flex;
+  flex-direction: column;
+  // 100 % - header height
+  min-height: calc(100vh - 64px);
+}
+
+#main-main {
+  flex-grow: 1;
+  display: flex;
+}
+
+

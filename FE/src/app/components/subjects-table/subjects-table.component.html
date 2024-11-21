@@ -1,0 +1,70 @@
+<div class="subject-table-wrapper" [ngClass]="{'subject-table-scrollable': isScrollable}">
+  <table mat-table [dataSource]="dataSource$" aria-description="subject table">
+    <ng-container matColumnDef="select">
+      <th mat-header-cell *matHeaderCellDef>
+      </th>
+      <td mat-cell *matCellDef="let subject">
+        <mat-checkbox (click)="$event.stopPropagation()"
+                      (change)="toggleSelection(subject)"
+                      (keyup.enter)="toggleSelection(subject)"
+                      [checked]="selectedSubjectsMap.has(subject.code)"
+                      [disabled]="(!selectedSubjectsMap.has(subject.code) && getSelectedSubjectsCount() >= maxSelectableSubjects)">
+        </mat-checkbox>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="name">
+      <th mat-header-cell *matHeaderCellDef>Názov</th>
+      <td mat-cell *matCellDef="let subject">
+        <a class="text-decoration-none" href="javascript:void(0)" (click)="navigateToSubjectDetail(subject.code)">
+          {{ subject.name }}
+        </a>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="code">
+      <th mat-header-cell class="center" *matHeaderCellDef>Kód predmetu</th>
+      <td mat-cell *matCellDef="let subject">{{ subject.code }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="abbreviation">
+      <th mat-header-cell class="center" *matHeaderCellDef>Skratka predmetu</th>
+      <td mat-cell *matCellDef="let subject">{{ subject.abbreviation }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="obligation">
+      <th mat-header-cell class="center" *matHeaderCellDef>Povinnosť predmetu</th>
+      <td mat-cell *matCellDef="let subject">{{ subject.obligation }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="recommendedYear">
+      <th mat-header-cell class="center" *matHeaderCellDef>Odporúčaný rok</th>
+      <td mat-cell *matCellDef="let subject">{{ subject.recommendedYear }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="semester">
+      <th mat-header-cell class="center" *matHeaderCellDef>Semester</th>
+      <td mat-cell *matCellDef="let subject">{{ subject.semester }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="empty">
+      <td mat-cell colspan="7">No subjects are present</td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="columnsToDisplay; sticky: true"></tr>
+    <tr mat-row *matRowDef="let row; columns: columnsToDisplay"></tr>
+  </table>
+
+  @if (isPageable) {
+    <div>
+      <mat-progress-bar *ngIf="isLoading" mode="indeterminate"></mat-progress-bar>
+      <mat-paginator
+        [length]="pageData.totalElements"
+        [pageSize]="pageData.size"
+        [pageIndex]="pageData.number"
+        (page)="onPageChange($event)"
+        [pageSizeOptions]="[5, 10, 100]"
+      ></mat-paginator>
+    </div>
+  }
+</div>

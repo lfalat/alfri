@@ -1,0 +1,106 @@
+.prediction-card {
+  padding: 20px;
+  margin: 20px;
+}
+
+.subject-mark-section {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  row-gap: 10px;
+}
+
+.subject-name {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #3f51b5;
+}
+
+.mark-card {
+  padding: 8px 16px;
+  font-weight: bold;
+  background-color: #3f51b5;
+  color: white;
+}
+
+.progress-section-wide {
+  width: 100%;
+  margin: 20px 0;
+}
+
+.percentage-label {
+  margin-top: 10px;
+  font-weight: bold;
+  text-align: left;
+  color: #333;
+}
+
+.recommendations-section {
+  margin-top: 20px;
+}
+
+mat-list-item {
+  white-space: normal;
+  word-wrap: break-word;
+  align-items: flex-start;
+}
+
+mat-icon {
+  margin-right: 8px;
+}
+
+p[matLine] {
+  font-size: 1rem;
+  margin: 0;
+  word-break: break-word;
+}
+
+@media (max-width: 768px) {
+  .subject-mark-section {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .mark-section {
+    margin-left: 0;
+    margin-top: 10px;
+  }
+
+  .progress-section-wide {
+    margin: 15px 0;
+  }
+
+  .subject-name {
+    font-size: 1.25rem;
+  }
+
+  .mark-card {
+    font-size: 1rem;
+  }
+
+  p[matLine] {
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .subject-name {
+    font-size: 1rem;
+  }
+
+  .mark-card {
+    font-size: 0.9rem;
+    padding: 6px 12px;
+  }
+
+  .percentage-label {
+    font-size: 0.9rem;
+  }
+
+  p[matLine] {
+    font-size: 0.8rem;
+  }
+}

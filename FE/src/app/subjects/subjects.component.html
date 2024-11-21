@@ -1,0 +1,20 @@
+<div>
+  <form [formGroup]="filterForm" (ngSubmit)="studyProgramChanged()">
+    <mat-form-field appearance="fill">
+      <mat-label>Study Program</mat-label>
+      <mat-select formControlName="mathFocus" [(value)]="selectedStudyProgramId" (selectionChange)="studyProgramChanged()">
+        <mat-option *ngFor="let program of studyPrograms$ | async" [value]="program.id">
+          {{ program.name }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </form>
+</div>
+
+<app-subjects-table
+  [dataSource$]="dataSource$"
+  [pageData]="pageData"
+  [isLoading]="isLoading"
+  (pageChange)="onPageChange($event)"
+  (subjectDetailNavigate)="navigateToSubjectDetail($event)">
+</app-subjects-table>

@@ -6,8 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class AlfriApplication {
 
-    public static void main(String[] args) {
-        SpringApplication.run(AlfriApplication.class, args);
-    }
-
+  public static void main(String[] args) {
+    SpringApplication.run(AlfriApplication.class, args);
+  }
 }

@@ -1,0 +1,29 @@
+spring:
+  config:
+    # The file needs to be optional because in the JAR the file has a different location
+    import: optional:file:.env[.properties]
+  application:
+    name: ${APPLICATION_NAME}
+  datasource:
+    url: ${DATABASE_PROD_URL}
+    username: ${DATABASE_PROD_USER}
+    password: ${DATABASE_PROD_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    show-sql: ${PROD_SHOW_SQL}
+    hibernate:
+      # Spring Boot won't modify the database based on @Entity classes - we must update the database ourselves
+      ddl-auto: none
+  security:
+    jwt:
+      secret-key: ${JWT_PROD_SECRET_KEY}
+      expiration-time: ${JWT_PROD_EXPIRATION_TIME}
+
+python:
+  executable_path: ${PYTHON_PROD_EXECUTABLE_PATH}
+  clustering_prediction_script_path: ${PROD_CLUSTERING_PREDICTION_SCRIPT_PATH}
+  clustering_prediction_model_path: ${PROD_CLUSTERING_PREDICTION_MODEL_PATH}
+
+frontend-url: ${FRONTEND_PROD_URL}
+default-user-email: "-" # no default user in production
+default-user-roles:
