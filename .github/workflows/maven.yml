@@ -2,7 +2,13 @@ name: Java CI with Maven
 
 on:
   push:
-    branches: [ "master", "develop" ]
+    branches:
+      - master
+      - develop
+  pull_request:
+    branches:
+      - master
+      - develop
 
 jobs:
   build:
@@ -43,3 +49,4 @@ jobs:
         git add .
         git commit -m "Apply code formatting with Spotless" || echo "No changes to commit"
         git push
+        
