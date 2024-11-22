@@ -17,6 +17,8 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}  # Ensure token is passed to checkout action
 
     - name: Set up JDK 21
       uses: actions/setup-java@v4
@@ -48,4 +50,4 @@ jobs:
         git config user.email 'github-actions@github.com'
         git add .
         git commit -m "Apply code formatting with Spotless" || echo "No changes to commit"
-        git push origin HEAD:${{ github.head_ref || github.ref_name }}
+        git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }} HEAD:${{ github.head_ref || github.ref_name }}
