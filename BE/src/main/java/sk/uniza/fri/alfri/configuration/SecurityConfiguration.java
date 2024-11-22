@@ -47,7 +47,7 @@ public class SecurityConfiguration {
     CorsConfiguration configuration = new CorsConfiguration();
 
     configuration.setAllowedOrigins(List.of(frontEndUrl));
-    configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "OPTIONS"));
+    configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "OPTIONS", "DELETE"));
     configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
 
     UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
