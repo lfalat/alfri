@@ -5,7 +5,9 @@ import sk.uniza.fri.alfri.entity.Role;
 import sk.uniza.fri.alfri.entity.User;
 
 public interface UserService {
-  User getUser(String id);
+  User getUser(String email);
+
+  User getUser(Integer id);
 
   List<Role> getRoles();
 

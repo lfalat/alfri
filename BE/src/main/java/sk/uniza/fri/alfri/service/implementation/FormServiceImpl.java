@@ -30,6 +30,7 @@ import sk.uniza.fri.alfri.service.FormService;
 
 @Service
 @Slf4j
+@Transactional
 public class FormServiceImpl implements FormService {
   private final QuestionnaireRepository questionnaireRepository;
   private final QuestionRepository questionRepository;
@@ -98,7 +99,6 @@ public class FormServiceImpl implements FormService {
     this.questionnaireRepository.save(questionnaire);
   }
 
-  @Transactional
   public void submitFormAnswers(UserFormAnswersDTO userFormAnswersDTO, User user) {
     // Fetch the questionnaire by formId
     Questionnaire questionnaire = questionnaireRepository.findById(userFormAnswersDTO.formId())

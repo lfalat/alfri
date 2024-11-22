@@ -157,7 +157,10 @@
              <version>2.41.1</version>
              <configuration>
                 <java>
-                   <removeUnusedImports />
+<!--                    TODO POUZIT, AK CHETE VYMAZAT NEPOUZITE IMPORTY V CELOM PROJEKTE
+                        TODO NECOMMITOVAT! NECHAT ZAKOMENTOVANE, ROBI TO NIEKEDY CHYBY AK TO JE DLHO POUZIVANE-->
+-->
+<!--                   <removeUnusedImports />-->
                    <eclipse>
                       <version>4.20</version>
                       <file>

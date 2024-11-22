@@ -22,9 +22,15 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public User getUser(String id) {
-    Optional<User> user = this.userRepository.findByEmail(id);
+  public User getUser(String email) {
+    Optional<User> user = this.userRepository.findByEmail(email);
     return user.orElse(null);
+  }
+
+  @Override
+  public User getUser(Integer userId) {
+    return userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException(
+        String.format("User with userId %d was not found!", userId)));
   }
 
   @Override

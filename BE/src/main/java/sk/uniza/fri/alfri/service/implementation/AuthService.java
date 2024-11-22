@@ -3,6 +3,8 @@ package sk.uniza.fri.alfri.service.implementation;
 import jakarta.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.Optional;
+
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -42,6 +44,7 @@ public class AuthService implements IAuthService {
   }
 
   @Override
+  @Transactional
   public User registerUser(User userToRegister, List<Integer> rolesIds)
       throws UserAlreadyRegisteredException {
     log.info("Trying to register user with email {}", userToRegister.getEmail());
@@ -93,6 +96,7 @@ public class AuthService implements IAuthService {
   }
 
   @Override
+  @Transactional
   public void changePassword(ChangePasswordDto changePasswordDto) {
     if (changePasswordDto.getNewPassword().equals(changePasswordDto.getOldPassword())) {
       throw new InvalidCredentialsException(
