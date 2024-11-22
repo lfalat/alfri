@@ -25,9 +25,7 @@ import lombok.Setter;
 public class UserRole implements Serializable {
   @Id
   @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_role_id_gen")
-  @SequenceGenerator(
-      name = "user_role_id_gen",
-      sequenceName = "user_role_id_seq",
+  @SequenceGenerator(name = "user_role_id_gen", sequenceName = "user_role_id_seq",
       allocationSize = 1)
   @Column(name = "id", nullable = false)
   private Integer id;

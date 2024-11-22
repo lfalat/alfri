@@ -24,35 +24,23 @@ public class SubjectGradeCorrelationServiceImpl implements SubjectGradeCorrelati
   }
 
   @Override
-  public List<SubjectGradeCorrelation> findAllWithCorrelation(
-          double correlationTreshold, String operator) {
+  public List<SubjectGradeCorrelation> findAllWithCorrelation(double correlationTreshold,
+      String operator) {
     Specification<SubjectGradeCorrelation> specification;
 
     switch (operator) {
-      case ">" ->
-          specification =
-              (root, query, criteriaBuilder) ->
-                  criteriaBuilder.gt(root.get(CORRELATION), correlationTreshold);
-      case ">=" ->
-          specification =
-              (root, query, criteriaBuilder) ->
-                  criteriaBuilder.greaterThanOrEqualTo(root.get(CORRELATION), correlationTreshold);
-      case "<" ->
-          specification =
-              (root, query, criteriaBuilder) ->
-                  criteriaBuilder.lt(root.get(CORRELATION), correlationTreshold);
-      case "<=" ->
-          specification =
-              (root, query, criteriaBuilder) ->
-                  criteriaBuilder.lessThanOrEqualTo(root.get(CORRELATION), correlationTreshold);
-      case "=" ->
-          specification =
-              (root, query, criteriaBuilder) ->
-                  criteriaBuilder.equal(root.get(CORRELATION), correlationTreshold);
-      case "<>" ->
-          specification =
-              (root, query, criteriaBuilder) ->
-                  criteriaBuilder.notEqual(root.get(CORRELATION), correlationTreshold);
+      case ">" -> specification = (root, query, criteriaBuilder) -> criteriaBuilder
+          .gt(root.get(CORRELATION), correlationTreshold);
+      case ">=" -> specification = (root, query, criteriaBuilder) -> criteriaBuilder
+          .greaterThanOrEqualTo(root.get(CORRELATION), correlationTreshold);
+      case "<" -> specification = (root, query, criteriaBuilder) -> criteriaBuilder
+          .lt(root.get(CORRELATION), correlationTreshold);
+      case "<=" -> specification = (root, query, criteriaBuilder) -> criteriaBuilder
+          .lessThanOrEqualTo(root.get(CORRELATION), correlationTreshold);
+      case "=" -> specification = (root, query, criteriaBuilder) -> criteriaBuilder
+          .equal(root.get(CORRELATION), correlationTreshold);
+      case "<>" -> specification = (root, query, criteriaBuilder) -> criteriaBuilder
+          .notEqual(root.get(CORRELATION), correlationTreshold);
 
       default -> throw new IllegalArgumentException("Invalid operator: " + operator);
     }

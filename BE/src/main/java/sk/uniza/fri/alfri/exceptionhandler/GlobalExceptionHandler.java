@@ -24,53 +24,53 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
   public ResponseEntity<Object> handleUserAlreadyRegisteredException(
       UserAlreadyRegisteredException ex, WebRequest request) {
     log.error(ex.getMessage());
-    return handleExceptionInternal(
-        ex, ex.getMessage(), new HttpHeaders(), HttpStatus.CONFLICT, request);
+    return handleExceptionInternal(ex, ex.getMessage(), new HttpHeaders(), HttpStatus.CONFLICT,
+        request);
   }
 
   @ExceptionHandler(InvalidCredentialsException.class)
-  public ResponseEntity<Object> handleInvalidCredentialsException(
-      InvalidCredentialsException ex, WebRequest request) {
+  public ResponseEntity<Object> handleInvalidCredentialsException(InvalidCredentialsException ex,
+      WebRequest request) {
     log.error(ex.getMessage());
-    return handleExceptionInternal(
-        ex, ex.getMessage(), new HttpHeaders(), HttpStatus.UNAUTHORIZED, request);
+    return handleExceptionInternal(ex, ex.getMessage(), new HttpHeaders(), HttpStatus.UNAUTHORIZED,
+        request);
   }
 
   @ExceptionHandler(AuthenticationException.class)
-  public ResponseEntity<Object> handleAuthentificationException(
-      AuthenticationException ex, WebRequest request) {
-    return handleExceptionInternal(
-        ex, ex.getMessage(), new HttpHeaders(), HttpStatus.FORBIDDEN, request);
+  public ResponseEntity<Object> handleAuthentificationException(AuthenticationException ex,
+      WebRequest request) {
+    return handleExceptionInternal(ex, ex.getMessage(), new HttpHeaders(), HttpStatus.FORBIDDEN,
+        request);
   }
 
   @ExceptionHandler(EntityNotFoundException.class)
-  public ResponseEntity<Object> handleEntityNotFoundException(
-      EntityNotFoundException ex, WebRequest request) {
+  public ResponseEntity<Object> handleEntityNotFoundException(EntityNotFoundException ex,
+      WebRequest request) {
     log.error(ex.getMessage());
-    return handleExceptionInternal(
-        ex, ex.getMessage(), new HttpHeaders(), HttpStatus.NOT_FOUND, request);
+    return handleExceptionInternal(ex, ex.getMessage(), new HttpHeaders(), HttpStatus.NOT_FOUND,
+        request);
   }
 
   @ExceptionHandler(QuestionnaireNotFilledException.class)
   public ResponseEntity<Object> handleQuestionnaireNotFilledException(
       QuestionnaireNotFilledException ex, WebRequest request) {
     log.error(ex.getMessage());
-    return handleExceptionInternal(
-        ex, ex.getMessage(), new HttpHeaders(), HttpStatus.I_AM_A_TEAPOT, request);
+    return handleExceptionInternal(ex, ex.getMessage(), new HttpHeaders(), HttpStatus.I_AM_A_TEAPOT,
+        request);
   }
 
   @ExceptionHandler(ResourceNotFoundException.class)
-  public ResponseEntity<Object> handleResourceNotFoundException(
-      ResourceNotFoundException ex, WebRequest request) {
+  public ResponseEntity<Object> handleResourceNotFoundException(ResourceNotFoundException ex,
+      WebRequest request) {
     log.error(ex.getMessage());
-    return handleExceptionInternal(
-        ex, ex.getMessage(), new HttpHeaders(), HttpStatus.NOT_FOUND, request);
+    return handleExceptionInternal(ex, ex.getMessage(), new HttpHeaders(), HttpStatus.NOT_FOUND,
+        request);
   }
 
   @ExceptionHandler(ExpiredJwtException.class)
-  public ResponseEntity<Object> handleExpiredJwtException(
-      ExpiredJwtException ex, WebRequest request) {
-    return handleExceptionInternal(
-        ex, "JWT token is expired!", new HttpHeaders(), HttpStatus.FORBIDDEN, request);
+  public ResponseEntity<Object> handleExpiredJwtException(ExpiredJwtException ex,
+      WebRequest request) {
+    return handleExceptionInternal(ex, "JWT token is expired!", new HttpHeaders(),
+        HttpStatus.FORBIDDEN, request);
   }
 }

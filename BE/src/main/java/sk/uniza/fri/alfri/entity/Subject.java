@@ -15,7 +15,8 @@ import org.hibernate.annotations.ColumnDefault;
 @Entity
 @Table(name = "subject")
 public class Subject implements Serializable {
-  @Serial private static final long serialVersionUID = 9150108708633901692L;
+  @Serial
+  private static final long serialVersionUID = 9150108708633901692L;
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)

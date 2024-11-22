@@ -33,11 +33,8 @@ public class AuthService implements IAuthService {
 
   private final AuthenticationManager authenticationManager;
 
-  public AuthService(
-      UserRepository userRepository,
-      RoleRepository roleRepository,
-      PasswordEncoder passwordEncoder,
-      AuthenticationManager authenticationManager) {
+  public AuthService(UserRepository userRepository, RoleRepository roleRepository,
+      PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager) {
     this.userRepository = userRepository;
     this.roleRepository = roleRepository;
     this.passwordEncoder = passwordEncoder;
@@ -55,25 +52,13 @@ public class AuthService implements IAuthService {
           String.format("User with email %s is already registered!", userToRegister.getEmail()));
     }
 
-    List<Role> roles =
-        rolesIds.stream()
-            .map(
-                roleId ->
-                    roleRepository
-                        .findById(roleId)
-                        .orElseThrow(
-                            () ->
-                                new EntityNotFoundException(
-                                    String.format("Role with id %d was not found", roleId))))
-            .toList();
+    List<Role> roles = rolesIds.stream().map(roleId -> roleRepository.findById(roleId).orElseThrow(
+        () -> new EntityNotFoundException(String.format("Role with id %d was not found", roleId))))
+        .toList();
 
-    User user =
-        User.builder()
-            .firstName(userToRegister.getFirstName())
-            .lastName(userToRegister.getLastName())
-            .email(userToRegister.getEmail())
-            .password(passwordEncoder.encode(userToRegister.getPassword()))
-            .build();
+    User user = User.builder().firstName(userToRegister.getFirstName())
+        .lastName(userToRegister.getLastName()).email(userToRegister.getEmail())
+        .password(passwordEncoder.encode(userToRegister.getPassword())).build();
 
     List<UserRole> userRoles = roles.stream().map(role -> new UserRole(null, user, role)).toList();
     user.setUserRoles(userRoles);
@@ -86,29 +71,22 @@ public class AuthService implements IAuthService {
   @Override
   public User verifyUser(User userToAutentificate) throws InvalidCredentialsException {
     try {
-      authenticationManager.authenticate(
-          new UsernamePasswordAuthenticationToken(
-              userToAutentificate.getUsername(), userToAutentificate.getPassword()));
+      authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
+          userToAutentificate.getUsername(), userToAutentificate.getPassword()));
     } catch (AuthenticationException e) {
       log.info("User with email {} was not authenticated!", userToAutentificate.getEmail());
       throw new InvalidCredentialsException("Invalid credentials!");
     }
 
-    return userRepository
-        .findByEmail(userToAutentificate.getEmail())
-        .orElseThrow(
-            () ->
-                new EntityNotFoundException(
-                    String.format(
-                        "Cannot authenticate user with email %s",
-                        userToAutentificate.getUsername())));
+    return userRepository.findByEmail(userToAutentificate.getEmail())
+        .orElseThrow(() -> new EntityNotFoundException(String
+            .format("Cannot authenticate user with email %s", userToAutentificate.getUsername())));
   }
 
   @Override
   public Optional<String> getCurrentUserEmail() {
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    if (authentication != null
-        && authentication.getPrincipal() instanceof UserDetails userDetails) {
+    if (authentication != null && authentication.getPrincipal()instanceof UserDetails userDetails) {
       return Optional.ofNullable(userDetails.getUsername()); // Handle null username
     }
     return Optional.empty();
@@ -118,18 +96,12 @@ public class AuthService implements IAuthService {
   public void changePassword(ChangePasswordDto changePasswordDto) {
     if (changePasswordDto.getNewPassword().equals(changePasswordDto.getOldPassword())) {
       throw new InvalidCredentialsException(
-          String.format(
-              "Cannot change password for user with email %s, password are not matching!",
+          String.format("Cannot change password for user with email %s, password are not matching!",
               changePasswordDto.getEmail()));
     }
-    User foundUser =
-        this.userRepository
-            .findByEmail(changePasswordDto.getEmail())
-            .orElseThrow(
-                () ->
-                    new EntityNotFoundException(
-                        String.format(
-                            "User with email %s was not found!", changePasswordDto.getEmail())));
+    User foundUser = this.userRepository.findByEmail(changePasswordDto.getEmail())
+        .orElseThrow(() -> new EntityNotFoundException(
+            String.format("User with email %s was not found!", changePasswordDto.getEmail())));
 
     foundUser.setPassword(passwordEncoder.encode(changePasswordDto.getNewPassword()));
     this.userRepository.save(foundUser);

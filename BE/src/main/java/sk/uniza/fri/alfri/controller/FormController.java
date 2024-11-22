@@ -38,12 +38,8 @@ public class FormController {
   private final UserService userService;
   private final AuthService authService;
 
-  public FormController(
-      QuestionnaireRepository questionnaireRepository,
-      FormService formService,
-      JwtService jwtService,
-      UserService userService,
-      AuthService authService) {
+  public FormController(QuestionnaireRepository questionnaireRepository, FormService formService,
+      JwtService jwtService, UserService userService, AuthService authService) {
     this.questionnaireRepository = questionnaireRepository;
     this.formService = formService;
     this.jwtService = jwtService;
@@ -69,8 +65,7 @@ public class FormController {
   }
 
   @PostMapping(value = "/submit-form", consumes = MediaType.APPLICATION_JSON_VALUE)
-  public void submitForm(
-      @RequestHeader(value = "Authorization") String token,
+  public void submitForm(@RequestHeader(value = "Authorization") String token,
       @RequestBody UserFormAnswersDTO userFormAnswersDTO) {
     // Get user id
     String parsedToken = token.replace("Bearer ", "");
@@ -81,8 +76,7 @@ public class FormController {
   }
 
   @PutMapping(value = "/replace-form", consumes = MediaType.APPLICATION_JSON_VALUE)
-  public void replaceForm(
-      @RequestHeader(value = "Authorization") String token,
+  public void replaceForm(@RequestHeader(value = "Authorization") String token,
       @RequestBody UserFormAnswersDTO userFormAnswersDTO) {
     // Get user id
     String parsedToken = token.replace("Bearer ", "");

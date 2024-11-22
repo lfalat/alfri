@@ -24,9 +24,7 @@ public class StudentController {
   private final IStudentService studentService;
   private final StudyProgramMapper studyProgramMapper;
 
-  public StudentController(
-      IAuthService authService,
-      IStudentService studentService,
+  public StudentController(IAuthService authService, IStudentService studentService,
       StudyProgramMapper studyProgramMapper) {
     this.authService = authService;
     this.studentService = studentService;
@@ -36,10 +34,8 @@ public class StudentController {
   @GetMapping(value = "/current/studyProgram", produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<StudyProgramDto> getCurrentStudentsStudyProgram() {
     log.info("Getting study program started");
-    String userEmail =
-        authService
-            .getCurrentUserEmail()
-            .orElseThrow(() -> new UsernameNotFoundException("Cannot retrieve current user!"));
+    String userEmail = authService.getCurrentUserEmail()
+        .orElseThrow(() -> new UsernameNotFoundException("Cannot retrieve current user!"));
     log.info("Getting study program of current user with email {}", userEmail);
 
     StudyProgram studyProgram = studentService.getUsersStudyProgram(userEmail);

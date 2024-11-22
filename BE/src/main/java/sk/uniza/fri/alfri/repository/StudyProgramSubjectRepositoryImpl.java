@@ -20,8 +20,8 @@ public class StudyProgramSubjectRepositoryImpl implements StudyProgramSubjectRep
   }
 
   @Override
-  public Page<StudyProgramSubject> findAllByFilter(
-      SearchDefinition searchDefinition, PageDefinition pageDefinition) {
+  public Page<StudyProgramSubject> findAllByFilter(SearchDefinition searchDefinition,
+      PageDefinition pageDefinition) {
 
     Pageable pageable = PageableAssembler.from(pageDefinition);
 

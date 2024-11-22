@@ -21,8 +21,8 @@ public class StudyProgramController {
   private final StudyProgramMapper studyProgramMapper;
   private final IStudyProgramService studyProgramService;
 
-  public StudyProgramController(
-      IStudyProgramService studyProgramService, StudyProgramMapper studyProgramMapper) {
+  public StudyProgramController(IStudyProgramService studyProgramService,
+      StudyProgramMapper studyProgramMapper) {
     this.studyProgramService = studyProgramService;
     this.studyProgramMapper = studyProgramMapper;
   }

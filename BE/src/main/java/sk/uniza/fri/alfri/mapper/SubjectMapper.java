@@ -37,5 +37,6 @@ public interface SubjectMapper {
   @Mapping(target = "focus", source = "subjectExtendedDto.focusDTO")
   Subject fromSubjectExtendedDtotoEntity(SubjectExtendedDto subjectExtendedDto);
 
-    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)Subject partialUpdate(SubjectDto subjectDto, @MappingTarget Subject subject);
+  @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+  Subject partialUpdate(SubjectDto subjectDto, @MappingTarget Subject subject);
 }

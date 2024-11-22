@@ -20,13 +20,10 @@ import lombok.Setter;
 @Table(name = "subject_grade_correlation", schema = "public")
 public class SubjectGradeCorrelation {
   @Id
-  @GeneratedValue(
-      strategy = GenerationType.SEQUENCE,
+  @GeneratedValue(strategy = GenerationType.SEQUENCE,
       generator = "subject_grade_correlation_id_gen")
-  @SequenceGenerator(
-      name = "subject_grade_correlation_id_gen",
-      sequenceName = "subject_grade_correlation_id_seq",
-      allocationSize = 1)
+  @SequenceGenerator(name = "subject_grade_correlation_id_gen",
+      sequenceName = "subject_grade_correlation_id_seq", allocationSize = 1)
   @Column(name = "id", nullable = false)
   private Integer id;
 

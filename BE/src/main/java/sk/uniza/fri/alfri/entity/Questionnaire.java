@@ -1,6 +1,5 @@
 package sk.uniza.fri.alfri.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -38,9 +37,11 @@ public class Questionnaire {
   @Column(name = "date_of_creation", nullable = false)
   private Instant dateOfCreation;
 
-  @OneToMany(mappedBy = "questionnaire", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+  @OneToMany(mappedBy = "questionnaire", fetch = FetchType.LAZY, cascade = CascadeType.ALL,
+      orphanRemoval = true)
   private List<QuestionnaireSection> sections = new ArrayList<>();
 
-  @OneToMany(mappedBy = "answerQuestionnaire", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+  @OneToMany(mappedBy = "answerQuestionnaire", fetch = FetchType.LAZY, cascade = CascadeType.ALL,
+      orphanRemoval = true)
   private List<Answer> answers = new ArrayList<>();
 }

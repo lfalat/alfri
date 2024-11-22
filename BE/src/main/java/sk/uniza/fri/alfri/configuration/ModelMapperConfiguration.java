@@ -18,24 +18,19 @@ public class ModelMapperConfiguration {
     ModelMapper modelMapper = new ModelMapper();
 
     // Map User to UserDto
-    modelMapper
-        .typeMap(User.class, UserDto.class)
-        .addMappings(
-            mapper -> mapper.skip(UserDto::setRoles) // skip default role mapping
-            )
-        .setPostConverter(
-            context -> {
-              User user = context.getSource();
-              UserDto userDto = context.getDestination();
+    modelMapper.typeMap(User.class, UserDto.class)
+        .addMappings(mapper -> mapper.skip(UserDto::setRoles) // skip default role mapping
+        ).setPostConverter(context -> {
+          User user = context.getSource();
+          UserDto userDto = context.getDestination();
 
-              // Manually map roles to RoleDto list
-              List<RoleDto> roleDtos =
-                  modelMapper.map(
-                      user.getUserRoles().stream().map(UserRole::getRole).toList(),
-                      new TypeToken<List<RoleDto>>() {}.getType());
-              userDto.setRoles(roleDtos);
-              return userDto;
-            });
+          // Manually map roles to RoleDto list
+          List<RoleDto> roleDtos =
+              modelMapper.map(user.getUserRoles().stream().map(UserRole::getRole).toList(),
+                  new TypeToken<List<RoleDto>>() {}.getType());
+          userDto.setRoles(roleDtos);
+          return userDto;
+        });
 
     return modelMapper;
   }

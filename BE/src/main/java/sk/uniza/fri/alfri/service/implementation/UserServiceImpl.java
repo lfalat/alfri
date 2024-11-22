@@ -35,13 +35,14 @@ public class UserServiceImpl implements UserService {
   @Override
   public List<Role> getCurrentUserRoles(String currentUserEmail) {
     User user =
-        userRepository
-            .findByEmail(currentUserEmail)
-            .orElseThrow(
-                () ->
-                    new EntityNotFoundException(
-                        String.format("User with email %s was not found!", currentUserEmail)));
+        userRepository.findByEmail(currentUserEmail).orElseThrow(() -> new EntityNotFoundException(
+            String.format("User with email %s was not found!", currentUserEmail)));
 
     return user.getUserRoles().stream().map(UserRole::getRole).toList();
+  }
+
+  @Override
+  public List<User> getAllUsers() {
+    return userRepository.findAll();
   }
 }

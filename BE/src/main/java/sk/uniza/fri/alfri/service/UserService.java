@@ -10,4 +10,6 @@ public interface UserService {
   List<Role> getRoles();
 
   List<Role> getCurrentUserRoles(String currentUserEmail);
+
+  List<User> getAllUsers();
 }

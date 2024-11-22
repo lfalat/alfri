@@ -29,9 +29,7 @@ public class AuthController {
     this.modelMapper = modelMapper;
   }
 
-  @PostMapping(
-      value = "/authenticate",
-      consumes = APPLICATION_JSON_VALUE,
+  @PostMapping(value = "/authenticate", consumes = APPLICATION_JSON_VALUE,
       produces = APPLICATION_JSON_VALUE)
   public ResponseEntity<AuthResponseDto> authenticateUser(
       @RequestBody @Valid UserCredentialsDto credentialsDTO) throws InvalidCredentialsException {
@@ -50,9 +48,7 @@ public class AuthController {
     return ResponseEntity.ok(new AuthResponseDto(token, jwtService.getExpirationTime()));
   }
 
-  @PostMapping(
-      value = "/register",
-      consumes = APPLICATION_JSON_VALUE,
+  @PostMapping(value = "/register", consumes = APPLICATION_JSON_VALUE,
       produces = APPLICATION_JSON_VALUE)
   public ResponseEntity<UserDto> register(@RequestBody @Valid RegisterUserDto registerUserDto)
       throws UserAlreadyRegisteredException {
