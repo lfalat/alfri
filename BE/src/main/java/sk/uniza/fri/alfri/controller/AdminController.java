@@ -13,7 +13,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import sk.uniza.fri.alfri.dto.RoleUpdateRequestDto;
+import sk.uniza.fri.alfri.dto.TeacherDto;
 import sk.uniza.fri.alfri.dto.user.UserDto;
+import sk.uniza.fri.alfri.entity.Teacher;
 import sk.uniza.fri.alfri.entity.User;
 import sk.uniza.fri.alfri.service.AdminService;
 import sk.uniza.fri.alfri.service.UserService;
@@ -71,5 +73,17 @@ public class AdminController {
     userService.deleteUser(userId);
 
     return ResponseEntity.ok().build();
+  }
+
+  @PostMapping("/teacher/{userId}/subjects")
+  public ResponseEntity<TeacherDto> changeSubjectsOfTeacher(@PathVariable Integer userId,
+      @RequestBody List<String> subjectCodes) {
+    log.info("Setting subjects {} to teacher with userId {}", subjectCodes.toString(), userId);
+
+    Teacher updatedTeacher = adminService.setSubjectsToTeacherByUserId(userId, subjectCodes);
+
+    TeacherDto teacherDto = this.modelMapper.map(updatedTeacher, TeacherDto.class);
+
+    return ResponseEntity.status(HttpStatus.CREATED).body(teacherDto);
   }
 }

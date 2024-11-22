@@ -6,32 +6,42 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import jakarta.transaction.Transactional;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import sk.uniza.fri.alfri.entity.Role;
+import sk.uniza.fri.alfri.entity.Subject;
+import sk.uniza.fri.alfri.entity.Teacher;
 import sk.uniza.fri.alfri.entity.User;
 import sk.uniza.fri.alfri.entity.UserRole;
 import sk.uniza.fri.alfri.repository.RoleRepository;
+import sk.uniza.fri.alfri.repository.SubjectRepository;
+import sk.uniza.fri.alfri.repository.TeacherRepository;
 import sk.uniza.fri.alfri.repository.UserRepository;
 import sk.uniza.fri.alfri.service.AdminService;
+import sk.uniza.fri.alfri.service.TeacherService;
 import sk.uniza.fri.alfri.service.UserService;
 
 @Service
-@Slf4j
+@Transactional
 public class AdminServiceImpl implements AdminService {
   private final RoleRepository roleRepository;
-  private final UserService userService;
   private final UserRepository userRepository;
+  private final UserService userService;
+  private final TeacherService teacherService;
+  private final SubjectRepository subjectRepository;
+  private final TeacherRepository teacherRepository;
 
   public AdminServiceImpl(RoleRepository roleRepository, UserService userService,
-      UserRepository userRepository) {
+      UserRepository userRepository, TeacherService teacherService,
+      SubjectRepository subjectRepository, TeacherRepository teacherRepository) {
     this.roleRepository = roleRepository;
     this.userService = userService;
     this.userRepository = userRepository;
+    this.teacherService = teacherService;
+    this.subjectRepository = subjectRepository;
+    this.teacherRepository = teacherRepository;
   }
 
   @Override
-  @Transactional
   public User changeUserRole(List<Integer> rolesIds, boolean addRole, Integer userId) {
     List<Role> rolesToChange = roleRepository.findAllById(rolesIds);
     User userToChangeRolesTo = userService.getUser(userId);
@@ -53,5 +63,16 @@ public class AdminServiceImpl implements AdminService {
     }
 
     return userRepository.save(userToChangeRolesTo);
+  }
+
+  @Override
+  public Teacher setSubjectsToTeacherByUserId(Integer userId, List<String> subjectCodes) {
+    Teacher teacher = teacherService.findByUserId(userId);
+
+    List<Subject> subjects = subjectRepository.findByCodeIn(subjectCodes);
+
+    teacher.setSubjects(subjects);
+
+    return teacherRepository.save(teacher);
   }
 }

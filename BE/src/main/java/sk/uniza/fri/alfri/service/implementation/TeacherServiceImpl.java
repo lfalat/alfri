@@ -28,9 +28,7 @@ public class TeacherServiceImpl implements TeacherService {
 
   @Override
   public List<Subject> getSubjectsOfTeacherById(Integer userId) {
-    Teacher teacher =
-        teacherRepository.findByUserId(userId).orElseThrow(() -> new EntityNotFoundException(
-            String.format("Teacher with user id %d was not found!", userId)));
+    Teacher teacher = this.findByUserId(userId);
 
     List<SubjectIdProjection> projections =
         teacherSubjectRepository.findIdByIdTeacherId(teacher.getId());
@@ -38,5 +36,11 @@ public class TeacherServiceImpl implements TeacherService {
         projections.stream().map(SubjectIdProjection::getSubjectId).toList();
 
     return subjectRepository.findAllById(teacherSubjectIds);
+  }
+
+  @Override
+  public Teacher findByUserId(Integer userId) {
+    return teacherRepository.findByUserId(userId).orElseThrow(() -> new EntityNotFoundException(
+        String.format("Teacher with user id %d was not found!", userId)));
   }
 }

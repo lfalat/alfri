@@ -3,7 +3,7 @@
   <table>
     <thead>
     <tr>
-      <th>ID</th>
+      <th>Poradie</th>
       <th>Meno</th>
       <th>Priezvisko</th>
       <th>Email</th>
@@ -12,8 +12,9 @@
     </tr>
     </thead>
     <tbody>
-    <tr *ngFor="let user of users">
-      <td>{{ user.userId }}</td>
+    <tr *ngFor="let user of users; let i = index">
+<!--      TODO Nezobrazuj id hocicoho z databazy pouzivatelovi, vie to iba zneuzit a je mu to na nic, nechavaj si to iba pre seba v kode, aby si sa na to vedel odkazovat-->
+      <td>{{ i + 1 }}</td>
       <td>{{ user.firstName }}</td>
       <td>{{ user.lastName }}</td>
       <td>{{ user.email }}</td>

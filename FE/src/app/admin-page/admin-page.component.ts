@@ -157,7 +157,7 @@ export class AdminPageComponent implements OnInit {
   showSubjectModal = false;
   selectedUser: UserDto | undefined = undefined;
   selectedTeacherId: number | null = null;
-  selectedTeacherSubjects : SubjectDto[] = [];
+  selectedTeacherSubjects: SubjectDto[] = [];
   mockSubjects: SubjectDto[] = [{
     name: 'Introduction to Computer Science',
     code: 'CS101',
@@ -166,14 +166,14 @@ export class AdminPageComponent implements OnInit {
     recommendedYear: 1,
     semester: 'Fall',
   },
-  {
-    name: 'Linear Algebra',
-    code: 'MATH201',
-    abbreviation: 'LA',
-    studyProgramName: 'Mathematics',
-    recommendedYear: 1,
-    semester: 'Spring',
-  }];
+    {
+      name: 'Linear Algebra',
+      code: 'MATH201',
+      abbreviation: 'LA',
+      studyProgramName: 'Mathematics',
+      recommendedYear: 1,
+      semester: 'Spring',
+    }];
 
   constructor(private as: AdminService, private us: UserService) {
   }
@@ -189,6 +189,7 @@ export class AdminPageComponent implements OnInit {
     this.us.getRoles().subscribe((roles) => {
       this.availableRoles = roles;
     });
+    this.loadAllSubjects();
   }
 
   userHasRole(user: UserDto, role: Role): boolean {
@@ -196,17 +197,17 @@ export class AdminPageComponent implements OnInit {
   }
 
   onRoleToggle(user: any, role: Role, event: Event): void {
-    const isChecked = (event.target as HTMLInputElement).checked;
-    if (isChecked) {
-      this.as.addUserRole(user.id, role).subscribe(() => {
+    const isAdd = (event.target as HTMLInputElement).checked;
+
+    this.as.updateUserRole(user.id, role, isAdd).subscribe(() => {
+      if (isAdd) {
         user.roles.push(role);
-      });
-    } else {
-      this.as.removeUserRole(user.id, role).subscribe(() => {
+      } else {
         user.roles = user.roles.filter((userRole: Role) => userRole.id !== role.id);
-      });
-    }
+      }
+    });
   }
+
 
   deleteUser(userId: number): void {
     if (confirm('Are you sure you want to delete this user?')) {
@@ -217,10 +218,10 @@ export class AdminPageComponent implements OnInit {
   }
 
   loadAllSubjects(): void {
-    this.availableSubjects = this.allSubjects;
-    // this.as.getAllSubjects().subscribe((subjects) => {
-    //   this.availableSubjects = subjects;
-    // });
+    // this.availableSubjects = this.allSubjects;
+    this.as.getAllSubjects().subscribe((subjects) => {
+      this.availableSubjects = subjects;
+    });
   }
 
   // openSubjectModal(teacherId: number): void {
@@ -236,7 +237,10 @@ export class AdminPageComponent implements OnInit {
   // }
 
   openSubjectModal(userId: number): void {
-    this.selectedUser = this.users.find(user => user.userId === userId && this.userHasRole(user, { id: 2, name: 'teacher' }));
+    this.selectedUser = this.users.find(user => user.userId === userId && this.userHasRole(user, {
+      id: 2,
+      name: 'teacher'
+    }));
 
     if (this.selectedUser) {
       this.as.getTeacherSubjects(userId).subscribe((subjects) => {
@@ -284,7 +288,7 @@ export class AdminPageComponent implements OnInit {
       this.as
         .updateTeacherSubjects(this.selectedTeacherId, subjectCodes)
         .subscribe(() => {
-          alert('Subjects updated successfully!');
+          alert('Subjects updated successfully!'); //TODO pre upozornenia pouzivaj NotificationService, vyzera to lepsie :D
           this.closeSubjectModal();
         });
     }
