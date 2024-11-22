@@ -34,6 +34,7 @@ import sk.uniza.fri.alfri.util.ProcessUtils;
 @Service
 @Slf4j
 public class SubjectService implements ISubjectService {
+  public static final String NO_SUBJECTS_FOUND_MESSAGE = "No subjects found!";
   private final StudyProgramSubjectRepository studyProgramSubjectRepository;
   private final SubjectRepository subjectRepository;
   private final AnswerRepository answerRepository;
@@ -190,6 +191,11 @@ public class SubjectService implements ISubjectService {
   }
 
   @Override
+  public List<Subject> findAll() {
+    return subjectRepository.findAll();
+  }
+
+  @Override
   public List<SubjectGrade> getFilteredSubjects(String sortCriteria, Integer numberOfSubjects) {
     Pageable pageable = PageRequest.of(0, numberOfSubjects);
 
@@ -198,22 +204,22 @@ public class SubjectService implements ISubjectService {
     switch (sortCriteria) {
       case "lowestAverage":
         subjectPage = subjectGradeRepository.findAllByOrderByGradeAverageAsc(pageable)
-            .orElseThrow(() -> new EntityNotFoundException("No subjects found!"));
+            .orElseThrow(() -> new EntityNotFoundException(NO_SUBJECTS_FOUND_MESSAGE));
         break;
 
       case "highestAverage":
         subjectPage = subjectGradeRepository.findAllByOrderByGradeAverageDesc(pageable)
-            .orElseThrow(() -> new EntityNotFoundException("No subjects found!"));
+            .orElseThrow(() -> new EntityNotFoundException(NO_SUBJECTS_FOUND_MESSAGE));
         break;
 
       case "mostAGrades":
         subjectPage = subjectGradeRepository.findAllByOrderByGradeADesc(pageable)
-            .orElseThrow(() -> new EntityNotFoundException("No subjects found!"));
+            .orElseThrow(() -> new EntityNotFoundException(NO_SUBJECTS_FOUND_MESSAGE));
         break;
 
       case "mostFXGrades":
         subjectPage = subjectGradeRepository.findAllByOrderByGradeFxDesc(pageable)
-            .orElseThrow(() -> new EntityNotFoundException("No subjects found!"));
+            .orElseThrow(() -> new EntityNotFoundException(NO_SUBJECTS_FOUND_MESSAGE));
         break;
 
       default:

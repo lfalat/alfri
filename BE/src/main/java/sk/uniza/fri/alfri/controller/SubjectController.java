@@ -5,7 +5,9 @@ import jakarta.validation.constraints.Positive;
 import java.io.IOException;
 import java.time.Duration;
 import java.util.List;
+
 import lombok.extern.slf4j.Slf4j;
+import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.http.CacheControl;
 import org.springframework.http.MediaType;
@@ -36,15 +38,26 @@ import sk.uniza.fri.alfri.service.implementation.JwtService;
 @PreAuthorize("hasAnyRole({'ROLE_STUDENT', 'ROLE_TEACHER', 'ROLE_ADMIN'})")
 @Slf4j
 public class SubjectController {
+  private final ModelMapper modelMapper;
   private final ISubjectService subjectService;
   private final JwtService jwtService;
   private final UserService userService;
 
   public SubjectController(ISubjectService subjectService, JwtService jwtService,
-      UserService userService) {
+      UserService userService, ModelMapper modelMapper) {
     this.subjectService = subjectService;
     this.jwtService = jwtService;
     this.userService = userService;
+    this.modelMapper = modelMapper;
+  }
+
+  @GetMapping("/all")
+  public ResponseEntity<List<SubjectDto>> findAllSubjects() {
+    log.info("Getting all subjects");
+    List<Subject> subjects = subjectService.findAll();
+
+    return ResponseEntity
+        .ok(subjects.stream().map(element -> modelMapper.map(element, SubjectDto.class)).toList());
   }
 
   @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)

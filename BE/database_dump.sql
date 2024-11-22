@@ -2713,6 +2713,9 @@ create table public.subject_grade_correlation
 );
 
 GRANT ALL ON TABLE public.subject_grade_correlation TO alfri_be;
+GRANT ALL ON TABLE public.teacher TO alfri_be;
+GRANT ALL ON TABLE public.teacher_subject TO alfri_be;
+GRANT ALL ON TABLE public.department TO alfri_be;
 
 INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
 VALUES (89, 89, 1);

@@ -2,6 +2,7 @@ package sk.uniza.fri.alfri.exceptionhandler;
 
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.persistence.EntityNotFoundException;
+
 import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -10,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
@@ -69,9 +71,15 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
   }
 
   @ExceptionHandler(ExpiredJwtException.class)
-  public ResponseEntity<Object> handleExpiredJwtException(ExpiredJwtException ex,
-      WebRequest request) {
+  public ResponseEntity<Object> handleExpiredJwtException(WebRequest request) {
     return buildResponseEntity(HttpStatus.FORBIDDEN, "JWT token is expired!",
+        request.getDescription(false));
+  }
+
+  @ExceptionHandler(AccessDeniedException.class)
+  public ResponseEntity<Object> handleAccessDeniedException(AccessDeniedException ex,
+      WebRequest request) {
+    return buildResponseEntity(HttpStatus.FORBIDDEN, ex.getMessage(),
         request.getDescription(false));
   }
 
