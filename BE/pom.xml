@@ -150,6 +150,30 @@
                     </includes>
                 </configuration>
             </plugin>
+             <!-- Define Spotless XML to Eclipse Google code style and hook Spotless apply to the compile phase-->
+          <plugin>
+             <groupId>com.diffplug.spotless</groupId>
+             <artifactId>spotless-maven-plugin</artifactId>
+             <version>2.41.1</version>
+             <configuration>
+                <java>
+                   <removeUnusedImports />
+                   <eclipse>
+                      <version>4.20</version>
+                      <file>
+                         ${project.basedir}/formatter/codestyles/eclipse-java-google-style.xml</file>
+                   </eclipse>
+                </java>
+             </configuration>
+             <executions>
+                <execution>
+                   <goals>
+                      <goal>apply</goal>
+                   </goals>
+                   <phase>compile</phase>
+                </execution>
+             </executions>
+          </plugin>
         </plugins>
     </build>
 
