@@ -86,7 +86,7 @@ export interface TeacherDto {
 }
 
 export interface DepartmentDto {
-  departmentId: number;
+  id: number;
   name: string;
   abbreviation: string;
 }
@@ -194,7 +194,7 @@ export interface ApexChartOptions {
   chart: ApexChart;
   dataLabels: ApexDataLabels;
   title: ApexTitleSubtitle;
-  colors: any;
+  colors: string[];
   plotOptions: ApexPlotOptions,
   xAxis: ApexXAxis,
   responsive: ApexResponsive[]

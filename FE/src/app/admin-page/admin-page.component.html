@@ -48,7 +48,7 @@
       <h2>Zmena predmetov pre {{ selectedUser?.firstName }} {{ selectedUser?.lastName }}</h2>
       <h3>Katedra</h3>
       <select [(ngModel)]="selectedTeacherDepartment" class="department-select">
-        <option *ngFor="let department of availableDepartments" [value]="department.departmentId">
+        <option *ngFor="let department of availableDepartments" [ngValue]="department">
           {{ department.name }}
         </option>
       </select>

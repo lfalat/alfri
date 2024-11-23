@@ -1,7 +1,7 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { catchError, EMPTY, Observable } from 'rxjs';
-import {DepartmentDto, SubjectDto, TeacherDto} from '../types';
+import { DepartmentDto, SubjectDto, TeacherDto } from '../types';
 import { NotificationService } from './notification.service';
 import { environment } from '../../environments/environment';
 
@@ -35,11 +35,11 @@ export class TeacherService {
     }));
   }
 
-  updateTeacherSubjects(userId: number, subjectCodes: string[]): Observable<any> {
-    return this.http.post(`${this.BE_URL}/admin/teacher/${userId}/subjects`, subjectCodes);
+  updateTeacherSubjects(userId: number, subjectCodes: string[]): Observable<TeacherDto> {
+    return this.http.post<TeacherDto>(`${this.BE_URL}/admin/teacher/${userId}/subjects`, subjectCodes);
   }
 
   updateTeacherDepartment(userId: number, departmentId: number | null | undefined): Observable<void> {
-    return this.http.post<void>(`${this.BE_URL}/teacher/${userId}/department`, { departmentId: departmentId });
+    return this.http.post<void>(`${this.BE_URL}/admin/teacher/${userId}/department`, { departmentId: departmentId });
   }
 }

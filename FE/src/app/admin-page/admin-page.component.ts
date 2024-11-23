@@ -137,15 +137,17 @@ export class AdminPageComponent implements OnInit {
 
 
   saveTeacherSubjects(): void {
-    if (this.selectedTeacher !== null) {
+    if (this.selectedTeacher !== null && this.selectedTeacherDepartment) {
       const subjectCodes = this.selectedTeacherSubjects.map((s) => s.code);
       this.ts
         .updateTeacherSubjects(this.selectedTeacher.userId, subjectCodes)
         .subscribe(() => {
-          this.ns.showSuccess('Predmety úspešne aktualizované');
-          this.closeSubjectModal();
+          this.ns.showSuccess('Údaje úspešne aktualizované');
         });
-      this.ts.updateTeacherDepartment(this.selectedTeacher.userId, this.selectedTeacherDepartment?.departmentId);
+      this.ts.updateTeacherDepartment(this.selectedTeacher.userId, this.selectedTeacherDepartment.id)
+        .subscribe(() => {
+        });
+      this.closeSubjectModal();
     }
   }
 
