@@ -36,7 +36,7 @@ export class TeacherService {
   }
 
   updateTeacherSubjects(userId: number, subjectCodes: string[]): Observable<any> {
-    return this.http.post(`${this.BE_URL}/admin/teacher/${userId}/subjects`, { subjectCodes });
+    return this.http.post(`${this.BE_URL}/admin/teacher/${userId}/subjects`, subjectCodes);
   }
 
   updateTeacherDepartment(userId: number, departmentId: number | null | undefined): Observable<void> {

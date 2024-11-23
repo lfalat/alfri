@@ -42,6 +42,6 @@ export class AdminService {
   // }
   //
   // updateTeacherSubjects(userId: number, subjectCodes: string[]): Observable<void> {
-  //   return this.http.put<void>(`${this.BE_URL}/teacher/${userId}/subjects`, { subjects: subjectCodes });
+  //   return this.http.put<void>(`${this.BE_URL}/teacher/${userId}/subjects`, { subjectCodes });
   // }
 }
