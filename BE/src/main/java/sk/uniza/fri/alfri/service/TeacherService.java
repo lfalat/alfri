@@ -9,4 +9,8 @@ public interface TeacherService {
   List<Subject> getSubjectsOfTeacherById(Integer userId);
 
   Teacher findByUserId(Integer userId);
+
+  Teacher createTeacher(Integer userId);
+
+  void deleteTeacher(Integer userId);
 }
