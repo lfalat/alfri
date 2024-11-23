@@ -13,4 +13,6 @@ public interface TeacherService {
   Teacher createTeacher(Integer userId);
 
   void deleteTeacher(Integer userId);
+
+  Teacher changeDepartment(Integer departmentId, Integer userId);
 }

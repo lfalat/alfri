@@ -41,7 +41,7 @@ public class Teacher {
   @JoinColumn(name = "user_id")
   private User user;
 
-  @ManyToOne(fetch = FetchType.LAZY)
+  @ManyToOne(fetch = FetchType.EAGER)
   @OnDelete(action = OnDeleteAction.SET_NULL)
   @JoinColumn(name = "department_id")
   private Department department;

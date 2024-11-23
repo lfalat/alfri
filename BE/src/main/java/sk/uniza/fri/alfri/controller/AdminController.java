@@ -12,12 +12,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import sk.uniza.fri.alfri.dto.DepartmentIdRequestDto;
 import sk.uniza.fri.alfri.dto.RoleUpdateRequestDto;
 import sk.uniza.fri.alfri.dto.TeacherDto;
 import sk.uniza.fri.alfri.dto.user.UserDto;
 import sk.uniza.fri.alfri.entity.Teacher;
 import sk.uniza.fri.alfri.entity.User;
 import sk.uniza.fri.alfri.service.AdminService;
+import sk.uniza.fri.alfri.service.TeacherService;
 import sk.uniza.fri.alfri.service.UserService;
 
 import java.util.List;
@@ -31,12 +33,14 @@ public class AdminController {
   private final ModelMapper modelMapper;
   private final UserService userService;
   private final AdminService adminService;
+  private final TeacherService teacherService;
 
   public AdminController(UserService userService, ModelMapper modelMapper,
-      AdminService adminService) {
+      AdminService adminService, TeacherService teacherService) {
     this.userService = userService;
     this.modelMapper = modelMapper;
     this.adminService = adminService;
+    this.teacherService = teacherService;
   }
 
   @GetMapping("/users")
@@ -85,5 +89,17 @@ public class AdminController {
     TeacherDto teacherDto = this.modelMapper.map(updatedTeacher, TeacherDto.class);
 
     return ResponseEntity.status(HttpStatus.CREATED).body(teacherDto);
+  }
+
+  @PostMapping("/teacher/{userId}/department")
+  public ResponseEntity<TeacherDto> changeDepartmentOfTeacher(@PathVariable Integer userId,
+      @RequestBody DepartmentIdRequestDto departmentId) {
+    log.info("Changing department of teacher with userId {} to department with id {}", userId,
+        departmentId);
+
+    Teacher teacher = teacherService.changeDepartment(departmentId.getDepartmentId(), userId);
+    TeacherDto teacherDto = modelMapper.map(teacher, TeacherDto.class);
+
+    return ResponseEntity.ok(teacherDto);
   }
 }

@@ -2,10 +2,12 @@ package sk.uniza.fri.alfri.service.implementation;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
+import sk.uniza.fri.alfri.entity.Department;
 import sk.uniza.fri.alfri.entity.Subject;
 import sk.uniza.fri.alfri.entity.Teacher;
 import sk.uniza.fri.alfri.entity.User;
 import sk.uniza.fri.alfri.projection.SubjectIdProjection;
+import sk.uniza.fri.alfri.repository.DepartmentRepository;
 import sk.uniza.fri.alfri.repository.SubjectRepository;
 import sk.uniza.fri.alfri.repository.TeacherRepository;
 import sk.uniza.fri.alfri.repository.TeacherSubjectRepository;
@@ -22,14 +24,16 @@ public class TeacherServiceImpl implements TeacherService {
   private final TeacherSubjectRepository teacherSubjectRepository;
   private final SubjectRepository subjectRepository;
   private final UserService userService;
+  private final DepartmentRepository departmentRepository;
 
   public TeacherServiceImpl(TeacherRepository teacherRepository,
       TeacherSubjectRepository teacherSubjectRepository, SubjectRepository subjectRepository,
-      UserService userService) {
+      UserService userService, DepartmentRepository departmentRepository) {
     this.teacherRepository = teacherRepository;
     this.teacherSubjectRepository = teacherSubjectRepository;
     this.subjectRepository = subjectRepository;
     this.userService = userService;
+    this.departmentRepository = departmentRepository;
   }
 
   @Override
@@ -73,5 +77,22 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     teacherRepository.delete(existingTeacher.get());
+  }
+
+  @Override
+  public Teacher changeDepartment(Integer departmentId, Integer userId) {
+    Teacher teacher = findByUserId(userId);
+
+    if (departmentId == null) {
+      teacher.setDepartment(null);
+      return teacherRepository.save(teacher);
+    }
+
+    Department department =
+        departmentRepository.findById(departmentId).orElseThrow(() -> new EntityNotFoundException(
+            String.format("Department with id %d was not found", departmentId)));
+
+    teacher.setDepartment(department);
+    return teacherRepository.save(teacher);
   }
 }
