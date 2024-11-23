@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import { SubjectService } from '../services/subject.service';
-import { NotificationService } from '../services/notification-servie.service';
+import { NotificationService } from '../services/notification.service';
 import { StudentService } from '../services/student.service';
 import { PageEvent } from '@angular/material/paginator';
 import { map, Observable, of, Subject } from 'rxjs';

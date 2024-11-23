@@ -81,8 +81,14 @@ export interface StudyProgramDto {
 export interface TeacherDto {
   teacherId: number;
   userId: number;
-  department: string;
+  department: DepartmentDto;
   subjects: SubjectDto[];
+}
+
+export interface DepartmentDto {
+  departmentId: number;
+  name: string;
+  abbreviation: string;
 }
 
 export interface Page<T> {

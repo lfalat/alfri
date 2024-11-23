@@ -1,8 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { AdminService } from '../services/admin.service';
 import { UserService } from '../services/user.service';
-import { Role, SubjectDto, UserDto } from '../types';
+import { NotificationService } from '../services/notification.service';
+import { DepartmentService } from '../services/department.service';
+import { DepartmentDto, Role, SubjectDto, TeacherDto, UserDto } from '../types';
 import { NgForOf, NgIf } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { TeacherService } from '../services/teacher.service';
 
 @Component({
   selector: 'app-admin',
@@ -10,173 +14,27 @@ import { NgForOf, NgIf } from '@angular/common';
   styleUrls: ['./admin-page.component.scss'],
   imports: [
     NgForOf,
-    NgIf
+    NgIf,
+    FormsModule
   ],
   standalone: true
 })
 export class AdminPageComponent implements OnInit {
-  users: UserDto[] = [
-    {
-      userId: 1,
-      firstName: 'John',
-      lastName: 'Doe',
-      roles: [
-        { id: 1, name: 'student' },
-        { id: 4, name: 'admin' },
-      ],
-      email: 'john.doe@example.com',
-    },
-    {
-      userId: 2,
-      firstName: 'Jane',
-      lastName: 'Smith',
-      roles: [{ id: 2, name: 'teacher' }],
-      email: 'jane.smith@example.com',
-    },
-    {
-      userId: 3,
-      firstName: 'Alice',
-      lastName: 'Johnson',
-      roles: [{ id: 3, name: 'visitor' }],
-      email: 'alice.johnson@example.com',
-    },
-    {
-      userId: 4,
-      firstName: 'Bob',
-      lastName: 'Brown',
-      roles: [
-        { id: 1, name: 'student' },
-        { id: 3, name: 'visitor' },
-      ],
-      email: 'bob.brown@example.com',
-    },
-    {
-      userId: 5,
-      firstName: 'Emma',
-      lastName: 'Wilson',
-      roles: [
-        { id: 2, name: 'teacher' },
-        { id: 3, name: 'visitor' },
-      ],
-      email: 'emma.wilson@example.com',
-    },
-  ];
-  availableRoles: Role[] = [
-    { id: 1, name: 'teacher' },
-    { id: 2, name: 'student' },
-    { id: 3, name: 'visitor' },
-    { id: 4, name: 'admin' },
-  ];
-
-  allSubjects: SubjectDto[] = [
-    {
-      name: 'Introduction to Computer Science',
-      code: 'CS101',
-      abbreviation: 'CS',
-      studyProgramName: 'Computer Science',
-      recommendedYear: 1,
-      semester: 'Fall',
-    },
-    {
-      name: 'Linear Algebra',
-      code: 'MATH201',
-      abbreviation: 'LA',
-      studyProgramName: 'Mathematics',
-      recommendedYear: 1,
-      semester: 'Spring',
-    },
-    {
-      name: 'Data Structures and Algorithms',
-      code: 'CS202',
-      abbreviation: 'DSA',
-      studyProgramName: 'Computer Science',
-      recommendedYear: 2,
-      semester: 'Fall',
-    },
-    {
-      name: 'Organic Chemistry',
-      code: 'CHEM301',
-      abbreviation: 'OC',
-      studyProgramName: 'Chemistry',
-      recommendedYear: 2,
-      semester: 'Spring',
-    },
-    {
-      name: 'Quantum Physics',
-      code: 'PHYS401',
-      abbreviation: 'QP',
-      studyProgramName: 'Physics',
-      recommendedYear: 3,
-      semester: 'Fall',
-    },
-  ];
-
-  availableSubjects: SubjectDto[] = [
-    {
-      name: 'Introduction to Computer Science',
-      code: 'CS101',
-      abbreviation: 'CS',
-      studyProgramName: 'Computer Science',
-      recommendedYear: 1,
-      semester: 'Fall',
-    },
-    {
-      name: 'Linear Algebra',
-      code: 'MATH201',
-      abbreviation: 'LA',
-      studyProgramName: 'Mathematics',
-      recommendedYear: 1,
-      semester: 'Spring',
-    },
-    {
-      name: 'Data Structures and Algorithms',
-      code: 'CS202',
-      abbreviation: 'DSA',
-      studyProgramName: 'Computer Science',
-      recommendedYear: 2,
-      semester: 'Fall',
-    },
-    {
-      name: 'Organic Chemistry',
-      code: 'CHEM301',
-      abbreviation: 'OC',
-      studyProgramName: 'Chemistry',
-      recommendedYear: 2,
-      semester: 'Spring',
-    },
-    {
-      name: 'Quantum Physics',
-      code: 'PHYS401',
-      abbreviation: 'QP',
-      studyProgramName: 'Physics',
-      recommendedYear: 3,
-      semester: 'Fall',
-    },
-  ];
-
+  users: UserDto[] = [];
+  availableSubjects: SubjectDto[] = [];
   showSubjectModal = false;
   selectedUser: UserDto | undefined = undefined;
+  selectedTeacher: TeacherDto | null = null;
   selectedTeacherId: number | null = null;
   selectedTeacherSubjects: SubjectDto[] = [];
-  mockSubjects: SubjectDto[] = [{
-    name: 'Introduction to Computer Science',
-    code: 'CS101',
-    abbreviation: 'CS',
-    studyProgramName: 'Computer Science',
-    recommendedYear: 1,
-    semester: 'Fall',
-  },
-    {
-      name: 'Linear Algebra',
-      code: 'MATH201',
-      abbreviation: 'LA',
-      studyProgramName: 'Mathematics',
-      recommendedYear: 1,
-      semester: 'Spring',
-    }];
+  selectedTeacherDepartment: DepartmentDto | null = null;
 
-  constructor(private as: AdminService, private us: UserService) {
-  }
+  availableRoles: Role[] = [];
+  availableDepartments: DepartmentDto[] = [];
+
+
+  constructor(private as: AdminService, private us: UserService, private ns: NotificationService,
+              private ds: DepartmentService, private ts: TeacherService) {}
 
   ngOnInit(): void {
     this.fetchData();
@@ -189,6 +47,9 @@ export class AdminPageComponent implements OnInit {
     this.us.getRoles().subscribe((roles) => {
       this.availableRoles = roles;
     });
+    this.ds.getAllDepartments().subscribe(departments => {
+      this.availableDepartments = departments;
+    });
     this.loadAllSubjects();
   }
 
@@ -196,10 +57,10 @@ export class AdminPageComponent implements OnInit {
     return user.roles.some((userRole: Role) => userRole.id === role.id);
   }
 
-  onRoleToggle(user: any, role: Role, event: Event): void {
+  onRoleToggle(user: UserDto, role: Role, event: Event): void {
     const isAdd = (event.target as HTMLInputElement).checked;
 
-    this.as.updateUserRole(user.id, role, isAdd).subscribe(() => {
+    this.as.updateUserRole(user.userId, role, isAdd).subscribe(() => {
       if (isAdd) {
         user.roles.push(role);
       } else {
@@ -218,23 +79,10 @@ export class AdminPageComponent implements OnInit {
   }
 
   loadAllSubjects(): void {
-    // this.availableSubjects = this.allSubjects;
     this.as.getAllSubjects().subscribe((subjects) => {
       this.availableSubjects = subjects;
     });
   }
-
-  // openSubjectModal(teacherId: number): void {
-  //   this.selectedTeacherId = teacherId;
-  //
-  //   // this.as.getTeacherSubjects(teacherId).subscribe((subjects) => {
-  //   //   this.teacherSubjects = subjects;
-  //   //   this.showSubjectModal = true;
-  //   // });
-  //
-  //   // this.selectedTeacherSubjects = this.availableSubjects; // just to showcase
-  //   this.showSubjectModal = true;
-  // }
 
   openSubjectModal(userId: number): void {
     this.selectedUser = this.users.find(user => user.userId === userId && this.userHasRole(user, {
@@ -243,10 +91,16 @@ export class AdminPageComponent implements OnInit {
     }));
 
     if (this.selectedUser) {
-      this.as.getTeacherSubjects(userId).subscribe((subjects) => {
+      this.ts.getTeacherSubjects(userId).subscribe((subjects) => {
         this.selectedTeacherSubjects = subjects;
-        this.showSubjectModal = true;
       });
+      this.ts.getTeacherById(userId).subscribe((teacher) => {
+        this.selectedTeacher = teacher;
+        this.selectedTeacherDepartment = teacher.department;
+      });
+      // this.ts.getTeacherDepartment(userId).subscribe((department) => {
+      //   this.selectedTeacherDepartment = department;
+      // });
       this.showSubjectModal = true;
     }
   }
@@ -283,14 +137,15 @@ export class AdminPageComponent implements OnInit {
 
 
   saveTeacherSubjects(): void {
-    if (this.selectedTeacherId !== null) {
-      const subjectCodes = this.selectedTeacherSubjects.map((s) => s.code); // Collect subject codes
-      this.as
-        .updateTeacherSubjects(this.selectedTeacherId, subjectCodes)
+    if (this.selectedTeacher !== null) {
+      const subjectCodes = this.selectedTeacherSubjects.map((s) => s.code);
+      this.ts
+        .updateTeacherSubjects(this.selectedTeacher.userId, subjectCodes)
         .subscribe(() => {
-          alert('Subjects updated successfully!'); //TODO pre upozornenia pouzivaj NotificationService, vyzera to lepsie :D
+          this.ns.showSuccess('Predmety úspešne aktualizované');
           this.closeSubjectModal();
         });
+      this.ts.updateTeacherDepartment(this.selectedTeacher.userId, this.selectedTeacherDepartment?.departmentId);
     }
   }
 
@@ -298,6 +153,8 @@ export class AdminPageComponent implements OnInit {
     this.showSubjectModal = false;
     this.selectedTeacherId = null;
     this.selectedTeacherSubjects = [];
+    this.selectedTeacher = null;
+    this.selectedTeacherDepartment = null;
     this.loadAllSubjects();
   }
 }

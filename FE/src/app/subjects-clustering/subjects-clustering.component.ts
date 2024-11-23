@@ -7,7 +7,7 @@ import { Router } from '@angular/router';
 import { PageEvent } from '@angular/material/paginator';
 import { HttpErrorResponse } from '@angular/common/http';
 import { StudentService } from '../services/student.service';
-import { NotificationService } from '../services/notification-servie.service';
+import { NotificationService } from '../services/notification.service';
 import { MatButton } from '@angular/material/button';
 import { MatDivider } from '@angular/material/divider';
 import { MatIcon } from '@angular/material/icon';

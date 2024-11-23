@@ -13,7 +13,6 @@
     </thead>
     <tbody>
     <tr *ngFor="let user of users; let i = index">
-<!--      TODO Nezobrazuj id hocicoho z databazy pouzivatelovi, vie to iba zneuzit a je mu to na nic, nechavaj si to iba pre seba v kode, aby si sa na to vedel odkazovat-->
       <td>{{ i + 1 }}</td>
       <td>{{ user.firstName }}</td>
       <td>{{ user.lastName }}</td>
@@ -47,6 +46,12 @@
   <div *ngIf="showSubjectModal" class="modal-overlay">
     <div class="modal">
       <h2>Zmena predmetov pre {{ selectedUser?.firstName }} {{ selectedUser?.lastName }}</h2>
+      <h3>Katedra</h3>
+      <select [(ngModel)]="selectedTeacherDepartment" class="department-select">
+        <option *ngFor="let department of availableDepartments" [value]="department.departmentId">
+          {{ department.name }}
+        </option>
+      </select>
 
       <h3>Priradené predmety</h3>
       <table>

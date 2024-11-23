@@ -3,7 +3,7 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { catchError, EMPTY, Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { Role, SubjectDto, UserDto } from '../types';
-import { NotificationService } from './notification-servie.service';
+import { NotificationService } from './notification.service';
 
 @Injectable({
   providedIn: 'root',
@@ -25,22 +25,23 @@ export class AdminService {
     });
   }
 
-  deleteUser(userId: number): Observable<any> {
-    return this.http.delete(`${this.BE_URL}/admin/user/${userId}`); //TODO a este prosim podavaj miesot any konkretne typy ak sa da
+  deleteUser(userId: number): Observable<void> {
+    return this.http.delete<void>(`${this.BE_URL}/admin/user/${userId}`);
   }
+
 
   getAllSubjects(): Observable<SubjectDto[]> {
     return this.http.get<SubjectDto[]>(`${this.BE_URL}/subject/all`);
   }
 
-  getTeacherSubjects(userId: number): Observable<SubjectDto[]> {
-    return this.http.get<SubjectDto[]>(`${this.BE_URL}/teacher/${userId}/subjects`).pipe(catchError((error: HttpErrorResponse) => {
-      this.notificationService.showError(error.error.message);
-      return EMPTY;
-    }));
-  }
-
-  updateTeacherSubjects(userId: number, subjectCodes: string[]): Observable<any> {
-    return this.http.put(`${this.BE_URL}/teacher/${userId}/subjects`, { subjects: subjectCodes });
-  }
+  // getTeacherSubjects(userId: number): Observable<SubjectDto[]> {
+  //   return this.http.get<SubjectDto[]>(`${this.BE_URL}/teacher/${userId}/subjects`).pipe(catchError((error: HttpErrorResponse) => {
+  //     this.notificationService.showError(error.error.message);
+  //     return EMPTY;
+  //   }));
+  // }
+  //
+  // updateTeacherSubjects(userId: number, subjectCodes: string[]): Observable<void> {
+  //   return this.http.put<void>(`${this.BE_URL}/teacher/${userId}/subjects`, { subjects: subjectCodes });
+  // }
 }

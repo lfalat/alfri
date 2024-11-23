@@ -8,7 +8,7 @@ import { AuthService } from '../services/auth.service';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { MatButton } from '@angular/material/button';
-import { NotificationService } from '../services/notification-servie.service';
+import { NotificationService } from '../services/notification.service';
 import { Router } from '@angular/router';
 
 

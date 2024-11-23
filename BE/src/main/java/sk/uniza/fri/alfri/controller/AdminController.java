@@ -1,5 +1,6 @@
 package sk.uniza.fri.alfri.controller;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
@@ -27,6 +28,7 @@ import java.util.List;
 /** Created by petos on 11/19/24. */
 @RestController
 @Slf4j
+@Tag(name = "Admin Controller", description = "Controller for the admin page")
 @RequestMapping("/api/admin/")
 @PreAuthorize("hasRole('ROLE_ADMIN')")
 public class AdminController {
