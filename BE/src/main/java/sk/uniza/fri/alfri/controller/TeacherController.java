@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import sk.uniza.fri.alfri.dto.TeacherDto;
 import sk.uniza.fri.alfri.dto.subject.SubjectDto;
 import sk.uniza.fri.alfri.entity.Subject;
 import sk.uniza.fri.alfri.service.TeacherService;
@@ -29,7 +30,16 @@ public class TeacherController {
     this.modelMapper = modelMapper;
   }
 
-  @GetMapping("{userId}/subjects")
+  @GetMapping("/{userId}")
+  public ResponseEntity<TeacherDto> findTeacherByUserId(@PathVariable Integer userId) {
+    log.info("Getting teacher with user id {}", userId);
+
+    TeacherDto teacherDto = modelMapper.map(teacherService.findByUserId(userId), TeacherDto.class);
+
+    return ResponseEntity.ok(teacherDto);
+  }
+
+  @GetMapping("/{userId}/subjects")
   public ResponseEntity<List<SubjectDto>> getTeacherSubjects(@PathVariable Integer userId) {
     log.info("Getting all subjects of teacher with userId id {}", userId);
 
