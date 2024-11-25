@@ -15,6 +15,7 @@ import { SubjectsClusteringComponent } from './subjects-clustering/subjects-clus
 import { SubjectReportsComponent } from './subject-reports/subject-reports.component';
 import { SubjectGradeCorrelationComponent } from './subject-grade-correlation/subject-grade-correlation.component';
 import { AdminPageComponent } from './admin-page/admin-page.component';
+import { PassingPredictionComponent } from './passing-prediction/passing-prediction.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -43,6 +44,11 @@ export const routes: Routes = [
   {
     path: 'subjects-chance',
     component: SubjectsChanceComponent,
+    canActivate: [() => inject(AuthGuard).canActivate()],
+  },
+  {
+    path: 'passing-prediction',
+    component: PassingPredictionComponent,
     canActivate: [() => inject(AuthGuard).canActivate()],
   },
   {

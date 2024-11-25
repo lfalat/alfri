@@ -1,4 +1,6 @@
 <mat-sidenav-container class="sidenav-container">
+
+  <!--   hamburger menu - mobile   -->
   <mat-sidenav #drawer class="sidenav" fixedInViewport mode="over" [opened]="false">
     <mat-toolbar>Menu</mat-toolbar>
     <mat-nav-list>
@@ -14,17 +16,38 @@
 
         <a mat-list-item href="javascript:void(0)" (click)="navigateToSubjects()">
           <div class="d-flex align-items-center gap-2">
-            <mat-icon>book</mat-icon>
-            Zoznam predmetov
+            <mat-icon>list_view</mat-icon>
+            Prehľad predmetov
           </div>
         </a>
 
-        <a mat-list-item href="javascript:void(0)" (click)="navigateToSubjectChances()">
+        <a mat-list-item href="javascript:void(0)" (click)="navigateToPrediction()">
           <div class="d-flex align-items-center gap-2">
-            <mat-icon>book</mat-icon>
-            Urobim predmet ?
+            <mat-icon>interests</mat-icon>
+            Záujmy
           </div>
         </a>
+
+        <a mat-list-item href="javascript:void(0)" (click)="navigateToSubjectsClustering()">
+          <div class="d-flex align-items-center gap-2">
+            <mat-icon>bubble_chart</mat-icon>
+            Podobné predmety
+          </div>
+        </a>
+
+        <a mat-list-item href="javascript:void(0)" (click)="navigateToPassingPrediction()">
+          <div class="d-flex align-items-center gap-2">
+            <mat-icon>check_circle</mat-icon>
+            Predikcia absolvovania
+          </div>
+        </a>
+
+<!--        <a mat-list-item href="javascript:void(0)" (click)="navigateToSubjectChances()">-->
+<!--          <div class="d-flex align-items-center gap-2">-->
+<!--            <mat-icon>question_mark</mat-icon>-->
+<!--            Predikcia-->
+<!--          </div>-->
+<!--        </a>-->
       </mat-expansion-panel>
 
       <mat-expansion-panel [class.mat-elevation-z0]="true">
@@ -39,30 +62,23 @@
 
         <a mat-list-item href="javascript:void(0)" (click)="navigateToSubjectsReports()">
           <div class="d-flex align-items-center gap-2">
-            <mat-icon>bar_chart</mat-icon>
-            Reporty predmetov
+            <mat-icon>summarize</mat-icon>
+            Predmety podľa známok
           </div>
         </a>
 
         <a mat-list-item href="javascript:void(0)" (click)="navigateToSubjectGradeCorrelation()">
           <div class="d-flex align-items-center gap-2">
-            <mat-icon>bar_chart</mat-icon>
+            <mat-icon>query_stats</mat-icon>
             Korelačná analýza známok
           </div>
         </a>
       </mat-expansion-panel>
 
-      <a mat-list-item href="javascript:void(0)" (click)="navigateToPrediction()">
+      <a mat-list-item href="javascript:void(0)" (click)="navigateToAdminPage()">
         <div class="d-flex align-items-center gap-2">
-          <mat-icon>analytics</mat-icon>
-          Predikcia
-        </div>
-      </a>
-
-      <a mat-list-item href="javascript:void(0)" (click)="navigateToSubjectsClustering()">
-        <div class="d-flex align-items-center gap-2">
-          <mat-icon>bubble_chart</mat-icon>
-          Zhlukovanie
+          <mat-icon>admin_panel_settings</mat-icon>
+          Administrácia
         </div>
       </a>
 
@@ -82,6 +98,7 @@
     </mat-nav-list>
   </mat-sidenav>
 
+  <!--   top toolbar - PC   -->
   <mat-sidenav-content>
     <div *ngIf="loggedIn(); else loggedOut">
       <mat-toolbar color="secondary" class="row">
@@ -91,22 +108,12 @@
             <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
           </button>
 
-          <span role="button" class="curs" (click)="navigateToHome()">Alfri</span>
+          <span role="button" class="curs" (click)="navigateToHome()">ALFRI</span>
 
           <div class="d-none d-md-block">
             <button mat-button [matMenuTriggerFor]="subjects_menu">
               <mat-icon>book</mat-icon>
               Predmety
-            </button>
-
-            <button mat-button (click)="navigateToPrediction()">
-              <mat-icon>interests</mat-icon>
-              Záujmy
-            </button>
-
-            <button mat-button (click)="navigateToSubjectsClustering()">
-              <mat-icon>bubble_chart</mat-icon>
-              Zhlukovanie
             </button>
 
             <button mat-button [matMenuTriggerFor]="reports_menu">
@@ -119,8 +126,8 @@
         <div class="col-4 d-none d-md-flex justify-content-end">
           <div>
             <button mat-button (click)="navigateToAdminPage()">
-              <mat-icon>account_circle</mat-icon>
-              Admin menu
+              <mat-icon>admin_panel_settings</mat-icon>
+              Administrácia
             </button>
             <button mat-button (click)="navigateToProfile()">
               <mat-icon>account_circle</mat-icon>
@@ -140,26 +147,43 @@
         <mat-icon>list_view</mat-icon>
         <span>Prehľad predmetov</span>
       </button>
-      <button mat-menu-item (click)="navigateToSubjectChances()">
-        <mat-icon>question_mark</mat-icon>
-        <span>Predikcia</span>
+
+      <button mat-menu-item (click)="navigateToPrediction()">
+        <mat-icon>interests</mat-icon>
+        <span>Záujmy</span>
       </button>
+
+      <button mat-menu-item (click)="navigateToSubjectsClustering()">
+        <mat-icon>bubble_chart</mat-icon>
+        <span>Podobné predmety</span>
+      </button>
+
+      <button mat-menu-item (click)="navigateToPassingPrediction()">
+        <mat-icon>check_circle</mat-icon>
+        <span>Predikcia absolvovania</span>
+      </button>
+
+<!--      <button mat-menu-item (click)="navigateToSubjectChances()">-->
+<!--        <mat-icon>question_mark</mat-icon>-->
+<!--        <span>Predikcia</span>-->
+<!--      </button>-->
+
     </mat-menu>
 
     <mat-menu #reports_menu="matMenu">
       <button mat-menu-item (click)="navigateToSubjectsReports()">
-        <mat-icon>bar_chart</mat-icon>
-        Reporty predmetov
+        <mat-icon>summarize</mat-icon>
+        Predmety podľa známok
       </button>
 
       <button mat-menu-item (click)="navigateToSubjectGradeCorrelation()">
-        <mat-icon>bar_chart</mat-icon>
+        <mat-icon>query_stats</mat-icon>
         Korelačná analýza známok
       </button>
     </mat-menu>
 
     <ng-template #loggedOut>
-      <mat-toolbar color="secondary" class="row">
+      <mat-toolbar class="row">
         <span>Alfri</span>
       </mat-toolbar>
     </ng-template>
