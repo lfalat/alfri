@@ -23,8 +23,10 @@ public class StudentSubjectId {
 
   @Override
   public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+    if (this == o)
+      return true;
+    if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o))
+      return false;
     StudentSubjectId entity = (StudentSubjectId) o;
     return Objects.equals(this.studentId, entity.studentId)
         && Objects.equals(this.subjectId, entity.subjectId);

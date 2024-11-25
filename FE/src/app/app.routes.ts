@@ -14,16 +14,17 @@ import { SubjectsChanceComponent } from './subjects-chance/subjects-chance.compo
 import { SubjectsClusteringComponent } from './subjects-clustering/subjects-clustering.component';
 import { SubjectReportsComponent } from './subject-reports/subject-reports.component';
 import { SubjectGradeCorrelationComponent } from './subject-grade-correlation/subject-grade-correlation.component';
+import { AdminPageComponent } from './admin-page/admin-page.component';
 
 export const routes: Routes = [
-  {path: '', redirectTo: 'login', pathMatch: 'full'},
+  { path: '', redirectTo: 'login', pathMatch: 'full' },
   {
     path: 'home',
     component: HomeComponent,
     canActivate: [() => inject(AuthGuard).canActivate()],
   },
-  {path: 'login', component: LoginComponent},
-  {path: 'register', component: RegistrationComponent},
+  { path: 'login', component: LoginComponent },
+  { path: 'register', component: RegistrationComponent },
   {
     path: 'subjects',
     component: SubjectsComponent,
@@ -64,8 +65,13 @@ export const routes: Routes = [
     component: SubjectGradeCorrelationComponent,
     canActivate: [() => inject(AuthGuard).canActivate()]
   },
-  {path: 'profile', component: ProfileComponent},
-  {path: '404', component: ErrorPageComponent},
-  {path: 'grade-form', component: GradeFormComponent},
-  {path: '**', redirectTo: 'login'}
+  {
+    path: 'admin-page',
+    component: AdminPageComponent,
+    canActivate: [() => inject(AuthGuard).canActivate()]
+  },
+  { path: 'profile', component: ProfileComponent },
+  { path: '404', component: ErrorPageComponent },
+  { path: 'grade-form', component: GradeFormComponent },
+  { path: '**', redirectTo: 'login' }
 ];

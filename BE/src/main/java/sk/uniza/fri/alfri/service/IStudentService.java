@@ -10,5 +10,5 @@ public interface IStudentService {
 
   StudyProgram getUsersStudyProgram(User user);
 
-    void makePrediction() throws IOException;
+  void makePrediction() throws IOException;
 }

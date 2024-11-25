@@ -15,18 +15,14 @@ import org.springframework.security.core.userdetails.UserDetails;
 @Getter
 @Setter
 @Entity
-@Table(
-    name = "\"user\"",
-    uniqueConstraints = {
-      @UniqueConstraint(
-          name = "user_email_unique",
-          columnNames = {"email"})
-    })
+@Table(name = "\"user\"",
+    uniqueConstraints = {@UniqueConstraint(name = "user_email_unique", columnNames = {"email"})})
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class User implements UserDetails {
-  @Serial private static final long serialVersionUID = -1611510836045616813L;
+  @Serial
+  private static final long serialVersionUID = -1611510836045616813L;
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)

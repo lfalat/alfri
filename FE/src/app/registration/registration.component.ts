@@ -19,7 +19,7 @@ import { NgForOf, NgIf } from '@angular/common';
 import { HttpClientModule, HttpErrorResponse } from '@angular/common/http';
 import { AuthService } from '../services/auth.service';
 import type { RegisterUserDto, Role } from '../types';
-import { NotificationService } from '../services/notification-servie.service';
+import { NotificationService } from '../services/notification.service';
 import { UserService } from '../services/user.service';
 import { JwtService } from '../services/jwt.service';
 import { ReplaySubject, takeUntil } from 'rxjs';

@@ -13,7 +13,8 @@ import lombok.Setter;
 @Entity
 @Table(name = "focus")
 public class Focus implements Serializable {
-  @Serial private static final long serialVersionUID = -9188932193400358754L;
+  @Serial
+  private static final long serialVersionUID = -9188932193400358754L;
 
   @Id
   @Column(name = "subject_id", nullable = false)

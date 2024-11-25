@@ -13,70 +13,76 @@ import java.util.List;
 import java.util.Optional;
 
 public class SortRequestQueryParameterResolver implements HandlerMethodArgumentResolver {
-    private static final String DEFAULT_PARAMETER = "sort";
-    private static final String DEFAULT_PROPERTY_DELIMITER = ",";
-    private static final String DEFAULT_QUALIFIER_DELIMITER = "_";
-    private String sortParameter = DEFAULT_PARAMETER;
-    private String propertyDelimiter = DEFAULT_PROPERTY_DELIMITER;
-    private String qualifierDelimiter = DEFAULT_QUALIFIER_DELIMITER;
-    @Override
-    public boolean supportsParameter(MethodParameter parameter) {
-        return SortDefinition.class.equals(parameter.getParameterType());
+  private static final String DEFAULT_PARAMETER = "sort";
+  private static final String DEFAULT_PROPERTY_DELIMITER = ",";
+  private static final String DEFAULT_QUALIFIER_DELIMITER = "_";
+  private String sortParameter = DEFAULT_PARAMETER;
+  private String propertyDelimiter = DEFAULT_PROPERTY_DELIMITER;
+  private String qualifierDelimiter = DEFAULT_QUALIFIER_DELIMITER;
+
+  @Override
+  public boolean supportsParameter(MethodParameter parameter) {
+    return SortDefinition.class.equals(parameter.getParameterType());
+  }
+
+  @Override
+  public SortDefinition resolveArgument(MethodParameter parameter,
+      ModelAndViewContainer mavContainer, NativeWebRequest webRequest,
+      WebDataBinderFactory binderFactory) throws Exception {
+    String[] directionParameter = webRequest.getParameterValues(getSortParameter(parameter));
+
+    if (directionParameter == null) {
+      return null;
     }
 
-    @Override
-    public SortDefinition resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
-        String[] directionParameter = webRequest.getParameterValues(getSortParameter(parameter));
+    return parseParameterIntoSort(directionParameter, propertyDelimiter);
+  }
 
-        if (directionParameter == null) {
-            return null;
-        }
+  protected String getSortParameter(MethodParameter parameter) {
 
-        return parseParameterIntoSort(directionParameter, propertyDelimiter);
+    StringBuilder builder = new StringBuilder();
+
+    Qualifier qualifier =
+        parameter != null ? parameter.getParameterAnnotation(Qualifier.class) : null;
+
+    if (qualifier != null) {
+      builder.append(qualifier.value()).append(qualifierDelimiter);
     }
 
-    protected String getSortParameter(MethodParameter parameter) {
+    return builder.append(sortParameter).toString();
+  }
 
-        StringBuilder builder = new StringBuilder();
+  SortDefinition parseParameterIntoSort(String[] source, String delimiter) {
 
-        Qualifier qualifier = parameter != null ? parameter.getParameterAnnotation(Qualifier.class) : null;
+    List<OrderRequestQuery> allOrders = new ArrayList<>();
 
-        if (qualifier != null) {
-            builder.append(qualifier.value()).append(qualifierDelimiter);
-        }
+    for (String part : source) {
+      if (part == null) {
+        continue;
+      }
+      String[] elements = part.split(delimiter);
 
-        return builder.append(sortParameter).toString();
+      Optional<DirectionRequestQueryEnum> direction = elements.length == 0 ? Optional.empty()
+          : DirectionRequestQueryEnum.fromOptionalString(elements[elements.length - 1]);
+
+      int lastIndex = direction.map(it -> elements.length - 1).orElseGet(() -> elements.length);
+
+      for (int i = 0; i < lastIndex; i++) {
+        toOrder(elements[i], direction).ifPresent(allOrders::add);
+      }
     }
 
-    SortDefinition parseParameterIntoSort(String[] source, String delimiter) {
+    return allOrders.isEmpty() ? null : SortDefinition.by(allOrders);
+  }
 
-        List<OrderRequestQuery> allOrders = new ArrayList<>();
+  private static Optional<OrderRequestQuery> toOrder(String property,
+      Optional<DirectionRequestQueryEnum> direction) {
 
-        for (String part : source) {
-            if (part == null) {
-                continue;
-            }
-            String[] elements = part.split(delimiter);
-
-            Optional<DirectionRequestQueryEnum> direction = elements.length == 0 ? Optional.empty()
-                    : DirectionRequestQueryEnum.fromOptionalString(elements[elements.length - 1]);
-
-            int lastIndex = direction.map(it -> elements.length - 1).orElseGet(() -> elements.length);
-
-            for (int i = 0; i < lastIndex; i++) {
-                toOrder(elements[i], direction).ifPresent(allOrders::add);
-            }
-        }
-
-        return allOrders.isEmpty() ? null : SortDefinition.by(allOrders);
+    if (!StringUtils.hasText(property)) {
+      return Optional.empty();
     }
 
-    private static Optional<OrderRequestQuery> toOrder(String property, Optional<DirectionRequestQueryEnum> direction) {
-
-        if (!StringUtils.hasText(property)) {
-            return Optional.empty();
-        }
-
-        return Optional.of(direction.map(it -> new OrderRequestQuery(it, property)).orElseGet(() -> OrderRequestQuery.by(property)));
-    }
+    return Optional.of(direction.map(it -> new OrderRequestQuery(it, property))
+        .orElseGet(() -> OrderRequestQuery.by(property)));
+  }
 }

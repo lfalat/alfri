@@ -42,10 +42,7 @@ public class Answer {
   @JoinColumn(name = "questionnaire_id", nullable = false)
   private Questionnaire answerQuestionnaire;
 
-  @OneToMany(
-      mappedBy = "answer",
-      fetch = FetchType.LAZY,
-      cascade = CascadeType.ALL,
+  @OneToMany(mappedBy = "answer", fetch = FetchType.LAZY, cascade = CascadeType.ALL,
       orphanRemoval = true)
   private List<AnswerText> texts = new ArrayList<>();
 }

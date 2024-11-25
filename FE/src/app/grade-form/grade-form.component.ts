@@ -13,7 +13,7 @@ import { MatRadioButton, MatRadioGroup } from '@angular/material/radio';
 import { MatList, MatListItem } from '@angular/material/list';
 import { MatOption, MatSelect } from '@angular/material/select';
 import { Router } from '@angular/router';
-import { NotificationService } from '../services/notification-servie.service';
+import { NotificationService } from '../services/notification.service';
 import { USER_FORM_ID } from '../home/home.component';
 
 @Component({

@@ -18,16 +18,12 @@ public interface StudyProgramSubjectMapper {
   @Mapping(target = "obligation", source = "studyProgramSubject.obligation")
   @Mapping(target = "studyProgramName", source = "studyProgramSubject.id.studyProgram.name")
   @Mapping(target = "recommendedYear", source = "studyProgramSubject.recommendedYear")
-  @Mapping(
-      target = "semester",
-      source = "studyProgramSubject.semesterWinter",
+  @Mapping(target = "semester", source = "studyProgramSubject.semesterWinter",
       qualifiedByName = "mapSemester")
   SubjectDto studyProgramSubjectToSubjectDto(StudyProgramSubject studyProgramSubject);
 
   @Mapping(target = "studyProgramName", source = "studyProgramSubject.id.studyProgram.name")
-  @Mapping(
-      target = "semester",
-      source = "studyProgramSubject.semesterWinter",
+  @Mapping(target = "semester", source = "studyProgramSubject.semesterWinter",
       qualifiedByName = "mapSemester")
   @Mapping(target = "name", source = "studyProgramSubject.id.subject.name")
   @Mapping(target = "focusDTO", source = "studyProgramSubject.id.subject.focus")

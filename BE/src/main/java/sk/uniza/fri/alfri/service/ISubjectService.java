@@ -13,16 +13,18 @@ import java.util.List;
 import sk.uniza.fri.alfri.entity.SubjectGrade;
 
 public interface ISubjectService {
-    Page<StudyProgramSubject> findAllByStudyProgramId(
-            SearchDefinition searchDefinition, PageDefinition pageDefinition);
+  Page<StudyProgramSubject> findAllByStudyProgramId(SearchDefinition searchDefinition,
+      PageDefinition pageDefinition);
 
-    Subject findBySubjectCode(String subjectCode);
+  Subject findBySubjectCode(String subjectCode);
 
-    List<StudyProgramSubject> getSimilarSubjects(List<Subject> originalSubjects) throws IOException;
+  List<StudyProgramSubject> getSimilarSubjects(List<Subject> originalSubjects) throws IOException;
 
-    List<StudyProgramSubject> findSubjectByIds(List<Integer> ids);
+  List<StudyProgramSubject> findSubjectByIds(List<Integer> ids);
 
-    List<SubjectGrade> getFilteredSubjects(String sortCriteria, Integer numberOfSubjects);
+  List<SubjectGrade> getFilteredSubjects(String sortCriteria, Integer numberOfSubjects);
 
-    List<Subject> makeSubjectsFocusPrediction(User user);
+  List<Subject> makeSubjectsFocusPrediction(User user);
+
+  List<Subject> findAll();
 }

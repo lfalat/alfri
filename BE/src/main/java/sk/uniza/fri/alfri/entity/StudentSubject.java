@@ -15,7 +15,8 @@ import lombok.Setter;
 @Entity
 @Table(name = "student_subject")
 public class StudentSubject {
-  @EmbeddedId private StudentSubjectId id;
+  @EmbeddedId
+  private StudentSubjectId id;
 
   @Column(name = "year", nullable = false)
   @NotNull(message = "StudentSubject's year cannot be null!")
