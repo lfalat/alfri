@@ -6,7 +6,7 @@
     <p class="h5 mb-4 fs-4">Email: &emsp;<strong>{{ userData.email }}</strong></p>
   </div>
   <hr>
-  <h3 class="mb-4">Zmena hesla</h3>
+  <h2 class="mb-4">Zmena hesla</h2>
   <form [formGroup]="profileForm" (ngSubmit)="changePassword()" class="mb-3">
     <div class="form-group mb-3">
       <mat-form-field appearance="fill" class="w-100">
@@ -28,4 +28,8 @@
     </div>
     <button mat-raised-button color="primary" type="submit">Zmeň heslo</button>
   </form>
+  <br>
+  <hr>
+  <h2 class="mb-4">Chceš zmeniť vyplnené údaje v dotazníku?</h2>
+  <button mat-raised-button color="primary" class="mt-3" (click)="redirectToUserForm()">Znovu vyplniť dotazník</button>
 </div>

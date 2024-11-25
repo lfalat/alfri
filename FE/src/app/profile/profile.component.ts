@@ -90,4 +90,8 @@ export class ProfileComponent {
     return <UserDto>this._userData;
   }
 
+  redirectToUserForm() {
+    this.router.navigate(['/grade-form']);
+  }
+
 }
