@@ -3,6 +3,8 @@ name: Build Angular App
 on:
   push:
     branches: ["master", "develop"]
+  pull_request:
+    branches: ["master", "develop"]
 
 jobs:
   build:
