@@ -1,5 +1,6 @@
 package sk.uniza.fri.alfri.controller;
 
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
 import java.io.IOException;
@@ -31,6 +32,7 @@ import sk.uniza.fri.alfri.mapper.SubjectGradeMapper;
 import sk.uniza.fri.alfri.mapper.SubjectMapper;
 import sk.uniza.fri.alfri.service.ISubjectService;
 import sk.uniza.fri.alfri.service.UserService;
+import sk.uniza.fri.alfri.service.implementation.AuthService;
 import sk.uniza.fri.alfri.service.implementation.JwtService;
 
 @RequestMapping("/api/subject")
@@ -42,13 +44,15 @@ public class SubjectController {
   private final ISubjectService subjectService;
   private final JwtService jwtService;
   private final UserService userService;
+  private final AuthService authService;
 
   public SubjectController(ISubjectService subjectService, JwtService jwtService,
-      UserService userService, ModelMapper modelMapper) {
+      UserService userService, ModelMapper modelMapper, AuthService authService) {
     this.subjectService = subjectService;
     this.jwtService = jwtService;
     this.userService = userService;
     this.modelMapper = modelMapper;
+    this.authService = authService;
   }
 
   @GetMapping("/all")
@@ -177,5 +181,14 @@ public class SubjectController {
         subjects.stream().map(SubjectGradeMapper.INSTANCE::toDto).toList();
 
     return ResponseEntity.ok().body(subjectGradeDtos);
+  }
+
+  @GetMapping("/asd")
+  public ResponseEntity<String> test() {
+    String currentUserEmail =
+        authService.getCurrentUserEmail().orElseThrow(() -> new EntityNotFoundException("CHYBA"));
+    log.info(String.valueOf(this.subjectService.makePassingChancePrediction(currentUserEmail)));
+    log.info(String.valueOf(this.subjectService.makepassingMarkPrediction(currentUserEmail)));
+    return ResponseEntity.ok("ok");
   }
 }

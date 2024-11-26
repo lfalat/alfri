@@ -1,3 +1,1 @@
-test = [i for i in range(100)]
-print(test)
-print(test)
+print(0.65, 0.76, 0.22)

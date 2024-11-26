@@ -19,6 +19,7 @@ import sk.uniza.fri.alfri.common.pagitation.SearchDefinition;
 import sk.uniza.fri.alfri.entity.Answer;
 import sk.uniza.fri.alfri.entity.AnswerText;
 import sk.uniza.fri.alfri.entity.Focus;
+import sk.uniza.fri.alfri.entity.Student;
 import sk.uniza.fri.alfri.entity.StudyProgramSubject;
 import sk.uniza.fri.alfri.entity.Subject;
 import sk.uniza.fri.alfri.entity.SubjectGrade;
@@ -40,6 +41,7 @@ public class SubjectService implements ISubjectService {
   private final AnswerRepository answerRepository;
   private final FocusRepository focusRepository;
   private final SubjectGradeRepository subjectGradeRepository;
+  private final StudentService studentService;
 
   @Value("${python.executable_path}")
   private String pythonExcecutablePath;
@@ -50,15 +52,23 @@ public class SubjectService implements ISubjectService {
   @Value("${python.clustering_prediction_model_path}")
   private String clusteringPredictionModelPath;
 
+  @Value("${python.passing_change_prediction_script_path}")
+  private String passingChangePredictionScriptPath;
+
+  @Value("${python.passing_mark_prediction_script_path}")
+  private String passingMarkPredictionScriptPath;
+
   public SubjectService(StudyProgramSubjectRepository studyProgramSubjectRepository,
       SubjectRepository subjectRepository, AnswerRepository answerRepository,
-      FocusRepository focusRepository, SubjectGradeRepository subjectGradeRepository) {
+      FocusRepository focusRepository, SubjectGradeRepository subjectGradeRepository,
+      StudentService studentService) {
 
     this.studyProgramSubjectRepository = studyProgramSubjectRepository;
     this.subjectRepository = subjectRepository;
     this.subjectGradeRepository = subjectGradeRepository;
     this.answerRepository = answerRepository;
     this.focusRepository = focusRepository;
+    this.studentService = studentService;
   }
 
   private static List<List<Integer>> getFocusesAttributes(List<Focus> subjectsFocuses) {
@@ -193,6 +203,51 @@ public class SubjectService implements ISubjectService {
   @Override
   public List<Subject> findAll() {
     return subjectRepository.findAll();
+  }
+
+  @Override
+  public List<Double> makePassingChancePrediction(String userEmail) {
+    Student userStudent = studentService.getStudentByUserEmail(userEmail);
+    int studentYear = userStudent.getYear();
+
+    ProcessBuilder processBuilder = new ProcessBuilder(pythonExcecutablePath,
+        passingChangePredictionScriptPath, String.valueOf(studentYear));
+    String output = null;
+    try {
+      output = ProcessUtils.getOutputFromProces(processBuilder);
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+    log.info("Output of clustering: {}", output);
+
+    try {
+      return Arrays.stream(output.trim().split("\\s+")).map(Double::parseDouble).toList();
+    } catch (NumberFormatException e) {
+      throw new RuntimeException("Error parsing output to List<Double>", e);
+    }
+  }
+
+  @Override
+  public List<String> makepassingMarkPrediction(String userEmail) {
+    Student userStudent = studentService.getStudentByUserEmail(userEmail);
+    int studentYear = userStudent.getYear();
+
+    ProcessBuilder processBuilder = new ProcessBuilder(pythonExcecutablePath,
+        passingMarkPredictionScriptPath, String.valueOf(studentYear));
+    String output = null;
+    try {
+      output = ProcessUtils.getOutputFromProces(processBuilder);
+    } catch (IOException e) {
+      throw new RuntimeException();
+    }
+    log.info("Output of clustering: {}", output);
+
+
+    try {
+      return Arrays.stream(output.trim().split("\\s+")).toList();
+    } catch (NumberFormatException e) {
+      throw new RuntimeException("Error parsing output to List<Double>", e);
+    }
   }
 
   @Override

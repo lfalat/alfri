@@ -49,4 +49,11 @@ public class StudentService implements IStudentService {
     String output = ProcessUtils.getOutputFromProces(processBuilder);
     System.out.println(output);
   }
+
+  @Override
+  public Student getStudentByUserEmail(String userEmail) {
+    return studentRepository.findByUser_Email(userEmail)
+        .orElseThrow(() -> new EntityNotFoundException(
+            String.format("User with email %s is not a student!", userEmail)));
+  }
 }
