@@ -22,9 +22,15 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public User getUser(String id) {
-    Optional<User> user = this.userRepository.findByEmail(id);
+  public User getUser(String email) {
+    Optional<User> user = this.userRepository.findByEmail(email);
     return user.orElse(null);
+  }
+
+  @Override
+  public User getUser(Integer userId) {
+    return userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException(
+        String.format("User with userId %d was not found!", userId)));
   }
 
   @Override
@@ -35,13 +41,19 @@ public class UserServiceImpl implements UserService {
   @Override
   public List<Role> getCurrentUserRoles(String currentUserEmail) {
     User user =
-        userRepository
-            .findByEmail(currentUserEmail)
-            .orElseThrow(
-                () ->
-                    new EntityNotFoundException(
-                        String.format("User with email %s was not found!", currentUserEmail)));
+        userRepository.findByEmail(currentUserEmail).orElseThrow(() -> new EntityNotFoundException(
+            String.format("User with email %s was not found!", currentUserEmail)));
 
     return user.getUserRoles().stream().map(UserRole::getRole).toList();
+  }
+
+  @Override
+  public List<User> getAllUsers() {
+    return userRepository.findAll();
+  }
+
+  @Override
+  public void deleteUser(Integer id) {
+    this.userRepository.deleteById(id);
   }
 }

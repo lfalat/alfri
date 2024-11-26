@@ -7,9 +7,9 @@ import sk.uniza.fri.alfri.entity.QuestionnaireSection;
 
 @Mapper(uses = QuestionMapper.class)
 public interface QuestionnaireSectionMapper {
-    QuestionnaireSectionMapper INSTANCE = Mappers.getMapper(QuestionnaireSectionMapper.class);
+  QuestionnaireSectionMapper INSTANCE = Mappers.getMapper(QuestionnaireSectionMapper.class);
 
-    QuestionnaireSection toEntity(QuestionnaireSectionDTO dto);
+  QuestionnaireSection toEntity(QuestionnaireSectionDTO dto);
 
-    QuestionnaireSectionDTO toDto(QuestionnaireSection dto);
+  QuestionnaireSectionDTO toDto(QuestionnaireSection dto);
 }

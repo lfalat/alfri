@@ -5,7 +5,9 @@ import jakarta.validation.constraints.Positive;
 import java.io.IOException;
 import java.time.Duration;
 import java.util.List;
+
 import lombok.extern.slf4j.Slf4j;
+import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.http.CacheControl;
 import org.springframework.http.MediaType;
@@ -36,49 +38,52 @@ import sk.uniza.fri.alfri.service.implementation.JwtService;
 @PreAuthorize("hasAnyRole({'ROLE_STUDENT', 'ROLE_TEACHER', 'ROLE_ADMIN'})")
 @Slf4j
 public class SubjectController {
+  private final ModelMapper modelMapper;
   private final ISubjectService subjectService;
   private final JwtService jwtService;
   private final UserService userService;
 
-  public SubjectController(
-      ISubjectService subjectService, JwtService jwtService, UserService userService) {
+  public SubjectController(ISubjectService subjectService, JwtService jwtService,
+      UserService userService, ModelMapper modelMapper) {
     this.subjectService = subjectService;
     this.jwtService = jwtService;
     this.userService = userService;
+    this.modelMapper = modelMapper;
+  }
+
+  @GetMapping("/all")
+  public ResponseEntity<List<SubjectDto>> findAllSubjects() {
+    log.info("Getting all subjects");
+    List<Subject> subjects = subjectService.findAll();
+
+    return ResponseEntity
+        .ok(subjects.stream().map(element -> modelMapper.map(element, SubjectDto.class)).toList());
   }
 
   @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<Page<SubjectDto>> findAllSubjectsByStudyProgramId(
       PagitationRequestQuery pagitationRequestQuery) {
-    log.info(
-        "Getting all subjects on page {} with page size {} with filters {}",
-        pagitationRequestQuery.page,
-        pagitationRequestQuery.size,
-        pagitationRequestQuery.search);
+    log.info("Getting all subjects on page {} with page size {} with filters {}",
+        pagitationRequestQuery.page, pagitationRequestQuery.size, pagitationRequestQuery.search);
 
     SearchDefinition searchDefinition = new SearchDefinition(pagitationRequestQuery.search);
     SortDefinition sortDefinition = SortRequestQuery.from(pagitationRequestQuery.sort);
-    PageDefinition pageDefinition =
-        new PageDefinition(
-            pagitationRequestQuery.page, pagitationRequestQuery.size, sortDefinition);
+    PageDefinition pageDefinition = new PageDefinition(pagitationRequestQuery.page,
+        pagitationRequestQuery.size, sortDefinition);
 
     Page<StudyProgramSubject> subjects =
         subjectService.findAllByStudyProgramId(searchDefinition, pageDefinition);
 
     log.info(subjects.getContent().toString());
 
-    log.info(
-        "{} subjects for study program with id {} on page {} with page size {} returned",
-        subjects.getSize(),
-        pagitationRequestQuery.page,
-        pagitationRequestQuery.page,
+    log.info("{} subjects for study program with id {} on page {} with page size {} returned",
+        subjects.getSize(), pagitationRequestQuery.page, pagitationRequestQuery.page,
         pagitationRequestQuery.size);
 
     Page<SubjectDto> subjectDtos =
         subjects.map(StudyProgramSubjectMapper.INSTANCE::studyProgramSubjectToSubjectDto);
 
-    return ResponseEntity.ok()
-        .cacheControl(CacheControl.maxAge(Duration.ofHours(6)))
+    return ResponseEntity.ok().cacheControl(CacheControl.maxAge(Duration.ofHours(6)))
         .body(subjectDtos);
   }
 
@@ -101,17 +106,13 @@ public class SubjectController {
   @GetMapping(path = "/withFocus", produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<Page<SubjectExtendedDto>> findAllSubjectsWithFocusByStudyProgramId(
       PagitationRequestQuery pagitationRequestQuery) {
-    log.info(
-        "Getting all subjects with focus on page {} with page size {} with filters {}",
-        pagitationRequestQuery.page,
-        pagitationRequestQuery.size,
-        pagitationRequestQuery.search);
+    log.info("Getting all subjects with focus on page {} with page size {} with filters {}",
+        pagitationRequestQuery.page, pagitationRequestQuery.size, pagitationRequestQuery.search);
 
     SearchDefinition searchDefinition = new SearchDefinition(pagitationRequestQuery.search);
     SortDefinition sortDefinition = SortRequestQuery.from(pagitationRequestQuery.sort);
-    PageDefinition pageDefinition =
-        new PageDefinition(
-            pagitationRequestQuery.page, pagitationRequestQuery.size, sortDefinition);
+    PageDefinition pageDefinition = new PageDefinition(pagitationRequestQuery.page,
+        pagitationRequestQuery.size, sortDefinition);
 
     Page<StudyProgramSubject> subjects =
         subjectService.findAllByStudyProgramId(searchDefinition, pageDefinition);
@@ -120,16 +121,13 @@ public class SubjectController {
 
     log.info(
         "{} subjects with focus for study program with id {} on page {} with page size {} returned",
-        subjects.getSize(),
-        pagitationRequestQuery.page,
-        pagitationRequestQuery.page,
+        subjects.getSize(), pagitationRequestQuery.page, pagitationRequestQuery.page,
         pagitationRequestQuery.size);
 
     Page<SubjectExtendedDto> subjectDtos =
         subjects.map(StudyProgramSubjectMapper.INSTANCE::studyProgramSubjectToSubjectExtendedDto);
 
-    return ResponseEntity.ok()
-        .cacheControl(CacheControl.maxAge(Duration.ofHours(6)))
+    return ResponseEntity.ok().cacheControl(CacheControl.maxAge(Duration.ofHours(6)))
         .body(subjectDtos);
   }
 
@@ -159,10 +157,8 @@ public class SubjectController {
       return ResponseEntity.badRequest().build();
     }
 
-    List<SubjectDto> similarSubjectsDto =
-        similarSubjects.stream()
-            .map(StudyProgramSubjectMapper.INSTANCE::studyProgramSubjectToSubjectDto)
-            .toList();
+    List<SubjectDto> similarSubjectsDto = similarSubjects.stream()
+        .map(StudyProgramSubjectMapper.INSTANCE::studyProgramSubjectToSubjectDto).toList();
 
     log.info("Returning {} similar subjects", similarSubjectsDto.size());
 
@@ -170,8 +166,8 @@ public class SubjectController {
   }
 
   @GetMapping("/subjectReport")
-  public ResponseEntity<List<SubjectGradeDto>> getReport(
-      @RequestParam String sortCriteria, @RequestParam @Positive Integer count) {
+  public ResponseEntity<List<SubjectGradeDto>> getReport(@RequestParam String sortCriteria,
+      @RequestParam @Positive Integer count) {
     log.info("Getting top {} subjects sorted by: {}", count, sortCriteria);
 
     List<SubjectGrade> subjects = subjectService.getFilteredSubjects(sortCriteria, count);

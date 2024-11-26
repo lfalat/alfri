@@ -78,6 +78,19 @@ export interface StudyProgramDto {
   name: string;
 }
 
+export interface TeacherDto {
+  teacherId: number;
+  userId: number;
+  department: DepartmentDto;
+  subjects: SubjectDto[];
+}
+
+export interface DepartmentDto {
+  id: number;
+  name: string;
+  abbreviation: string;
+}
+
 export interface Page<T> {
   content: T[];
   pageable: {
@@ -181,7 +194,7 @@ export interface ApexChartOptions {
   chart: ApexChart;
   dataLabels: ApexDataLabels;
   title: ApexTitleSubtitle;
-  colors: any;
+  colors: string[];
   plotOptions: ApexPlotOptions,
   xAxis: ApexXAxis,
   responsive: ApexResponsive[]

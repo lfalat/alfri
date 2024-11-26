@@ -30,8 +30,10 @@ public class StudyProgramSubjectId {
 
   @Override
   public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+    if (this == o)
+      return true;
+    if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o))
+      return false;
     StudyProgramSubjectId entity = (StudyProgramSubjectId) o;
     return Objects.equals(this.studyProgramId, entity.studyProgramId)
         && Objects.equals(this.subjectId, entity.subjectId);

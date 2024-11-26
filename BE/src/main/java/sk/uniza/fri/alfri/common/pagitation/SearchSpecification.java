@@ -13,7 +13,8 @@ import org.springframework.data.jpa.domain.Specification;
 import sk.uniza.fri.alfri.exception.BadConditionException;
 
 public class SearchSpecification<T> implements Specification<T> {
-  @Serial private static final long serialVersionUID = -6650896170916288552L;
+  @Serial
+  private static final long serialVersionUID = -6650896170916288552L;
 
   private final List<SearchCriteria> searchCriterias;
 
@@ -22,8 +23,8 @@ public class SearchSpecification<T> implements Specification<T> {
   }
 
   @Override
-  public Predicate toPredicate(
-      Root<T> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
+  public Predicate toPredicate(Root<T> root, CriteriaQuery<?> query,
+      CriteriaBuilder criteriaBuilder) {
     List<Predicate> predicates = new ArrayList<>();
 
     for (SearchCriteria searchCriteria : this.searchCriterias) {
@@ -41,52 +42,36 @@ public class SearchSpecification<T> implements Specification<T> {
     return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
   }
 
-  private void addPredicateFromSearchCriteria(
-      SearchCriteria searchCriteria,
-      List<Predicate> predicates,
-      CriteriaBuilder builder,
-      Path<?> fieldPath) {
+  private void addPredicateFromSearchCriteria(SearchCriteria searchCriteria,
+      List<Predicate> predicates, CriteriaBuilder builder, Path<?> fieldPath) {
     switch (searchCriteria.getOperation()) {
-      case ">":
-        {
-          predicates.add(
-              builder.greaterThanOrEqualTo(
-                  (Expression<? extends Comparable>) fieldPath,
-                  (Comparable) searchCriteria.getFirstValue(fieldPath.getJavaType())));
-          break;
-        }
-      case "<":
-        {
-          predicates.add(
-              builder.lessThanOrEqualTo(
-                  (Expression<? extends Comparable>) fieldPath,
-                  (Comparable) searchCriteria.getFirstValue(fieldPath.getJavaType())));
-          break;
-        }
-      case ":":
-        {
-          predicates.add(
-              builder.equal(fieldPath, searchCriteria.getFirstValue(fieldPath.getJavaType())));
-          break;
-        }
-      case "~":
-        {
-          predicates.add(
-              builder.like(
-                  builder.lower((Expression<String>) fieldPath),
-                  "%" + searchCriteria.getFirstValue().toLowerCase() + "%"));
-          break;
-        }
-        // TODO test
-      case "^":
-        {
-          // List of string contains string value.
-          predicates.add(
-              builder.isMember(
-                  searchCriteria.getFirstValue().toLowerCase(),
-                  (Expression<List<String>>) fieldPath));
-          break;
-        }
+      case ">": {
+        predicates.add(builder.greaterThanOrEqualTo((Expression<? extends Comparable>) fieldPath,
+            (Comparable) searchCriteria.getFirstValue(fieldPath.getJavaType())));
+        break;
+      }
+      case "<": {
+        predicates.add(builder.lessThanOrEqualTo((Expression<? extends Comparable>) fieldPath,
+            (Comparable) searchCriteria.getFirstValue(fieldPath.getJavaType())));
+        break;
+      }
+      case ":": {
+        predicates
+            .add(builder.equal(fieldPath, searchCriteria.getFirstValue(fieldPath.getJavaType())));
+        break;
+      }
+      case "~": {
+        predicates.add(builder.like(builder.lower((Expression<String>) fieldPath),
+            "%" + searchCriteria.getFirstValue().toLowerCase() + "%"));
+        break;
+      }
+      // TODO test
+      case "^": {
+        // List of string contains string value.
+        predicates.add(builder.isMember(searchCriteria.getFirstValue().toLowerCase(),
+            (Expression<List<String>>) fieldPath));
+        break;
+      }
       default:
         throw new BadConditionException(
             "Operation: '" + searchCriteria.getOperation() + "' is not supported.");

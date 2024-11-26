@@ -37,36 +37,33 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
   @Value("${default-user-roles}")
   private String[] defaultUserRoles;
 
-  public JwtAuthenticationFilter(
-      JwtService jwtService, UserDetailsService userDetailsService, Environment environment) {
+  public JwtAuthenticationFilter(JwtService jwtService, UserDetailsService userDetailsService,
+      Environment environment) {
     this.jwtService = jwtService;
     this.userDetailsService = userDetailsService;
     this.environment = environment;
   }
 
   @Override
-  protected void doFilterInternal(
-      @NonNull HttpServletRequest request,
-      @NonNull HttpServletResponse response,
-      @NonNull FilterChain filterChain)
+  protected void doFilterInternal(@NonNull HttpServletRequest request,
+      @NonNull HttpServletResponse response, @NonNull FilterChain filterChain)
       throws IOException, java.io.IOException, ServletException {
     final String authHeader = request.getHeader("Authorization");
 
-    if (environment.getActiveProfiles().length != 0
-        && Arrays.stream(environment.getActiveProfiles())
-            .allMatch(profile -> profile.equals(DEV_PROFILE))) {
+    if (environment.getActiveProfiles().length != 0 && Arrays
+        .stream(environment.getActiveProfiles()).allMatch(profile -> profile.equals(DEV_PROFILE))) {
       log.info(Arrays.toString(environment.getActiveProfiles()));
 
-      UserDetails devUserDetails =
-          User.builder()
-              .username(defaultUserEmail)
-              .password("") // Empty password as it's not needed here
-              .roles(defaultUserRoles)
-              .build();
+      UserDetails devUserDetails = User.builder().username(defaultUserEmail).password("") // Empty
+                                                                                          // password
+                                                                                          // as it's
+                                                                                          // not
+                                                                                          // needed
+                                                                                          // here
+          .roles(defaultUserRoles).build();
 
-      UsernamePasswordAuthenticationToken devAuthToken =
-          new UsernamePasswordAuthenticationToken(
-              devUserDetails, null, devUserDetails.getAuthorities());
+      UsernamePasswordAuthenticationToken devAuthToken = new UsernamePasswordAuthenticationToken(
+          devUserDetails, null, devUserDetails.getAuthorities());
 
       devAuthToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
       SecurityContextHolder.getContext().setAuthentication(devAuthToken);
@@ -98,9 +95,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
       UserDetails userDetails = this.userDetailsService.loadUserByUsername(userName);
 
       if (jwtService.isTokenValid(jwt, userDetails)) {
-        UsernamePasswordAuthenticationToken authToken =
-            new UsernamePasswordAuthenticationToken(
-                userDetails, null, userDetails.getAuthorities());
+        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+            userDetails, null, userDetails.getAuthorities());
 
         authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
         SecurityContextHolder.getContext().setAuthentication(authToken);

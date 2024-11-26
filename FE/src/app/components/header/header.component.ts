@@ -40,13 +40,18 @@ export class HeaderComponent {
 
   private readonly ROLE_STUDENT = 'ROLE_STUDENT';
   private readonly ROLE_TEACHER = 'ROLE_TEACHER';
+  private readonly ROLE_ADMIN = 'ROLE_ADMIN';
 
-  get issUserStudent(): boolean {
+  get isUserStudent(): boolean {
     return this.userData?.roles.map((role) => role.name).includes(this.ROLE_STUDENT) ?? false;
   }
 
   get isUserTeacher(): boolean {
     return this.userData?.roles.map((role) => role.name).includes(this.ROLE_TEACHER) ?? false;
+  }
+
+  get isUserAdmin(): boolean {
+    return this.userData?.roles.map((role) => role.name).includes(this.ROLE_ADMIN) ?? false;
   }
 
   constructor(private readonly userService: UserService, private readonly authService: AuthService, private readonly router: Router) {
@@ -89,11 +94,19 @@ export class HeaderComponent {
     this.router.navigate(['clustering']);
   }
 
+  navigateToPassingPrediction() {
+    this.router.navigate(['passing-prediction']);
+  }
+
   navigateToSubjectsReports() {
     this.router.navigate(['subject-reports']);
   }
 
   navigateToSubjectGradeCorrelation() {
     this.router.navigate(['subjects-grades-correlation']);
+  }
+
+  navigateToAdminPage() {
+    this.router.navigate(['admin-page']);
   }
 }

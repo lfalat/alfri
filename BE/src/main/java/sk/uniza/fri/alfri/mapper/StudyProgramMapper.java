@@ -4,8 +4,7 @@ import org.mapstruct.*;
 import sk.uniza.fri.alfri.dto.StudyProgramDto;
 import sk.uniza.fri.alfri.entity.StudyProgram;
 
-@Mapper(
-    unmappedTargetPolicy = ReportingPolicy.IGNORE,
+@Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE,
     componentModel = MappingConstants.ComponentModel.SPRING)
 public interface StudyProgramMapper {
   StudyProgram toEntity(StudyProgramDto studyProgramDto);
@@ -13,6 +12,6 @@ public interface StudyProgramMapper {
   StudyProgramDto toDto(StudyProgram studyProgram);
 
   @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-  StudyProgram partialUpdate(
-      StudyProgramDto studyProgramDto, @MappingTarget StudyProgram studyProgram);
+  StudyProgram partialUpdate(StudyProgramDto studyProgramDto,
+      @MappingTarget StudyProgram studyProgram);
 }
