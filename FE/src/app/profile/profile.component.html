@@ -1,13 +1,13 @@
 <div *ngIf="!isLoading" class="container mt-5">
   <h1 class="text-center mb-5 fs-1">Môj profil</h1>
-  <div class="mb-4" >
+  <mat-card class="user-card mb-4">
     <p class="h5 mb-4 fs-4">Meno: <strong>{{ userData.firstName }}</strong></p>
     <p class="h5 mb-4 fs-4">Priezvisko: <strong>{{ userData.lastName }}</strong></p>
-    <p class="h5 mb-4 fs-4">Email: &emsp;<strong>{{ userData.email }}</strong></p>
-  </div>
+    <p class="h5 fs-4">Email: &emsp;<strong>{{ userData.email }}</strong></p>
+  </mat-card>
   <hr>
   <h2 class="mb-4">Zmena hesla</h2>
-  <form [formGroup]="profileForm" (ngSubmit)="changePassword()" class="mb-3">
+  <form [formGroup]="profileForm" (ngSubmit)="changePassword()" class="">
     <div class="form-group mb-3">
       <mat-form-field appearance="fill" class="w-100">
         <mat-label>Pôvodné heslo</mat-label>
@@ -30,6 +30,6 @@
   </form>
   <br>
   <hr>
-  <h2 class="mb-4">Chceš zmeniť vyplnené údaje v dotazníku?</h2>
-  <button mat-raised-button color="primary" class="mt-3" (click)="redirectToUserForm()">Znovu vyplniť dotazník</button>
+  <h2 class="mb-2">Chceš zmeniť vyplnené údaje v dotazníku?</h2>
+  <button mat-raised-button color="primary" class="mt-3 mb-3" (click)="redirectToUserForm()">Znovu vyplniť dotazník</button>
 </div>

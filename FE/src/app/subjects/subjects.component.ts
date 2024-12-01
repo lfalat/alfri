@@ -96,7 +96,7 @@ export class SubjectsComponent implements OnInit, OnDestroy {
   ) {
     this.filterForm = this.formBuilder.group(
       {
-        mathFocus: ['', [Validators.required]]
+        subjectForm: ['', [Validators.required]]
       }
     );
   }
@@ -110,7 +110,10 @@ export class SubjectsComponent implements OnInit, OnDestroy {
       .getAll()
       .pipe(takeUntil(this._destroy$));
 
-    this._dataSource$ = this.getSubjects(0, 10, this._selectedStudyProgramId ? 1 : 0);
+    this._selectedStudyProgramId = 3; // informatika
+    this.filterForm.patchValue({ subjectForm: this._selectedStudyProgramId });
+
+    this._dataSource$ = this.getSubjects(0, 10, this._selectedStudyProgramId);
   }
 
   private getSubjects(

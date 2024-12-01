@@ -39,40 +39,42 @@
         <td mat-cell *matCellDef="let subject">{{ subject.studentsCount }}</td>
       </ng-container>
 
-      <ng-container matColumnDef="gradeA">
-        <th mat-header-cell class="center" *matHeaderCellDef>A</th>
-        <td mat-cell *matCellDef="let subject">{{ subject.gradeA }}</td>
-      </ng-container>
-
-      <ng-container matColumnDef="gradeB">
-        <th mat-header-cell class="center" *matHeaderCellDef>B</th>
-        <td mat-cell *matCellDef="let subject">{{ subject.gradeB }}</td>
-      </ng-container>
-
-      <ng-container matColumnDef="gradeC">
-        <th mat-header-cell class="center" *matHeaderCellDef>C</th>
-        <td mat-cell *matCellDef="let subject">{{ subject.gradeC }}</td>
-      </ng-container>
-
-      <ng-container matColumnDef="gradeD">
-        <th mat-header-cell class="center" *matHeaderCellDef>D</th>
-        <td mat-cell *matCellDef="let subject">{{ subject.gradeD }}</td>
-      </ng-container>
-
-      <ng-container matColumnDef="gradeE">
-        <th mat-header-cell class="center" *matHeaderCellDef>E</th>
-        <td mat-cell *matCellDef="let subject">{{ subject.gradeE }}</td>
-      </ng-container>
-
-      <ng-container matColumnDef="gradeFx">
-        <th mat-header-cell class="center" *matHeaderCellDef>FX</th>
-        <td mat-cell *matCellDef="let subject">{{ subject.gradeFx }}</td>
-      </ng-container>
-
       <ng-container matColumnDef="averageScore">
         <th mat-header-cell class="center" *matHeaderCellDef>Priemerná známka</th>
         <td mat-cell *matCellDef="let subject">{{ subject.gradeAverage }}</td>
       </ng-container>
+
+      <ng-container matColumnDef="gradeA">
+        <th mat-header-cell class="center" *matHeaderCellDef>A</th>
+        <td mat-cell *matCellDef="let subject">{{ subject.gradeA }} %</td>
+      </ng-container>
+
+      <ng-container matColumnDef="gradeB">
+        <th mat-header-cell class="center" *matHeaderCellDef>B</th>
+        <td mat-cell *matCellDef="let subject">{{ subject.gradeB }} %</td>
+      </ng-container>
+
+      <ng-container matColumnDef="gradeC">
+        <th mat-header-cell class="center" *matHeaderCellDef>C</th>
+        <td mat-cell *matCellDef="let subject">{{ subject.gradeC }} %</td>
+      </ng-container>
+
+      <ng-container matColumnDef="gradeD">
+        <th mat-header-cell class="center" *matHeaderCellDef>D</th>
+        <td mat-cell *matCellDef="let subject">{{ subject.gradeD }} %</td>
+      </ng-container>
+
+      <ng-container matColumnDef="gradeE">
+        <th mat-header-cell class="center" *matHeaderCellDef>E</th>
+        <td mat-cell *matCellDef="let subject">{{ subject.gradeE }} %</td>
+      </ng-container>
+
+      <ng-container matColumnDef="gradeFx">
+        <th mat-header-cell class="center" *matHeaderCellDef>FX</th>
+        <td mat-cell *matCellDef="let subject">{{ subject.gradeFx }} %</td>
+      </ng-container>
+
+
 
 
 
