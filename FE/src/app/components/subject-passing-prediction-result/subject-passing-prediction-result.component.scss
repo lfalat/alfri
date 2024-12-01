@@ -19,21 +19,46 @@
   color: #3f51b5;
 }
 
-.mark-card {
-  padding: 8px 16px;
+.mark-section {
+  padding: 8px 0;
+  font-size: large;
   font-weight: bold;
-  background-color: #3f51b5;
-  color: white;
+  background-color: #ffffff;
+  display: inline;
+}
+
+.mark-value {
+  font-size: xx-large;
+  padding: 10px;
+}
+
+.high-mark {
+  color: green;  /* Excellent mark */
+}
+
+.medium-mark {
+  color: orange; /* Good to average marks */
+}
+
+.low-mark {
+  color: yellow;  /* Passing marks */
+}
+
+.fail-mark {
+  color: red;    /* Failing mark */
 }
 
 .progress-section-wide {
   width: 100%;
   margin: 20px 0;
 }
-
+.probability-label {
+  font-size: medium;
+}
 .percentage-label {
-  margin-top: 10px;
+  margin: 5px;
   font-weight: bold;
+  font-size: x-large;
   text-align: left;
   color: #333;
 }

@@ -1,2 +1,10 @@
 @import "../registration/registration.component";
 
+.info-wrapper {
+  text-align: center; /* Horizontally centers inline text */
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Centers items horizontally */
+  justify-content: center; /* Centers items vertically */
+  height: 100%; /* Ensure div takes up enough space for vertical centering */
+}

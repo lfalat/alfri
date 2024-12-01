@@ -38,13 +38,13 @@ export class SubjectReportsComponent implements OnInit {
     'name',
     'code',
     'studentsCount',
+    'averageScore',
     'gradeA',
     'gradeB',
     'gradeC',
     'gradeD',
     'gradeE',
-    'gradeFx',
-    'averageScore'
+    'gradeFx'
   ];
 
   dataSource$!: Observable<SubjectGradesDto[]>;

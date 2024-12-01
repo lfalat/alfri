@@ -1,6 +1,11 @@
 /* You can add global styles to this file, and also import other style files */
 @import "../node_modules/bootstrap/scss/bootstrap";
 
+$base-yellow: #feb81c;
+$base-light: #dde8f5;
+$base-light-blue: #7a9ccd;
+$base-dark-blue: #1264b0;
+$base-dark: #1f1f1f;
 
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
@@ -52,6 +57,7 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   flex-direction: column;
   // 100 % - header height
   min-height: calc(100vh - 64px);
+  background-color: $base-light;
 }
 
 #main-main {
