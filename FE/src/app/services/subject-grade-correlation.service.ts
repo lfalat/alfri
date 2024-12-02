@@ -19,6 +19,6 @@ export class SubjectGradeCorrelationService {
     if (correlationTreshold && operator) {
       params = params.append('correlationTreshold', correlationTreshold).append('operator', operator);
     }
-    return this.http.get<SubjectGradeCorrelation[]>(`${this.BE_URL}/subject-grade-correlation-controller/correlation`, {params});
+    return this.http.get<SubjectGradeCorrelation[]>(`${this.BE_URL}/subject-grade-correlation-controller/correlation`, { params });
   }
 }

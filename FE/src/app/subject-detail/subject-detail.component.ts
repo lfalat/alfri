@@ -52,7 +52,6 @@ export class SubjectDetailComponent implements OnInit {
     }
   ];
 
-
   private colors = [
     'rgba(255, 99, 132, 0.8)',
     'rgba(54, 162, 235, 0.8)',
@@ -68,59 +67,13 @@ export class SubjectDetailComponent implements OnInit {
     'rgba(0, 0, 255, 0.8)'
   ];
 
-  public radarChartOptions: ChartConfiguration['options'] = {
-    responsive: true,
-    scales: {
-      r: {
-        angleLines: {
-          display: true
-        },
-        suggestedMin: 0,
-        suggestedMax: 100
-      }
-    },
-    plugins: {
-      legend: {
-        display: false,
-      },
-      tooltip: {
-        callbacks: {
-          label: (context) => {
-            const label = context.label || '';
-            const value = context.raw || 0;
-            return `${label}: ${value}`;
-          }
-        }
-      }
-    },
-    animations: {}
-  };
-
-  public radarChartLabels: string[] = ['Running', 'Swimming', 'Eating', 'Cycling', 'Sleeping', 'Designing', 'Coding'];
-
-  public radarChartData: ChartData<'radar'> = {
-    labels: this.radarChartLabels,
-    datasets: [
-      {
-        data: [65, 59, 90, 81, 56, 55, 40],
-        label: 'Focus predmetu',
-        fill: true,
-        backgroundColor: this.colors,
-        borderColor: this.colors,
-        borderWidth: 1
-      }
-    ]
-  };
-
-  public radarChartType: ChartType = 'radar';
-
   private barChartLabels: string[] = ['A', 'B', 'C', 'D', 'E', 'Fx'];
   private barChartData: ChartData<'bar'> = {
     labels: this.barChartLabels,
     datasets: [
       {
-        label: 'Percentualny podiel znamky',
-        data: this.generateRandomValues(100, this.barChartLabels.length),
+        label: 'Percentuálny podiel známky',
+        data: this.generateRandomValues(100, this.barChartLabels.length), //TODO: nahradit realnymi datami
         backgroundColor: this.colors,
         borderColor: this.colors,
         borderWidth: 1
@@ -130,6 +83,7 @@ export class SubjectDetailComponent implements OnInit {
 
   public barChartOptions: ChartConfiguration['options'] = {
     responsive: true,
+    aspectRatio: 1,
     scales: {
       x: {
         beginAtZero: true
@@ -151,9 +105,10 @@ export class SubjectDetailComponent implements OnInit {
     },
   };
 
+
   public barChartType: ChartType = 'bar';
 
-  constructor(private subjectService: SubjectService, private activateRoute: ActivatedRoute, private elRef: ElementRef) {
+  constructor(private subjectService: SubjectService, private activateRoute: ActivatedRoute) {
     chartJs.register(
       CategoryScale,
       LinearScale,
@@ -180,7 +135,7 @@ export class SubjectDetailComponent implements OnInit {
     if (value && barValue) {
       this.ctx = value;
       this.barCtx = barValue;
-      this.generateNewChart();
+      this.generateRadarChart();
       this.generateBarChart();
       this.chart.update();
       this.barChart.update();
@@ -207,11 +162,26 @@ export class SubjectDetailComponent implements OnInit {
     });
   }
 
-  private generateNewChart() {
+  private generateRadarChart() {
+    const focusLabelMapping: { [key: string]: string } = {
+      mathFocus: 'Matematika',
+      logicFocus: 'Logika',
+      programmingFocus: 'Programovanie',
+      designFocus: 'Dizajn',
+      economicsFocus: 'Ekonomika',
+      managementFocus: 'Manažment',
+      hardwareFocus: 'Hardvér',
+      networkFocus: 'Sieťové technológie',
+      dataFocus: 'Práca s dátami',
+      testingFocus: 'Testovanie',
+      languageFocus: 'Jazyky',
+      physicalFocus: 'Fyzické zameranie'
+    };
+
     this.chart = new Chart(this.ctx, {
       type: 'radar',
       data: {
-        labels: Object.keys(this.subjectData?.focusDTO),
+        labels: Object.keys(this.subjectData?.focusDTO).map(key => {return focusLabelMapping[key];}),
         datasets: this.chartDatasets
       },
       options: {
@@ -241,10 +211,10 @@ export class SubjectDetailComponent implements OnInit {
         }
       }
     });
-    this.chartDatasets[0] = this.getNewData();
+    this.chartDatasets[0] = this.getFocusData();
   }
 
-  private getNewData(): ChartDataset {
+  private getFocusData(): ChartDataset {
     return {
       label: 'Focus predmetu',
       fill: true,
