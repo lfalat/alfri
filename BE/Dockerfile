@@ -24,7 +24,7 @@ RUN apt-get update && \
 # Set up a Python virtual environment and install specific Python libraries
 RUN python3 -m venv /opt/venv && \
     /opt/venv/bin/pip install --upgrade pip setuptools && \
-    /opt/venv/bin/pip install joblib numpy scikit-learn==1.5.0
+    /opt/venv/bin/pip install joblib numpy scikit-learn==1.5.0 tensorflow==2.12.0
 
 # Set the virtual environment as default for Python and pip commands
 ENV PATH="/opt/venv/bin:$PATH"

@@ -1,12 +1,11 @@
 package sk.uniza.fri.alfri.service.implementation;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.EntityNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,6 +23,7 @@ import sk.uniza.fri.alfri.entity.StudyProgramSubject;
 import sk.uniza.fri.alfri.entity.Subject;
 import sk.uniza.fri.alfri.entity.SubjectGrade;
 import sk.uniza.fri.alfri.entity.User;
+import sk.uniza.fri.alfri.exception.PythonOutputParsingException;
 import sk.uniza.fri.alfri.repository.AnswerRepository;
 import sk.uniza.fri.alfri.repository.FocusRepository;
 import sk.uniza.fri.alfri.repository.StudyProgramSubjectRepository;
@@ -36,6 +36,7 @@ import sk.uniza.fri.alfri.util.ProcessUtils;
 @Slf4j
 public class SubjectService implements ISubjectService {
   public static final String NO_SUBJECTS_FOUND_MESSAGE = "No subjects found!";
+
   private final StudyProgramSubjectRepository studyProgramSubjectRepository;
   private final SubjectRepository subjectRepository;
   private final AnswerRepository answerRepository;
@@ -88,7 +89,6 @@ public class SubjectService implements ISubjectService {
       focusAttributes.add(focus.getTestingFocus());
       focusAttributes.add(focus.getLanguageFocus());
       focusAttributes.add(focus.getPhysicalFocus());
-
       focusesAttributes.add(focusAttributes);
     }
     return focusesAttributes;
@@ -159,7 +159,6 @@ public class SubjectService implements ISubjectService {
         .toList();
 
     Map<String, String> questionToFocusMap = new HashMap<>();
-
     questionToFocusMap.put("question_matematika_focus", "math_focus");
     questionToFocusMap.put("question_dizajn_focus", "design_focus");
     questionToFocusMap.put("question_hardver_focus", "hardware_focus");
@@ -179,8 +178,7 @@ public class SubjectService implements ISubjectService {
                 answerText -> questionToFocusMap.getOrDefault(
                     answerText.getAnswer().getAnswerQuestion().getQuestionIdentifier(), null),
                 answerText -> Integer.parseInt(answerText.getAnswerText()),
-                (oldValue, newValue) -> newValue // handle duplicate keys by taking the new value
-            ));
+                (oldValue, newValue) -> newValue));
 
     Integer mathFocus = values.getOrDefault("math_focus", null);
     Integer logicFocus = values.getOrDefault("logic_focus", null);
@@ -207,47 +205,87 @@ public class SubjectService implements ISubjectService {
 
   @Override
   public List<Double> makePassingChancePrediction(String userEmail) {
-    Student userStudent = studentService.getStudentByUserEmail(userEmail);
-    int studentYear = userStudent.getYear();
-
-    ProcessBuilder processBuilder = new ProcessBuilder(pythonExcecutablePath,
-        passingChangePredictionScriptPath, String.valueOf(studentYear));
-    String output = null;
+    String output;
     try {
-      output = ProcessUtils.getOutputFromProces(processBuilder);
+      output = runPythonModelForPrediction(userEmail, passingMarkPredictionScriptPath);
     } catch (IOException e) {
-      throw new RuntimeException(e);
+      throw new PythonOutputParsingException(e.getMessage());
     }
-    log.info("Output of clustering: {}", output);
+
+    log.info("Output of makePassingChancePrediction: {}", output);
 
     try {
       return Arrays.stream(output.trim().split("\\s+")).map(Double::parseDouble).toList();
     } catch (NumberFormatException e) {
-      throw new RuntimeException("Error parsing output to List<Double>", e);
+      throw new PythonOutputParsingException(
+          String.format("There was error parsing passing chance with output:%s ", output.trim()));
     }
   }
 
   @Override
-  public List<String> makepassingMarkPrediction(String userEmail) {
+  public List<String> makePassingMarkPrediction(String userEmail) {
+    Student userStudent = studentService.getStudentByUserEmail(userEmail);
+    int studentYear = userStudent.getYear();
+
+    // Create a map of subject to their encoded input arrays.
+    // Each subject has its own array of features.
+    Map<String, List<Integer>> subjectInputs = new HashMap<>();
+    subjectInputs.put("Matematicka analyza 1", Arrays.asList(0, 0, 0));
+    subjectInputs.put("Algoritmy a udajove struktury 1", Arrays.asList(0, 0, 0));
+    subjectInputs.put("Diskretna pravdepodobnost", Arrays.asList(0, 0));
+    // Add more subjects and their corresponding arrays here.
+
+    // Model paths map
+    Map<String, String> modelPaths =
+        Map.of("Matematicka analyza 1", "/app/python_scripts/models/mata1.h5",
+            "Diskretna pravdepodobnost", "/app/python_scripts/models/dp.h5",
+            "Algoritmy a udajove struktury 1", "/app/python_scripts/models/aus1.h5");
+
+    ObjectMapper mapper = new ObjectMapper();
+    String inputJson;
+    String modelPathsJson;
+
+    try {
+      // Now 'data' is a dictionary of subjects to arrays
+      inputJson = mapper.writeValueAsString(Map.of("data", subjectInputs));
+      modelPathsJson = mapper.writeValueAsString(modelPaths);
+    } catch (JsonProcessingException e) {
+      throw new RuntimeException("Failed to create JSON input for the python script", e);
+    }
+
+    ProcessBuilder processBuilder = new ProcessBuilder(pythonExcecutablePath,
+        passingMarkPredictionScriptPath, inputJson, modelPathsJson);
+
+    String output;
+    try {
+      output = ProcessUtils.getOutputFromProces(processBuilder);
+    } catch (IOException e) {
+      throw new PythonOutputParsingException(
+          "Error running Python prediction script: " + e.getMessage());
+    }
+
+    log.info("Output of makePassingMarkPrediction: {}", output);
+
+    Map<String, String> predictions;
+    try {
+      predictions = mapper.readValue(output, new TypeReference<>() {});
+    } catch (IOException e) {
+      throw new PythonOutputParsingException(
+          String.format("There was error parsing passing mark with output: %s ", output.trim()));
+    }
+
+    return new ArrayList<>(predictions.values());
+  }
+
+  private String runPythonModelForPrediction(String userEmail,
+      String passingMarkPredictionScriptPath) throws IOException {
     Student userStudent = studentService.getStudentByUserEmail(userEmail);
     int studentYear = userStudent.getYear();
 
     ProcessBuilder processBuilder = new ProcessBuilder(pythonExcecutablePath,
         passingMarkPredictionScriptPath, String.valueOf(studentYear));
-    String output = null;
-    try {
-      output = ProcessUtils.getOutputFromProces(processBuilder);
-    } catch (IOException e) {
-      throw new RuntimeException();
-    }
-    log.info("Output of clustering: {}", output);
 
-
-    try {
-      return Arrays.stream(output.trim().split("\\s+")).toList();
-    } catch (NumberFormatException e) {
-      throw new RuntimeException("Error parsing output to List<Double>", e);
-    }
+    return ProcessUtils.getOutputFromProces(processBuilder);
   }
 
   @Override

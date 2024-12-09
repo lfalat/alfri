@@ -185,10 +185,11 @@ public class SubjectController {
 
   @GetMapping("/asd")
   public ResponseEntity<String> test() {
-    String currentUserEmail =
-        authService.getCurrentUserEmail().orElseThrow(() -> new EntityNotFoundException("CHYBA"));
-    log.info(String.valueOf(this.subjectService.makePassingChancePrediction(currentUserEmail)));
-    log.info(String.valueOf(this.subjectService.makepassingMarkPrediction(currentUserEmail)));
-    return ResponseEntity.ok("ok");
+    String currentUserEmail = authService.getCurrentUserEmail()
+        .orElseThrow(() -> new EntityNotFoundException("User's email was not found!"));
+    // log.info(String.valueOf(this.subjectService.makePassingChancePrediction(currentUserEmail)));
+    // log.info(String.valueOf(this.subjectService.makePassingMarkPrediction(currentUserEmail)));
+    return ResponseEntity
+        .ok(String.valueOf(this.subjectService.makePassingMarkPrediction(currentUserEmail)));
   }
 }
