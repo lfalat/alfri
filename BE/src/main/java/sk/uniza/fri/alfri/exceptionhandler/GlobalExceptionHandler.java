@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import sk.uniza.fri.alfri.exception.InvalidCredentialsException;
+import sk.uniza.fri.alfri.exception.PythonOutputParsingException;
 import sk.uniza.fri.alfri.exception.QuestionnaireNotFilledException;
 import sk.uniza.fri.alfri.exception.UserAlreadyRegisteredException;
 
@@ -71,7 +72,9 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
   }
 
   @ExceptionHandler(ExpiredJwtException.class)
-  public ResponseEntity<Object> handleExpiredJwtException(WebRequest request) {
+  public ResponseEntity<Object> handleExpiredJwtException(ExpiredJwtException ex,
+      WebRequest request) {
+    log.error(ex.getMessage());
     return buildResponseEntity(HttpStatus.FORBIDDEN, "JWT token is expired!",
         request.getDescription(false));
   }
@@ -79,7 +82,16 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
   @ExceptionHandler(AccessDeniedException.class)
   public ResponseEntity<Object> handleAccessDeniedException(AccessDeniedException ex,
       WebRequest request) {
+    log.error(ex.getMessage());
     return buildResponseEntity(HttpStatus.FORBIDDEN, ex.getMessage(),
+        request.getDescription(false));
+  }
+
+  @ExceptionHandler(PythonOutputParsingException.class)
+  public ResponseEntity<Object> handlePythonOutputParsingException(PythonOutputParsingException ex,
+      WebRequest request) {
+    log.error(ex.getMessage());
+    return buildResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage(),
         request.getDescription(false));
   }
 

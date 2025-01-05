@@ -1,10 +1,14 @@
 package sk.uniza.fri.alfri.controller;
 
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
 import java.io.IOException;
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -20,6 +24,7 @@ import sk.uniza.fri.alfri.common.pagitation.SearchDefinition;
 import sk.uniza.fri.alfri.common.pagitation.SortDefinition;
 import sk.uniza.fri.alfri.common.pagitation.SortRequestQuery;
 import sk.uniza.fri.alfri.dto.SubjectGradeDto;
+import sk.uniza.fri.alfri.dto.SubjectsPredictionsResult;
 import sk.uniza.fri.alfri.dto.subject.SubjectDto;
 import sk.uniza.fri.alfri.dto.subject.SubjectExtendedDto;
 import sk.uniza.fri.alfri.entity.StudyProgramSubject;
@@ -31,6 +36,7 @@ import sk.uniza.fri.alfri.mapper.SubjectGradeMapper;
 import sk.uniza.fri.alfri.mapper.SubjectMapper;
 import sk.uniza.fri.alfri.service.ISubjectService;
 import sk.uniza.fri.alfri.service.UserService;
+import sk.uniza.fri.alfri.service.implementation.AuthService;
 import sk.uniza.fri.alfri.service.implementation.JwtService;
 
 @RequestMapping("/api/subject")
@@ -42,13 +48,15 @@ public class SubjectController {
   private final ISubjectService subjectService;
   private final JwtService jwtService;
   private final UserService userService;
+  private final AuthService authService;
 
   public SubjectController(ISubjectService subjectService, JwtService jwtService,
-      UserService userService, ModelMapper modelMapper) {
+      UserService userService, ModelMapper modelMapper, AuthService authService) {
     this.subjectService = subjectService;
     this.jwtService = jwtService;
     this.userService = userService;
     this.modelMapper = modelMapper;
+    this.authService = authService;
   }
 
   @GetMapping("/all")
@@ -150,7 +158,7 @@ public class SubjectController {
     List<Subject> subjectList =
         subjects.stream().map(SubjectMapper.INSTANCE::fromSubjectExtendedDtotoEntity).toList();
 
-    List<StudyProgramSubject> similarSubjects = null;
+    List<StudyProgramSubject> similarSubjects;
     try {
       similarSubjects = subjectService.getSimilarSubjects(subjectList);
     } catch (IOException e) {
@@ -177,5 +185,38 @@ public class SubjectController {
         subjects.stream().map(SubjectGradeMapper.INSTANCE::toDto).toList();
 
     return ResponseEntity.ok().body(subjectGradeDtos);
+  }
+
+  @GetMapping("/makePredictions")
+  public ResponseEntity<List<SubjectsPredictionsResult>> makeMarkAndPassingChangePredictionsByStudentYear() {
+    String currentUserEmail = authService.getCurrentUserEmail()
+        .orElseThrow(() -> new EntityNotFoundException("User's email was not found!"));
+
+    log.info("Making prediction by student year for user with email {}", currentUserEmail);
+
+    List<String> marksList = subjectService.makePassingMarkPrediction(currentUserEmail);
+    List<String> chanceList = subjectService.makePassingChancePrediction(currentUserEmail);
+
+    Map<String, String> marksMap = marksList.stream().map(s -> s.split(":", 2))
+        .collect(Collectors.toMap(arr -> arr[0].trim(), arr -> arr[1].trim()));
+
+    Map<String, Double> chanceMap = chanceList.stream().map(s -> s.split(":", 2))
+        .collect(Collectors.toMap(arr -> arr[0].trim(), arr -> Double.valueOf(arr[1].trim())));
+
+    List<SubjectsPredictionsResult> result = new ArrayList<>();
+    for (Map.Entry<String, String> entry : marksMap.entrySet()) {
+      String subjectName = entry.getKey();
+      String mark = entry.getValue();
+      Double passingChance = chanceMap.getOrDefault(subjectName, 0.0);
+
+      SubjectsPredictionsResult prediction = new SubjectsPredictionsResult();
+      prediction.setSubjectName(subjectName);
+      prediction.setMark(mark);
+      prediction.setPassingProbability(passingChance);
+
+      result.add(prediction);
+    }
+
+    return ResponseEntity.ok(result);
   }
 }

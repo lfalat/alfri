@@ -177,7 +177,6 @@ export interface SubjectGradesDto {
 
 export interface SubjectPassingPrediction {
   subjectName: string;
-  subjectCode: string;
   passingProbability: number;
   mark: string;
   recommendations?: string[];

@@ -34,7 +34,6 @@ import { SubjectPassingPrediction } from '../../types';
 export class SubjectPassingPredictionResultComponent implements OnChanges{
   @Input() passingPrediction: SubjectPassingPrediction = {
     subjectName: '',
-    subjectCode: '',
     passingProbability: 0,
     mark: '',
     recommendations: []

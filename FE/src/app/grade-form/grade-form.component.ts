@@ -124,12 +124,10 @@ export class GradeFormComponent implements OnInit {
         answers: answers
       };
 
-      console.log(result)
-
       this.formService.submitFormAnswer(result).subscribe({
         next: () => {
           this.router.navigate(['/home']).then(() => {
-            this.errorService.showError('Vyplnenie dotazníka prebehlo úspešne.');
+            this.errorService.showSuccess('Vyplnenie dotazníka prebehlo úspešne.');
           });
         },
         error: () => {

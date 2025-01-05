@@ -27,4 +27,8 @@ public interface ISubjectService {
   List<Subject> makeSubjectsFocusPrediction(User user);
 
   List<Subject> findAll();
+
+  List<String> makePassingChancePrediction(String userEmail);
+
+  List<String> makePassingMarkPrediction(String userEmail);
 }

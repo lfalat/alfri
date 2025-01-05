@@ -1,9 +1,12 @@
 package sk.uniza.fri.alfri.util;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
+@Slf4j
 public class ProcessUtils {
   private ProcessUtils() {}
 
@@ -18,6 +21,7 @@ public class ProcessUtils {
       output.append(line).append("\n");
     }
 
+    log.info("Output of script: {}", output);
     return output.toString();
   }
 }
