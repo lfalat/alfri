@@ -15,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import sk.uniza.fri.alfri.common.pagitation.PageDefinition;
 import sk.uniza.fri.alfri.common.pagitation.SearchDefinition;
+import sk.uniza.fri.alfri.constant.ModelType;
 import sk.uniza.fri.alfri.entity.Answer;
 import sk.uniza.fri.alfri.entity.AnswerText;
 import sk.uniza.fri.alfri.entity.Focus;
@@ -40,6 +41,22 @@ public class SubjectService implements ISubjectService {
 
   private static final Map<String, Integer> MARK_MAPPING =
       Map.of("A", 0, "B", 1, "C", 2, "D", 3, "E", 4, "Fx", 5, "*", 6);
+
+  private static final Map<String, String> CHANCE_MODEL_PATHS =
+      Map.of("Matematicka analyza 1", "/app/python_scripts/models/mata1.pkl",
+          "Diskretna pravdepodobnost", "/app/python_scripts/models/dp.pkl",
+          "Algoritmy a udajove struktury 1", "/app/python_scripts/models/aus1.pkl",
+          "Diskretna simulacia", "/app/python_scripts/models/model_DIS.pkl", "Optimalizacia sieti",
+          "/app/python_scripts/models/model_OPTS.pkl", "Algoritmy a udajove struktury 2",
+          "/app/python_scripts/models/model_AUS.pkl");
+
+  private static final Map<String, String> MARK_MODEL_PATHS =
+      Map.of("Matematicka analyza 1", "/app/python_scripts/models/mata1.h5",
+          "Diskretna pravdepodobnost", "/app/python_scripts/models/dp.h5",
+          "Algoritmy a udajove struktury 1", "/app/python_scripts/models/aus1.h5",
+          "Diskretna simulacia", "/app/python_scripts/models/best_model_DIS.h5",
+          "Optimalizacia sieti", "/app/python_scripts/models/best_model_OPTS.h5",
+          "Algoritmy a udajove struktury 2", "/app/python_scripts/models/best_model_AUS.h5");
 
   private final StudyProgramSubjectRepository studyProgramSubjectRepository;
   private final SubjectRepository subjectRepository;
@@ -210,7 +227,7 @@ public class SubjectService implements ISubjectService {
   }
 
   @Override
-  public List<Double> makePassingChancePrediction(String userEmail) {
+  public List<String> makePassingChancePrediction(String userEmail) {
     Student userStudent = studentService.getStudentByUserEmail(userEmail);
     int studentYear = userStudent.getYear();
 
@@ -220,12 +237,9 @@ public class SubjectService implements ISubjectService {
     subjectNames.forEach(subjectName -> subjectInputs.put(subjectName, this
         .getMarksRequiredToPredictSubjectFromQuestionnaire(subjectName, userStudent.getUser())));
 
-    // 4. Build a map of subject -> path to the “chance” model
-    // (Adjust model paths according to your setup/environment)
     Map<String, String> modelPaths =
-        Map.of("Matematicka analyza 1", "/app/python_scripts/models/mata1.pkl",
-            "Diskretna pravdepodobnost", "/app/python_scripts/models/dp.pkl",
-            "Algoritmy a udajove struktury 1", "/app/python_scripts/models/aus1.pkl");
+        subjectNames.stream().collect(Collectors.toMap(subjectName -> subjectName,
+            subjectName -> getModelPath(subjectName, ModelType.CHANCE)));
 
     ObjectMapper mapper = new ObjectMapper();
     String inputJson;
@@ -258,7 +272,10 @@ public class SubjectService implements ISubjectService {
           String.format("There was an error parsing passing chance. Output: %s", output.trim()));
     }
 
-    return predictions.values().stream().mapToDouble(Double::valueOf).boxed().toList();
+    log.info("Returning predictions: {}", predictions);
+
+    return predictions.entrySet().stream().map(entry -> entry.getKey() + ": " + entry.getValue())
+        .toList();
   }
 
   @Override
@@ -273,12 +290,9 @@ public class SubjectService implements ISubjectService {
     subjectNames.forEach(subjectName -> subjectInputs.put(subjectName, this
         .getMarksRequiredToPredictSubjectFromQuestionnaire(subjectName, userStudent.getUser())));
 
-    // // Model paths map
-    // TODO dostat path podla predmetu z env variable
     Map<String, String> modelPaths =
-        Map.of("Matematicka analyza 1", "/app/python_scripts/models/mata1.h5",
-            "Diskretna pravdepodobnost", "/app/python_scripts/models/dp.h5",
-            "Algoritmy a udajove struktury 1", "/app/python_scripts/models/aus1.h5");
+        subjectNames.stream().collect(Collectors.toMap(subjectName -> subjectName,
+            subjectName -> getModelPath(subjectName, ModelType.MARK)));
 
     ObjectMapper mapper = new ObjectMapper();
     String inputJson;
@@ -313,12 +327,15 @@ public class SubjectService implements ISubjectService {
           String.format("There was error parsing passing mark with output: %s ", output.trim()));
     }
 
-    return new ArrayList<>(predictions.values());
+    log.info("Returning predictions: {}", predictions);
+
+    return predictions.entrySet().stream().map(entry -> entry.getKey() + ": " + entry.getValue())
+        .toList();
   }
 
   private List<Integer> getMarksRequiredToPredictSubjectFromQuestionnaire(String subjectName,
       User user) {
-    log.info(subjectName);
+    log.info("Getting related subjects for subject {}", subjectName);
     switch (subjectName) {
       case "Matematicka analyza 1" -> {
         return List.of(getMarkOfSubjectFromQuestionnaire("Algebra", user),
@@ -364,6 +381,13 @@ public class SubjectService implements ISubjectService {
       default -> throw new IllegalArgumentException(
           String.format("Student year %d cannot be predicted!", studentYear));
     }
+  }
+
+  private String getModelPath(String subjectName, ModelType type) {
+    return switch (type) {
+      case CHANCE -> CHANCE_MODEL_PATHS.get(subjectName);
+      case MARK -> MARK_MODEL_PATHS.get(subjectName);
+    };
   }
 
   @Override

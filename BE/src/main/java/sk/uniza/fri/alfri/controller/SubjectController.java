@@ -5,7 +5,10 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
 import java.io.IOException;
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -21,6 +24,7 @@ import sk.uniza.fri.alfri.common.pagitation.SearchDefinition;
 import sk.uniza.fri.alfri.common.pagitation.SortDefinition;
 import sk.uniza.fri.alfri.common.pagitation.SortRequestQuery;
 import sk.uniza.fri.alfri.dto.SubjectGradeDto;
+import sk.uniza.fri.alfri.dto.SubjectsPredictionsResult;
 import sk.uniza.fri.alfri.dto.subject.SubjectDto;
 import sk.uniza.fri.alfri.dto.subject.SubjectExtendedDto;
 import sk.uniza.fri.alfri.entity.StudyProgramSubject;
@@ -183,13 +187,36 @@ public class SubjectController {
     return ResponseEntity.ok().body(subjectGradeDtos);
   }
 
-  @GetMapping("/asd")
-  public ResponseEntity<List<Object>> test() {
+  @GetMapping("/makePredictions")
+  public ResponseEntity<List<SubjectsPredictionsResult>> makeMarkAndPassingChangePredictionsByStudentYear() {
     String currentUserEmail = authService.getCurrentUserEmail()
         .orElseThrow(() -> new EntityNotFoundException("User's email was not found!"));
 
-    return ResponseEntity
-        .ok(List.of(String.valueOf(this.subjectService.makePassingMarkPrediction(currentUserEmail)),
-            this.subjectService.makePassingChancePrediction(currentUserEmail)));
+    log.info("Making prediction by student year for user with email {}", currentUserEmail);
+
+    List<String> marksList = subjectService.makePassingMarkPrediction(currentUserEmail);
+    List<String> chanceList = subjectService.makePassingChancePrediction(currentUserEmail);
+
+    Map<String, String> marksMap = marksList.stream().map(s -> s.split(":", 2))
+        .collect(Collectors.toMap(arr -> arr[0].trim(), arr -> arr[1].trim()));
+
+    Map<String, Double> chanceMap = chanceList.stream().map(s -> s.split(":", 2))
+        .collect(Collectors.toMap(arr -> arr[0].trim(), arr -> Double.valueOf(arr[1].trim())));
+
+    List<SubjectsPredictionsResult> result = new ArrayList<>();
+    for (Map.Entry<String, String> entry : marksMap.entrySet()) {
+      String subjectName = entry.getKey();
+      String mark = entry.getValue();
+      Double passingChance = chanceMap.getOrDefault(subjectName, 0.0);
+
+      SubjectsPredictionsResult prediction = new SubjectsPredictionsResult();
+      prediction.setSubjectName(subjectName);
+      prediction.setMark(mark);
+      prediction.setPassingProbability(passingChance);
+
+      result.add(prediction);
+    }
+
+    return ResponseEntity.ok(result);
   }
 }
