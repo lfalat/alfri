@@ -29,6 +29,7 @@ import sk.uniza.fri.alfri.repository.FocusRepository;
 import sk.uniza.fri.alfri.repository.StudyProgramSubjectRepository;
 import sk.uniza.fri.alfri.repository.SubjectGradeRepository;
 import sk.uniza.fri.alfri.repository.SubjectRepository;
+import sk.uniza.fri.alfri.service.FormService;
 import sk.uniza.fri.alfri.service.ISubjectService;
 import sk.uniza.fri.alfri.util.ProcessUtils;
 
@@ -37,12 +38,16 @@ import sk.uniza.fri.alfri.util.ProcessUtils;
 public class SubjectService implements ISubjectService {
   public static final String NO_SUBJECTS_FOUND_MESSAGE = "No subjects found!";
 
+  private static final Map<String, Integer> MARK_MAPPING =
+      Map.of("A", 0, "B", 1, "C", 2, "D", 3, "E", 4, "Fx", 5, "*", 6);
+
   private final StudyProgramSubjectRepository studyProgramSubjectRepository;
   private final SubjectRepository subjectRepository;
   private final AnswerRepository answerRepository;
   private final FocusRepository focusRepository;
   private final SubjectGradeRepository subjectGradeRepository;
   private final StudentService studentService;
+  private final FormService formService;
 
   @Value("${python.executable_path}")
   private String pythonExcecutablePath;
@@ -62,7 +67,7 @@ public class SubjectService implements ISubjectService {
   public SubjectService(StudyProgramSubjectRepository studyProgramSubjectRepository,
       SubjectRepository subjectRepository, AnswerRepository answerRepository,
       FocusRepository focusRepository, SubjectGradeRepository subjectGradeRepository,
-      StudentService studentService) {
+      StudentService studentService, FormService formService) {
 
     this.studyProgramSubjectRepository = studyProgramSubjectRepository;
     this.subjectRepository = subjectRepository;
@@ -70,6 +75,7 @@ public class SubjectService implements ISubjectService {
     this.answerRepository = answerRepository;
     this.focusRepository = focusRepository;
     this.studentService = studentService;
+    this.formService = formService;
   }
 
   private static List<List<Integer>> getFocusesAttributes(List<Focus> subjectsFocuses) {
@@ -205,21 +211,54 @@ public class SubjectService implements ISubjectService {
 
   @Override
   public List<Double> makePassingChancePrediction(String userEmail) {
+    Student userStudent = studentService.getStudentByUserEmail(userEmail);
+    int studentYear = userStudent.getYear();
+
+    List<String> subjectNames = this.getSubjectNamesToPredictByStudentsYear(studentYear);
+
+    Map<String, List<Integer>> subjectInputs = new HashMap<>();
+    subjectNames.forEach(subjectName -> subjectInputs.put(subjectName, this
+        .getMarksRequiredToPredictSubjectFromQuestionnaire(subjectName, userStudent.getUser())));
+
+    // 4. Build a map of subject -> path to the “chance” model
+    // (Adjust model paths according to your setup/environment)
+    Map<String, String> modelPaths =
+        Map.of("Matematicka analyza 1", "/app/python_scripts/models/mata1.pkl",
+            "Diskretna pravdepodobnost", "/app/python_scripts/models/dp.pkl",
+            "Algoritmy a udajove struktury 1", "/app/python_scripts/models/aus1.pkl");
+
+    ObjectMapper mapper = new ObjectMapper();
+    String inputJson;
+    String modelPathsJson;
+    try {
+      inputJson = mapper.writeValueAsString(Map.of("data", subjectInputs));
+      modelPathsJson = mapper.writeValueAsString(modelPaths);
+    } catch (JsonProcessingException e) {
+      throw new PythonOutputParsingException("Failed to create JSON input for the python script");
+    }
+
+    ProcessBuilder processBuilder = new ProcessBuilder(pythonExcecutablePath,
+        passingChangePredictionScriptPath, inputJson, modelPathsJson);
+
     String output;
     try {
-      output = runPythonModelForPrediction(userEmail, passingMarkPredictionScriptPath);
+      output = ProcessUtils.getOutputFromProces(processBuilder);
     } catch (IOException e) {
-      throw new PythonOutputParsingException(e.getMessage());
+      throw new PythonOutputParsingException(
+          "Error running Python passing chance script: " + e.getMessage());
     }
 
     log.info("Output of makePassingChancePrediction: {}", output);
 
+    Map<String, String> predictions;
     try {
-      return Arrays.stream(output.trim().split("\\s+")).map(Double::parseDouble).toList();
-    } catch (NumberFormatException e) {
+      predictions = mapper.readValue(output, new TypeReference<>() {});
+    } catch (IOException e) {
       throw new PythonOutputParsingException(
-          String.format("There was error parsing passing chance with output:%s ", output.trim()));
+          String.format("There was an error parsing passing chance. Output: %s", output.trim()));
     }
+
+    return predictions.values().stream().mapToDouble(Double::valueOf).boxed().toList();
   }
 
   @Override
@@ -227,15 +266,15 @@ public class SubjectService implements ISubjectService {
     Student userStudent = studentService.getStudentByUserEmail(userEmail);
     int studentYear = userStudent.getYear();
 
-    // Create a map of subject to their encoded input arrays.
-    // Each subject has its own array of features.
-    Map<String, List<Integer>> subjectInputs = new HashMap<>();
-    subjectInputs.put("Matematicka analyza 1", Arrays.asList(0, 0, 0));
-    subjectInputs.put("Algoritmy a udajove struktury 1", Arrays.asList(0, 0, 0));
-    subjectInputs.put("Diskretna pravdepodobnost", Arrays.asList(0, 0));
-    // Add more subjects and their corresponding arrays here.
+    List<String> subjectNames = this.getSubjectNamesToPredictByStudentsYear(studentYear);
 
-    // Model paths map
+    Map<String, List<Integer>> subjectInputs = new HashMap<>();
+
+    subjectNames.forEach(subjectName -> subjectInputs.put(subjectName, this
+        .getMarksRequiredToPredictSubjectFromQuestionnaire(subjectName, userStudent.getUser())));
+
+    // // Model paths map
+    // TODO dostat path podla predmetu z env variable
     Map<String, String> modelPaths =
         Map.of("Matematicka analyza 1", "/app/python_scripts/models/mata1.h5",
             "Diskretna pravdepodobnost", "/app/python_scripts/models/dp.h5",
@@ -246,12 +285,12 @@ public class SubjectService implements ISubjectService {
     String modelPathsJson;
 
     try {
-      // Now 'data' is a dictionary of subjects to arrays
       inputJson = mapper.writeValueAsString(Map.of("data", subjectInputs));
       modelPathsJson = mapper.writeValueAsString(modelPaths);
     } catch (JsonProcessingException e) {
-      throw new RuntimeException("Failed to create JSON input for the python script", e);
+      throw new PythonOutputParsingException("Failed to create JSON input for the python script");
     }
+
 
     ProcessBuilder processBuilder = new ProcessBuilder(pythonExcecutablePath,
         passingMarkPredictionScriptPath, inputJson, modelPathsJson);
@@ -277,47 +316,71 @@ public class SubjectService implements ISubjectService {
     return new ArrayList<>(predictions.values());
   }
 
-  private String runPythonModelForPrediction(String userEmail,
-      String passingMarkPredictionScriptPath) throws IOException {
-    Student userStudent = studentService.getStudentByUserEmail(userEmail);
-    int studentYear = userStudent.getYear();
+  private List<Integer> getMarksRequiredToPredictSubjectFromQuestionnaire(String subjectName,
+      User user) {
+    log.info(subjectName);
+    switch (subjectName) {
+      case "Matematicka analyza 1" -> {
+        return List.of(getMarkOfSubjectFromQuestionnaire("Algebra", user),
+            getMarkOfSubjectFromQuestionnaire("Matematika pre informatikov", user),
+            getMarkOfSubjectFromQuestionnaire("Diskrétna pravdepodobnosť", user));
+      }
+      case "Algoritmy a udajove struktury 1" -> {
+        return List.of(getMarkOfSubjectFromQuestionnaire("Informatika 1", user),
+            getMarkOfSubjectFromQuestionnaire("Informatika 2", user),
+            getMarkOfSubjectFromQuestionnaire("Algoritmická teória grafov", user));
+      }
+      case "Diskretna pravdepodobnost" -> {
+        return List.of(getMarkOfSubjectFromQuestionnaire("Algebra", user),
+            getMarkOfSubjectFromQuestionnaire("Matematika pre informatikov", user));
+      }
+      default -> {
+        return Collections.emptyList();
+      }
+    }
+  }
 
-    ProcessBuilder processBuilder = new ProcessBuilder(pythonExcecutablePath,
-        passingMarkPredictionScriptPath, String.valueOf(studentYear));
+  private Integer getMarkOfSubjectFromQuestionnaire(String subjectName, User user) {
+    String markOfSubjectFromQuesionnaire =
+        formService.getMarkOfSubjectFromQuesionnaire(subjectName, user);
 
-    return ProcessUtils.getOutputFromProces(processBuilder);
+    if (markOfSubjectFromQuesionnaire == null) {
+      return 6; // Fallback value
+    }
+
+    return MARK_MAPPING.getOrDefault(markOfSubjectFromQuesionnaire, 6);
+  }
+
+  private List<String> getSubjectNamesToPredictByStudentsYear(int studentYear) {
+    switch (studentYear) {
+      case 2 -> {
+        return List.of("Matematicka analyza 1", "Algoritmy a udajove struktury 1",
+            "Diskretna pravdepodobnost");
+      }
+      case 4 -> {
+        return List.of("Algoritmy a udajove struktury 2", "Optimalizacia sieti",
+            "Diskretna simulacia");
+      }
+      default -> throw new IllegalArgumentException(
+          String.format("Student year %d cannot be predicted!", studentYear));
+    }
   }
 
   @Override
   public List<SubjectGrade> getFilteredSubjects(String sortCriteria, Integer numberOfSubjects) {
     Pageable pageable = PageRequest.of(0, numberOfSubjects);
 
-    Page<SubjectGrade> subjectPage;
-
-    switch (sortCriteria) {
-      case "lowestAverage":
-        subjectPage = subjectGradeRepository.findAllByOrderByGradeAverageAsc(pageable)
-            .orElseThrow(() -> new EntityNotFoundException(NO_SUBJECTS_FOUND_MESSAGE));
-        break;
-
-      case "highestAverage":
-        subjectPage = subjectGradeRepository.findAllByOrderByGradeAverageDesc(pageable)
-            .orElseThrow(() -> new EntityNotFoundException(NO_SUBJECTS_FOUND_MESSAGE));
-        break;
-
-      case "mostAGrades":
-        subjectPage = subjectGradeRepository.findAllByOrderByGradeADesc(pageable)
-            .orElseThrow(() -> new EntityNotFoundException(NO_SUBJECTS_FOUND_MESSAGE));
-        break;
-
-      case "mostFXGrades":
-        subjectPage = subjectGradeRepository.findAllByOrderByGradeFxDesc(pageable)
-            .orElseThrow(() -> new EntityNotFoundException(NO_SUBJECTS_FOUND_MESSAGE));
-        break;
-
-      default:
-        throw new IllegalArgumentException("Invalid sorting criteria");
-    }
+    Page<SubjectGrade> subjectPage = switch (sortCriteria) {
+      case "lowestAverage" -> subjectGradeRepository.findAllByOrderByGradeAverageAsc(pageable)
+          .orElseThrow(() -> new EntityNotFoundException(NO_SUBJECTS_FOUND_MESSAGE));
+      case "highestAverage" -> subjectGradeRepository.findAllByOrderByGradeAverageDesc(pageable)
+          .orElseThrow(() -> new EntityNotFoundException(NO_SUBJECTS_FOUND_MESSAGE));
+      case "mostAGrades" -> subjectGradeRepository.findAllByOrderByGradeADesc(pageable)
+          .orElseThrow(() -> new EntityNotFoundException(NO_SUBJECTS_FOUND_MESSAGE));
+      case "mostFXGrades" -> subjectGradeRepository.findAllByOrderByGradeFxDesc(pageable)
+          .orElseThrow(() -> new EntityNotFoundException(NO_SUBJECTS_FOUND_MESSAGE));
+      default -> throw new IllegalArgumentException("Invalid sorting criteria");
+    };
 
     return subjectPage.getContent();
   }

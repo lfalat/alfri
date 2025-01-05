@@ -45,7 +45,7 @@ public class StudentService implements IStudentService {
   @Override
   public void makePrediction() throws IOException {
     ProcessBuilder processBuilder =
-        new ProcessBuilder("python3", "./python_scripts/test_script.py");
+        new ProcessBuilder("python3", "./python_scripts/passing_chance_prediction.py");
     String output = ProcessUtils.getOutputFromProces(processBuilder);
     System.out.println(output);
   }

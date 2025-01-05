@@ -106,10 +106,10 @@ public class FormServiceImpl implements FormService {
             "Questionnaire not found with id: " + userFormAnswersDTO.formId()));
 
     // Check if the user has already submitted answers for this questionnaire
-    if (answerRepository.existsByAnswerQuestionnaireAndUserId(questionnaire, user)) {
-      throw new IllegalArgumentException(
-          "User has already submitted answers for this questionnaire.");
-    }
+    // if (answerRepository.existsByAnswerQuestionnaireAndUserId(questionnaire, user)) {
+    // throw new IllegalArgumentException(
+    // "User has already submitted answers for this questionnaire.");
+    // }
 
     // Validate answers for each question in the questionnaire
     for (QuestionnaireSection section : questionnaire.getSections()) {
@@ -201,6 +201,11 @@ public class FormServiceImpl implements FormService {
           String.format("User with id %d has not filled form with id %d", user.getId(),
               questionnaire.get().getId()));
     }
+  }
+
+  @Override
+  public String getMarkOfSubjectFromQuesionnaire(String subjectName, User user) {
+    return questionnaireRepository.getAnswerOfQuestionByQuestionText(subjectName, user.getId());
   }
 
   private void saveFormAnswers(UserFormAnswersDTO userFormAnswersDTO, User user,

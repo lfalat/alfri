@@ -154,7 +154,7 @@ public class SubjectController {
     List<Subject> subjectList =
         subjects.stream().map(SubjectMapper.INSTANCE::fromSubjectExtendedDtotoEntity).toList();
 
-    List<StudyProgramSubject> similarSubjects = null;
+    List<StudyProgramSubject> similarSubjects;
     try {
       similarSubjects = subjectService.getSimilarSubjects(subjectList);
     } catch (IOException e) {
@@ -184,12 +184,12 @@ public class SubjectController {
   }
 
   @GetMapping("/asd")
-  public ResponseEntity<String> test() {
+  public ResponseEntity<List<Object>> test() {
     String currentUserEmail = authService.getCurrentUserEmail()
         .orElseThrow(() -> new EntityNotFoundException("User's email was not found!"));
-    // log.info(String.valueOf(this.subjectService.makePassingChancePrediction(currentUserEmail)));
-    // log.info(String.valueOf(this.subjectService.makePassingMarkPrediction(currentUserEmail)));
+
     return ResponseEntity
-        .ok(String.valueOf(this.subjectService.makePassingMarkPrediction(currentUserEmail)));
+        .ok(List.of(String.valueOf(this.subjectService.makePassingMarkPrediction(currentUserEmail)),
+            this.subjectService.makePassingChancePrediction(currentUserEmail)));
   }
 }

@@ -3,88 +3,66 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
 import json
 import sys
-import tensorflow as tf
+import pickle
 import numpy as np
-
-# Example structure of model_paths input:
-# {
-#    "Matematicka analyza 1": "./best_models/mata1.h5",
-#    "Diskretna pravdepodobnost": "./best_models/dp.h5",
-#    "Algoritmy a udajove struktury 1": "./best_models/aus1.h5"
-#}
-
-DECODE_MAP = {
-    0: "A",
-    1: "B",
-    2: "C",
-    3: "D",
-    4: "E",
-    5: "Fx",
-    6: "*"
-}
-
 
 def load_models(model_paths):
     """
-    Load TensorFlow models from provided paths.
+    Load binary LogisticRegression models from provided .pkl paths.
     :param model_paths: Dictionary with subject names as keys and paths to models as values.
-    :return: Dictionary with loaded models.
+    :return: Dictionary with loaded models (or None if load fails).
     """
     models = {}
     for subject, path in model_paths.items():
         try:
-            models[subject] = tf.keras.models.load_model(path)
+            with open(path, "rb") as f:
+                models[subject] = pickle.load(f)
         except Exception as e:
             print(f"Error loading model for {subject}: {e}")
-            models[subject] = None  # Mark this model as not loadable
+            models[subject] = None
     return models
 
-
-def run_model(model, input_data):
+def get_passing_probability(model, input_data):
     """
-    Run inference for a specific model with the provided input data.
-    :param model: The TensorFlow model to use for inference.
+    Run inference on a binary logistic regression model trained for passing vs. not passing.
+    Model’s positive class (label=1) should correspond to “passing”.
+    :param model: The logistic regression model to use for inference.
     :param input_data: A list of input features for the model.
-    :return: The decoded predicted mark.
+    :return: A float representing the probability (0.0 - 1.0) of passing.
     """
     if model is None:
-        return "Error: Model not loaded"
+        return None
 
-    input_array = np.array([input_data])
+    X = np.array([input_data], dtype=float)
 
-    predictions = model.predict(input_array, verbose=0)
-
-    predicted_category = np.argmax(predictions, axis=1)[0]
-
-    return DECODE_MAP.get(predicted_category, "Unknown")
-
+    passing_prob = model.predict_proba(X)[0][1]
+    return float(passing_prob)
 
 def main():
     """
     Main entry point for the script.
-    Expects:
-    - JSON string with input data (first argument)
-    - JSON string with model paths (second argument)
-
-    input_data example:
-    {
-       "data": {
-           "Matematicka analyza 1": [0, 0, 0],
-           "Algoritmy a udajove struktury 1": [0, 0]
-       }
-    }
-
-    model_paths example:
-    {
-       "Matematicka analyza 1": "./best_models/mata1.h5",
-       "Algoritmy a udajove struktury 1": "./best_models/aus1.h5"
-    }
+    Expects two arguments:
+     1) JSON string with input data:
+        {
+          "data": {
+            "Matematicka analyza 1": [feature1, feature2, ...],
+            "Diskretna pravdepodobnost": [feature1, feature2, ...],
+            ...
+          }
+        }
+     2) JSON string with model paths:
+        {
+          "Matematicka analyza 1": "./path/to/mata1.pkl",
+          "Diskretna pravdepodobnost": "./path/to/dp.pkl",
+          ...
+        }
     """
 
     if len(sys.argv) != 3:
-        print("Usage: python run_models.py <input_json> <model_paths_json>")
+        print("Usage: python run_passing_change.py <input_json> <model_paths_json>")
         sys.exit(1)
 
+    # Parse input data
     input_json = sys.argv[1]
     try:
         input_data = json.loads(input_json)
@@ -92,6 +70,7 @@ def main():
         print("Invalid JSON input.")
         sys.exit(1)
 
+    # Parse model paths
     model_paths_json = sys.argv[2]
     try:
         model_paths = json.loads(model_paths_json)
@@ -116,12 +95,14 @@ def main():
         if subject_input is None:
             print(f"No input data provided for subject: {subject_name}")
             sys.exit(1)
-
-        results[subject_name] = run_model(model, subject_input)
+        passing_probability = get_passing_probability(model, subject_input)
+        if passing_probability is None:
+            results[subject_name] = "Error: Model not loaded"
+        else:
+            results[subject_name] = f"{passing_probability * 100:.2f}"
 
     # output
     print(json.dumps(results, indent=4))
-
 
 if __name__ == "__main__":
     main()
