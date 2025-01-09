@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 import { SpeechBubbleComponent } from '../components/speech-bubble/speech-bubble.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { FormService } from '../services/form.service';
+import { CdkDrag } from '@angular/cdk/drag-drop';
 
 export const USER_FORM_ID = 69;
 
@@ -19,7 +20,8 @@ export const USER_FORM_ID = 69;
     NgOptimizedImage,
     SpeechBubbleComponent,
     ReactiveFormsModule,
-    NgIf
+    NgIf,
+    CdkDrag
   ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss'

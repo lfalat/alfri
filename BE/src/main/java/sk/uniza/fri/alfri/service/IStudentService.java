@@ -1,5 +1,6 @@
 package sk.uniza.fri.alfri.service;
 
+import sk.uniza.fri.alfri.entity.Student;
 import sk.uniza.fri.alfri.entity.StudyProgram;
 import sk.uniza.fri.alfri.entity.User;
 
@@ -11,4 +12,6 @@ public interface IStudentService {
   StudyProgram getUsersStudyProgram(User user);
 
   void makePrediction() throws IOException;
+
+  Student getStudentByUserEmail(String userEmail);
 }

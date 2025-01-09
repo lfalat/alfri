@@ -10,7 +10,7 @@ import { MatInput } from '@angular/material/input';
 import { MatButton } from '@angular/material/button';
 import { NotificationService } from '../services/notification.service';
 import { Router } from '@angular/router';
-
+import { MatCard } from '@angular/material/card';
 
 @Component({
   selector: 'app-profile',
@@ -22,7 +22,8 @@ import { Router } from '@angular/router';
     MatLabel,
     MatFormField,
     MatInput,
-    MatButton
+    MatButton,
+    MatCard
   ],
   styleUrls: ['./profile.component.scss']
 })
@@ -88,6 +89,10 @@ export class ProfileComponent {
 
   get userData(): UserDto {
     return <UserDto>this._userData;
+  }
+
+  redirectToUserForm() {
+    this.router.navigate(['/grade-form']);
   }
 
 }

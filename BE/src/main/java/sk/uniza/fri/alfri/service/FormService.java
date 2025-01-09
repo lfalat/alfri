@@ -4,6 +4,7 @@ import sk.uniza.fri.alfri.dto.questionnaire.QuestionnaireDTO;
 import sk.uniza.fri.alfri.dto.questionnaire.UserFormAnswersDTO;
 import sk.uniza.fri.alfri.entity.User;
 
+
 public interface FormService {
   void saveQuestionnaire(QuestionnaireDTO questionnaireDTO);
 
@@ -12,5 +13,7 @@ public interface FormService {
   void updateFormAnswers(UserFormAnswersDTO userFormAnswersDTO, User user);
 
   void hasUserFilledForm(int formId, User user);
+
+  String getMarkOfSubjectFromQuesionnaire(String subjectName, User user);
 }
 

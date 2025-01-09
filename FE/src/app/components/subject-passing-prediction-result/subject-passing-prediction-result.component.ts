@@ -5,7 +5,7 @@ import { MatList, MatListItem, MatListItemIcon } from '@angular/material/list';
 import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
 import { MatLine, ThemePalette } from '@angular/material/core';
-import { AsyncPipe, NgForOf, NgIf } from '@angular/common';
+import { AsyncPipe, NgClass, NgForOf, NgIf } from '@angular/common';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { SubjectPassingPrediction } from '../../types';
 
@@ -25,7 +25,8 @@ import { SubjectPassingPrediction } from '../../types';
     MatLine,
     NgForOf,
     AsyncPipe,
-    NgIf
+    NgIf,
+    NgClass
   ],
   templateUrl: './subject-passing-prediction-result.component.html',
   styleUrl: './subject-passing-prediction-result.component.scss'
@@ -33,7 +34,6 @@ import { SubjectPassingPrediction } from '../../types';
 export class SubjectPassingPredictionResultComponent implements OnChanges{
   @Input() passingPrediction: SubjectPassingPrediction = {
     subjectName: '',
-    subjectCode: '',
     passingProbability: 0,
     mark: '',
     recommendations: []
@@ -55,6 +55,23 @@ export class SubjectPassingPredictionResultComponent implements OnChanges{
       return 'accent';
     } else {
       return 'warn';
+    }
+  }
+
+  getMarkClass(mark: string): string {
+    switch (mark) {
+      case 'A':
+        return 'high-mark';
+      case 'B':
+      case 'C':
+        return 'medium-mark';
+      case 'D':
+      case 'E':
+        return 'low-mark';
+      case 'Fx':
+        return 'fail-mark';
+      default:
+        return '';
     }
   }
 }

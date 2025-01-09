@@ -1,44 +1,36 @@
-import { Component } from '@angular/core';
-import { SubjectPassingPredictionResultComponent }
-  from '../components/subject-passing-prediction-result/subject-passing-prediction-result.component';
+import { Component, OnInit } from '@angular/core';
+import {
+  SubjectPassingPredictionResultComponent
+} from '../components/subject-passing-prediction-result/subject-passing-prediction-result.component';
 import { SubjectPassingPrediction } from '../types';
 import { NgForOf } from '@angular/common';
+import { SubjectService } from '../services/subject.service';
+import { take } from 'rxjs';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
 
 @Component({
   selector: 'app-passing-prediction',
   standalone: true,
-  imports: [SubjectPassingPredictionResultComponent, NgForOf],
+  imports: [SubjectPassingPredictionResultComponent, NgForOf, MatProgressSpinner],
   templateUrl: './passing-prediction.component.html',
   styleUrls: ['./passing-prediction.component.scss'],
 })
-export class PassingPredictionComponent {
-  subjects: SubjectPassingPrediction[] = [
-    {
-      subjectName: 'Matematika',
-      subjectCode: 'MATH101',
-      passingProbability: 80,
-      mark: 'B',
-      recommendations: [],
-    },
-    {
-      subjectName: 'Fyzika',
-      subjectCode: 'PHYS101',
-      passingProbability: 70,
-      mark: 'C',
-      recommendations: [],
-    },
-    {
-      subjectName: 'Chémia',
-      subjectCode: 'CHEM101',
-      passingProbability: 45,
-      mark: 'D',
-      recommendations: [],
-    },
-  ];
+export class PassingPredictionComponent implements OnInit {
+  subjects: SubjectPassingPrediction[] = [];
+  isLoading: boolean = true;
+
+  constructor(private subjectService: SubjectService) {
+  }
 
   ngOnInit(): void {
-    this.subjects.forEach((subject) => {
-      subject.recommendations = this.generateRecommendations(subject.passingProbability);
+    this.subjectService.makeSubjectsPassingAndMarkPredictions().pipe(take(1)).subscribe((predictionResult: SubjectPassingPrediction[]) => {
+      this.isLoading = false;
+      console.log(predictionResult);
+      this.subjects = predictionResult;
+
+      this.subjects.forEach((subject) => {
+        subject.recommendations = this.generateRecommendations(subject.passingProbability);
+      });
     });
   }
 
