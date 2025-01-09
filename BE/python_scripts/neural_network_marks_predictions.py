@@ -1,5 +1,11 @@
 import os
+import logging
+import warnings
+
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+logging.getLogger('tensorflow').setLevel(logging.ERROR)
+warnings.filterwarnings("ignore", category=UserWarning)  # Suppress user warnings
+warnings.filterwarnings("ignore", category=FutureWarning)  # Suppress future warnings
 
 import json
 import sys
@@ -33,7 +39,7 @@ def load_models(model_paths):
     models = {}
     for subject, path in model_paths.items():
         try:
-            models[subject] = tf.keras.models.load_model(path)
+            models[subject] = tf.keras.models.load_model(path, compile=False)
         except Exception as e:
             print(f"Error loading model for {subject}: {e}")
             models[subject] = None  # Mark this model as not loadable

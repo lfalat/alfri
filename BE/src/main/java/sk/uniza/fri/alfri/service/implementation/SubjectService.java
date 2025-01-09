@@ -237,6 +237,8 @@ public class SubjectService implements ISubjectService {
     subjectNames.forEach(subjectName -> subjectInputs.put(subjectName, this
         .getMarksRequiredToPredictSubjectFromQuestionnaire(subjectName, userStudent.getUser())));
 
+    log.info("Subjects inputs: {}", subjectInputs);
+
     Map<String, String> modelPaths =
         subjectNames.stream().collect(Collectors.toMap(subjectName -> subjectName,
             subjectName -> getModelPath(subjectName, ModelType.CHANCE)));
@@ -289,6 +291,8 @@ public class SubjectService implements ISubjectService {
 
     subjectNames.forEach(subjectName -> subjectInputs.put(subjectName, this
         .getMarksRequiredToPredictSubjectFromQuestionnaire(subjectName, userStudent.getUser())));
+
+    log.info("Subjects inputs: {}", subjectInputs);
 
     Map<String, String> modelPaths =
         subjectNames.stream().collect(Collectors.toMap(subjectName -> subjectName,
@@ -351,9 +355,26 @@ public class SubjectService implements ISubjectService {
         return List.of(getMarkOfSubjectFromQuestionnaire("Algebra", user),
             getMarkOfSubjectFromQuestionnaire("Matematika pre informatikov", user));
       }
-      default -> {
-        return Collections.emptyList();
+
+      case "Algoritmy a udajove struktury 2" -> {
+        return List.of(getMarkOfSubjectFromQuestionnaire("Algoritmy a údajové štruktúry 1", user),
+            getMarkOfSubjectFromQuestionnaire("Informatika 3", user),
+            getMarkOfSubjectFromQuestionnaire("Informatika 2", user));
       }
+
+      case "Optimalizacia sieti" -> {
+        return List.of(getMarkOfSubjectFromQuestionnaire("Matematika pre informatikov", user),
+            getMarkOfSubjectFromQuestionnaire("Algoritmická teória grafov", user),
+            getMarkOfSubjectFromQuestionnaire("Diskrétna optimalizácia", user));
+      }
+
+      case "Diskretna simulacia" -> {
+        return List.of(getMarkOfSubjectFromQuestionnaire("Diskrétna pravdepodobnosť", user),
+            getMarkOfSubjectFromQuestionnaire("Pravdepodobnosť a štatistika", user),
+            getMarkOfSubjectFromQuestionnaire("Diskrétna optimalizácia", user));
+      }
+      default -> throw new IllegalArgumentException(
+          "Unknown subject name to predict: " + subjectName);
     }
   }
 

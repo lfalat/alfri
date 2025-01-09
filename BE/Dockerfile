@@ -28,7 +28,7 @@ RUN apt-get update && \
 
 RUN python3 -m venv /opt/venv && \
     /opt/venv/bin/pip install --upgrade pip setuptools && \
-    /opt/venv/bin/pip install joblib numpy scikit-learn==1.5.0 tensorflow==2.12.0
+    /opt/venv/bin/pip install joblib numpy scikit-learn==1.5.0 tensorflow==2.18.0
 
 COPY python_scripts /app/python_scripts
 
