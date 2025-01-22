@@ -3,7 +3,7 @@ import { environment } from '../../environments/environment';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { JwtService } from './jwt.service';
 import { Observable } from 'rxjs';
-import { Form, UserFormAnswers } from '../types';
+import { AnsweredForm, Form, UserFormAnswers } from '../types';
 
 @Injectable({
   providedIn: 'root'
@@ -41,5 +41,9 @@ export class FormService {
 
   hasUserFilledForm(formId: number): Observable<void> {
     return this.http.get<void>(`${this.URL}/has-filled-form/${formId}`);
+  }
+
+  getExistingFormAnswers(formId: number): Observable<AnsweredForm> {
+    return this.http.get<AnsweredForm>(`${this.URL}/get-user-answers/${formId}`);
   }
 }

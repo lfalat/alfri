@@ -6,9 +6,11 @@ import io.jsonwebtoken.security.Keys;
 import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cglib.core.internal.Function;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import sk.uniza.fri.alfri.exceptionhandler.GlobalExceptionHandler;
@@ -34,7 +36,14 @@ public class JwtService {
   }
 
   public String generateToken(UserDetails userDetails) {
-    return generateToken(new HashMap<>(), userDetails);
+      Map<String, Object> extraClaims = new HashMap<>();
+      List<String> roles = userDetails.getAuthorities()
+              .stream()
+              .map(GrantedAuthority::getAuthority)
+              .toList();
+
+      extraClaims.put("roles", roles);
+      return generateToken(extraClaims, userDetails);
   }
 
   public String generateToken(Map<String, Object> extraClaims, UserDetails userDetails) {
@@ -47,10 +56,11 @@ public class JwtService {
 
   private String buildToken(Map<String, Object> extraClaims, UserDetails userDetails,
       long expiration) {
-    return Jwts.builder().setClaims(extraClaims).setSubject(userDetails.getUsername())
-        .setIssuedAt(new Date(System.currentTimeMillis()))
-        .setExpiration(new Date(System.currentTimeMillis() + expiration))
-        .signWith(getSignInKey(), SignatureAlgorithm.HS256).compact();
+      return Jwts.builder().setClaims(extraClaims)
+              .setSubject(userDetails.getUsername())
+              .setIssuedAt(new Date(System.currentTimeMillis()))
+              .setExpiration(new Date(System.currentTimeMillis() + expiration))
+              .signWith(getSignInKey(), SignatureAlgorithm.HS256).compact();
   }
 
   public boolean isTokenValid(String token, UserDetails userDetails) {

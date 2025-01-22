@@ -10,8 +10,9 @@ import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle } from '@angular/material/expansion';
-import { UserDto } from '../../types';
+import { AuthRole, UserDto } from '../../types';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { HasRoleDirective } from '../../directives/auth.directive';
 
 @Component({
   selector: 'app-header',
@@ -32,32 +33,47 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
     MatMenuTrigger,
     MatExpansionPanel,
     MatExpansionPanelTitle,
-    MatExpansionPanelHeader
-  ]
+    MatExpansionPanelHeader,
+    HasRoleDirective,
+  ],
 })
 export class HeaderComponent {
-  private userData: UserDto | undefined;
-
-  private readonly ROLE_STUDENT = 'ROLE_STUDENT';
-  private readonly ROLE_TEACHER = 'ROLE_TEACHER';
-  private readonly ROLE_ADMIN = 'ROLE_ADMIN';
+  protected readonly AuthRole = AuthRole;
+  userData: UserDto | undefined;
 
   get isUserStudent(): boolean {
-    return this.userData?.roles.map((role) => role.name).includes(this.ROLE_STUDENT) ?? false;
+    return (
+      this.userData?.roles
+        .map((role) => role.name)
+        .includes(this.AuthRole.STUDENT) ?? false
+    );
   }
 
   get isUserTeacher(): boolean {
-    return this.userData?.roles.map((role) => role.name).includes(this.ROLE_TEACHER) ?? false;
+    return (
+      this.userData?.roles
+        .map((role) => role.name)
+        .includes(this.AuthRole.TEACHER) ?? false
+    );
   }
 
   get isUserAdmin(): boolean {
-    return this.userData?.roles.map((role) => role.name).includes(this.ROLE_ADMIN) ?? false;
+    return (
+      this.userData?.roles.map((role) => role.name).includes(this.AuthRole.ADMIN) ??
+      false
+    );
   }
 
-  constructor(private readonly userService: UserService, private readonly authService: AuthService, private readonly router: Router) {
-    this.userService.userData.pipe(takeUntilDestroyed()).subscribe((userData: UserDto) => {
-      this.userData = userData;
-    });
+  constructor(
+    private readonly userService: UserService,
+    private readonly authService: AuthService,
+    private readonly router: Router,
+  ) {
+    this.userService.userData
+      .pipe(takeUntilDestroyed())
+      .subscribe((userData: UserDto) => {
+        this.userData = userData;
+      });
   }
 
   loggedIn() {

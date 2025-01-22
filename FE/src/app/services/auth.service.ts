@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
 import { Observable, tap } from 'rxjs';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { AuthResponseDto, ChangePasswordDto, LoginUserDto, RegisterUserDto, UserDto } from '../types';
+import { AuthResponseDto, AuthRole, ChangePasswordDto, LoginUserDto, RegisterUserDto, UserDto } from '../types';
 import { JwtService } from './jwt.service';
 import { environment } from '../../environments/environment';
 import { UserService } from './user.service';
+import { JwtHelperService } from '@auth0/angular-jwt';
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +13,11 @@ import { UserService } from './user.service';
 export class AuthService {
   private readonly URL = `${environment.API_URL}/auth`;
 
-  constructor(private readonly http: HttpClient, private readonly jwtService: JwtService, private readonly userService: UserService) {
+  constructor(
+    private http: HttpClient,
+    private jwtService: JwtService,
+    private userService: UserService,
+    private jwtHelper: JwtHelperService) {
   }
 
   postUser(userData: RegisterUserDto): Observable<UserDto> {
@@ -51,5 +56,21 @@ export class AuthService {
       })
     };
     return this.http.post<ChangePasswordDto>(`${this.URL}/change-password`, passwordData, httpOptions);
+  }
+
+  hasRole(expectedRole: AuthRole | undefined): boolean {
+    if (!expectedRole) {
+      return false;
+    }
+
+    const userRoles = this.jwtHelper.decodeToken()?.roles;
+
+    if (!userRoles) {
+      return false;
+    }
+
+    console.log(expectedRole, userRoles);
+
+    return userRoles.includes(expectedRole);
   }
 }

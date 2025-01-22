@@ -38,6 +38,10 @@ public class QuestionnaireSection {
   @Column(name = "section_title")
   private String sectionTitle;
 
+  @Basic
+  @Column(name = "section_description")
+  private String sectionDescription;
+
   @OneToMany(mappedBy = "questionnaireSection", fetch = FetchType.LAZY, cascade = CascadeType.ALL,
       orphanRemoval = true)
   private List<Question> questions = new ArrayList<>();

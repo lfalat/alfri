@@ -5,6 +5,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
@@ -24,6 +26,7 @@ import sk.uniza.fri.alfri.exception.QuestionnaireNotFilledException;
 import sk.uniza.fri.alfri.mapper.AnswerMapper;
 import sk.uniza.fri.alfri.mapper.QuestionnaireMapper;
 import sk.uniza.fri.alfri.repository.AnswerRepository;
+import sk.uniza.fri.alfri.repository.AnswerTextRepository;
 import sk.uniza.fri.alfri.repository.QuestionRepository;
 import sk.uniza.fri.alfri.repository.QuestionnaireRepository;
 import sk.uniza.fri.alfri.service.FormService;
@@ -35,12 +38,14 @@ public class FormServiceImpl implements FormService {
   private final QuestionnaireRepository questionnaireRepository;
   private final QuestionRepository questionRepository;
   private final AnswerRepository answerRepository;
+  private final AnswerTextRepository answerTextRepository;
 
   public FormServiceImpl(QuestionnaireRepository questionnaireRepository,
-      QuestionRepository questionRepository, AnswerRepository answerRepository) {
+      QuestionRepository questionRepository, AnswerRepository answerRepository, AnswerTextRepository answerTextRepository) {
     this.questionnaireRepository = questionnaireRepository;
     this.questionRepository = questionRepository;
     this.answerRepository = answerRepository;
+    this.answerTextRepository = answerTextRepository;
   }
 
   public void saveQuestionnaire(QuestionnaireDTO questionnaireDTO) {
@@ -99,17 +104,32 @@ public class FormServiceImpl implements FormService {
     this.questionnaireRepository.save(questionnaire);
   }
 
+  @Transactional
   public void submitFormAnswers(UserFormAnswersDTO userFormAnswersDTO, User user) {
-    // Fetch the questionnaire by formId
-    Questionnaire questionnaire = questionnaireRepository.findById(userFormAnswersDTO.formId())
-        .orElseThrow(() -> new ResourceNotFoundException(
-            "Questionnaire not found with id: " + userFormAnswersDTO.formId()));
+      // Explicitly fetch the questionnaire with its answers
+      Questionnaire questionnaire = questionnaireRepository.findById(userFormAnswersDTO.formId())
+              .orElseThrow(() -> new ResourceNotFoundException(
+                      "Questionnaire not found with id: " + userFormAnswersDTO.formId()));
 
-    // Check if the user has already submitted answers for this questionnaire
-    // if (answerRepository.existsByAnswerQuestionnaireAndUserId(questionnaire, user)) {
-    // throw new IllegalArgumentException(
-    // "User has already submitted answers for this questionnaire.");
-    // }
+      // Or use a custom query to fetch answers
+      List<Answer> existingAnswers = answerRepository.findByAnswerQuestionnaireAndUserId(questionnaire, user);
+
+      if (!existingAnswers.isEmpty()) {
+          // Collect all answer text IDs
+          List<Integer> answerTextIds = existingAnswers.stream()
+                  .flatMap(answer -> answer.getTexts().stream())
+                  .map(AnswerText::getAnswerTextId)
+                  .toList();
+
+          // Collect all answer IDs
+          List<Integer> answerIds = existingAnswers.stream()
+                  .map(Answer::getAnswerId)
+                  .toList();
+
+          // Perform deletions
+          answerTextRepository.deleteAllByIdInBatch(answerTextIds);
+          answerRepository.deleteAllByIdInBatch(answerIds);
+      }
 
     // Validate answers for each question in the questionnaire
     for (QuestionnaireSection section : questionnaire.getSections()) {
@@ -147,7 +167,7 @@ public class FormServiceImpl implements FormService {
   private void validateRadioOrCheckboxAnswer(Question question, AnswerDTO answerDTO) {
     for (AnswerTextDTO answerTextDTO : answerDTO.texts()) {
       boolean validAnswerText = question.getOptions().stream()
-          .anyMatch(option -> option.getQuestionOption().equals(answerTextDTO.answerText()));
+          .anyMatch(option -> answerTextDTO.textOfAnswer().equals(option.getQuestionOption()));
 
       if (!validAnswerText) {
         throw new IllegalArgumentException(
@@ -189,18 +209,14 @@ public class FormServiceImpl implements FormService {
   }
 
   @Override
-  public void hasUserFilledForm(int formId, User user) {
+  public boolean hasUserFilledForm(int formId, User user) {
     Optional<Questionnaire> questionnaire = this.questionnaireRepository.findById(formId);
 
     if (questionnaire.isEmpty()) {
       throw new IllegalArgumentException("Questionnaire with id " + formId + " does not exist.");
     }
 
-    if (!this.answerRepository.existsByAnswerQuestionnaireAndUserId(questionnaire.get(), user)) {
-      throw new QuestionnaireNotFilledException(
-          String.format("User with id %d has not filled form with id %d", user.getId(),
-              questionnaire.get().getId()));
-    }
+    return this.answerRepository.existsByAnswerQuestionnaireAndUserId(questionnaire.get(), user);
   }
 
   @Override

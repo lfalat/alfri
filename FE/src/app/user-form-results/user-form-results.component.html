@@ -1,0 +1,77 @@
+<ul class="list-group list-group-flush" *ngIf="existingAnswers">
+  <li class="list-group-item">
+    <h3>Zakladne informacie</h3>
+    <div class="row">
+      <div
+        class="col-12 col-md-6"
+        *ngFor="
+                    let information of existingAnswers?.sections?.[0]?.questions
+                  "
+      >
+        <p class="m-0">{{ information.questionTitle }}</p>
+        <p class="fw-bolder">
+          {{ information.answers[0].texts[0].textOfAnswer }}
+        </p>
+      </div>
+    </div>
+  </li>
+  <li class="list-group-item">
+    <h3>Známky z povinných predmetov</h3>
+    <div class="row">
+      <table
+        mat-table
+        [dataSource]="dataSource"
+        class="mat-table striped-table"
+      >
+        <!-- Názov Predmetu Column -->
+        <ng-container matColumnDef="nazovPredmetu">
+          <th mat-header-cell *matHeaderCellDef>Názov Predmetu</th>
+          <td mat-cell *matCellDef="let element">
+            {{ element.subjectName }}
+          </td>
+        </ng-container>
+
+        <!-- Známka z Predmetu Column -->
+        <ng-container matColumnDef="znamka">
+          <th mat-header-cell *matHeaderCellDef>Známka z Predmetu</th>
+          <td mat-cell *matCellDef="let element">
+            {{ element.grade }}
+          </td>
+        </ng-container>
+
+        <!-- Header and Row Definitions -->
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr
+          mat-row
+          *matRowDef="let row; columns: displayedColumns"
+        ></tr>
+      </table>
+    </div>
+  </li>
+  <li class="list-group-item">
+    <div class="row">
+      <div class="col-12 col-md-6">
+        <h3>Oblasti záujmov</h3>
+        <div class="col-12">
+          <canvas #radarChart id="chart"></canvas>
+        </div>
+      </div>
+      <div class="col-12 col-md-6">
+        <h3>Voľnočasové aktivity</h3>
+        <div class="row">
+          <mat-chip-set aria-label="Fish selection">
+            <mat-chip
+              *ngFor="
+                          let activity of existingAnswers?.sections?.[3]
+                            ?.questions
+                        "
+            >{{
+                activity.answers[0].texts[0].textOfAnswer
+              }}</mat-chip
+            >
+          </mat-chip-set>
+        </div>
+      </div>
+    </div>
+  </li>
+</ul>

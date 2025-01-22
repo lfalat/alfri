@@ -23,7 +23,6 @@ export class UserService {
 
   public loadUserData() {
     this.loadUserInfo().pipe(take(1)).subscribe((userData: UserDto) => {
-      console.log(userData);
       this._userData.next(userData);
     });
   }

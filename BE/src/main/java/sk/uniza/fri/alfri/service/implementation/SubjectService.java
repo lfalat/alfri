@@ -177,7 +177,7 @@ public class SubjectService implements ISubjectService {
         this.answerRepository.findByQuestionIdsAndUser(questionIds, user);
 
     List<Answer> filteredAnswers = focusUserAnswers.stream()
-        .filter(answer -> answer.getTexts().stream().map(AnswerText::getAnswerText)
+        .filter(answer -> answer.getTexts().stream().map(AnswerText::getTextOfAnswer)
             .map(Integer::parseInt).anyMatch(value -> value > 5))
         .toList();
 
@@ -200,7 +200,7 @@ public class SubjectService implements ISubjectService {
             .collect(Collectors.toMap(
                 answerText -> questionToFocusMap.getOrDefault(
                     answerText.getAnswer().getAnswerQuestion().getQuestionIdentifier(), null),
-                answerText -> Integer.parseInt(answerText.getAnswerText()),
+                answerText -> Integer.parseInt(answerText.getTextOfAnswer()),
                 (oldValue, newValue) -> newValue));
 
     Integer mathFocus = values.getOrDefault("math_focus", null);

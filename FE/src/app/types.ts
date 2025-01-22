@@ -43,6 +43,7 @@ export interface ChangePasswordDto {
 export interface AuthResponseDto {
   jwtToken: string;
   expiresIn: number;
+  userRoles: AuthRole[];
 }
 
 export interface FocusDto {
@@ -129,16 +130,42 @@ export interface Option {
 export interface Question {
   id: number;
   questionTitle: string;
-  answerType: 'RADIO' | 'CHECKBOX' | 'TEXT' | 'NUMERIC';
+  answerType: 'TEXT' | 'NUMERIC' | 'RADIO' | 'CHECKBOX' | 'DROPDOWN' | 'GRADE';
   optional: boolean;
   questionIdentifier: string;
   positionInQuestionnaire: number;
   options: Option[];
 }
 
+export interface AnsweredQuestion {
+  id: number;
+  questionTitle: string;
+  answerType: 'TEXT' | 'NUMERIC' | 'RADIO' | 'CHECKBOX' | 'DROPDOWN' | 'GRADE';
+  optional: boolean;
+  questionIdentifier: string;
+  positionInQuestionnaire: number;
+  options: Option[];
+  answers: Answer[];
+}
+
 export interface Section {
   sectionTitle: string;
+  sectionDescription: string;
   questions: Question[];
+}
+
+export interface AnsweredSection {
+  sectionTitle: string;
+  sectionDescription: string;
+  questions: AnsweredQuestion[];
+}
+
+export interface AnsweredForm {
+  id: number;
+  title: string;
+  description: string;
+  dateOfCreation: string;
+  sections: AnsweredSection[];
 }
 
 export interface Form {
@@ -150,7 +177,7 @@ export interface Form {
 }
 
 export interface AnswerText {
-  answerText: string;
+  textOfAnswer: string;
 }
 
 export interface Answer {
@@ -197,4 +224,11 @@ export interface ApexChartOptions {
   plotOptions: ApexPlotOptions,
   xAxis: ApexXAxis,
   responsive: ApexResponsive[]
+}
+
+export enum AuthRole {
+  STUDENT = 'ROLE_STUDENT',
+  TEACHER = 'ROLE_TEACHER',
+  ADMIN = 'ROLE_ADMIN',
+  VISITOR = 'ROLE_VISITOR'
 }

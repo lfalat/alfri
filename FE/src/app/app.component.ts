@@ -1,9 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { MatToolbar } from '@angular/material/toolbar';
 import { FooterComponent } from './components/footer/footer.component';
 import { NgIf } from '@angular/common';
 import { HeaderComponent } from './components/header/header.component';
+import { Chart } from 'chart.js';
 
 @Component({
   selector: 'app-root',

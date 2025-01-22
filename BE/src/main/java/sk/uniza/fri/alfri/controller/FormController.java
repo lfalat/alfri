@@ -12,10 +12,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import sk.uniza.fri.alfri.dto.questionnaire.AnsweredQuestionnaireDTO;
 import sk.uniza.fri.alfri.dto.questionnaire.QuestionnaireDTO;
 import sk.uniza.fri.alfri.dto.questionnaire.UserFormAnswersDTO;
 import sk.uniza.fri.alfri.entity.Questionnaire;
 import sk.uniza.fri.alfri.entity.User;
+import sk.uniza.fri.alfri.exception.QuestionnaireNotFilledException;
 import sk.uniza.fri.alfri.mapper.QuestionnaireMapper;
 import sk.uniza.fri.alfri.repository.QuestionnaireRepository;
 import sk.uniza.fri.alfri.service.FormService;
@@ -64,6 +66,28 @@ public class FormController {
     return QuestionnaireMapper.INSTANCE.toDto(questionnaire.get());
   }
 
+    @GetMapping(value = "/get-user-answers/{formId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public AnsweredQuestionnaireDTO getUserAnsweredForm(@PathVariable int formId, @RequestHeader(value = "Authorization") String token) throws IllegalArgumentException {
+        Optional<Questionnaire> questionnaire = this.questionnaireRepository.findById(formId);
+
+        if (questionnaire.isEmpty()) {
+            throw new IllegalArgumentException(
+                    String.format("The questionnaire with the specified formId %d does not exist.", formId));
+        }
+
+        String parsedToken = token.replace("Bearer ", "");
+        String username = this.jwtService.extractUsername(parsedToken);
+        User user = this.userService.getUser(username);
+
+        if (!this.formService.hasUserFilledForm(formId, user)) {
+            throw new QuestionnaireNotFilledException(
+                    String.format("User with id %d has not filled form with id %d", user.getId(),
+                            questionnaire.get().getId()));
+        }
+
+        return QuestionnaireMapper.INSTANCE.toAnsweredDto(questionnaire.get());
+    }
+
   @PostMapping(value = "/submit-form", consumes = MediaType.APPLICATION_JSON_VALUE)
   public void submitForm(@RequestHeader(value = "Authorization") String token,
       @RequestBody UserFormAnswersDTO userFormAnswersDTO) {
@@ -84,17 +108,5 @@ public class FormController {
     User user = this.userService.getUser(username);
 
     this.formService.updateFormAnswers(userFormAnswersDTO, user);
-  }
-
-  @GetMapping(value = "/has-filled-form/{formId}")
-  public void hasUserFilledForm(@PathVariable int formId) throws IllegalArgumentException {
-    Optional<String> email = this.authService.getCurrentUserEmail();
-
-    if (email.isEmpty()) {
-      throw new IllegalArgumentException("Can't parse user email from token");
-    }
-
-    User user = this.userService.getUser(email.get());
-    this.formService.hasUserFilledForm(formId, user);
   }
 }

@@ -12,7 +12,7 @@ public interface FormService {
 
   void updateFormAnswers(UserFormAnswersDTO userFormAnswersDTO, User user);
 
-  void hasUserFilledForm(int formId, User user);
+  boolean hasUserFilledForm(int formId, User user);
 
   String getMarkOfSubjectFromQuesionnaire(String subjectName, User user);
 }

@@ -2,7 +2,7 @@ import type { Routes } from '@angular/router';
 import { HomeComponent } from './home/home.component';
 import { LoginComponent } from './login/login.component';
 import { RegistrationComponent } from './registration/registration.component';
-import { AuthGuard } from './auth-guard';
+import { AuthGuards, roleAppGuard, tokenAppGuard } from './auth-guards';
 import { ErrorPageComponent } from './error-page/error-page.component';
 import { ProfileComponent } from './profile/profile.component';
 import { inject } from '@angular/core';
@@ -16,65 +16,67 @@ import { SubjectReportsComponent } from './subject-reports/subject-reports.compo
 import { SubjectGradeCorrelationComponent } from './subject-grade-correlation/subject-grade-correlation.component';
 import { AdminPageComponent } from './admin-page/admin-page.component';
 import { PassingPredictionComponent } from './passing-prediction/passing-prediction.component';
+import { AuthRole } from './types';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
   {
     path: 'home',
     component: HomeComponent,
-    canActivate: [() => inject(AuthGuard).canActivate()],
+    canActivate: [() => inject(AuthGuards).canActivate()],
   },
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegistrationComponent },
   {
     path: 'subjects',
     component: SubjectsComponent,
-    canActivate: [() => inject(AuthGuard).canActivate()],
+    canActivate: [() => inject(AuthGuards).canActivate()],
   },
   {
     path: 'subjects',
     component: SubjectsComponent,
-    canActivate: [() => inject(AuthGuard).canActivate()]
+    canActivate: [() => inject(AuthGuards).canActivate()]
   },
   {
     path: 'subjects/:subjectCode',
     component: SubjectDetailComponent,
-    canActivate: [() => inject(AuthGuard).canActivate()],
+    canActivate: [() => inject(AuthGuards).canActivate()],
   },
   {
     path: 'subjects-chance',
     component: SubjectsChanceComponent,
-    canActivate: [() => inject(AuthGuard).canActivate()],
+    canActivate: [() => inject(AuthGuards).canActivate()],
   },
   {
     path: 'passing-prediction',
     component: PassingPredictionComponent,
-    canActivate: [() => inject(AuthGuard).canActivate()],
+    canActivate: [() => inject(AuthGuards).canActivate()],
   },
   {
     path: 'recommendation',
     component: RecommendationComponent,
-    canActivate: [() => inject(AuthGuard).canActivate()],
+    canActivate: [() => inject(AuthGuards).canActivate()],
   },
   {
     path: 'clustering',
     component: SubjectsClusteringComponent,
-    canActivate: [() => inject(AuthGuard).canActivate()]
+    canActivate: [() => inject(AuthGuards).canActivate()]
   },
   {
     path: 'subject-reports',
     component: SubjectReportsComponent,
-    canActivate: [() => inject(AuthGuard).canActivate()]
+    canActivate: [() => inject(AuthGuards).canActivate()]
   },
   {
     path: 'subjects-grades-correlation',
     component: SubjectGradeCorrelationComponent,
-    canActivate: [() => inject(AuthGuard).canActivate()]
+    canActivate: [() => inject(AuthGuards).canActivate()]
   },
   {
     path: 'admin-page',
     component: AdminPageComponent,
-    canActivate: [() => inject(AuthGuard).canActivate()]
+    canActivate: [tokenAppGuard, roleAppGuard],
+    data: {role: AuthRole.ADMIN}
   },
   { path: 'profile', component: ProfileComponent },
   { path: '404', component: ErrorPageComponent },

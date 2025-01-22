@@ -39,6 +39,7 @@ public class Questionnaire {
 
   @OneToMany(mappedBy = "questionnaire", fetch = FetchType.LAZY, cascade = CascadeType.ALL,
       orphanRemoval = true)
+  @OrderBy("sectionId ASC")
   private List<QuestionnaireSection> sections = new ArrayList<>();
 
   @OneToMany(mappedBy = "answerQuestionnaire", fetch = FetchType.LAZY, cascade = CascadeType.ALL,

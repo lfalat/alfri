@@ -1,100 +1,63 @@
 {
   "root": true,
-  "parser": "@typescript-eslint/parser",
-  "plugins": [
-    "@typescript-eslint",
-    "html"
+  "ignorePatterns": [
+    "projects/**/*"
   ],
-  "env": {
-    "node": true
-  },
-  "extends": [
-    "eslint:recommended",
-    "plugin:@typescript-eslint/recommended"
-  ],
-  "rules": {
-    "@typescript-eslint/no-unused-vars": [
-      "error",
-      {
-        "argsIgnorePattern": "_"
-      }
-    ],
-    "@typescript-eslint/no-explicit-any": "warn",
-    "indent": [2, 2, {"SwitchCase": 1}],
-    "@typescript-eslint/array-type": "off",
-    "@typescript-eslint/arrow-parens": "off",
-    "@typescript-eslint/consistent-type-definitions": [
-      "error",
-      "interface"
-    ],
-    "@typescript-eslint/no-inferrable-types": [
-      "error",
-      {
-        "ignoreParameters": true
-      }
-    ],
-    "@typescript-eslint/member-ordering": [
-      "error",
-      {
-        "default": [
-          "static-field",
-          "instance-field",
-          "static-method",
-          "instance-method"
-        ]
-      }
-    ],
-    "@typescript-eslint/no-namespace": "off",
-    "no-console": [
-      "error",
-      {
-        "allow": [
-          "warn",
-          "error"
-        ]
-      }
-    ],
-    "no-empty": "off",
-    "quote-props": [
-      "error",
-      "as-needed"
-    ],
-    "sort-keys": "off",
-    "quotes": [
-      "error",
-      "single"
-    ],
-    "comma-dangle": "off",
-    "no-confusing-arrow": "error",
-    "semi": [
-      "error",
-      "always"
-    ],
-    "space-before-function-paren": [
-      "error",
-      {
-        "anonymous": "never",
-        "named": "never",
-        "asyncArrow": "always"
-      }
-    ],
-    "no-multi-spaces": "error",
-    "no-multiple-empty-lines": "off",
-    "no-var": "error",
-    "object-curly-spacing": [
-      "error",
-      "always"
-    ],
-    "max-len": [
-      "error",
-      140
-    ]
-  },
   "overrides": [
     {
-      "files": "*.json",
-      "parser": "jsonc-eslint-parser",
+      "files": [
+        "*.ts"
+      ],
+      "extends": [
+        "eslint:recommended",
+        "plugin:@typescript-eslint/recommended",
+        "plugin:@angular-eslint/recommended",
+        "plugin:@angular-eslint/template/process-inline-templates"
+      ],
+      "rules": {
+        "@angular-eslint/directive-selector": [
+          "error",
+          {
+            "type": "attribute",
+            "prefix": "app",
+            "style": "camelCase"
+          }
+        ],
+        "@angular-eslint/component-selector": [
+          "error",
+          {
+            "type": "element",
+            "prefix": "app",
+            "style": "kebab-case"
+          }
+        ]
+      }
+    },
+    {
+      "files": [
+        "*.html"
+      ],
+      "extends": [
+        "eslint:recommended",
+        "plugin:@angular-eslint/template/recommended",
+        "plugin:@angular-eslint/template/accessibility"
+      ],
       "rules": {}
     }
-  ]
+  ],
+  "plugins": [
+    "@typescript-eslint",
+    "@angular-eslint/template"
+  ],
+  "settings": {
+    "typescript-eslint/parser": [
+      "@typescript-eslint/parser"
+    ],
+    "eslint-plugin-prettier/recommended": [
+      "eslint-plugin-prettier/recommended"
+    ]
+  },
+  "parserOptions": {
+    "project": "./tsconfig.json"
+  }
 }
