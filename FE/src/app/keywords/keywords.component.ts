@@ -1,17 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { MatTableModule } from '@angular/material/table';
 import { MatChipsModule } from '@angular/material/chips';
-import { KeywordDto, SubjectDto } from '../types';
-import { Observable } from 'rxjs';
-import { SubjectService } from '../services/subject.service';
+import { SubjectExtendedDto } from '../types';
+import { Subject } from 'rxjs';
 import { Router } from '@angular/router';
 import { NgForOf, NgIf } from '@angular/common';
-
-
-interface Subject {
-  code: string;
-  name: string;
-}
+import { MatFormField, MatLabel } from '@angular/material/form-field';
+import { KeywordService } from '../services/keyword.service';
+import { debounceTime, distinctUntilChanged } from 'rxjs';
+import { MatInput } from '@angular/material/input';
 
 @Component({
   selector: 'app-keywords',
@@ -22,15 +19,20 @@ interface Subject {
     MatTableModule,
     MatChipsModule,
     NgForOf,
-    NgIf
+    NgIf,
+    MatFormField,
+    MatInput,
+    MatLabel
   ]
 })
 export class KeywordsComponent implements OnInit {
 
-  keywords: KeywordDto[] = [];
-  selectedKeywords: KeywordDto[] = [];
+  filteredKeywords: string[] = [];
+  keywords: string[] = [];
+  selectedKeywords: string[] = [];
+  keywordSubjects: { [key: string]: SubjectExtendedDto[] } = {};
 
-  public readonly columnsToDisplay: string[] = [
+  readonly columnsToDisplay: string[] = [
     'name',
     'code',
     'abbreviation',
@@ -38,48 +40,53 @@ export class KeywordsComponent implements OnInit {
     'recommendedYear',
     'semester'
   ];
-  dataSource$!: Observable<KeywordDto[]>;
+  searchSubject = new Subject<string>();
+
   constructor(
-    private subjectsService: SubjectService,
-    private router: Router) { }
+    private router: Router,
+    private keywordService: KeywordService
+  ) {}
 
   ngOnInit(): void {
-    // this.dataSource$ = this.subjectsService.getKeywords();
-    this.loadKeywords();
-  }
-  loadKeywords(): void {
-    //TODO: replace with DB data
-    const mockSubject: SubjectDto = {
-      name: 'Mathematics',
-      code: 'MATH101',
-      abbreviation: 'MATH',
-      studyProgramName: 'Computer Science',
-      recommendedYear: 1,
-      semester: 'Fall'
-    };
-    this.keywords = [
-      { keyword: 'Keyword 1', subjects: [mockSubject, mockSubject, mockSubject] },
-      { keyword: 'Keyword 2', subjects: [mockSubject, mockSubject] },
-      { keyword: 'Keyword 3', subjects: [mockSubject] }
-    ];
+    this.searchSubject
+      .pipe(debounceTime(300), distinctUntilChanged())
+      .subscribe((searchText) => {
+        this.fetchKeywords(searchText);
+      });
   }
 
-  // Triggered when a chip is clicked
-  onKeywordSelect(keyword: KeywordDto): void {
-    if (this.selectedKeywords.includes(keyword)) {
-      this.selectedKeywords = this.selectedKeywords.filter(k => k !== keyword);
-    } else {
+  onSearch(event: any): void {
+    const searchText = event.target.value;
+    this.searchSubject.next(searchText);
+  }
+
+  fetchKeywords(searchText: string): void {
+    if (!searchText.trim()) {
+      this.filteredKeywords = [];
+      return;
+    }
+
+    this.keywordService.searchKeywords(searchText).subscribe((results) => {
+      this.filteredKeywords = results;
+      if (!results.length) {
+        this.filteredKeywords = [];
+      }
+    });
+  }
+
+  onKeywordSelect(keyword: string): void {
+    if (!this.selectedKeywords.includes(keyword)) {
       this.selectedKeywords.push(keyword);
+      this.keywordService.showSubjects(keyword).subscribe((subjects) => {
+        this.keywordSubjects[keyword] = subjects;
+      });
+    } else {
+      this.selectedKeywords = this.selectedKeywords.filter(item => item !== keyword);
+      delete this.keywordSubjects[keyword];
     }
   }
 
-  // Get subjects for a given keyword
-  getSubjectsForKeyword(keyword: KeywordDto): Subject[] {
-    return keyword.subjects;
-  }
-
-  public navigateToSubjectDetail(code: string) {
+  public navigateToSubjectDetail(code: string): void {
     this.router.navigate(['/subjects/' + code]);
   }
-
 }

@@ -14,22 +14,22 @@ public class SubjectKeyword {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "keyword_id", nullable = false)
-    private Integer id; // If you want to manage an ID, otherwise remove this if it's unnecessary.
+    private Integer id;
 
     @NotNull
     @Column(name = "keyword", nullable = false)
     private String keyword;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "subject_code1", referencedColumnName = "code", nullable = true)
-    private Subject subjectCode1;
+    @JoinColumn(name = "subject_1", referencedColumnName = "subject_id", nullable = true)
+    private Subject subject1;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "subject_code2", referencedColumnName = "code", nullable = true)
-    private Subject subjectCode2;
+    @JoinColumn(name = "subject_2", referencedColumnName = "subject_id", nullable = true)
+    private Subject subject2;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "subject_code3", referencedColumnName = "code", nullable = true)
-    private Subject subjectCode3;
+    @JoinColumn(name = "subject_3", referencedColumnName = "subject_id", nullable = true)
+    private Subject subject3;
 
 }

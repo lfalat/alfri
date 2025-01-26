@@ -9,12 +9,14 @@ import sk.uniza.fri.alfri.entity.SubjectKeyword;
 import java.util.List;
 
 public interface SubjectKeywordRepository extends JpaRepository<SubjectKeyword, Integer> {
-    @Query("SELECT s FROM Subject s WHERE s.code IN (" +
-            "SELECT k.subjectCode1 FROM SubjectKeyword k WHERE k.keyword = :keyword " +
+    @Query("SELECT s FROM Subject s WHERE s IN (" +
+            "SELECT k.subject1 FROM SubjectKeyword k WHERE k.keyword = :keyword " +
             "UNION " +
-            "SELECT k.subjectCode2 FROM SubjectKeyword k WHERE k.keyword = :keyword " +
+            "SELECT k.subject2 FROM SubjectKeyword k WHERE k.keyword = :keyword " +
             "UNION " +
-            "SELECT k.subjectCode3 FROM SubjectKeyword k WHERE k.keyword = :keyword)")
+            "SELECT k.subject3 FROM SubjectKeyword k WHERE k.keyword = :keyword)")
     List<Subject> findSubjectsByKeyword(@Param("keyword") String keyword);
 
+    @Query("SELECT e.keyword FROM SubjectKeyword e WHERE e.keyword LIKE %:value%")
+    List<String> searchKeywords(@Param("value") String value);
 }
