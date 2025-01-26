@@ -13,6 +13,9 @@ import { SubjectDetailComponent } from './subject-detail/subject-detail.componen
 import { SubjectsChanceComponent } from './subjects-chance/subjects-chance.component';
 import { SubjectsClusteringComponent } from './subjects-clustering/subjects-clustering.component';
 import { SubjectReportsComponent } from './subject-reports/subject-reports.component';
+import { SubjectGradeCorrelationComponent } from './subject-grade-correlation/subject-grade-correlation.component';
+import { AdminPageComponent } from './admin-page/admin-page.component';
+import { PassingPredictionComponent } from './passing-prediction/passing-prediction.component';
 import { KeywordsComponent } from './keywords/keywords.component';
 
 export const routes: Routes = [
@@ -45,6 +48,11 @@ export const routes: Routes = [
     canActivate: [() => inject(AuthGuard).canActivate()],
   },
   {
+    path: 'passing-prediction',
+    component: PassingPredictionComponent,
+    canActivate: [() => inject(AuthGuard).canActivate()],
+  },
+  {
     path: 'recommendation',
     component: RecommendationComponent,
     canActivate: [() => inject(AuthGuard).canActivate()],
@@ -57,6 +65,16 @@ export const routes: Routes = [
   {
     path: 'subject-reports',
     component: SubjectReportsComponent,
+    canActivate: [() => inject(AuthGuard).canActivate()]
+  },
+  {
+    path: 'subjects-grades-correlation',
+    component: SubjectGradeCorrelationComponent,
+    canActivate: [() => inject(AuthGuard).canActivate()]
+  },
+  {
+    path: 'admin-page',
+    component: AdminPageComponent,
     canActivate: [() => inject(AuthGuard).canActivate()]
   },
   {

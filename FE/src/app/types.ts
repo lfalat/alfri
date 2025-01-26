@@ -1,3 +1,13 @@
+import {
+  ApexAxisChartSeries,
+  ApexChart,
+  ApexDataLabels,
+  ApexPlotOptions,
+  ApexResponsive,
+  ApexTitleSubtitle,
+  ApexXAxis
+} from 'ng-apexcharts';
+
 export interface Role {
   id: number;
   name: string;
@@ -6,7 +16,7 @@ export interface Role {
 export interface RegisterUserDto {
   firstName: string;
   lastName: string;
-  roleId: number;
+  rolesIds: number[];
   email: string;
   password: string;
 }
@@ -15,7 +25,7 @@ export interface UserDto {
   userId: number;
   firstName: string;
   lastName: string;
-  role: Role;
+  roles: Role[];
   email: string;
 }
 
@@ -66,6 +76,19 @@ export interface SubjectExtendedDto extends SubjectDto {
 export interface StudyProgramDto {
   id: number;
   name: string;
+}
+
+export interface TeacherDto {
+  teacherId: number;
+  userId: number;
+  department: DepartmentDto;
+  subjects: SubjectDto[];
+}
+
+export interface DepartmentDto {
+  id: number;
+  name: string;
+  abbreviation: string;
 }
 
 export interface Page<T> {
@@ -150,6 +173,30 @@ export interface SubjectGradesDto {
   gradeE: number;
   gradeFx: number;
   gradeAverage: number;
+}
+
+export interface SubjectPassingPrediction {
+  subjectName: string;
+  passingProbability: number;
+  mark: string;
+  recommendations?: string[];
+}
+
+export interface SubjectGradeCorrelation {
+  firstSubject: SubjectDto;
+  secondSubject: SubjectDto;
+  correlation: number;
+}
+
+export interface ApexChartOptions {
+  series: ApexAxisChartSeries;
+  chart: ApexChart;
+  dataLabels: ApexDataLabels;
+  title: ApexTitleSubtitle;
+  colors: string[];
+  plotOptions: ApexPlotOptions,
+  xAxis: ApexXAxis,
+  responsive: ApexResponsive[]
 }
 
 export interface KeywordDto {

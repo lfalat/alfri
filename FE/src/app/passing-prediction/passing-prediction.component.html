@@ -1,0 +1,9 @@
+<div class="subject-prediction-container">
+  @if (isLoading) {
+    <mat-spinner></mat-spinner>
+  }
+  <app-subject-passing-prediction-result
+    *ngFor="let subject of subjects"
+    [passingPrediction]="subject"
+  ></app-subject-passing-prediction-result>
+</div>

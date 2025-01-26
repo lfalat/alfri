@@ -1,3 +1,5 @@
+version: '3.8'
+
 services:
   backend:
     image: groben5558/alfri:alfri-backend
@@ -6,22 +8,31 @@ services:
     environment:
       PROD_SHOW_SQL: ${PROD_SHOW_SQL}
       DATABASE_PROD_PASSWORD: ${DATABASE_PROD_PASSWORD}
+      PYTHON_PROD_EXECUTABLE_PATH: ${PYTHON_PROD_EXECUTABLE_PATH}
+      PROD_CLUSTERING_PREDICTION_SCRIPT_PATH: ${PROD_CLUSTERING_PREDICTION_SCRIPT_PATH}
+      PROD_CLUSTERING_PREDICTION_MODEL_PATH: ${PROD_CLUSTERING_PREDICTION_MODEL_PATH}
       FRONTEND_PROD_URL: ${FRONTEND_PROD_URL}
       DATABASE_PROD_USER: ${DATABASE_PROD_USER}
       DATABASE_PROD_URL: ${DATABASE_PROD_URL}
       JWT_PROD_EXPIRATION_TIME: ${JWT_PROD_EXPIRATION_TIME}
       JWT_PROD_SECRET_KEY: ${JWT_PROD_SECRET_KEY}
       APPLICATION_NAME: ${APPLICATION_NAME}
-    build:
-      context: ./BE
-    ports:
-      - "8080:8080"
+    networks:
+      - alfri-network
+
   frontend:
     image: groben5558/alfri:alfri-frontend
+    platform: linux/amd64
     container_name: alfri_fe
-    build:
-      context: ./FE
     ports:
       - "80:80"
     depends_on:
       - backend
+    networks:
+      - alfri-network
+
+networks:
+  alfri-network:
+    driver: bridge
+
+# buildovanie a pushovanie amd64 imagov na macu - docker buildx build --platform linux/amd64 -t groben5558/alfri:alfri-frontend -f Dockerfile . --push

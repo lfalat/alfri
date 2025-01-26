@@ -116,7 +116,7 @@ ALTER SEQUENCE public.answer_text_answer_text_id_seq OWNED BY public.answer_text
 CREATE TABLE public.answer_type
 (
     answer_type_id integer               NOT NULL,
-    name           varchar(50)           NOT NULL
+    name           character varying(50) NOT NULL
 );
 
 
@@ -155,19 +155,19 @@ ALTER SEQUENCE public.answer_type_answer_type_id_seq OWNED BY public.answer_type
 
 CREATE TABLE public.focus
 (
-    math_focus       integer NOT NULL,
-    logic_focus      integer NOT NULL,
+    math_focus        integer NOT NULL,
+    logic_focus       integer NOT NULL,
     programming_focus integer NOT NULL,
-    design_focus     integer NOT NULL,
-    economics_focus  integer NOT NULL,
-    management_focus integer NOT NULL,
-    hardware_focus   integer NOT NULL,
-    network_focus    integer NOT NULL,
-    data_focus       integer NOT NULL,
-    testing_focus    integer NOT NULL,
-    language_focus   integer NOT NULL,
-    physical_focus   integer NOT NULL,
-    subject_id       integer NOT NULL
+    design_focus      integer NOT NULL,
+    economics_focus   integer NOT NULL,
+    management_focus  integer NOT NULL,
+    hardware_focus    integer NOT NULL,
+    network_focus     integer NOT NULL,
+    data_focus        integer NOT NULL,
+    testing_focus     integer NOT NULL,
+    language_focus    integer NOT NULL,
+    physical_focus    integer NOT NULL,
+    subject_id        integer NOT NULL
 );
 
 
@@ -205,13 +205,13 @@ ALTER SEQUENCE public.options_answer_seq OWNER TO postgres;
 
 CREATE TABLE public.question
 (
-    question_id         integer NOT NULL,
-    section_id          integer NOT NULL,
-    answer_type_id      integer NOT NULL,
+    question_id               integer NOT NULL,
+    section_id                integer NOT NULL,
+    answer_type_id            integer NOT NULL,
     position_in_questionnaire integer NOT NULL,
-    question_title      text    NOT NULL,
-    optional            boolean NOT NULL,
-    question_identifier text    NOT NULL
+    question_title            text    NOT NULL,
+    optional                  boolean NOT NULL,
+    question_identifier       text    NOT NULL
 );
 
 
@@ -291,9 +291,9 @@ ALTER SEQUENCE public.question_question_id_seq OWNED BY public.question.question
 
 CREATE TABLE public.questionnaire
 (
-    questionnaire_id integer                NOT NULL,
-    title            varchar(100)           NOT NULL,
-    description      text                   NOT NULL,
+    questionnaire_id integer                                   NOT NULL,
+    title            character varying(100)                    NOT NULL,
+    description      text                                      NOT NULL,
     date_of_creation timestamp without time zone DEFAULT now() NOT NULL
 );
 
@@ -374,7 +374,7 @@ ALTER SEQUENCE public.questionnaire_section_id_seq OWNED BY public.questionnaire
 CREATE TABLE public.role
 (
     role_id integer               NOT NULL,
-    name    varchar(50)           NOT NULL
+    name    character varying(50) NOT NULL
 );
 
 
@@ -413,10 +413,10 @@ ALTER SEQUENCE public.role_role_id_seq OWNED BY public.role.role_id;
 
 CREATE TABLE public.student
 (
-    student_id integer NOT NULL,
-    user_id    integer,
+    student_id       integer NOT NULL,
+    user_id          integer,
     study_program_id integer NOT NULL,
-    year       integer NOT NULL
+    year             integer NOT NULL
 );
 
 
@@ -456,8 +456,8 @@ CREATE TABLE public.student_subject
 (
     student_id integer NOT NULL,
     subject_id integer NOT NULL,
-    mark varchar(2),
-    year integer NOT NULL
+    mark       character varying(2),
+    year       integer NOT NULL
 );
 
 
@@ -472,7 +472,7 @@ ALTER TABLE public.student_subject
 CREATE TABLE public.study_program
 (
     study_program_id integer                NOT NULL,
-    name             varchar(100)           NOT NULL
+    name             character varying(100) NOT NULL
 );
 
 
@@ -512,7 +512,7 @@ CREATE TABLE public.study_program_subject
 (
     study_program_id integer              NOT NULL,
     subject_id       integer              NOT NULL,
-    obligation       varchar(4)           NOT NULL,
+    obligation       character varying(4) NOT NULL,
     recommended_year integer              NOT NULL,
     semester_winter  boolean              NOT NULL
 );
@@ -529,8 +529,8 @@ ALTER TABLE public.study_program_subject
 CREATE TABLE public.subject
 (
     subject_id   integer                NOT NULL,
-    name         varchar(100)           NOT NULL,
-    code         varchar(50)            NOT NULL,
+    name         character varying(100) NOT NULL,
+    code         character varying(50)  NOT NULL,
     abbreviation text                   NOT NULL
 );
 
@@ -593,16 +593,12 @@ ALTER SEQUENCE public.subject_subject_id_seq OWNED BY public.subject.subject_id;
 CREATE TABLE public."user"
 (
     user_id    integer                NOT NULL,
-    role_id    integer                NOT NULL,
-    email      varchar(100)           NOT NULL,
-    first_name varchar(50)            NOT NULL,
-    last_name  varchar(50)            NOT NULL,
-    password   varchar(72)            NOT NULL
+    email      character varying(100) NOT NULL,
+    first_name character varying(50)  NOT NULL,
+    last_name  character varying(50)  NOT NULL,
+    password   character varying(72)  NOT NULL
 );
 
-
-ALTER TABLE public."user"
-    OWNER TO postgres;
 
 --
 -- TOC entry 234 (class 1259 OID 17679)
@@ -1159,15 +1155,6 @@ ALTER TABLE ONLY public.answer
 
 
 --
--- TOC entry 3375 (class 2606 OID 17833)
--- Name: user user_role_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public."user"
-    ADD CONSTRAINT user_role_id_fk FOREIGN KEY (role_id) REFERENCES public.role (role_id);
-
-
---
 -- TOC entry 3560 (class 0 OID 0)
 -- Dependencies: 5
 -- Name: SCHEMA public; Type: ACL; Schema: -; Owner: pg_database_owner
@@ -1436,6 +1423,35 @@ GRANT ALL ON TABLE public."user" TO alfri_be;
 
 GRANT ALL ON SEQUENCE public.user_user_id_seq TO alfri_be;
 
+ALTER TABLE public."user"
+    OWNER TO postgres;
+
+CREATE SEQUENCE public.user_role_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+create table public.user_role
+(
+    id      integer primary key not null default nextval('public.user_role_id_seq'::regclass),
+    user_id integer,
+    role_id integer,
+    foreign key (role_id) references public.role (role_id)
+        match simple on update no action on delete no action,
+    foreign key (user_id) references public."user" (user_id)
+        match simple on update no action on delete no action
+);
+
+ALTER TABLE public.user_role
+    OWNER TO postgres;
+
+GRANT ALL ON TABLE public.user_role TO alfri_be;
+GRANT ALL ON SEQUENCE public.user_role_id_seq TO alfri_be;
+
+
 insert into public.answer_type (answer_type_id, name)
 values (2, 'NUMERIC');
 insert into public.answer_type (answer_type_id, name)
@@ -1453,6 +1469,8 @@ INSERT INTO public.role (role_id, name)
 VALUES (1, 'student');
 INSERT INTO public.role (role_id, name)
 VALUES (3, 'visitor');
+INSERT INTO public.role (role_id, name)
+VALUES (4, 'admin');
 
 INSERT INTO public.study_program (study_program_id, name)
 VALUES (3, 'informatika');
@@ -1460,12 +1478,12 @@ VALUES (3, 'informatika');
 INSERT INTO public.questionnaire (questionnaire_id, title, description, date_of_creation)
 VALUES (2, 'Úvodný dotazník', 'úvod', '2024-05-23 11:11:21.000000');
 
-INSERT INTO public."user" (user_id, role_id, email, first_name, last_name, password)
-VALUES (1, 1, 'nagy1@stud.uniza.sk', 'Adam', 'Nagy', '$2a$10$FWZ7zGzeQGdlMX3Bd.nTTOYyY0n8GtsGdgq53a414w65OPHgOv8Me');
-INSERT INTO public."user" (user_id, role_id, email, first_name, last_name, password)
-VALUES (2, 1, 'majba@stud.uniza.sk', 'Maroš', 'Majba', '$2a$10$.s7derW1HlXmpRLyTEJjGOZEV6nZEuYYZqAWYXrIauIHLPm9u5mI6');
-INSERT INTO public."user" (user_id, role_id, email, first_name, last_name, password)
-VALUES (3, 1, 'szathmary@stud.uniza.sk', 'Peter', 'Szathmáry',
+INSERT INTO public."user" (user_id, email, first_name, last_name, password)
+VALUES (1, 'nagy1@stud.uniza.sk', 'Adam', 'Nagy', '$2a$10$FWZ7zGzeQGdlMX3Bd.nTTOYyY0n8GtsGdgq53a414w65OPHgOv8Me');
+INSERT INTO public."user" (user_id, email, first_name, last_name, password)
+VALUES (2, 'majba@stud.uniza.sk', 'Maroš', 'Majba', '$2a$10$.s7derW1HlXmpRLyTEJjGOZEV6nZEuYYZqAWYXrIauIHLPm9u5mI6');
+INSERT INTO public."user" (user_id, email, first_name, last_name, password)
+VALUES (3, 'szathmary@stud.uniza.sk', 'Peter', 'Szathmáry',
         '$2a$10$rcn.t1DBfl67OcbY/5bqmeRGLuSVkueYmp19I/CgfMz0sQuS1UbM2');
 
 INSERT INTO public.subject (subject_id, name, code, abbreviation)
@@ -2548,36 +2566,1648 @@ VALUES ((SELECT subject_id FROM public.subject WHERE code = '6BA0003'), 0, 0, 0,
 INSERT INTO public.answer_type (answer_type_id, name)
 VALUES (5, 'DROPDOWN');
 
-insert into public.questionnaire (questionnaire_id, title, description, date_of_creation) values (69, 'Úvodný dotazník', 'úvodný dotazník pre základnú predikciu študentov UNIZA', '2024-06-26 07:43:18.729131');
+insert into public.questionnaire (questionnaire_id, title, description, date_of_creation)
+values (69, 'Úvodný dotazník', 'úvodný dotazník pre základnú predikciu študentov UNIZA', '2024-06-26 07:43:18.729131');
 
-insert into public.questionnaire_section (section_id, questionnaire_id, section_title) values (61, 69, 'Základné informácie');
-insert into public.questionnaire_section (section_id, questionnaire_id, section_title) values (62, 69, 'Známky z povinných predmetov');
-insert into public.questionnaire_section (section_id, questionnaire_id, section_title) values (63, 69, 'Oblasti záujmov');
-insert into public.questionnaire_section (section_id, questionnaire_id, section_title) values (64, 69, 'Voľnočasové aktivity');
+insert into public.questionnaire_section (section_id, questionnaire_id, section_title)
+values (61, 69, 'Základné informácie');
+insert into public.questionnaire_section (section_id, questionnaire_id, section_title)
+values (62, 69, 'Známky z povinných predmetov');
+insert into public.questionnaire_section (section_id, questionnaire_id, section_title)
+values (63, 69, 'Oblasti záujmov');
+insert into public.questionnaire_section (section_id, questionnaire_id, section_title)
+values (64, 69, 'Voľnočasové aktivity');
 
-INSERT INTO public.question (question_id, section_id, answer_type_id, position_in_questionnaire, question_title, optional, question_identifier) VALUES (105, 61, 1, 1, 'Meno', false, 'question_meno');
-INSERT INTO public.question (question_id, section_id, answer_type_id, position_in_questionnaire, question_title, optional, question_identifier) VALUES (106, 61, 1, 2, 'Priezvisko', false, 'question_priezvisko');
-INSERT INTO public.question (question_id, section_id, answer_type_id, position_in_questionnaire, question_title, optional, question_identifier) VALUES (107, 61, 1, 3, 'Ročník v škole', false, 'question_rocnik');
-INSERT INTO public.question (question_id, section_id, answer_type_id, position_in_questionnaire, question_title, optional, question_identifier) VALUES (108, 61, 5, 4, 'Fakulta', false, 'question_fakulta');
-INSERT INTO public.question (question_id, section_id, answer_type_id, position_in_questionnaire, question_title, optional, question_identifier) VALUES (109, 61, 5, 5, 'Odbor', false, 'question_odbor');
-INSERT INTO public.question (question_id, section_id, answer_type_id, position_in_questionnaire, question_title, optional, question_identifier) VALUES (110, 62, 5, 1, 'Informatika 1', false, 'question_informatika1');
-INSERT INTO public.question (question_id, section_id, answer_type_id, position_in_questionnaire, question_title, optional, question_identifier) VALUES (111, 62, 5, 2, 'Informatika 2', false, 'question_informatika2');
-INSERT INTO public.question (question_id, section_id, answer_type_id, position_in_questionnaire, question_title, optional, question_identifier) VALUES (112, 62, 5, 3, 'Matematická analýza 1', false, 'question_matematicka_analyza_1');
-INSERT INTO public.question (question_id, section_id, answer_type_id, position_in_questionnaire, question_title, optional, question_identifier) VALUES (113, 62, 5, 4, 'Pravdepodobnosť a štatistika', false, 'question_pravdepodobnost_a_statistika');
-INSERT INTO public.question (question_id, section_id, answer_type_id, position_in_questionnaire, question_title, optional, question_identifier) VALUES (114, 62, 5, 5, 'Modelovanie a simulácia', false, 'question_modelovanie_a_simulacia');
-INSERT INTO public.question (question_id, section_id, answer_type_id, position_in_questionnaire, question_title, optional, question_identifier) VALUES (115, 63, 2, 1, 'Matematika', false, 'question_matematika_focus');
-INSERT INTO public.question (question_id, section_id, answer_type_id, position_in_questionnaire, question_title, optional, question_identifier) VALUES (116, 63, 2, 2, 'Dizajn', false, 'question_dizajn_focus');
-INSERT INTO public.question (question_id, section_id, answer_type_id, position_in_questionnaire, question_title, optional, question_identifier) VALUES (117, 63, 2, 3, 'Hárdver', false, 'question_hardver_focus');
-INSERT INTO public.question (question_id, section_id, answer_type_id, position_in_questionnaire, question_title, optional, question_identifier) VALUES (118, 63, 2, 4, 'Testovanie', false, 'question_testovanie_focus');
-INSERT INTO public.question (question_id, section_id, answer_type_id, position_in_questionnaire, question_title, optional, question_identifier) VALUES (119, 63, 2, 5, 'Logika', false, 'question_logika_focus');
-INSERT INTO public.question (question_id, section_id, answer_type_id, position_in_questionnaire, question_title, optional, question_identifier) VALUES (120, 63, 2, 6, 'Ekonomika', false, 'question_ekonomika_focus');
-INSERT INTO public.question (question_id, section_id, answer_type_id, position_in_questionnaire, question_title, optional, question_identifier) VALUES (121, 63, 2, 7, 'Siete', false, 'question_siete_focus');
-INSERT INTO public.question (question_id, section_id, answer_type_id, position_in_questionnaire, question_title, optional, question_identifier) VALUES (122, 63, 2, 8, 'Jazyky', false, 'question_jazyky_focus');
-INSERT INTO public.question (question_id, section_id, answer_type_id, position_in_questionnaire, question_title, optional, question_identifier) VALUES (123, 63, 2, 9, 'Programovanie', false, 'question_programovanie_focus');
-INSERT INTO public.question (question_id, section_id, answer_type_id, position_in_questionnaire, question_title, optional, question_identifier) VALUES (124, 63, 2, 10, 'Manažment', false, 'question_manazment_focus');
-INSERT INTO public.question (question_id, section_id, answer_type_id, position_in_questionnaire, question_title, optional, question_identifier) VALUES (125, 63, 2, 11, 'Dáta', false, 'question_data_focus');
-INSERT INTO public.question (question_id, section_id, answer_type_id, position_in_questionnaire, question_title, optional, question_identifier) VALUES (126, 63, 2, 12, 'Fyzická aktivita', false, 'question_fyzicka_aktivita_focus');
-INSERT INTO public.question (question_id, section_id, answer_type_id, position_in_questionnaire, question_title, optional, question_identifier) VALUES (127, 64, 4, 1, 'Voľnočasové aktivity', false, 'question_two');
+INSERT INTO public.question (question_id, section_id, answer_type_id, position_in_questionnaire, question_title,
+                             optional, question_identifier)
+VALUES (105, 61, 1, 1, 'Meno', false, 'question_meno');
+INSERT INTO public.question (question_id, section_id, answer_type_id, position_in_questionnaire, question_title,
+                             optional, question_identifier)
+VALUES (106, 61, 1, 2, 'Priezvisko', false, 'question_priezvisko');
+INSERT INTO public.question (question_id, section_id, answer_type_id, position_in_questionnaire, question_title,
+                             optional, question_identifier)
+VALUES (107, 61, 1, 3, 'Ročník v škole', false, 'question_rocnik');
+INSERT INTO public.question (question_id, section_id, answer_type_id, position_in_questionnaire, question_title,
+                             optional, question_identifier)
+VALUES (108, 61, 5, 4, 'Fakulta', false, 'question_fakulta');
+INSERT INTO public.question (question_id, section_id, answer_type_id, position_in_questionnaire, question_title,
+                             optional, question_identifier)
+VALUES (109, 61, 5, 5, 'Odbor', false, 'question_odbor');
+INSERT INTO public.question (question_id, section_id, answer_type_id, position_in_questionnaire, question_title,
+                             optional, question_identifier)
+VALUES (110, 62, 5, 1, 'Informatika 1', false, 'question_informatika1');
+INSERT INTO public.question (question_id, section_id, answer_type_id, position_in_questionnaire, question_title,
+                             optional, question_identifier)
+VALUES (111, 62, 5, 2, 'Informatika 2', false, 'question_informatika2');
+INSERT INTO public.question (question_id, section_id, answer_type_id, position_in_questionnaire, question_title,
+                             optional, question_identifier)
+VALUES (112, 62, 5, 3, 'Matematická analýza 1', false, 'question_matematicka_analyza_1');
+INSERT INTO public.question (question_id, section_id, answer_type_id, position_in_questionnaire, question_title,
+                             optional, question_identifier)
+VALUES (113, 62, 5, 4, 'Pravdepodobnosť a štatistika', false, 'question_pravdepodobnost_a_statistika');
+INSERT INTO public.question (question_id, section_id, answer_type_id, position_in_questionnaire, question_title,
+                             optional, question_identifier)
+VALUES (114, 62, 5, 5, 'Modelovanie a simulácia', false, 'question_modelovanie_a_simulacia');
+INSERT INTO public.question (question_id, section_id, answer_type_id, position_in_questionnaire, question_title,
+                             optional, question_identifier)
+VALUES (115, 63, 2, 1, 'Matematika', false, 'question_matematika_focus');
+INSERT INTO public.question (question_id, section_id, answer_type_id, position_in_questionnaire, question_title,
+                             optional, question_identifier)
+VALUES (116, 63, 2, 2, 'Dizajn', false, 'question_dizajn_focus');
+INSERT INTO public.question (question_id, section_id, answer_type_id, position_in_questionnaire, question_title,
+                             optional, question_identifier)
+VALUES (117, 63, 2, 3, 'Hárdver', false, 'question_hardver_focus');
+INSERT INTO public.question (question_id, section_id, answer_type_id, position_in_questionnaire, question_title,
+                             optional, question_identifier)
+VALUES (118, 63, 2, 4, 'Testovanie', false, 'question_testovanie_focus');
+INSERT INTO public.question (question_id, section_id, answer_type_id, position_in_questionnaire, question_title,
+                             optional, question_identifier)
+VALUES (119, 63, 2, 5, 'Logika', false, 'question_logika_focus');
+INSERT INTO public.question (question_id, section_id, answer_type_id, position_in_questionnaire, question_title,
+                             optional, question_identifier)
+VALUES (120, 63, 2, 6, 'Ekonomika', false, 'question_ekonomika_focus');
+INSERT INTO public.question (question_id, section_id, answer_type_id, position_in_questionnaire, question_title,
+                             optional, question_identifier)
+VALUES (121, 63, 2, 7, 'Siete', false, 'question_siete_focus');
+INSERT INTO public.question (question_id, section_id, answer_type_id, position_in_questionnaire, question_title,
+                             optional, question_identifier)
+VALUES (122, 63, 2, 8, 'Jazyky', false, 'question_jazyky_focus');
+INSERT INTO public.question (question_id, section_id, answer_type_id, position_in_questionnaire, question_title,
+                             optional, question_identifier)
+VALUES (123, 63, 2, 9, 'Programovanie', false, 'question_programovanie_focus');
+INSERT INTO public.question (question_id, section_id, answer_type_id, position_in_questionnaire, question_title,
+                             optional, question_identifier)
+VALUES (124, 63, 2, 10, 'Manažment', false, 'question_manazment_focus');
+INSERT INTO public.question (question_id, section_id, answer_type_id, position_in_questionnaire, question_title,
+                             optional, question_identifier)
+VALUES (125, 63, 2, 11, 'Dáta', false, 'question_data_focus');
+INSERT INTO public.question (question_id, section_id, answer_type_id, position_in_questionnaire, question_title,
+                             optional, question_identifier)
+VALUES (126, 63, 2, 12, 'Fyzická aktivita', false, 'question_fyzicka_aktivita_focus');
+INSERT INTO public.question (question_id, section_id, answer_type_id, position_in_questionnaire, question_title,
+                             optional, question_identifier)
+VALUES (127, 64, 4, 1, 'Voľnočasové aktivity', false, 'question_two');
+
+CREATE SEQUENCE public.subject_grade_correlation_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+GRANT ALL ON SEQUENCE public.subject_grade_correlation_id_seq TO alfri_be;
+--new
+
+CREATE TABLE public.department
+(
+    department_id SERIAL PRIMARY KEY,
+    name          VARCHAR(255) NOT NULL,
+    abbreviation  VARCHAR(10)  NOT NULL
+);
+
+CREATE TABLE public.teacher
+(
+    teacher_id    SERIAL PRIMARY KEY,
+    user_id       INT REFERENCES public."user" (user_id) ON DELETE CASCADE,
+    department_id INT REFERENCES public.department (department_id) ON DELETE SET NULL
+);
+
+CREATE TABLE public.teacher_subject
+(
+    teacher_id INT REFERENCES public.teacher (teacher_id) ON DELETE CASCADE,
+    subject_id INT REFERENCES public.subject (subject_id) ON DELETE CASCADE,
+    PRIMARY KEY (teacher_id, subject_id)
+);
+
+INSERT INTO public."user" (email, first_name, last_name, password)
+VALUES ('lukas.falat@fri.uniza.sk', 'Lukáš', 'Falát', '$2a$10$UQMrrb2DVEF/Gqj26QbVoe4Kshn2XUBz4r6NpKQfkuhTrD8RqaHVa');
+INSERT INTO public."user" (email, first_name, last_name, password)
+VALUES ('michal.kvet@fri.uniza.sk', 'Michal', 'Kvet', '$2a$10$XU5FXvQvpS9ga.qgZvZAruYeWu1xehZZFH6n8VyJh.PXL14JuXx3m');
+INSERT INTO public."user" (email, first_name, last_name, password)
+VALUES ('tomas.majer@fri.uniza.sk', 'Tomáš', 'Majer', '$2a$10$aEl.HnC27oRo7WVKSVk5mOLqziyC4FQVkxpxOvffHgYawTdYMuN8G');
+INSERT INTO public."user" (email, first_name, last_name, password)
+VALUES ('peter.jankovic@fri.uniza.sk', 'Peter', 'Jankovič',
+        '$2a$10$dz0.JBq48tAR6n1oVKXdT.tSUiDdnO8dEfRHFqF7VU8gVHrSmLiqe');
+INSERT INTO public."user" (email, first_name, last_name, password)
+VALUES ('jozef.kostolny@fri.uniza.sk', 'Jozef', 'Kostolný',
+        '$2a$10$pdGP545Fg/0mrm.sWytWr.WPjLnlF2Dx2d721gWVTw0zWdhAVDur2');
+
+
+INSERT INTO public.department (name, abbreviation)
+VALUES ('Katedra informatiky', 'KI');
+INSERT INTO public.department (name, abbreviation)
+VALUES ('Katedra makro a mikroekonomiky', 'KMME');
+INSERT INTO public.department (name, abbreviation)
+VALUES ('Katedra matematických metód a operačnej analýzy', 'FRDSA');
+
+create table public.subject_grade_correlation
+(
+    first_subject  integer,
+    second_subject integer,
+    correlation    double precision    not null,
+    id             integer primary key not null default nextval('public.subject_grade_correlation_id_seq'::regclass),
+    foreign key (first_subject) references public.subject (subject_id)
+        match simple on update no action on delete no action,
+    foreign key (second_subject) references public.subject (subject_id)
+        match simple on update no action on delete no action
+);
+
+GRANT ALL ON TABLE public.subject_grade_correlation TO alfri_be;
+GRANT ALL ON TABLE public.teacher TO alfri_be;
+GRANT ALL ON TABLE public.teacher_subject TO alfri_be;
+GRANT ALL ON TABLE public.department TO alfri_be;
+GRANT ALL ON SEQUENCE public.teacher_teacher_id_seq TO alfri_be;
+GRANT ALL ON SEQUENCE public.department_department_id_seq TO alfri_be;
+
+
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (89, 89, 1);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (89, 90, 0.03826682455661278);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (89, 92, -0.02709510464671677);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (89, 91, -0.02936716804199381);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (89, 94, -0.030142110244715213);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (89, 98, 0.03553684277307609);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (89, 99, 0.03813336055800914);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (89, 100, 0.01433880597332955);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (89, 101, -0.0528468519990133);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (89, 105, -0.02461132466079115);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (89, 110, 0.02532079568053233);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (89, 112, -0.031123050111317385);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (89, 117, 0.02682961049581364);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (89, 127, -0.09638451060863304);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (89, 128, 0.02111509515457636);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (89, 129, -0.026567102941711614);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (89, 114, -0.6);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (89, 111, 1);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (89, 147, -0.008214930368702054);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (89, 148, -0.02211788674281554);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (89, 149, -0.01607546891483633);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (89, 150, 0.03624837829493869);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (89, 103, 0.7);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (89, 154, 0.09967947488688635);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (89, 169, 0.021401947616770712);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (89, 95, 0.2);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (92, 127, 0.3);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (92, 149, -0.2);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (89, 115, -1);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (91, 154, -0.4);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (92, 129, 0.5);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (92, 110, 0.8);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (91, 111, -0.7);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (92, 100, 0.9);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (91, 148, -1);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (90, 89, 0.03826682455661278);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (90, 90, 1);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (90, 92, 0.04112693353145285);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (90, 91, 0.00024706585590422725);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (90, 95, -0.015042491575122304);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (90, 94, 0.027679661062465374);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (90, 98, 0.03311494859904338);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (90, 99, 0.061834895110284206);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (90, 100, 0.03544702427314111);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (90, 101, -0.0017174499610896582);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (90, 103, 0.017718921896322078);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (90, 105, -0.008673372425814964);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (90, 110, -0.011972169345199816);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (90, 111, 0.011571736819023683);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (90, 112, 0.03336599585429054);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (90, 114, -0.0012744488916041122);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (90, 115, -0.05990318887817419);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (90, 117, 0.10757804929921908);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (90, 127, -0.03753719007337353);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (90, 128, 0.00899718792913378);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (90, 129, 0.014012311451131416);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (92, 114, 0.2);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (90, 147, -0.005406395430805226);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (90, 148, -0.07393768198196932);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (90, 149, 0.040158639665483144);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (90, 150, -0.020768150846734994);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (90, 154, -0.020203072221092452);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (90, 169, 0.052307509375808255);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (92, 89, -0.02709510464671677);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (92, 90, 0.04112693353145285);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (92, 92, 1);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (92, 91, 0.0542725537281143);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (92, 95, -0.025649704632363924);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (92, 94, 0.019435205836368024);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (92, 98, -0.040447768665872776);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (92, 99, 0.03459922237844916);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (92, 101, -0.05093893107442262);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (92, 103, 0.017492503810119804);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (92, 105, -0.03291882905214925);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (92, 111, 0.02671245752230301);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (92, 112, -0.03476883995093298);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (92, 115, 0.04167193691439548);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (92, 117, -0.016589169683287205);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (92, 128, -0.03302187807252146);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (92, 147, 0.055306062683062776);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (92, 148, 0.1709004567911334);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (92, 150, 0.015792386099607647);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (92, 154, 0.004963942246928699);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (92, 169, 0.023881082457858298);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (91, 89, -0.02936716804199381);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (91, 90, 0.00024706585590422725);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (91, 92, 0.0542725537281143);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (91, 91, 1);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (91, 95, 0.03654463188687411);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (91, 94, 0.014933965736710013);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (91, 98, -0.0039671575690624515);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (91, 99, 0.03472770625987408);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (91, 100, 0.009142348952415379);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (91, 101, 0.006444334374404247);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (91, 103, -0.01986539673388952);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (91, 105, 0.025633514100253225);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (91, 110, -0.03755809790542678);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (91, 112, -0.03235804111725775);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (91, 114, -0.035880003259443606);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (91, 115, 0.008570551932138055);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (91, 117, -0.03711926414319685);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (91, 127, 0.012191882405152737);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (91, 128, 0.011652540141170304);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (91, 129, 0.02342339126440065);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (91, 147, -0.017486601079024822);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (91, 149, -0.02840245455320249);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (91, 150, -0.06355015863920614);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (91, 169, -0.007431473031847822);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (95, 89, 0.0280811032948066);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (95, 90, -0.015042491575122304);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (95, 92, -0.025649704632363924);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (95, 91, 0.03654463188687411);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (95, 95, 1);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (95, 94, -0.03720079169142529);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (95, 98, 0.02381496663967938);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (95, 99, 0.006543869439212815);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (95, 100, -0.0757539465574432);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (95, 101, 0.006949888652921325);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (95, 103, 0.004288839864973147);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (95, 105, 0.03289839252465824);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (95, 110, 0.0010032622429836165);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (95, 111, 0.06792094019558843);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (95, 112, 0.05771558690810576);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (95, 114, -0.053742603083804845);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (95, 115, -0.050157511310758955);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (95, 117, -0.018406789656558762);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (95, 127, -0.003214305240451573);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (95, 128, 0.03568682765232552);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (95, 129, 0.04382818495641486);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (95, 147, 0.05664915630639602);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (95, 148, 0.008858639603981899);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (95, 149, 0.005560263674405874);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (95, 150, 0.061546421188749076);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (95, 154, 0.03725155201193982);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (95, 169, -0.04140681615181018);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (94, 89, -0.030142110244715213);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (94, 90, 0.027679661062465374);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (94, 92, 0.019435205836368024);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (94, 91, 0.014933965736710013);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (94, 95, -0.03720079169142529);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (94, 94, 1);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (94, 98, 0.0018677227142526451);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (94, 99, -0.05272085816298114);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (94, 100, -0.02649625772708581);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (94, 101, -0.05002686777158499);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (94, 103, -0.03312280918333819);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (94, 105, -0.008870970751164357);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (94, 110, 0.019198059399957404);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (94, 111, 0.033291185402822665);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (94, 112, 0.09273195683681817);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (94, 114, 0.015365613594360353);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (94, 115, 0.028380921374309517);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (94, 117, 0.11047266469041957);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (94, 127, 0.010466143314548778);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (94, 128, 0.025397104527325583);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (94, 129, 0.004175213804057231);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (94, 147, 0.0658197592223672);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (94, 148, -0.06124114656842414);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (94, 149, 0.10291393256947776);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (94, 150, -0.08323934851155261);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (94, 154, 0.04084255625264228);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (94, 169, 0.008637959064392568);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (98, 89, 0.03553684277307609);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (98, 90, 0.03311494859904338);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (98, 92, -0.040447768665872776);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (98, 91, -0.0039671575690624515);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (98, 95, 0.02381496663967938);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (98, 94, 0.0018677227142526451);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (98, 98, 1);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (98, 99, 0.006727152582182051);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (98, 100, -0.014422887122965954);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (98, 101, 0.028851372395345687);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (98, 103, 0.03648132122420298);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (98, 105, -0.02694849726307339);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (98, 110, 0.15263306020881642);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (98, 111, 0.05202458595248073);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (98, 112, 0.017797756989573837);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (98, 114, -0.004963466417862592);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (98, 115, -0.03066497028438584);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (98, 117, 0.012886678432519307);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (98, 127, 0.012750592393244364);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (98, 128, -0.04614471619038345);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (98, 129, -0.04587528710822522);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (98, 147, 0.02165914829163559);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (98, 148, 0.002980300416495643);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (98, 149, -0.05480418315656328);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (98, 150, -0.008706847493355456);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (98, 154, 0.0013971358367875762);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (98, 169, -0.051949573807845296);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (99, 89, 0.03813336055800914);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (99, 90, 0.061834895110284206);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (99, 92, 0.03459922237844916);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (99, 91, 0.03472770625987408);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (99, 95, 0.006543869439212815);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (99, 94, -0.05272085816298114);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (99, 98, 0.006727152582182051);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (99, 99, 1);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (99, 100, 0.042715587823687326);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (99, 101, -0.023306815850686464);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (99, 103, 0.015627880547993134);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (99, 105, -0.005475571607573211);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (99, 110, -0.007407041433319151);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (99, 111, 0.02537377974900371);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (99, 112, 0.02785077788252344);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (99, 114, -0.0075454059702948885);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (99, 115, -0.03389674563766029);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (99, 117, -0.00691943743075019);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (99, 127, 0.07001575238571334);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (99, 128, -0.009829872911169409);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (99, 129, 0.09106144820603485);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (99, 147, -0.0496588862894899);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (99, 148, 0.0031660386076270064);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (99, 149, -0.006934498887017066);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (99, 150, -0.03954181904910483);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (99, 154, -0.05763872999764547);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (99, 169, 0.08563401187393516);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (100, 89, 0.01433880597332955);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (100, 90, 0.03544702427314111);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (100, 92, 0.03767129738524125);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (100, 91, 0.009142348952415379);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (100, 95, -0.0757539465574432);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (100, 94, -0.02649625772708581);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (100, 98, -0.014422887122965954);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (100, 99, 0.042715587823687326);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (100, 100, 1);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (100, 101, 0.09910470776013519);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (100, 103, 0.025183186362007365);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (100, 105, -0.013710247703898826);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (100, 110, -0.043198024714360614);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (100, 111, 0.016663055637877927);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (100, 112, -0.060539376385771865);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (100, 114, 0.03427563962236257);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (100, 115, 0.047896360248227195);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (100, 117, -0.010217617399930583);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (100, 127, 0.03671532523940551);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (100, 128, 0.04650140211564046);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (100, 129, -0.04422698721159858);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (100, 147, 0.04178407922765229);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (100, 148, -0.061032740902295816);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (100, 149, -0.05455205241481897);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (100, 150, 0.07669906863026904);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (100, 154, 0.039731761882175476);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (100, 169, -0.04684139695812868);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (101, 89, -0.0528468519990133);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (101, 90, -0.0017174499610896582);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (101, 92, -0.05093893107442262);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (101, 91, 0.006444334374404247);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (101, 95, 0.006949888652921325);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (101, 94, -0.05002686777158499);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (101, 98, 0.028851372395345687);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (101, 99, -0.023306815850686464);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (101, 100, 0.09910470776013519);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (101, 101, 1);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (101, 103, -0.04175877248634507);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (101, 105, -0.014331687402776608);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (101, 110, -0.07927939047380939);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (101, 111, 0.013864020923445415);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (101, 112, 0.01928543446433772);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (101, 114, -0.0015314929499458546);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (101, 115, 0.05629925664580851);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (101, 117, 0.0022814310308548517);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (101, 127, -0.011496293593170998);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (101, 128, -0.0017973003729252965);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (101, 129, 0.04901186560656042);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (101, 147, -0.07104603446800829);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (101, 148, 0.02005555283463022);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (101, 149, 0.041584915601088436);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (101, 150, 0.04837646949493096);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (101, 154, -0.02332008823628629);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (101, 169, -0.06790266071983274);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (103, 89, -0.0013507384289578764);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (103, 90, 0.017718921896322078);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (103, 92, 0.017492503810119804);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (103, 91, -0.01986539673388952);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (103, 95, 0.004288839864973147);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (103, 94, -0.03312280918333819);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (103, 98, 0.03648132122420298);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (103, 99, 0.015627880547993134);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (103, 100, 0.025183186362007365);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (103, 101, -0.04175877248634507);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (103, 103, 1);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (103, 105, 0.03183300894558527);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (103, 110, -0.013674426189568118);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (103, 111, -0.04668765204283975);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (103, 112, -0.005039479767129375);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (103, 114, -0.031751297912969836);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (103, 115, 0.01936273870152207);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (103, 117, 0.009688984376693768);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (103, 127, -0.07595779955961914);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (103, 128, 0.008787953082353042);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (103, 129, 0.025534037265285615);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (103, 147, -0.08139116689332711);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (103, 148, -0.023689417961155698);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (103, 149, -0.06343320113175388);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (103, 150, -0.0700455235776471);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (103, 154, -0.003094001558056828);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (103, 169, -0.0020433603142967272);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (105, 89, -0.02461132466079115);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (105, 90, -0.008673372425814964);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (105, 92, -0.03291882905214925);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (105, 91, 0.025633514100253225);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (105, 95, 0.03289839252465824);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (105, 94, -0.008870970751164357);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (105, 98, -0.02694849726307339);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (105, 99, -0.005475571607573211);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (105, 100, -0.013710247703898826);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (105, 101, -0.014331687402776608);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (105, 103, 0.03183300894558527);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (105, 105, 1);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (105, 110, -0.0460626290874204);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (105, 111, 0.030212853188459888);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (105, 112, -0.03688516912610167);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (105, 114, -0.028353627562187466);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (105, 115, -0.009228437945444642);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (105, 117, 0.05588343878088943);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (105, 127, -0.03904423832385793);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (105, 128, -0.02841584161923439);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (105, 129, -0.03248339375749095);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (105, 147, -0.07328254517952823);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (105, 148, 0.04183350820281416);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (105, 149, 0.0369000514010301);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (105, 150, 0.01821853917756726);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (105, 154, 0.060948761271584724);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (105, 169, -0.02144632963922996);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (110, 89, 0.02532079568053233);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (110, 90, -0.011972169345199816);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (110, 92, 0.04374569462032354);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (110, 91, -0.03755809790542678);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (110, 95, 0.0010032622429836165);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (110, 94, 0.019198059399957404);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (110, 98, 0.15263306020881642);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (110, 99, -0.007407041433319151);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (110, 100, -0.043198024714360614);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (110, 101, -0.07927939047380939);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (110, 103, -0.013674426189568118);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (110, 105, -0.0460626290874204);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (110, 110, 1);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (110, 111, 0.00808945438657382);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (110, 112, -0.011644587226793682);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (110, 114, 0.06860842117396423);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (110, 115, -0.006279185247164262);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (110, 117, 0.009444424923346496);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (110, 127, 0.05871906019865205);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (110, 128, 0.0025394353604574057);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (110, 129, -0.012669188847334338);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (110, 147, 0.07729011418650511);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (110, 148, -0.08143312804174653);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (110, 149, 0.037921446466494965);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (110, 150, 0.003688414159376476);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (110, 154, -0.01565004997204141);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (110, 169, 0.01922914764400532);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (111, 89, -0.03262908292953918);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (111, 90, 0.011571736819023683);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (111, 92, 0.02671245752230301);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (111, 91, -0.00910587875620738);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (111, 95, 0.06792094019558843);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (111, 94, 0.033291185402822665);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (111, 98, 0.05202458595248073);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (111, 99, 0.02537377974900371);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (111, 100, 0.016663055637877927);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (111, 101, 0.013864020923445415);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (111, 103, -0.04668765204283975);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (111, 105, 0.030212853188459888);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (111, 110, 0.00808945438657382);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (111, 111, 1);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (111, 112, -0.00848645364634227);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (111, 114, -0.046041042955977565);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (111, 115, -0.045564488967801346);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (111, 117, 0.05255978907387606);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (111, 127, 0.03479156816993457);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (111, 128, 0.027707993782823608);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (111, 129, -0.02260656784796875);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (111, 147, 0.10080422383926303);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (111, 148, -0.07233064304460284);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (111, 149, 0.05750130756011588);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (111, 150, 0.004966408411008841);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (111, 154, -0.032519702315360374);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (111, 169, 0.008344565452998711);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (112, 89, -0.031123050111317385);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (112, 90, 0.03336599585429054);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (112, 92, -0.03476883995093298);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (112, 91, -0.03235804111725775);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (112, 95, 0.05771558690810576);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (112, 94, 0.09273195683681817);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (112, 98, 0.017797756989573837);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (112, 99, 0.02785077788252344);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (112, 100, -0.060539376385771865);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (112, 101, 0.01928543446433772);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (112, 103, -0.005039479767129375);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (112, 105, -0.03688516912610167);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (112, 110, -0.011644587226793682);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (112, 111, -0.00848645364634227);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (112, 112, 1);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (112, 114, 0.019728146971925604);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (112, 115, -0.006214639300118572);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (112, 117, -0.03556835315048128);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (112, 127, -0.01453072129293221);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (112, 128, -0.02252166107541251);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (112, 129, 0.03168216924475062);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (112, 147, 0.007987002246539456);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (112, 148, 0.02874488363809613);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (112, 149, -0.008641034392062373);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (112, 150, 0.07155710194564653);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (112, 154, 0.050416440597216276);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (112, 169, 0.00015744281190606567);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (114, 89, 0.036738412439871033);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (114, 90, -0.0012744488916041122);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (114, 92, 0.004270415066217616);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (114, 91, -0.035880003259443606);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (114, 95, -0.053742603083804845);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (114, 94, 0.015365613594360353);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (114, 98, -0.004963466417862592);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (114, 99, -0.0075454059702948885);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (114, 100, 0.03427563962236257);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (114, 101, -0.0015314929499458546);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (114, 103, -0.031751297912969836);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (114, 105, -0.028353627562187466);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (114, 110, 0.06860842117396423);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (114, 111, -0.046041042955977565);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (114, 112, 0.019728146971925604);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (114, 114, 1);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (114, 115, 0.05381985793571712);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (114, 117, 0.06933779449391093);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (114, 127, 0.021792343838718052);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (114, 128, -0.009885245750285293);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (114, 129, 0.04158958576541402);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (114, 147, -0.09451494088833336);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (114, 148, -0.08268615712964504);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (114, 149, -0.057139921330587366);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (114, 150, 0.00411012177510957);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (114, 154, -0.015638725741161184);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (114, 169, 0.03401382286233791);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (115, 89, -0.056670222446053006);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (115, 90, -0.05990318887817419);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (115, 92, 0.04167193691439548);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (115, 91, 0.008570551932138055);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (115, 95, -0.050157511310758955);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (115, 94, 0.028380921374309517);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (115, 98, -0.03066497028438584);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (115, 99, -0.03389674563766029);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (115, 100, 0.047896360248227195);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (115, 101, 0.05629925664580851);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (115, 103, 0.01936273870152207);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (115, 105, -0.009228437945444642);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (115, 110, -0.006279185247164262);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (115, 111, -0.045564488967801346);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (115, 112, -0.006214639300118572);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (115, 114, 0.05381985793571712);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (115, 115, 1);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (115, 117, -0.012530795253553429);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (115, 127, -0.032786870529041556);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (115, 128, -0.00024076943917600388);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (115, 129, -0.03353673378248949);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (115, 147, 0.06176691455615775);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (115, 148, 0.03542304513167534);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (115, 149, 0.04451295927815279);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (115, 150, -0.048596075598043804);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (115, 154, -0.011301740270072311);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (115, 169, 0.08976624793282177);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (117, 89, 0.02682961049581364);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (117, 90, 0.10757804929921908);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (117, 92, -0.016589169683287205);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (117, 91, -0.03711926414319685);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (117, 95, -0.018406789656558762);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (117, 94, 0.11047266469041957);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (117, 98, 0.012886678432519307);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (117, 99, -0.00691943743075019);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (117, 100, -0.010217617399930583);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (117, 101, 0.0022814310308548517);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (117, 103, 0.009688984376693768);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (117, 105, 0.05588343878088943);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (117, 110, 0.009444424923346496);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (117, 111, 0.05255978907387606);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (117, 112, -0.03556835315048128);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (117, 114, 0.06933779449391093);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (117, 115, -0.012530795253553429);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (117, 117, 1);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (117, 127, 0.007967234710701872);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (117, 128, 0.07631890929793479);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (117, 129, 0.034359913535145094);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (117, 147, 0.028179329230381342);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (117, 148, -0.02756483881060153);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (117, 149, -0.01945440098857673);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (117, 150, -0.145210730917976);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (117, 154, 0.07977404355225001);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (117, 169, -0.03789036766770491);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (127, 89, -0.09638451060863304);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (127, 90, -0.03753719007337353);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (127, 92, 0.05185312712156384);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (127, 91, 0.012191882405152737);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (127, 95, -0.003214305240451573);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (127, 94, 0.010466143314548778);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (127, 98, 0.012750592393244364);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (127, 99, 0.07001575238571334);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (127, 100, 0.03671532523940551);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (127, 101, -0.011496293593170998);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (127, 103, -0.07595779955961914);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (127, 105, -0.03904423832385793);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (127, 110, 0.05871906019865205);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (127, 111, 0.03479156816993457);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (127, 112, -0.01453072129293221);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (127, 114, 0.021792343838718052);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (127, 115, -0.032786870529041556);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (127, 117, 0.007967234710701872);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (127, 127, 1);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (127, 128, 0.004698553794833548);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (127, 129, 0.00835865469619378);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (127, 147, 0.05466858128144139);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (127, 148, -0.0033670156957843716);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (127, 149, -0.044805077875104474);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (127, 150, 0.06487675289470249);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (127, 154, -0.06051015354622761);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (127, 169, -0.06527829422195129);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (128, 89, 0.02111509515457636);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (128, 90, 0.00899718792913378);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (128, 92, -0.03302187807252146);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (128, 91, 0.011652540141170304);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (128, 95, 0.03568682765232552);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (128, 94, 0.025397104527325583);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (128, 98, -0.04614471619038345);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (128, 99, -0.009829872911169409);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (128, 100, 0.04650140211564046);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (128, 101, -0.0017973003729252965);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (128, 103, 0.008787953082353042);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (128, 105, -0.02841584161923439);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (128, 110, 0.0025394353604574057);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (128, 111, 0.027707993782823608);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (128, 112, -0.02252166107541251);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (128, 114, -0.009885245750285293);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (128, 115, -0.00024076943917600388);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (128, 117, 0.07631890929793479);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (128, 127, 0.004698553794833548);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (128, 128, 1);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (128, 129, 0.07439195401657672);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (128, 147, -0.075177437441814);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (128, 148, 0.0630515230505254);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (128, 149, 0.04582120606991595);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (128, 150, 0.04433857011992887);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (128, 154, 0.007580843860171407);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (128, 169, -0.0027074629196020715);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (129, 89, -0.026567102941711614);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (129, 90, 0.014012311451131416);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (129, 92, 0.022518491744979413);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (129, 91, 0.02342339126440065);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (129, 95, 0.04382818495641486);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (129, 94, 0.004175213804057231);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (129, 98, -0.04587528710822522);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (129, 99, 0.09106144820603485);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (129, 100, -0.04422698721159858);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (129, 101, 0.04901186560656042);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (129, 103, 0.025534037265285615);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (129, 105, -0.03248339375749095);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (129, 110, -0.012669188847334338);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (129, 111, -0.02260656784796875);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (129, 112, 0.03168216924475062);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (129, 114, 0.04158958576541402);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (129, 115, -0.03353673378248949);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (129, 117, 0.034359913535145094);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (129, 127, 0.00835865469619378);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (129, 128, 0.07439195401657672);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (129, 129, 1);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (129, 147, -0.09101422267809957);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (129, 148, -0.05231546664612163);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (129, 149, -0.014998651534472272);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (129, 150, -0.02715275935024331);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (129, 154, 0.036897546245200474);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (129, 169, -0.148892199517563);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (147, 89, -0.008214930368702054);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (147, 90, -0.005406395430805226);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (147, 92, 0.055306062683062776);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (147, 91, -0.017486601079024822);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (147, 95, 0.05664915630639602);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (147, 94, 0.0658197592223672);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (147, 98, 0.02165914829163559);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (147, 99, -0.0496588862894899);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (147, 100, 0.04178407922765229);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (147, 101, -0.07104603446800829);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (147, 103, -0.08139116689332711);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (147, 105, -0.07328254517952823);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (147, 110, 0.07729011418650511);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (147, 111, 0.10080422383926303);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (147, 112, 0.007987002246539456);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (147, 114, -0.09451494088833336);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (147, 115, 0.06176691455615775);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (147, 117, 0.028179329230381342);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (147, 127, 0.05466858128144139);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (147, 128, -0.075177437441814);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (147, 129, -0.09101422267809957);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (147, 147, 1);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (147, 148, -0.053825296210327764);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (147, 149, 0.017664547497501168);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (147, 150, 0.06725233422374591);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (147, 154, -0.029669500871293372);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (147, 169, 0.062063376234094275);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (148, 89, -0.02211788674281554);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (148, 90, -0.07393768198196932);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (148, 92, 0.1709004567911334);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (148, 91, 0.05483145972645912);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (148, 95, 0.008858639603981899);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (148, 94, -0.06124114656842414);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (148, 98, 0.002980300416495643);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (148, 99, 0.0031660386076270064);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (148, 100, -0.061032740902295816);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (148, 101, 0.02005555283463022);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (148, 103, -0.023689417961155698);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (148, 105, 0.04183350820281416);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (148, 110, -0.08143312804174653);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (148, 111, -0.07233064304460284);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (148, 112, 0.02874488363809613);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (148, 114, -0.08268615712964504);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (148, 115, 0.03542304513167534);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (148, 117, -0.02756483881060153);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (148, 127, -0.0033670156957843716);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (148, 128, 0.0630515230505254);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (148, 129, -0.05231546664612163);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (148, 147, -0.053825296210327764);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (148, 148, 1);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (148, 149, -0.03415499457431179);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (148, 150, 0.01615775129001179);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (148, 154, -0.02518657997149516);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (148, 169, 0.1711286435982699);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (149, 89, -0.01607546891483633);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (149, 90, 0.040158639665483144);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (149, 92, 0.04017555744873516);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (149, 91, -0.02840245455320249);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (149, 95, 0.005560263674405874);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (149, 94, 0.10291393256947776);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (149, 98, -0.05480418315656328);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (149, 99, -0.006934498887017066);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (149, 100, -0.05455205241481897);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (149, 101, 0.041584915601088436);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (149, 103, -0.06343320113175388);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (149, 105, 0.0369000514010301);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (149, 110, 0.037921446466494965);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (149, 111, 0.05750130756011588);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (149, 112, -0.008641034392062373);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (149, 114, -0.057139921330587366);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (149, 115, 0.04451295927815279);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (149, 117, -0.01945440098857673);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (149, 127, -0.044805077875104474);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (149, 128, 0.04582120606991595);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (149, 129, -0.014998651534472272);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (149, 147, 0.017664547497501168);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (149, 148, -0.03415499457431179);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (149, 149, 1);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (149, 150, -0.030365800008713903);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (149, 154, 0.07866419906403992);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (149, 169, 0.006105226334737056);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (150, 89, 0.03624837829493869);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (150, 90, -0.020768150846734994);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (150, 92, 0.015792386099607647);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (150, 91, -0.06355015863920614);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (150, 95, 0.061546421188749076);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (150, 94, -0.08323934851155261);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (150, 98, -0.008706847493355456);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (150, 99, -0.03954181904910483);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (150, 100, 0.07669906863026904);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (150, 101, 0.04837646949493096);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (150, 103, -0.0700455235776471);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (150, 105, 0.01821853917756726);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (150, 110, 0.003688414159376476);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (150, 111, 0.004966408411008841);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (150, 112, 0.07155710194564653);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (150, 114, 0.00411012177510957);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (150, 115, -0.048596075598043804);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (150, 117, -0.145210730917976);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (150, 127, 0.06487675289470249);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (150, 128, 0.04433857011992887);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (150, 129, -0.02715275935024331);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (150, 147, 0.06725233422374591);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (150, 148, 0.01615775129001179);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (150, 149, -0.030365800008713903);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (150, 150, 1);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (150, 154, 0.022152432794412237);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (150, 169, 0.021225825597264106);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (154, 89, 0.09967947488688635);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (154, 90, -0.020203072221092452);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (154, 92, 0.004963942246928699);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (154, 91, -0.016453775811983623);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (154, 95, 0.03725155201193982);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (154, 94, 0.04084255625264228);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (154, 98, 0.0013971358367875762);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (154, 99, -0.05763872999764547);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (154, 100, 0.039731761882175476);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (154, 101, -0.02332008823628629);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (154, 103, -0.003094001558056828);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (154, 105, 0.060948761271584724);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (154, 110, -0.01565004997204141);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (154, 111, -0.032519702315360374);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (154, 112, 0.050416440597216276);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (154, 114, -0.015638725741161184);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (154, 115, -0.011301740270072311);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (154, 117, 0.07977404355225001);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (154, 127, -0.06051015354622761);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (154, 128, 0.007580843860171407);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (154, 129, 0.036897546245200474);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (154, 147, -0.029669500871293372);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (154, 148, -0.02518657997149516);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (154, 149, 0.07866419906403992);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (154, 150, 0.022152432794412237);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (154, 154, 1);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (154, 169, -0.07317711019495152);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (169, 89, 0.021401947616770712);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (169, 90, 0.052307509375808255);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (169, 92, 0.023881082457858298);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (169, 91, -0.007431473031847822);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (169, 95, -0.04140681615181018);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (169, 94, 0.008637959064392568);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (169, 98, -0.051949573807845296);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (169, 99, 0.08563401187393516);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (169, 100, -0.04684139695812868);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (169, 101, -0.06790266071983274);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (169, 103, -0.0020433603142967272);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (169, 105, -0.02144632963922996);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (169, 110, 0.01922914764400532);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (169, 111, 0.008344565452998711);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (169, 112, 0.00015744281190606567);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (169, 114, 0.03401382286233791);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (169, 115, 0.08976624793282177);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (169, 117, -0.03789036766770491);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (169, 127, -0.06527829422195129);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (169, 128, -0.0027074629196020715);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (169, 129, -0.148892199517563);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (169, 147, 0.062063376234094275);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (169, 148, 0.1711286435982699);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (169, 149, 0.006105226334737056);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (169, 150, 0.021225825597264106);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (169, 154, -0.07317711019495152);
+INSERT INTO public.subject_grade_correlation (first_subject, second_subject, correlation)
+VALUES (169, 169, 1);
+INSERT INTO public.teacher (user_id, department_id)
+VALUES (10, 2);
+INSERT INTO public.teacher (user_id, department_id)
+VALUES (11, 1);
+INSERT INTO public.teacher (user_id, department_id)
+VALUES (12, 3);
+INSERT INTO public.teacher (user_id, department_id)
+VALUES (13, 3);
+INSERT INTO public.teacher (user_id, department_id)
+VALUES (14, 1);
+
+INSERT INTO public.teacher_subject (teacher_id, subject_id)
+VALUES (2, 128);
+INSERT INTO public.teacher_subject (teacher_id, subject_id)
+VALUES (1, 154);
+INSERT INTO public.teacher_subject (teacher_id, subject_id)
+VALUES (3, 98);
+INSERT INTO public.teacher_subject (teacher_id, subject_id)
+VALUES (4, 149);
+INSERT INTO public.teacher_subject (teacher_id, subject_id)
+VALUES (5, 92);
+INSERT INTO public.teacher_subject (teacher_id, subject_id)
+VALUES (5, 100);
+
+INSERT INTO public.user_role (user_id, role_id)
+VALUES (1, 4);
+INSERT INTO public.user_role (user_id, role_id)
+VALUES (2, 4);
+INSERT INTO public.user_role (user_id, role_id)
+VALUES (3, 4);
 
 -- newly added - not all inserts work as intended because not all of the subject codes are inserted in the subject table
 ALTER TABLE subject ADD CONSTRAINT unique_code UNIQUE (code);

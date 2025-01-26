@@ -1,0 +1,29 @@
+spring:
+  application:
+    name: ALFRI_BE_TEST
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: password
+  jpa:
+    show-sql: true
+    database-platform: org.hibernate.dialect.H2Dialect
+  security:
+    jwt:
+      secret-key: 3cfa76ef14937c1c0ea519f8fc057a80fcd04a7420f8e8bcd0a7567c272e007b
+      expiration-time: 3600000
+
+python:
+  executable_path: ${PYTHON_DEV_EXECUTABLE_PATH:python3}
+  clustering_prediction_script_path: ${DEV_CLUSTERING_PREDICTION_SCRIPT_PATH:./python_scripts/subject_clustering.py}
+  clustering_prediction_model_path: ${DEV_CLUSTERING_PREDICTION_MODEL_PATH:./python_scripts/kmeans_model.pkl}
+  passing_change_prediction_script_path: ${DEV_PASSING_CHANGE_PREDICTION_SCRIPT_PATH:./python_scripts/passing_chance_prediction.py}
+  passing_mark_prediction_script_path: ${DEV_PASSING_MARK_PREDICTION_SCRIPT_PATH:./python_scripts/neural_network_marks_predictions.py}
+
+
+frontend-url: ${FRONTEND_DEV_URL:*}
+# email of user that you want to act as
+default-user-email: szathmary@stud.uniza.sk
+# roles that you want to have - upper case with comma in between them
+default-user-roles: STUDENT, TEACHER, VISITOR, ADMIN

@@ -7,19 +7,19 @@ import java.util.List;
 
 @Data
 public class PageDTO<T> {
-    int currentPage;
-    int pageSize;
-    long totalElements;
-    int totalPages;
-    List<T> content;
+  int currentPage;
+  int pageSize;
+  long totalElements;
+  int totalPages;
+  List<T> content;
 
-    @JsonProperty
-    boolean hasNextPage() {
-        return this.currentPage + 1 < this.totalPages;
-    }
+  @JsonProperty
+  boolean hasNextPage() {
+    return this.currentPage + 1 < this.totalPages;
+  }
 
-    @JsonProperty
-    boolean hasPreviousPage() {
-        return this.currentPage > 0;
-    }
+  @JsonProperty
+  boolean hasPreviousPage() {
+    return this.currentPage > 0;
+  }
 }

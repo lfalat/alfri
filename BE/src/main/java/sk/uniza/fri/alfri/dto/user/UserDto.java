@@ -3,11 +3,13 @@ package sk.uniza.fri.alfri.dto.user;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import java.util.List;
 import lombok.Data;
-import sk.uniza.fri.alfri.entity.Role;
+import lombok.ToString;
 
 /** DTO for {@link sk.uniza.fri.alfri.entity.User} */
 @Data
+@ToString
 public class UserDto {
   Integer userId;
 
@@ -18,7 +20,7 @@ public class UserDto {
   String lastName;
 
   @NotNull(message = "Role cannot be null!")
-  Role role;
+  List<RoleDto> roles;
 
   @Email(message = "Email must have format of email!")
   String email;

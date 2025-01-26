@@ -1,7 +1,6 @@
 package sk.uniza.fri.alfri.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -11,7 +10,6 @@ import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
-import org.hibernate.annotations.Type;
 
 @Getter
 @Setter
@@ -51,11 +49,13 @@ public class Question {
   @Column(name = "optional", nullable = false)
   private Boolean optional = false;
 
-  @OneToMany(mappedBy = "question", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+  @OneToMany(mappedBy = "question", fetch = FetchType.LAZY, cascade = CascadeType.ALL,
+      orphanRemoval = true)
   @JsonBackReference
   private List<QuestionOption> options = new ArrayList<>();
 
-  @OneToMany(mappedBy = "answerQuestion", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+  @OneToMany(mappedBy = "answerQuestion", fetch = FetchType.LAZY, cascade = CascadeType.ALL,
+      orphanRemoval = true)
   @JsonBackReference
   private List<Answer> answers = new ArrayList<>();
 }

@@ -1,13 +1,13 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import {
-  FormGroup,
-  FormBuilder,
-  Validators,
-  ReactiveFormsModule,
+  AbstractControl,
   AbstractControlOptions,
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
   ValidationErrors,
   ValidatorFn,
-  AbstractControl,
+  Validators,
 } from '@angular/forms';
 import { Router } from '@angular/router';
 import { MatCard } from '@angular/material/card';
@@ -19,9 +19,10 @@ import { NgForOf, NgIf } from '@angular/common';
 import { HttpClientModule, HttpErrorResponse } from '@angular/common/http';
 import { AuthService } from '../services/auth.service';
 import type { RegisterUserDto, Role } from '../types';
-import { ErrorService } from '../services/error.service';
+import { NotificationService } from '../services/notification.service';
 import { UserService } from '../services/user.service';
 import { JwtService } from '../services/jwt.service';
+import { ReplaySubject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-registration-form',
@@ -43,23 +44,20 @@ import { JwtService } from '../services/jwt.service';
   templateUrl: './registration.component.html',
   styleUrl: './registration.component.scss',
 })
-export class RegistrationComponent {
+export class RegistrationComponent implements OnInit, OnDestroy {
   registerForm: FormGroup;
-  roles: Role[] = [
-    { id: 1, name: 'Študent' },
-    { id: 2, name: 'Učiteľ' },
-    { id: 3, name: 'Návštevník' },
-  ];
+  roles: Role[] = [];
   public isError = false;
   public errorText = '';
+  private readonly destroyed$: ReplaySubject<void> = new ReplaySubject(1);
 
   constructor(
-    private formBuilder: FormBuilder,
-    private router: Router,
-    private authService: AuthService,
-    private errorService: ErrorService,
-    private userService: UserService,
-    private jwtService: JwtService
+    private readonly formBuilder: FormBuilder,
+    private readonly router: Router,
+    private readonly authService: AuthService,
+    private readonly errorService: NotificationService,
+    private readonly userService: UserService,
+    private readonly jwtService: JwtService
   ) {
     const formOptions: AbstractControlOptions = {
       validators: [this.mustMatch('password', 'confirmPassword')],
@@ -82,6 +80,17 @@ export class RegistrationComponent {
       },
       formOptions
     );
+  }
+
+  ngOnInit() {
+    this.userService.getRoles().pipe(takeUntil(this.destroyed$)).subscribe((roles: Role[]) => {
+      this.roles = roles;
+    });
+  }
+
+  ngOnDestroy() {
+    this.destroyed$.next();
+    this.destroyed$.complete();
   }
 
   // custom validator to check that two fields match
@@ -116,7 +125,7 @@ export class RegistrationComponent {
     const userData: RegisterUserDto = {
       firstName: this.registerForm.value.name,
       lastName: this.registerForm.value.surname,
-      roleId: this.registerForm.value.roleId,
+      rolesIds: [this.registerForm.value.roleId],
       email: this.registerForm.value.email,
       password: this.registerForm.value.password,
     };

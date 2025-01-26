@@ -2,7 +2,7 @@ package sk.uniza.fri.alfri.dto.user;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Positive;
+import java.util.List;
 import lombok.Data;
 
 /** DTO for {@link sk.uniza.fri.alfri.entity.User} */
@@ -14,8 +14,7 @@ public class RegisterUserDto {
   @NotBlank(message = "Last name cannot be null or blank!")
   String lastName;
 
-  @Positive(message = "Role id must be positive number!")
-  Integer roleId;
+  List<Integer> rolesIds;
 
   @Email(message = "Email must have format of email!")
   String email;

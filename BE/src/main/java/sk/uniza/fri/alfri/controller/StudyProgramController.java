@@ -4,6 +4,7 @@ import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -14,13 +15,14 @@ import sk.uniza.fri.alfri.service.IStudyProgramService;
 
 @RequestMapping("/api/studyProgram")
 @RestController
+@PreAuthorize("hasAnyRole({'ROLE_STUDENT', 'ROLE_TEACHER', 'ROLE_ADMIN'})")
 @Slf4j
 public class StudyProgramController {
   private final StudyProgramMapper studyProgramMapper;
   private final IStudyProgramService studyProgramService;
 
-  public StudyProgramController(
-      IStudyProgramService studyProgramService, StudyProgramMapper studyProgramMapper) {
+  public StudyProgramController(IStudyProgramService studyProgramService,
+      StudyProgramMapper studyProgramMapper) {
     this.studyProgramService = studyProgramService;
     this.studyProgramMapper = studyProgramMapper;
   }

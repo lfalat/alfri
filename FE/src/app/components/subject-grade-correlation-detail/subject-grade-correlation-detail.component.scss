@@ -1,0 +1,17 @@
+$secondary-color: #d5e9fd;
+
+.correlation-card {
+  margin-bottom: 10px;
+  border: 1px solid lightgrey;
+  margin-top: 10px
+}
+
+mat-card-header {
+  background-color: $secondary-color;
+  font-weight: bold;
+}
+
+.correlation-value {
+  font-size: 1.2em;
+  margin-top: 10px;
+}

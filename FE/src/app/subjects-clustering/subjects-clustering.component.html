@@ -1,8 +1,8 @@
 <div class="container-fluid m-0">
   <div class="row m-0 p-0">
     <div class="col-12 col-md-5 m-0">
-      <h2>Vyber si 3 predmety a my ti ukážeme podobné predmety</h2>
-      <div class="overflow-x-auto">
+      <h2>Výberom troch predmetov zobraz podobné predmety</h2>
+      <div class="overflow-x-auto overflow-y-auto clustering-max-height-75vh">
         <app-subjects-table
           [dataSource$]="allSubjectsDataSource$"
           [pageData]="allSubjectsPageData"
@@ -15,10 +15,12 @@
           (subjectDetailNavigate)="navigateToSubjectDetail($event)">
         </app-subjects-table>
       </div>
-      <button color="primary" mat-stroked-button class="mt-5 w-100" (click)="getSimilarSubjects()">Potvrdiť</button>
-      @if (isLoadingRecommendetSubjects) {
-        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
-      }
+      <div class="mb-3">
+        <button color="primary" mat-stroked-button class="mt-5 w-100" (click)="getSimilarSubjects()">Potvrdiť</button>
+        @if (isLoadingRecommendetSubjects) {
+          <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+        }
+      </div>
     </div>
     <div class="col-md-2 d-flex align-items-center justify-content-center">
       <mat-icon>arrow_forward</mat-icon>
@@ -26,7 +28,7 @@
     <div class="col-md-5">
       @if ((recommendedSubjectsDataSource$ | async)?.at(0) !== null) {
         <div class="text-center fw-bold">Podobné predmety</div>
-        <div class="d-flex flex-column clustering-max-height-70vh">
+        <div class="d-flex flex-column clustering-max-height-75vh">
           <app-subjects-table
             class="w-100 h-100"
             [dataSource$]="recommendedSubjectsDataSource$"
