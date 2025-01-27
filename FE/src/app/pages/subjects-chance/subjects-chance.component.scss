@@ -1,0 +1,29 @@
+.mat-table {
+  width: 100%;
+}
+
+.mat-elevation-z8 {
+  box-shadow:
+    0px 5px 5px -3px rgba(0, 0, 0, 0.2),
+    0px 8px 10px 1px rgba(0, 0, 0, 0.14),
+    0px 3px 14px 2px rgba(0, 0, 0, 0.12);
+}
+
+.progress-bar-container {
+  width: 100%;
+  height: 20px; /* Adjust height as needed */
+  background-color: #e0e0e0; /* Background color of the progress bar */
+  border-radius: 4px; /* Optional: round the corners */
+  overflow: hidden;
+  position: relative;
+}
+
+.progress-bar-filled {
+  height: 100%;
+  background-color: #3f51b5; /* Filled color */
+  width: 0;
+  border-radius: 4px 0 0 4px; /* Optional: round the corners */
+  position: absolute;
+  left: 0;
+  top: 0;
+}

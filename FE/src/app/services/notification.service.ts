@@ -1,37 +1,54 @@
 import { Injectable } from '@angular/core';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class NotificationService {
-  constructor(private snackBar: MatSnackBar) {
+  constructor(private snackBar: MatSnackBar) {}
+
+  public showError(
+    message: string,
+    action: string = 'X',
+    duration: number = 6000,
+  ): void {
+    const config: MatSnackBarConfig = {
+      duration,
+      panelClass: ['custom-snackbar', 'error-snackbar'],
+      horizontalPosition: 'start',
+      verticalPosition: 'top',
+    };
+
+    this.snackBar.open(message, action, config);
   }
 
-  public showError(message: string, action: string = 'X', duration: number = 6000): void {
-    this.snackBar.open(message, action, {
-      duration: duration,
-      panelClass: ['error-snackbar'],
-      horizontalPosition: 'right',
-      verticalPosition: 'top'
-    });
+  public showSuccess(
+    message: string,
+    action: string = 'X',
+    duration: number = 6000,
+  ): void {
+    const config: MatSnackBarConfig = {
+      duration,
+      panelClass: ['custom-snackbar', 'success-snackbar'],
+      horizontalPosition: 'start',
+      verticalPosition: 'top',
+    };
+
+    this.snackBar.open(message, action, config);
   }
 
-  public showSuccess(message: string, action: string = 'X', duration: number = 6000): void {
-    this.snackBar.open(message, action, {
-      duration: duration,
-      panelClass: ['success-snackbar'],
-      horizontalPosition: 'right',
-      verticalPosition: 'top'
-    });
-  }
+  public showWarning(
+    message: string,
+    action: string = 'X',
+    duration: number = 6000000,
+  ): void {
+    const config: MatSnackBarConfig = {
+      duration,
+      panelClass: ['custom-snackbar', 'warning-snackbar'],
+      horizontalPosition: 'end',
+      verticalPosition: 'top',
+    };
 
-  public showWarning(message: string, action: string = 'X', duration: number = 6000): void {
-    this.snackBar.open(message, action, {
-      duration: duration,
-      panelClass: ['warning-snackbar'],
-      horizontalPosition: 'right',
-      verticalPosition: 'top'
-    });
+    this.snackBar.open(message, action, config);
   }
 }

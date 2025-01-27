@@ -166,7 +166,6 @@
               <mat-icon>vpn_key</mat-icon>
               Kľúčové slová
             </button>
-
           </div>
         </div>
 
@@ -177,12 +176,14 @@
             aria-label="Open menu"
             class="menu-avatar-button"
           >
-            <div mat-icon class="avatar">
-              M
-            </div>
+            <div mat-icon class="avatar">M</div>
           </button>
           <mat-menu #menu="matMenu">
-            <button mat-menu-item (click)="navigateToAdminPage()" *appHasRole="AuthRole.ADMIN">
+            <button
+              mat-menu-item
+              (click)="navigateToAdminPage()"
+              *appHasRole="AuthRole.ADMIN"
+            >
               <mat-icon>admin_panel_settings</mat-icon>
               Administrácia
             </button>

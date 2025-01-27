@@ -1,0 +1,23 @@
+<div class="container">
+  <!-- Subject Data Header -->
+  <div *ngIf="subjectData">
+    <h1 class="d-flex justify-content-center">{{ subjectData.name }}</h1>
+  </div>
+
+  <!-- Chart Section -->
+  <div class="row d-flex justify-content-center align-items-center">
+    <!-- Radar Chart Container -->
+    <div class="col-12 col-md-6 mb-4">
+      <canvas #chart id="chart" class="p-lg-3 w-100"></canvas>
+      <h2 class="d-flex justify-content-center mt-3">Zameranie predmetu</h2>
+    </div>
+
+    <!-- Bar Chart Container -->
+    <div class="col-12 col-md-6 mb-4">
+      <canvas #barChart id="barChart" class="p-lg-3 w-100"></canvas>
+      <h2 class="d-flex justify-content-center mt-3">
+        Percentuálny podiel známok
+      </h2>
+    </div>
+  </div>
+</div>

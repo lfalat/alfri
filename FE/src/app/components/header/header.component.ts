@@ -5,14 +5,17 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
-import { UserService } from '../../services/user.service';
-import { AuthService } from '../../services/auth.service';
+import { UserService } from '@services/user.service';
+import { AuthService } from '@services/auth.service';
 import { Router } from '@angular/router';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
-import { MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle } from '@angular/material/expansion';
-import { AuthRole, UserDto } from '../../types';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { HasRoleDirective } from '../../directives/auth.directive';
+import {
+  MatExpansionPanel,
+  MatExpansionPanelHeader,
+  MatExpansionPanelTitle,
+} from '@angular/material/expansion';
+import { HasRoleDirective } from '@directives/auth.directive';
+import { AuthRole } from '@enums/auth-role';
 
 @Component({
   selector: 'app-header',
@@ -39,42 +42,12 @@ import { HasRoleDirective } from '../../directives/auth.directive';
 })
 export class HeaderComponent {
   protected readonly AuthRole = AuthRole;
-  userData: UserDto | undefined;
-
-  get isUserStudent(): boolean {
-    return (
-      this.userData?.roles
-        .map((role) => role.name)
-        .includes(this.AuthRole.STUDENT) ?? false
-    );
-  }
-
-  get isUserTeacher(): boolean {
-    return (
-      this.userData?.roles
-        .map((role) => role.name)
-        .includes(this.AuthRole.TEACHER) ?? false
-    );
-  }
-
-  get isUserAdmin(): boolean {
-    return (
-      this.userData?.roles.map((role) => role.name).includes(this.AuthRole.ADMIN) ??
-      false
-    );
-  }
 
   constructor(
     private readonly userService: UserService,
     private readonly authService: AuthService,
     private readonly router: Router,
-  ) {
-    this.userService.userData
-      .pipe(takeUntilDestroyed())
-      .subscribe((userData: UserDto) => {
-        this.userData = userData;
-      });
-  }
+  ) {}
 
   loggedIn() {
     return this.userService.loggedIn();

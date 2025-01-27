@@ -1,0 +1,6 @@
+export enum AuthRole {
+  STUDENT = 'ROLE_STUDENT',
+  TEACHER = 'ROLE_TEACHER',
+  ADMIN = 'ROLE_ADMIN',
+  VISITOR = 'ROLE_VISITOR',
+}

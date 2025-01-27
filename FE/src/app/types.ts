@@ -5,8 +5,9 @@ import {
   ApexPlotOptions,
   ApexResponsive,
   ApexTitleSubtitle,
-  ApexXAxis
+  ApexXAxis,
 } from 'ng-apexcharts';
+import { AuthRole } from '@enums/auth-role';
 
 export interface Role {
   id: number;
@@ -35,9 +36,9 @@ export interface LoginUserDto {
 }
 
 export interface ChangePasswordDto {
-  email: string,
-  oldPassword: string
-  newPassword: string
+  email: string;
+  oldPassword: string;
+  newPassword: string;
 }
 
 export interface AuthResponseDto {
@@ -71,7 +72,7 @@ export interface SubjectDto {
 }
 
 export interface SubjectExtendedDto extends SubjectDto {
-  focusDTO: FocusDto
+  focusDTO: FocusDto;
 }
 
 export interface StudyProgramDto {
@@ -120,7 +121,6 @@ export interface Page<T> {
   numberOfElements: number;
   empty: boolean;
 }
-
 
 // Questionnaire types
 export interface Option {
@@ -221,16 +221,9 @@ export interface ApexChartOptions {
   dataLabels: ApexDataLabels;
   title: ApexTitleSubtitle;
   colors: string[];
-  plotOptions: ApexPlotOptions,
-  xAxis: ApexXAxis,
-  responsive: ApexResponsive[]
-}
-
-export enum AuthRole {
-  STUDENT = 'ROLE_STUDENT',
-  TEACHER = 'ROLE_TEACHER',
-  ADMIN = 'ROLE_ADMIN',
-  VISITOR = 'ROLE_VISITOR'
+  plotOptions: ApexPlotOptions;
+  xAxis: ApexXAxis;
+  responsive: ApexResponsive[];
 }
 
 export interface KeywordDto {

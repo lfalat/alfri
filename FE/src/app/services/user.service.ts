@@ -5,9 +5,8 @@ import { Observable, ReplaySubject, take } from 'rxjs';
 import { Role, UserDto } from '../types';
 import { environment } from '../../environments/environment';
 
-
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class UserService {
   get userData(): Observable<UserDto> {
@@ -19,12 +18,19 @@ export class UserService {
   private readonly _userData: ReplaySubject<UserDto> = new ReplaySubject(1);
   private readonly BE_URL = `${environment.API_URL}/user`;
 
-  constructor(private readonly http: HttpClient, public jwtHelper: JwtHelperService) {}
+  constructor(
+    private readonly http: HttpClient,
+    public jwtHelper: JwtHelperService,
+  ) {
+    this.loadUserData();
+  }
 
   public loadUserData() {
-    this.loadUserInfo().pipe(take(1)).subscribe((userData: UserDto) => {
-      this._userData.next(userData);
-    });
+    this.loadUserInfo()
+      .pipe(take(1))
+      .subscribe((userData: UserDto) => {
+        this._userData.next(userData);
+      });
   }
 
   saveUserId(userId: number) {

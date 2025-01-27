@@ -2,19 +2,25 @@
   <div class="subject-mark-section">
     <mat-card-title class="subject-name">{{ data.subjectName }}</mat-card-title>
     <div class="mark-section">
-      Známka: <span [ngClass]="getMarkClass(data.mark)" class="mark-value">{{ data.mark }}</span>
+      Známka:
+      <span [ngClass]="getMarkClass(data.mark)" class="mark-value">{{
+        data.mark
+      }}</span>
     </div>
   </div>
 
   <span class="probability-label">Pravdepodobnosť absolvovania predmetu:</span>
-  <div class="progress-section-wide" matTooltip="Pravdepodobnosť absolvovania predmetu">
+  <div
+    class="progress-section-wide"
+    matTooltip="Pravdepodobnosť absolvovania predmetu"
+  >
     <div class="percentage-label">{{ data.passingProbability }} %</div>
     <mat-progress-bar
       mode="determinate"
       [value]="data.passingProbability"
-      [color]="getProgressColor(data.passingProbability)">
+      [color]="getProgressColor(data.passingProbability)"
+    >
     </mat-progress-bar>
-
   </div>
 
   <div class="recommendations-section">

@@ -1,6 +1,12 @@
-import { Directive, Input, OnInit, TemplateRef, ViewContainerRef } from '@angular/core';
-import { AuthService } from '../services/auth.service';
-import { AuthRole } from '../types';
+import {
+  Directive,
+  Input,
+  OnInit,
+  TemplateRef,
+  ViewContainerRef,
+} from '@angular/core';
+import { AuthService } from '@services/auth.service';
+import { AuthRole } from '@enums/auth-role';
 
 /**
  * Directive that displays content based on the user's role

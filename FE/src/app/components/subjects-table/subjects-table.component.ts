@@ -1,4 +1,11 @@
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnDestroy,
+  OnInit,
+  Output,
+} from '@angular/core';
 import { Observable, Subject, takeUntil } from 'rxjs';
 import { Page, SubjectDto } from '../../types';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
@@ -12,7 +19,7 @@ import {
   MatHeaderRowDef,
   MatRow,
   MatRowDef,
-  MatTable
+  MatTable,
 } from '@angular/material/table';
 import { MatProgressBar } from '@angular/material/progress-bar';
 import { AsyncPipe, NgClass, NgIf } from '@angular/common';
@@ -38,10 +45,10 @@ import { SelectionModel } from '@angular/cdk/collections';
     NgIf,
     MatCheckbox,
     AsyncPipe,
-    NgClass
+    NgClass,
   ],
   templateUrl: './subjects-table.component.html',
-  styleUrl: './subjects-table.component.scss'
+  styleUrl: './subjects-table.component.scss',
 })
 export class SubjectsTableComponent implements OnInit, OnDestroy {
   @Input() dataSource$!: Observable<SubjectDto[]>;
@@ -55,7 +62,9 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
 
   @Output() pageChange = new EventEmitter<PageEvent>();
   @Output() subjectDetailNavigate = new EventEmitter<string>();
-  @Output() selectedSubjects: EventEmitter<SubjectDto[]> = new EventEmitter<SubjectDto[]>();
+  @Output() selectedSubjects: EventEmitter<SubjectDto[]> = new EventEmitter<
+    SubjectDto[]
+  >();
 
   private readonly _destroy$: Subject<void> = new Subject();
   private _columnsToDisplay!: string[];
@@ -78,11 +87,7 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
         'semester',
       ];
     } else {
-      this._columnsToDisplay = [
-        'name',
-        'abbreviation',
-        'obligation',
-      ];
+      this._columnsToDisplay = ['name', 'abbreviation', 'obligation'];
     }
 
     if (this.isSelectable) {
@@ -114,7 +119,10 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
   public toggleSelection(selectedSubject: SubjectDto): void {
     if (this.selectedSubjectsMap.get(selectedSubject.code)) {
       this.selectedSubjectsMap.delete(selectedSubject.code);
-    } else if (Array.from(this.selectedSubjectsMap.values()).length < this.maxSelectableSubjects) {
+    } else if (
+      Array.from(this.selectedSubjectsMap.values()).length <
+      this.maxSelectableSubjects
+    ) {
       this.selectedSubjectsMap.set(selectedSubject.code, selectedSubject);
     }
 
@@ -124,6 +132,7 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
   }
 
   public getSelectedSubjectsCount(): number {
-    return Array.from(this.selectedSubjectsMap.values()).filter(v => v).length;
+    return Array.from(this.selectedSubjectsMap.values()).filter((v) => v)
+      .length;
   }
 }

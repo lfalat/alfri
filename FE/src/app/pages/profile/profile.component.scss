@@ -1,0 +1,32 @@
+/* Styling for the mat-card */
+.user-card {
+  padding: 20px; /* Adding padding to the card */
+  border-radius: 8px; /* Slight rounded corners */
+  background-color: #f9f9f9; /* Light grey background */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+  font-family: "Arial", sans-serif; /* Use a clean font for text */
+}
+
+/* Styling for the paragraph text inside the card */
+.user-card p {
+  margin-bottom: 12px; /* Spacing between paragraphs */
+  color: #333; /* Dark text color for better readability */
+  font-size: 1.1rem; /* Adjusted font size */
+}
+
+/* Making the strong tags inside the paragraphs more prominent */
+.user-card strong {
+  color: #2c6e99; /* Different color for strong text (blueish) */
+  font-weight: bold; /* Bold the strong text */
+}
+
+/* Optional: Hover effect on the card */
+.user-card:hover {
+  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15); /* Slightly increased shadow on hover */
+  background-color: #e7f3f7; /* Lighter background on hover */
+}
+
+/* Adjusting spacing for the Email field */
+.user-card p:last-of-type {
+  margin-bottom: 0; /* Remove bottom margin for the last paragraph */
+}

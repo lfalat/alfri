@@ -1,22 +1,23 @@
 import type { Routes } from '@angular/router';
-import { HomeComponent } from './home/home.component';
-import { LoginComponent } from './login/login.component';
-import { RegistrationComponent } from './registration/registration.component';
+import { HomeComponent } from '@pages/home/home.component';
+import { LoginComponent } from '@pages/login/login.component';
+import { RegistrationComponent } from '@pages/registration/registration.component';
 import { AuthGuards, roleAppGuard, tokenAppGuard } from './auth-guards';
-import { ErrorPageComponent } from './error-page/error-page.component';
-import { ProfileComponent } from './profile/profile.component';
+import { ErrorPageComponent } from '@pages/error-page/error-page.component';
+import { ProfileComponent } from '@pages/profile/profile.component';
 import { inject } from '@angular/core';
-import { SubjectsComponent } from './subjects/subjects.component';
-import { RecommendationComponent } from './recommendation/recommendation.component';
-import { GradeFormComponent } from './grade-form/grade-form.component';
-import { SubjectDetailComponent } from './subject-detail/subject-detail.component';
-import { SubjectsChanceComponent } from './subjects-chance/subjects-chance.component';
-import { SubjectsClusteringComponent } from './subjects-clustering/subjects-clustering.component';
-import { SubjectReportsComponent } from './subject-reports/subject-reports.component';
-import { SubjectGradeCorrelationComponent } from './subject-grade-correlation/subject-grade-correlation.component';
-import { AdminPageComponent } from './admin-page/admin-page.component';
-import { PassingPredictionComponent } from './passing-prediction/passing-prediction.component';
-import { AuthRole } from './types';
+import { SubjectsComponent } from '@pages/subjects/subjects.component';
+import { RecommendationComponent } from '@pages/recommendation/recommendation.component';
+import { GradeFormComponent } from '@pages/grade-form/grade-form.component';
+import { SubjectDetailComponent } from '@pages/subject-detail/subject-detail.component';
+import { SubjectsChanceComponent } from '@pages/subjects-chance/subjects-chance.component';
+import { SubjectsClusteringComponent } from '@pages/subjects-clustering/subjects-clustering.component';
+import { SubjectReportsComponent } from '@pages/subject-reports/subject-reports.component';
+import { SubjectGradeCorrelationComponent } from '@pages/subject-grade-correlation/subject-grade-correlation.component';
+import { AdminPageComponent } from '@pages/admin-page/admin-page.component';
+import { PassingPredictionComponent } from '@pages/passing-prediction/passing-prediction.component';
+import { KeywordsComponent } from '@pages/keywords/keywords.component';
+import { AuthRole } from '@enums/auth-role';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -35,7 +36,7 @@ export const routes: Routes = [
   {
     path: 'subjects',
     component: SubjectsComponent,
-    canActivate: [() => inject(AuthGuards).canActivate()]
+    canActivate: [() => inject(AuthGuards).canActivate()],
   },
   {
     path: 'subjects/:subjectCode',
@@ -60,31 +61,31 @@ export const routes: Routes = [
   {
     path: 'clustering',
     component: SubjectsClusteringComponent,
-    canActivate: [() => inject(AuthGuards).canActivate()]
+    canActivate: [() => inject(AuthGuards).canActivate()],
   },
   {
     path: 'subject-reports',
     component: SubjectReportsComponent,
-    canActivate: [() => inject(AuthGuards).canActivate()]
+    canActivate: [() => inject(AuthGuards).canActivate()],
   },
   {
     path: 'subjects-grades-correlation',
     component: SubjectGradeCorrelationComponent,
-    canActivate: [() => inject(AuthGuards).canActivate()]
+    canActivate: [() => inject(AuthGuards).canActivate()],
   },
   {
     path: 'admin-page',
     component: AdminPageComponent,
     canActivate: [tokenAppGuard, roleAppGuard],
-    data: {role: AuthRole.ADMIN}
+    data: { role: AuthRole.ADMIN },
   },
   {
     path: 'keywords',
     component: KeywordsComponent,
-    canActivate: [() => inject(AuthGuards).canActivate()]
+    canActivate: [() => inject(AuthGuards).canActivate()],
   },
   { path: 'profile', component: ProfileComponent },
   { path: '404', component: ErrorPageComponent },
   { path: 'grade-form', component: GradeFormComponent },
-  { path: '**', redirectTo: 'login' }
+  { path: '**', redirectTo: 'login' },
 ];

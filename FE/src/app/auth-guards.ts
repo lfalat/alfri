@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
-import { ActivatedRoute, ActivatedRouteSnapshot, CanActivateFn, Router } from '@angular/router';
-import { UserService } from './services/user.service';
-import { AuthService } from './services/auth.service';
+import { ActivatedRoute, CanActivateFn, Router } from '@angular/router';
+import { UserService } from '@services/user.service';
+import { AuthService } from '@services/auth.service';
 
 /**
  * Basic JWT token auth guard
@@ -16,7 +16,7 @@ export const tokenAppGuard: CanActivateFn = (): boolean => {
   }
 
   return true;
-}
+};
 
 /**
  * Role based auth guard
@@ -33,13 +33,16 @@ export const roleAppGuard: CanActivateFn = () => {
 
   router.navigate(['404']);
   return false;
-}
+};
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AuthGuards {
-  constructor(private userService: UserService, private router: Router) {}
+  constructor(
+    private userService: UserService,
+    private router: Router,
+  ) {}
 
   canActivate(): boolean {
     if (!this.userService.loggedIn()) {

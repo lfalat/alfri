@@ -1,20 +1,27 @@
 <mat-card *ngIf="this.correlationData" class="correlation-card">
   <mat-card-header>
     <mat-card-title>
-      <a class="text-decoration-none" href="javascript:void(0)"
-         (click)="navigateToSubjectDetail(correlationData.firstSubject.code)">
+      <a
+        class="text-decoration-none"
+        href="javascript:void(0)"
+        (click)="navigateToSubjectDetail(correlationData.firstSubject.code)"
+      >
         {{ this.correlationData.firstSubject.name }}
       </a>
-      <span *ngIf="this.correlationData.firstSubject.abbreviation">({{ this.correlationData.firstSubject.abbreviation }}
-        )</span>
+      <span *ngIf="this.correlationData.firstSubject.abbreviation"
+        >({{ this.correlationData.firstSubject.abbreviation }} )</span
+      >
       -
-      <a class="text-decoration-none" href="javascript:void(0)"
-         (click)="navigateToSubjectDetail(correlationData.secondSubject.code)">
+      <a
+        class="text-decoration-none"
+        href="javascript:void(0)"
+        (click)="navigateToSubjectDetail(correlationData.secondSubject.code)"
+      >
         {{ this.correlationData.secondSubject.name }}
       </a>
-      <span
-        *ngIf="this.correlationData.secondSubject.abbreviation">({{ this.correlationData.secondSubject.abbreviation }}
-        )</span>
+      <span *ngIf="this.correlationData.secondSubject.abbreviation"
+        >({{ this.correlationData.secondSubject.abbreviation }} )</span
+      >
     </mat-card-title>
   </mat-card-header>
 
@@ -22,7 +29,7 @@
     <div class="correlation-value">
       <strong>Korelácia: </strong>
       <span>
-        {{ this.correlationData.correlation | number:'1.0-2' }}
+        {{ this.correlationData.correlation | number: "1.0-2" }}
       </span>
     </div>
   </mat-card-content>
