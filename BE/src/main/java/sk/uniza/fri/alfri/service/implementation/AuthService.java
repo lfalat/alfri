@@ -89,7 +89,7 @@ public class AuthService implements IAuthService {
   @Override
   public Optional<String> getCurrentUserEmail() {
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    if (authentication != null && authentication.getPrincipal()instanceof UserDetails userDetails) {
+    if (authentication != null && authentication.getPrincipal() instanceof UserDetails userDetails) {
       return Optional.ofNullable(userDetails.getUsername()); // Handle null username
     }
     return Optional.empty();
