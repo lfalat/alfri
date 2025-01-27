@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 import sk.uniza.fri.alfri.entity.Subject;
 
 /** DTO for {@link Subject} */
-
+//TODO: refactor
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

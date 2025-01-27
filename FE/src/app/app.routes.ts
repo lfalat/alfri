@@ -78,6 +78,11 @@ export const routes: Routes = [
     canActivate: [tokenAppGuard, roleAppGuard],
     data: {role: AuthRole.ADMIN}
   },
+  {
+    path: 'keywords',
+    component: KeywordsComponent,
+    canActivate: [() => inject(AuthGuards).canActivate()]
+  },
   { path: 'profile', component: ProfileComponent },
   { path: '404', component: ErrorPageComponent },
   { path: 'grade-form', component: GradeFormComponent },

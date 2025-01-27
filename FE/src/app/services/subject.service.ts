@@ -98,4 +98,23 @@ export class SubjectService {
   public makeSubjectsPassingAndMarkPredictions(): Observable<SubjectPassingPrediction[]> {
     return this.http.get<SubjectPassingPrediction[]>(`${this.URL}/makePredictions`);
   }
+
+  public getSubjectsByKeywords(keywords: string[]): Observable<SubjectDto[]> {
+
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json'
+      })
+    };
+
+    const keywordsParam = keywords.join(',');
+
+    const urlParameters: HttpParams = new HttpParams()
+      .set('keywords', keywordsParam);
+
+    return this.http.get<SubjectDto[]>(`${this.URL}/subjects`, {
+      params: urlParameters,
+      headers: httpOptions.headers
+    });
+  }
 }

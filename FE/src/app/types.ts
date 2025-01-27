@@ -232,3 +232,8 @@ export enum AuthRole {
   ADMIN = 'ROLE_ADMIN',
   VISITOR = 'ROLE_VISITOR'
 }
+
+export interface KeywordDto {
+  keyword: string;
+  subjects: SubjectDto[];
+}

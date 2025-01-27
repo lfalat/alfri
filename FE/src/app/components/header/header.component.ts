@@ -125,4 +125,8 @@ export class HeaderComponent {
   navigateToAdminPage() {
     this.router.navigate(['admin-page']);
   }
+
+  navigateToKeywords() {
+    this.router.navigate(['keywords']);
+  }
 }
