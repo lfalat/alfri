@@ -1,5 +1,6 @@
 package sk.uniza.fri.alfri.controller;
 
+import java.util.Comparator;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import sk.uniza.fri.alfri.dto.questionnaire.AnsweredQuestionnaireDTO;
 import sk.uniza.fri.alfri.dto.questionnaire.QuestionnaireDTO;
 import sk.uniza.fri.alfri.dto.questionnaire.UserFormAnswersDTO;
+import sk.uniza.fri.alfri.entity.Question;
 import sk.uniza.fri.alfri.entity.Questionnaire;
 import sk.uniza.fri.alfri.entity.User;
 import sk.uniza.fri.alfri.exception.QuestionnaireNotFilledException;
@@ -62,6 +64,8 @@ public class FormController {
       throw new IllegalArgumentException(
           String.format("The questionnaire with the specified formId %d does not exist.", formId));
     }
+
+    questionnaire.get().getSections().forEach(s -> s.getQuestions().sort(Comparator.comparing(Question::getPositionInQuestionnaire)));
 
     return QuestionnaireMapper.INSTANCE.toDto(questionnaire.get());
   }
