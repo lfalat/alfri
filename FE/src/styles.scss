@@ -76,6 +76,7 @@ body {
 #main-main {
   flex-grow: 1;
   display: flex;
+  padding: 20px 0;
 }
 
 /* skeleton loading */
@@ -151,4 +152,14 @@ body {
   width: 100%;
   height: 100%;
   border-radius: 50%;
+}
+
+.step {
+  min-height: 400px; /* Set a minimum height for each step */
+}
+
+@media (max-width: 768px) {
+  .step {
+    min-height: 300px; /* Adjust height for smaller screens */
+  }
 }

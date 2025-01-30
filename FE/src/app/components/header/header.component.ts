@@ -1,13 +1,13 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { AsyncPipe, NgClass, NgIf } from '@angular/common';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
-import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatSidenav, MatSidenavModule } from '@angular/material/sidenav';
 import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
 import { UserService } from '@services/user.service';
 import { AuthService } from '@services/auth.service';
-import { Router } from '@angular/router';
+import { NavigationEnd, Router } from '@angular/router';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import {
   MatExpansionPanel,
@@ -16,6 +16,8 @@ import {
 } from '@angular/material/expansion';
 import { HasRoleDirective } from '@directives/auth.directive';
 import { AuthRole } from '@enums/auth-role';
+import { NotificationService } from '@services/notification.service';
+import { filter, Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-header',
@@ -40,14 +42,29 @@ import { AuthRole } from '@enums/auth-role';
     HasRoleDirective,
   ],
 })
-export class HeaderComponent {
-  protected readonly AuthRole = AuthRole;
+export class HeaderComponent implements OnInit {
+  readonly AuthRole = AuthRole;
+  @ViewChild('drawer') drawer!: MatSidenav;
+  routerSubscription!: Subscription;
+
 
   constructor(
     private readonly userService: UserService,
     private readonly authService: AuthService,
     private readonly router: Router,
+    private notificationService: NotificationService,
   ) {}
+
+  ngOnInit() {
+    // Subscribe to router events
+    this.routerSubscription = this.router.events
+      .pipe(filter((event) => event instanceof NavigationEnd)) // Listen only for NavigationEnd events
+      .subscribe(() => {
+        if (this.drawer.opened) {
+          this.drawer.close(); // Close the drawer if it's open
+        }
+      });
+  }
 
   loggedIn() {
     return this.userService.loggedIn();
@@ -101,5 +118,10 @@ export class HeaderComponent {
 
   navigateToKeywords() {
     this.router.navigate(['keywords']);
+  }
+
+  openDrawer() {
+    this.drawer.toggle();
+    this.notificationService.hideSnackbar();
   }
 }

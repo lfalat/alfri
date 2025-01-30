@@ -56,6 +56,8 @@ import { catchError, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { StepperSelectionEvent } from '@angular/cdk/stepper';
 import { Answer, AnsweredForm, Form, Option } from '../../types';
+import { GradeFormSection, QuestionTypes } from '@pages/grade-form/grade-form-types';
+import { SubjectService } from '@services/subject.service';
 
 @Component({
   selector: 'app-grade-form',
@@ -97,7 +99,8 @@ export class GradeFormComponent implements OnInit {
   formGroups: FormGroup[] = [];
   @ViewChild('radarChart') chart!: ElementRef<HTMLCanvasElement>;
   radarChart: Chart | undefined;
-  protected readonly GradeFormUtil = GradeFormUtil;
+  readonly GradeFormUtil = GradeFormUtil;
+  readonly QuestionTypes = QuestionTypes;
   existingAnswers: AnsweredForm | null = null;
   loading = true;
 
@@ -127,6 +130,7 @@ export class GradeFormComponent implements OnInit {
     private formService: FormService,
     private router: Router,
     private errorService: NotificationService,
+    private subjectService: SubjectService,
   ) {
     chartJs.register(
       CategoryScale,
@@ -178,7 +182,7 @@ export class GradeFormComponent implements OnInit {
 
       section.questions.forEach((question) => {
         // Default values
-        let defaultValue: any = question.answerType === 'NUMERIC' ? 0 : '';
+        let defaultValue = question.answerType === 'NUMERIC' ? 0 : '';
 
         // If existing answers exist, find the corresponding answer
         if (this.existingAnswers) {
@@ -296,13 +300,15 @@ export class GradeFormComponent implements OnInit {
   }
 
   nextSection($event: StepperSelectionEvent) {
-    if (
-      this.form.sections[$event.selectedIndex].sectionTitle ===
-      'Oblasti záujmov'
-    ) {
-      if (!this.radarChart) {
-        this.initializeRadarChart($event.selectedIndex);
-      }
+    switch ($event.selectedIndex) {
+      case GradeFormSection.AREAS_OF_INTEREST:
+        if (!this.radarChart) {
+          this.initializeRadarChart($event.selectedIndex);
+        }
+        break;
+      case GradeFormSection.MANDATORY_SUBJECT_GRADES:
+        this.loadMandatorySubjects();
+        break;
     }
   }
 
@@ -390,4 +396,28 @@ export class GradeFormComponent implements OnInit {
       });
     }
   }
+
+  private loadMandatorySubjects() {
+    const studyProgram = this.formGroups[GradeFormSection.BASIC_INFORMATION].get('question_odbor')?.value;
+    const year = this.formGroups[GradeFormSection.BASIC_INFORMATION].get('question_rocnik')?.value;
+    console.log(studyProgram, year);
+    this.subjectService.getMandatorySubjectsByStudyProgramIdAndYear(0, 100, studyProgram, year).subscribe({
+      next: (data) => {
+        console.log(data);
+        this.form.sections[GradeFormSection.MANDATORY_SUBJECT_GRADES].questions = data.content.map((subject) => ({
+          id: 0,
+          questionTitle: subject.name,
+          answerType: 'GRADE',
+          optional: false,
+          questionIdentifier: `subject_${subject.code}`,
+          positionInQuestionnaire: 0,
+          options: [],
+        }));
+      },
+      error: (error) => {
+        console.error('Error loading mandatory subjects:', error);
+      },
+    });
+  }
+
 }

@@ -12,7 +12,7 @@
       <mat-expansion-panel [class.mat-elevation-z0]="true">
         <mat-expansion-panel-header style="padding: 0 16px">
           <mat-panel-title>
-            <div class="d-flex align-items-center gap-2">
+            <div class="d-flex align-items-center gap-1">
               <mat-icon>book</mat-icon>
               Predmety
             </div>
@@ -24,7 +24,7 @@
           href="javascript:void(0)"
           (click)="navigateToSubjects()"
         >
-          <div class="d-flex align-items-center gap-2">
+          <div class="d-flex align-items-center gap-1">
             <mat-icon>list_view</mat-icon>
             Prehľad predmetov
           </div>
@@ -35,7 +35,7 @@
           href="javascript:void(0)"
           (click)="navigateToPrediction()"
         >
-          <div class="d-flex align-items-center gap-2">
+          <div class="d-flex align-items-center gap-1">
             <mat-icon>interests</mat-icon>
             Záujmy
           </div>
@@ -46,7 +46,7 @@
           href="javascript:void(0)"
           (click)="navigateToSubjectsClustering()"
         >
-          <div class="d-flex align-items-center gap-2">
+          <div class="d-flex align-items-center gap-1">
             <mat-icon>bubble_chart</mat-icon>
             Podobné predmety
           </div>
@@ -57,14 +57,14 @@
           href="javascript:void(0)"
           (click)="navigateToPassingPrediction()"
         >
-          <div class="d-flex align-items-center gap-2">
+          <div class="d-flex align-items-center gap-1">
             <mat-icon>check_circle</mat-icon>
             Predikcia absolvovania
           </div>
         </a>
 
         <!--        <a mat-list-item href="javascript:void(0)" (click)="navigateToSubjectChances()">-->
-        <!--          <div class="d-flex align-items-center gap-2">-->
+        <!--          <div class="d-flex align-items-center gap-1">-->
         <!--            <mat-icon>question_mark</mat-icon>-->
         <!--            Predikcia-->
         <!--          </div>-->
@@ -74,7 +74,7 @@
       <mat-expansion-panel [class.mat-elevation-z0]="true">
         <mat-expansion-panel-header style="padding: 0 16px">
           <mat-panel-title>
-            <div class="d-flex align-items-center gap-2">
+            <div class="d-flex align-items-center gap-1">
               <mat-icon>bar_chart</mat-icon>
               Analýzy a Reporty
             </div>
@@ -86,7 +86,7 @@
           href="javascript:void(0)"
           (click)="navigateToSubjectsReports()"
         >
-          <div class="d-flex align-items-center gap-2">
+          <div class="d-flex align-items-center gap-1">
             <mat-icon>summarize</mat-icon>
             Predmety podľa známok
           </div>
@@ -97,7 +97,7 @@
           href="javascript:void(0)"
           (click)="navigateToSubjectGradeCorrelation()"
         >
-          <div class="d-flex align-items-center gap-2">
+          <div class="d-flex align-items-center gap-1">
             <mat-icon>query_stats</mat-icon>
             Korelačná analýza známok
           </div>
@@ -110,21 +110,21 @@
         href="javascript:void(0)"
         (click)="navigateToAdminPage()"
       >
-        <div class="d-flex align-items-center gap-2">
+        <div class="d-flex align-items-center gap-1">
           <mat-icon>admin_panel_settings</mat-icon>
           Administrácia
         </div>
       </a>
 
       <a mat-list-item href="javascript:void(0)" (click)="navigateToProfile()">
-        <div class="d-flex align-items-center gap-2">
+        <div class="d-flex align-items-center gap-1">
           <mat-icon>account_circle</mat-icon>
           Profil
         </div>
       </a>
 
       <a mat-list-item href="javascript:void(0)" (click)="logOut()">
-        <div class="d-flex align-items-center gap-2">
+        <div class="d-flex align-items-center gap-1">
           <mat-icon>logout</mat-icon>
           Odhlásiť sa
         </div>
@@ -142,14 +142,12 @@
             type="button"
             aria-label="Toggle sidenav"
             mat-icon-button
-            (click)="drawer.toggle()"
+            (click)="openDrawer()"
           >
             <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
           </button>
 
-          <span role="button" class="curs" (click)="navigateToHome()"
-            >ALFRI</span
-          >
+          <span role="button" class="curs" (click)="navigateToHome()">ALFRI</span>
 
           <div class="d-none d-md-block">
             <button mat-button [matMenuTriggerFor]="subjects_menu">

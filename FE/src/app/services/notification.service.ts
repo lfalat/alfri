@@ -14,8 +14,8 @@ export class NotificationService {
   ): void {
     const config: MatSnackBarConfig = {
       duration,
-      panelClass: ['custom-snackbar', 'error-snackbar'],
-      horizontalPosition: 'start',
+      panelClass: ['error-snackbar'],
+      horizontalPosition: 'end',
       verticalPosition: 'top',
     };
 
@@ -29,8 +29,8 @@ export class NotificationService {
   ): void {
     const config: MatSnackBarConfig = {
       duration,
-      panelClass: ['custom-snackbar', 'success-snackbar'],
-      horizontalPosition: 'start',
+      panelClass: ['success-snackbar'],
+      horizontalPosition: 'end',
       verticalPosition: 'top',
     };
 
@@ -44,11 +44,15 @@ export class NotificationService {
   ): void {
     const config: MatSnackBarConfig = {
       duration,
-      panelClass: ['custom-snackbar', 'warning-snackbar'],
+      panelClass: ['warning-snackbar'],
       horizontalPosition: 'end',
       verticalPosition: 'top',
     };
 
     this.snackBar.open(message, action, config);
+  }
+
+  public hideSnackbar(): void {
+    this.snackBar.dismiss();
   }
 }

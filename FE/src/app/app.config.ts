@@ -9,11 +9,7 @@ import {
   withInterceptorsFromDi,
 } from '@angular/common/http';
 import { JwtModule } from '@auth0/angular-jwt';
-import { httpErrorInterceptor } from '@interceptors/http-error.interceptor';
-
-export const tokenGetter = () => {
-  return localStorage.getItem('access_token');
-};
+import { tokenGetter } from '@interceptors/auth.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -33,7 +29,6 @@ export const appConfig: ApplicationConfig = {
     ),
     provideHttpClient(
       withInterceptorsFromDi(),
-      withInterceptors([httpErrorInterceptor]),
     ),
   ],
 };

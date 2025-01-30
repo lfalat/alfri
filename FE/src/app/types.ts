@@ -124,7 +124,8 @@ export interface Page<T> {
 
 // Questionnaire types
 export interface Option {
-  questionOption: string;
+  questionOption: string; // The label to be displayed
+  questionValue: string; // The value to be sent to the backend
 }
 
 export interface Question {

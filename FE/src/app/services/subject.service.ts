@@ -41,6 +41,30 @@ export class SubjectService {
     });
   }
 
+  public getMandatorySubjectsByStudyProgramIdAndYear(
+    pageNumber: number,
+    pageSize: number,
+    studyProgramId: number,
+    studyYear: number,
+  ) {
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+      }),
+    };
+
+    let urlParameters: HttpParams = new HttpParams();
+    urlParameters = urlParameters
+      .append('page', pageNumber)
+      .append('size', pageSize)
+      .append('search', `id.studyProgramId:${studyProgramId},recommendedYear<${studyYear - 1},obligation:Pov.`);
+
+    return this.http.get<Page<SubjectDto>>(`${this.URL}`, {
+      params: urlParameters,
+      headers: httpOptions.headers,
+    });
+  }
+
   public getSubjectsWithFocusByStudyProgramId(
     studyProgramId: number,
     pageNumber: number,

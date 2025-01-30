@@ -148,7 +148,7 @@ export class RegistrationComponent implements OnInit, OnDestroy {
             this.jwtService.saveToken(token);
 
             this.router.navigate(['/home']).then(() => {
-              this.errorService.showError('Registrácia prebehla úspešne.');
+              this.errorService.showSuccess('Registrácia prebehla úspešne.');
             });
           },
           error: () => {
