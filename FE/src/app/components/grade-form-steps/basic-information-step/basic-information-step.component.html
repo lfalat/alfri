@@ -1,0 +1,26 @@
+<form [formGroup]="formGroup">
+  <ng-template matStepLabel>{{ section.sectionTitle }}</ng-template>
+  <div class="row">
+    <p>{{ section.sectionDescription }}</p>
+    <div class="row pe-0">
+      <app-form-question
+        class="col-12 col-md-6 col-lg-4 pe-0"
+        *ngFor="let question of section.questions"
+        [question]="question"
+        [formGroup]="formGroup"
+      ></app-form-question>
+    </div>
+  </div>
+  <div>
+    <!--      <button mat-button matStepperPrevious *ngIf="i > 0">Späť</button>-->
+    <button mat-button matStepperNext [disabled]="formGroup.invalid">Pokračovať</button>
+    <!--      <button-->
+    <!--        mat-button-->
+    <!--        type="submit"-->
+    <!--        (click)="onSubmit()"-->
+    <!--        *ngIf="i === form.sections.length - 1"-->
+    <!--      >-->
+    <!--        Uložiť-->
+    <!--      </button>-->
+  </div>
+</form>

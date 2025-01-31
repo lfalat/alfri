@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, signal, ViewChild } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -6,17 +6,18 @@ import {
   Validators,
 } from '@angular/forms';
 import {
-  MatStep,
+  MatStep, MatStepContent,
   MatStepLabel,
   MatStepper,
   MatStepperNext,
-  MatStepperPrevious,
+  MatStepperPrevious, StepperOrientation,
 } from '@angular/material/stepper';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { MatButton } from '@angular/material/button';
 import { MatError, MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import {
+  AsyncPipe,
   KeyValuePipe,
   NgClass,
   NgForOf,
@@ -52,12 +53,20 @@ import {
   Title,
   Tooltip,
 } from 'chart.js';
-import { catchError, of } from 'rxjs';
+import { catchError, map, Observable, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { StepperSelectionEvent } from '@angular/cdk/stepper';
 import { Answer, AnsweredForm, Form, Option } from '../../types';
 import { GradeFormSection, QuestionTypes } from '@pages/grade-form/grade-form-types';
 import { SubjectService } from '@services/subject.service';
+import { BreakpointObserver } from '@angular/cdk/layout';
+import { FormQuestionComponent } from '@components/form-question/form-question.component';
+import {
+  BasicInformationStepComponent
+} from '@components/grade-form-steps/basic-information-step/basic-information-step.component';
+import {
+  MandatorySubjectsStepComponent
+} from '@components/grade-form-steps/mandatory-subjects-step/mandatory-subjects-step.component';
 
 @Component({
   selector: 'app-grade-form',
@@ -90,6 +99,11 @@ import { SubjectService } from '@services/subject.service';
     MatOption,
     BaseChartDirective,
     NgClass,
+    AsyncPipe,
+    FormQuestionComponent,
+    BasicInformationStepComponent,
+    MandatorySubjectsStepComponent,
+    MatStepContent,
   ],
   templateUrl: './grade-form.component.html',
   styleUrl: './grade-form.component.scss',
@@ -103,6 +117,8 @@ export class GradeFormComponent implements OnInit {
   readonly QuestionTypes = QuestionTypes;
   existingAnswers: AnsweredForm | null = null;
   loading = true;
+  stepperOrientation: Observable<StepperOrientation>;
+  activeStep = signal(0);
 
   private colors = [
     'rgba(255, 99, 132, 0.8)',
@@ -131,6 +147,7 @@ export class GradeFormComponent implements OnInit {
     private router: Router,
     private errorService: NotificationService,
     private subjectService: SubjectService,
+    private breakpointObserver: BreakpointObserver,
   ) {
     chartJs.register(
       CategoryScale,
@@ -147,6 +164,10 @@ export class GradeFormComponent implements OnInit {
       BarController,
       BarElement,
     );
+
+    this.stepperOrientation = this.breakpointObserver
+      .observe('(min-width: 768px)')
+      .pipe(map(({ matches }) => (matches ? 'horizontal' : 'vertical')));
   }
 
   ngOnInit(): void {
@@ -160,7 +181,7 @@ export class GradeFormComponent implements OnInit {
           return this.formService.getExistingFormAnswers(USER_FORM_ID).pipe(
             catchError(() => {
               // Handle error when no existing answers are found
-              return of(null); // Emit `null` if there's an error
+              return of(null);
             }),
           );
         }),
@@ -169,11 +190,20 @@ export class GradeFormComponent implements OnInit {
         next: (answers) => {
           this.existingAnswers = answers;
           this.createFormGroups();
+          console.log(this.formGroups[0])
+          this.loading = false;
         },
         error: (error) => {
+          this.loading = false;
           console.error('Error loading form data:', error);
         },
       });
+  }
+
+  onStepChange(event: StepperSelectionEvent) {
+    const selectedIndex = event.selectedIndex;
+    console.log(selectedIndex);
+    this.activeStep.set(selectedIndex);
   }
 
   createFormGroups() {
@@ -239,8 +269,6 @@ export class GradeFormComponent implements OnInit {
 
       return this.fb.group(group);
     });
-
-    this.loading = false;
   }
 
   onSubmit() {
@@ -398,26 +426,38 @@ export class GradeFormComponent implements OnInit {
   }
 
   private loadMandatorySubjects() {
-    const studyProgram = this.formGroups[GradeFormSection.BASIC_INFORMATION].get('question_odbor')?.value;
-    const year = this.formGroups[GradeFormSection.BASIC_INFORMATION].get('question_rocnik')?.value;
-    console.log(studyProgram, year);
-    this.subjectService.getMandatorySubjectsByStudyProgramIdAndYear(0, 100, studyProgram, year).subscribe({
-      next: (data) => {
-        console.log(data);
-        this.form.sections[GradeFormSection.MANDATORY_SUBJECT_GRADES].questions = data.content.map((subject) => ({
-          id: 0,
-          questionTitle: subject.name,
-          answerType: 'GRADE',
-          optional: false,
-          questionIdentifier: `subject_${subject.code}`,
-          positionInQuestionnaire: 0,
-          options: [],
-        }));
-      },
-      error: (error) => {
-        console.error('Error loading mandatory subjects:', error);
-      },
-    });
+    const studyProgram =
+      this.formGroups[GradeFormSection.BASIC_INFORMATION].get(
+        'question_odbor',
+      )?.value;
+    const year =
+      this.formGroups[GradeFormSection.BASIC_INFORMATION].get(
+        'question_rocnik',
+      )?.value;
+    this.subjectService
+      .getMandatorySubjectsByStudyProgramIdAndYear(0, 100, studyProgram, year)
+      .subscribe({
+        next: (data) => {
+          console.log(data);
+          this.form.sections[
+            GradeFormSection.MANDATORY_SUBJECT_GRADES
+          ].questions = data.content.map((subject) => ({
+            id: 0,
+            questionTitle: subject.name,
+            answerType: 'GRADE',
+            optional: false,
+            questionIdentifier: `subject_${subject.code}`,
+            positionInQuestionnaire: 0,
+            options: [],
+          }));
+        },
+        error: (error) => {
+          console.error('Error loading mandatory subjects:', error);
+        },
+      });
   }
 
+  test() {
+    console.log(this.formGroups[0])
+  }
 }

@@ -1,0 +1,128 @@
+<div [ngSwitch]="questionComputed().answerType">
+  <div *ngSwitchCase="QuestionTypes.TEXT">
+    <mat-form-field appearance="fill" style="width: 100%">
+      <mat-label>{{ questionComputed().questionTitle }}</mat-label>
+      <input
+        matInput
+        [formControl]="control"
+        [required]="!questionComputed().optional"
+      />
+      <mat-error
+        *ngIf="
+          control.hasError('required') && control?.invalid && control?.touched
+        "
+      >
+        {{ questionComputed().questionTitle }} is required
+      </mat-error>
+    </mat-form-field>
+  </div>
+  <div *ngSwitchCase="QuestionTypes.NUMERIC">
+    <p>
+      {{ questionComputed().questionTitle }}:
+      {{ formGroup.get(questionComputed().questionIdentifier)?.value }}
+    </p>
+    <mat-slider min="0" max="10" step="1" style="width: 100%">
+      <input
+        matSliderThumb
+        [formControl]="control"
+        [required]="!questionComputed().optional"
+      />
+    </mat-slider>
+    <mat-error
+      *ngIf="
+        control.hasError('required') && control?.invalid && control?.touched
+      "
+    >
+      {{ questionComputed().questionTitle }} is required
+    </mat-error>
+  </div>
+  <div *ngSwitchCase="QuestionTypes.RADIO">
+    <p>{{ questionComputed().questionTitle }}</p>
+    <mat-radio-group
+      [formControl]="control"
+      [required]="!questionComputed().optional"
+    >
+      <mat-radio-button
+        *ngFor="let option of questionComputed().options"
+        [value]="option.questionOption"
+      >
+        {{ option.questionOption }}
+      </mat-radio-button>
+    </mat-radio-group>
+    <mat-error
+      *ngIf="
+        control.hasError('required') && control?.invalid && control?.touched
+      "
+    >
+      {{ questionComputed().questionTitle }} is required
+    </mat-error>
+  </div>
+  <div *ngSwitchCase="QuestionTypes.CHECKBOX">
+    <h3>{{ questionComputed().questionTitle }}</h3>
+    <mat-list>
+      <mat-list-item
+        *ngFor="
+          let option of questionComputed().options;
+          let optionIndex = index
+        "
+      >
+        <mat-checkbox [formControl]="control">
+          {{ option.questionOption }}
+        </mat-checkbox>
+      </mat-list-item>
+    </mat-list>
+    <mat-error
+      *ngIf="
+        control.hasError('required') && control?.invalid && control?.touched
+      "
+    >
+      {{ questionComputed().questionTitle }} is required
+    </mat-error>
+  </div>
+  <div *ngSwitchCase="QuestionTypes.DROPDOWN">
+    <mat-form-field appearance="fill" style="width: 100%">
+      <mat-label>{{ questionComputed().questionTitle }}</mat-label>
+      <mat-select
+        [formControl]="control"
+        [required]="!questionComputed().optional"
+      >
+        <mat-option
+          *ngFor="let option of questionComputed().options"
+          [value]="option.questionValue"
+        >
+          {{ option.questionOption }}
+        </mat-option>
+      </mat-select>
+      <mat-error
+        *ngIf="
+          control.hasError('required') && control?.invalid && control?.touched
+        "
+      >
+        {{ questionComputed().questionTitle }} is required
+      </mat-error>
+    </mat-form-field>
+  </div>
+  <div *ngSwitchCase="QuestionTypes.GRADE">
+    <mat-form-field appearance="fill" style="width: 100%">
+      <mat-label>{{ questionComputed().questionTitle }}</mat-label>
+      <mat-select
+        [formControl]="control"
+        [required]="!questionComputed().optional"
+      >
+        <mat-option
+          *ngFor="let option of GradeFormUtil.GRADES"
+          [value]="option"
+        >
+          {{ option }}
+        </mat-option>
+      </mat-select>
+      <mat-error
+        *ngIf="
+          control.hasError('required') && control?.invalid && control?.touched
+        "
+      >
+        {{ questionComputed().questionTitle }} is required
+      </mat-error>
+    </mat-form-field>
+  </div>
+</div>
