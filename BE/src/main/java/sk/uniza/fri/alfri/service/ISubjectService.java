@@ -30,5 +30,6 @@ public interface ISubjectService {
 
   List<String> makePassingChancePrediction(String userEmail);
 
+
   List<String> makePassingMarkPrediction(String userEmail);
 }

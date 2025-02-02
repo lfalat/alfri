@@ -337,7 +337,7 @@ public class SubjectService implements ISubjectService {
         .toList();
   }
 
-  private List<Integer> getMarksRequiredToPredictSubjectFromQuestionnaire(String subjectName,
+    private List<Integer> getMarksRequiredToPredictSubjectFromQuestionnaire(String subjectName,
       User user) {
     log.info("Getting related subjects for subject {}", subjectName);
     switch (subjectName) {

@@ -1,5 +1,6 @@
 package sk.uniza.fri.alfri.repository;
 
+import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -35,4 +36,9 @@ public class StudyProgramSubjectRepositoryImpl implements StudyProgramSubjectRep
   public Optional<StudyProgramSubject> findByIdSubjectId(Integer id) {
     return studyProgramSubjectSpringDataRepository.findByIdSubjectId(id);
   }
+
+    @Override
+    public List<StudyProgramSubject> findMandatorySubjects(Long studyProgramId, int year) {
+        return this.studyProgramSubjectSpringDataRepository.findAllMandatorySubjectsForStudyProgramAndYear(studyProgramId, year);
+    }
 }

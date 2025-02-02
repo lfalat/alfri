@@ -1,5 +1,6 @@
 package sk.uniza.fri.alfri.repository;
 
+import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
 import sk.uniza.fri.alfri.common.pagitation.PageDefinition;
@@ -11,4 +12,6 @@ public interface StudyProgramSubjectRepository {
       PageDefinition pageDefinition);
 
   Optional<StudyProgramSubject> findByIdSubjectId(Integer id);
+
+  List<StudyProgramSubject> findMandatorySubjects(Long studyProgramId, int year);
 }

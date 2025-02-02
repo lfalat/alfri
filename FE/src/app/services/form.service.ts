@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { environment } from '../../environments/environment';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { AnsweredForm, Form, UserFormAnswers } from '../types';
+import { AnsweredForm, Form, Question, UserFormAnswers } from '../types';
 
 @Injectable({
   providedIn: 'root',
@@ -55,5 +55,19 @@ export class FormService {
     return this.http.get<AnsweredForm>(
       `${this.URL}/get-user-answers/${formId}`,
     );
+  }
+
+  getMandatorySubjectsByStudyProgramIdAndYear(studyProgram: number, year: number) {
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+      }),
+    };
+
+    return this.http.get<Question[]>(
+      `${this.URL}/get-mandatory-subjects/${studyProgram}/${year - 1}`,
+      httpOptions,
+    );
+
   }
 }

@@ -23,7 +23,6 @@ export const USER_FORM_ID = 69;
 export class HomeComponent {
   protected readonly AuthRole = AuthRole;
 
-  constructor(private notificationService: NotificationService) {
-    this.notificationService.showSuccess('Welcome to the home page', 'X', 3000000);
+  constructor() {
   }
 }

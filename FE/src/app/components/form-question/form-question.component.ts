@@ -45,10 +45,12 @@ export class FormQuestionComponent {
   protected readonly QuestionTypes = QuestionTypes;
   protected readonly GradeFormUtil = GradeFormUtil;
 
-  // @Input() question!: Question;
   @Input() formGroup!: FormGroup;
+  @Input({ required: true, transform: (q: Question) => q }) set question(value: Question) {
+    this._question.set(value);
+  }
 
-  private _question = signal<Question>({
+  _question = signal<Question>({
     id: 0,
     questionTitle: '',
     answerType: 'TEXT',
@@ -57,20 +59,32 @@ export class FormQuestionComponent {
     positionInQuestionnaire: 0,
     options: [],
   });
-  @Input({ required: true, transform: (q: Question) => q }) set question(value: Question) {
-    this._question.set(value);
-  }
 
   questionComputed = computed(() => this._question());
 
+  // Reactive form control that updates when the question changes
+  control = computed(() => {
+    const question = this.questionComputed();
+    return this.formGroup.get(question.questionIdentifier) as FormControl;
+  });
+
+  // Reactive form controls for checkboxes
+  checkboxControls = computed(() => {
+    const question = this.questionComputed();
+    if (question.answerType === QuestionTypes.CHECKBOX) {
+      return question.options.map((_, index) =>
+        this.formGroup.get(`${question.questionIdentifier}${index}`) as FormControl
+      );
+    }
+    return [];
+  });
+
   constructor() {
-    effect(() => {
-      console.log('Question changed:', this.questionComputed());
-    });
   }
 
-
-  get control(): FormControl {
-    return this.formGroup.get(this.questionComputed().questionIdentifier) as FormControl;
+  ngOnInit() {
+    this.formGroup.valueChanges.subscribe((value) => {
+      console.log(value);
+    });
   }
 }

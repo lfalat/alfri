@@ -1,4 +1,4 @@
-<form [formGroup]="formGroup">
+<form [formGroup]="currentFormGroup">
   <ng-template matStepLabel>{{ section.sectionTitle }}</ng-template>
   <div class="row">
     <p>{{ section.sectionDescription }}</p>
@@ -7,11 +7,18 @@
         class="col-12 col-md-6 col-lg-4 pe-0"
         *ngFor="let question of section.questions"
         [question]="question"
-        [formGroup]="formGroup"
+        [formGroup]="currentFormGroup"
       ></app-form-question>
     </div>
   </div>
   <div>
-    <button mat-button matStepperNext [disabled]="formGroup.invalid">Pokračovať</button>
+    <button mat-button matStepperPrevious>Späť</button>
+    <button
+      mat-button
+      type="submit"
+      (click)="submit()"
+    >
+      Uložiť
+    </button>
   </div>
 </form>

@@ -1,17 +1,16 @@
-import {
-  AfterViewInit,
-  Component,
-  ElementRef,
-  Input,
-  OnInit,
-  ViewChild,
-} from '@angular/core';
+import { Component, effect, ElementRef, Input, Signal, ViewChild } from '@angular/core';
+import { FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { Section } from '../../../types';
+import { MatStepLabel, MatStepperNext, MatStepperPrevious } from '@angular/material/stepper';
+import { MatButton } from '@angular/material/button';
+import { FormQuestionComponent } from '@components/form-question/form-question.component';
+import { NgForOf } from '@angular/common';
 import {
   BarController,
   BarElement,
   CategoryScale,
-  Chart as chartJs,
   Chart,
+  Chart as chartJs,
   ChartDataset,
   Filler,
   Legend,
@@ -24,64 +23,29 @@ import {
   Title,
   Tooltip,
 } from 'chart.js';
-import { BaseChartDirective } from 'ng2-charts';
-import {
-  MatCell,
-  MatCellDef,
-  MatColumnDef,
-  MatHeaderCell,
-  MatHeaderCellDef,
-  MatHeaderRow,
-  MatHeaderRowDef,
-  MatRow,
-  MatRowDef,
-  MatTable, MatTableDataSource,
-} from '@angular/material/table';
-import { NgForOf, NgIf } from '@angular/common';
-import { MatChip, MatChipSet } from '@angular/material/chips';
-import { AnsweredForm } from '../../types';
-import { MatPaginator } from '@angular/material/paginator';
 
 @Component({
-  selector: 'app-user-form-results',
+  selector: 'app-focus-step',
   standalone: true,
   imports: [
-    BaseChartDirective,
-    MatCell,
+    FormsModule,
+    ReactiveFormsModule,
+    MatStepLabel,
+    MatButton,
+    MatStepperNext,
+    MatStepperPrevious,
+    FormQuestionComponent,
     NgForOf,
-    MatChip,
-    MatChipSet,
-    MatRow,
-    MatRowDef,
-    MatHeaderRow,
-    MatCellDef,
-    MatHeaderCell,
-    MatColumnDef,
-    MatTable,
-    MatHeaderRowDef,
-    MatHeaderCellDef,
-    NgIf,
-    MatPaginator,
   ],
-  templateUrl: './user-form-results.component.html',
-  styleUrl: './user-form-results.component.scss',
+  templateUrl: './focus-step.component.html',
+  styleUrl: './focus-step.component.scss',
 })
-export class UserFormResultsComponent implements OnInit, AfterViewInit {
-  @Input()
-  existingAnswers: AnsweredForm | undefined;
+export class FocusStepComponent {
+  @Input() section!: Section;
+  @Input() formGroup!: FormGroup;
+  @Input() activeStep!: Signal<number>;
   @ViewChild('radarChart') chart!: ElementRef<HTMLCanvasElement>;
   radarChart: Chart | undefined;
-
-  // Data source for the table
-  dataSource: MatTableDataSource<{ subjectName: string; grade: string }> = new MatTableDataSource();
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
-
-  displayedColumns: string[] = ['nazovPredmetu', 'znamka'];
-  chartDatasets: ChartDataset[] = [
-    {
-      data: [],
-    },
-  ];
   private colors = [
     'rgba(255, 99, 132, 0.8)',
     'rgba(54, 162, 235, 0.8)',
@@ -97,7 +61,26 @@ export class UserFormResultsComponent implements OnInit, AfterViewInit {
     'rgba(0, 0, 255, 0.8)',
   ];
 
+  chartDatasets: ChartDataset[] = [
+    {
+      data: [],
+    },
+  ];
+
+
   constructor() {
+    effect(
+      () => {
+        if (this.activeStep() !== 2) {
+          return;
+        }
+
+        if (!this.radarChart) {
+          this.initializeRadarChart();
+        }
+      },
+    );
+
     chartJs.register(
       CategoryScale,
       LinearScale,
@@ -115,31 +98,12 @@ export class UserFormResultsComponent implements OnInit, AfterViewInit {
     );
   }
 
-  ngOnInit(): void {
-    if (!this.existingAnswers) {
-      return;
-    }
-    this.dataSource.data = this.existingAnswers.sections[1].questions.map(
-      (question) => {
-        return {
-          subjectName: question.questionTitle,
-          grade: question.answers[0].texts[0].textOfAnswer,
-        };
-      },
-    );
-  }
-
-  ngAfterViewInit(): void {
-    this.initializeRadarChart();
-    this.dataSource.paginator = this.paginator;
-  }
-
   initializeRadarChart(): void {
     const canvas = this.chart.nativeElement;
     const value = canvas.getContext('2d');
 
     if (value) {
-      const focusLabelMapping: Record<string, string> = {
+      const focusLabelMapping: { [key: string]: string } = {
         question_matematika_focus: 'Matematika',
         question_logika_focus: 'Logika',
         question_programovanie_focus: 'Programovanie',
@@ -161,7 +125,7 @@ export class UserFormResultsComponent implements OnInit, AfterViewInit {
           datasets: this.chartDatasets,
         },
         options: {
-          responsive: true,
+          responsive: false,
           scales: {
             r: {
               angleLines: {
@@ -197,29 +161,25 @@ export class UserFormResultsComponent implements OnInit, AfterViewInit {
         data: [],
       };
 
-      const focusesFormData: Record<string, string>[] | undefined =
-        this.existingAnswers?.sections[2].questions.map((question) => {
-          const focuses: Record<string, string> = {};
-          focuses[question.questionIdentifier] =
-            question.answers[0].texts[0].textOfAnswer;
-          return focuses;
-        });
-
-      if (focusesFormData) {
-        // Merge all objects in the array into one
-        const mergedFocusesFormData = Object.assign({}, ...focusesFormData);
-
-        this.chartDatasets[0].data = Object.values(
-          Object.fromEntries(
-            Object.keys(focusLabelMapping).map((key) => [
-              key,
-              mergedFocusesFormData[key],
-            ]),
-          ),
-        ) as number[];
-      }
+      this.chartDatasets[0].data = Object.values(
+        Object.fromEntries(
+          Object.keys(focusLabelMapping).map((key) => [
+            key,
+            this.formGroup.value[key],
+          ]),
+        ),
+      ) as number[];
 
       this.radarChart.update();
+
+      this.formGroup.valueChanges.pipe().subscribe((data) => {
+        const sortedData = Object.fromEntries(
+          Object.keys(focusLabelMapping).map((key) => [key, data[key]]),
+        );
+
+        this.chartDatasets[0].data = Object.values(sortedData) as number[];
+        this.radarChart?.update();
+      });
     }
   }
 }

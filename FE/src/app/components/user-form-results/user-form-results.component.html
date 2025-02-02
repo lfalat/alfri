@@ -19,6 +19,7 @@
       <table
         mat-table
         [dataSource]="dataSource"
+
         class="mat-table striped-table"
       >
         <ng-container matColumnDef="nazovPredmetu">
@@ -38,6 +39,11 @@
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
         <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
       </table>
+      <mat-paginator
+        [pageSizeOptions]="[5, 10, 20]"
+        [pageSize]="5"
+        showFirstLastButtons
+      ></mat-paginator>
     </div>
   </li>
   <li class="list-group-item">
