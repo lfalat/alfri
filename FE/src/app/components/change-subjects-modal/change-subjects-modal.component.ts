@@ -107,26 +107,16 @@ export class ChangeSubjectsModalComponent implements OnInit {
     });
   }
 
-  onAssignedSubjectToggle(subject: SubjectDto, event: MatCheckboxChange): void {
+  onSubjectToggle(subject: SubjectDto, event: MatCheckboxChange): void {
     const checked = event.checked;
     if (!checked) {
       this.selectedTeacherSubjects = this.selectedTeacherSubjects.filter(
         (s) => s.code !== subject.code
       );
       this.availableSubjects.push(subject);
+      return;
     }
-  }
-
-  onUnassignedSubjectToggle(subject: SubjectDto, event: MatCheckboxChange): void {
-    const checked = event.checked;
-    if (checked) {
-      this.selectedTeacherSubjects.push(subject);
-    } else {
-      this.selectedTeacherSubjects = this.selectedTeacherSubjects.filter(
-        (s) => s.code !== subject.code
-      );
-      this.availableSubjects.push(subject);
-    }
+    this.selectedTeacherSubjects.push(subject);
   }
 
   saveTeacherSubjects(): void {

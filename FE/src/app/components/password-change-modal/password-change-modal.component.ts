@@ -4,7 +4,7 @@ import { MAT_DIALOG_DATA, MatDialogActions, MatDialogRef, MatDialogTitle } from 
 import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { MatButton } from '@angular/material/button';
-import { PasswordPair } from '../../types';
+import { PasswordPair, UserDto } from '../../types';
 import { UserService } from '@services/user.service';
 
 @Component({
@@ -28,7 +28,7 @@ export class PasswordChangeModalComponent {
   constructor(
     private fb: FormBuilder,
     private dialogRef: MatDialogRef<PasswordChangeModalComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: PasswordPair,
+    @Inject(MAT_DIALOG_DATA) public data: {user: UserDto},
     private userService: UserService
   ) {
     this.passwordForm = this.fb.group({

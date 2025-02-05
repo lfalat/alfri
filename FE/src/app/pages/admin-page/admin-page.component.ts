@@ -18,17 +18,26 @@ import { AuthRole } from '@enums/auth-role';
 import { HasRoleDirective } from '@directives/auth.directive';
 import { NotificationService } from '@services/notification.service';
 import { AuthService } from '@services/auth.service';
+import {
+  MatCell,
+  MatCellDef,
+  MatColumnDef,
+  MatHeaderCell,
+  MatHeaderCellDef,
+  MatHeaderRow, MatHeaderRowDef, MatRow, MatRowDef, MatTable
+} from '@angular/material/table';
 
 @Component({
   selector: 'app-admin',
   templateUrl: './admin-page.component.html',
   styleUrls: ['./admin-page.component.scss'],
-  imports: [NgForOf, NgIf, FormsModule, MatMenu, MatMenuItem, MatIconButton, MatMenuTrigger, MatIcon, HasRoleDirective],
+  imports: [NgForOf, NgIf, FormsModule, MatMenu, MatMenuItem, MatIconButton, MatMenuTrigger, MatIcon, HasRoleDirective, MatColumnDef, MatHeaderCell, MatCell, MatCellDef, MatHeaderCellDef, MatHeaderRow, MatRow, MatRowDef, MatHeaderRowDef, MatTable],
   standalone: true,
 })
 export class AdminPageComponent implements OnInit {
   users: UserDto[] = [];
   availableRoles: Role[] = [];
+  displayedColumns: string[] = ['firstName', 'lastName', 'email', 'roles', 'options'];
   protected readonly AuthRole = AuthRole;
 
   constructor(
@@ -114,7 +123,8 @@ export class AdminPageComponent implements OnInit {
   openChangePasswordModal(user: UserDto) {
     const dialogRef = this.dialog.open(PasswordChangeModalComponent, {
       width: '400px',
-      disableClose: false
+      disableClose: false,
+      data: {user: user}
     });
 
     dialogRef.afterClosed().subscribe((result: PasswordPair) => {

@@ -23,7 +23,7 @@
     <ng-container matColumnDef="assigned">
       <th mat-header-cell *matHeaderCellDef>Priradenie</th>
       <td mat-cell *matCellDef="let subject">
-        <mat-checkbox [checked]="true" (change)="onAssignedSubjectToggle(subject, $event)">
+        <mat-checkbox [checked]="true" (change)="onSubjectToggle(subject, $event)">
         </mat-checkbox>
       </td>
     </ng-container>
@@ -33,8 +33,7 @@
   </table>
 
   <h3>Ostatné predmety</h3>
-  <table mat-table>
-
+  <table mat-table [dataSource]="availableSubjects">
     <ng-container matColumnDef="name">
       <th mat-header-cell *matHeaderCellDef>Predmet</th>
       <td mat-cell *matCellDef="let subject">{{ subject.name }}</td>
@@ -43,7 +42,7 @@
     <ng-container matColumnDef="assigned">
       <th mat-header-cell *matHeaderCellDef>Priradenie</th>
       <td mat-cell *matCellDef="let subject">
-        <mat-checkbox [checked]="isSubjectAssigned(subject)" (change)="onAssignedSubjectToggle(subject, $event)">
+        <mat-checkbox [checked]="isSubjectAssigned(subject)" (change)="onSubjectToggle(subject, $event)">
         </mat-checkbox>
       </td>
     </ng-container>
