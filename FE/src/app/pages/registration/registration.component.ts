@@ -47,17 +47,16 @@ import { RegisterUserDto, Role } from '../../types';
 export class RegistrationComponent implements OnInit, OnDestroy {
   registerForm: FormGroup;
   roles: Role[] = [];
-  public isError = false;
-  public errorText = '';
-  private readonly destroyed$: ReplaySubject<void> = new ReplaySubject(1);
+  readonly destroyed$: ReplaySubject<void> = new ReplaySubject(1);
 
   constructor(
-    private readonly formBuilder: FormBuilder,
-    private readonly router: Router,
-    private readonly authService: AuthService,
-    private readonly errorService: NotificationService,
-    private readonly userService: UserService,
-    private readonly jwtService: JwtService,
+    private formBuilder: FormBuilder,
+    private router: Router,
+    private authService: AuthService,
+    private errorService: NotificationService,
+    private userService: UserService,
+    private jwtService: JwtService,
+    private notificationService: NotificationService
   ) {
     const formOptions: AbstractControlOptions = {
       validators: [this.mustMatch('password', 'confirmPassword')],
@@ -155,24 +154,19 @@ export class RegistrationComponent implements OnInit, OnDestroy {
         });
       },
       error: (error: HttpErrorResponse) => {
-        this.isError = true;
         switch (error.status) {
           case 409:
-            this.errorText = 'Používateľ už existuje.';
+            this.notificationService.showError('Používateľ už existuje.');
             break;
           case 404:
-            this.errorText = error.error;
+            this.notificationService.showError(error.error);
             break;
           default:
-            this.errorText = 'Neznáma chyba.';
+            this.notificationService.showError('Neznáma chyba. Kontaktujte prosím administrátora.');
             break;
         }
       },
     });
-  }
-
-  hideError() {
-    this.isError = false;
   }
 
   redirectToLogin() {

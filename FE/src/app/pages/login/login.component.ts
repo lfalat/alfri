@@ -16,6 +16,7 @@ import { AuthService } from '@services/auth.service';
 import { JwtService } from '@services/jwt.service';
 import { Router } from '@angular/router';
 import { LoginUserDto } from '../../types';
+import { NotificationService } from '@services/notification.service';
 
 @Component({
   selector: 'app-login-form',
@@ -38,14 +39,13 @@ import { LoginUserDto } from '../../types';
 })
 export class LoginComponent {
   loginForm: FormGroup;
-  public isError = false;
-  public errorText = '';
 
   constructor(
     private formBuilder: FormBuilder,
     private authService: AuthService,
     private jwtService: JwtService,
     private router: Router,
+    private notificationService: NotificationService
   ) {
     this.loginForm = this.formBuilder.group({
       email: ['', [Validators.required, Validators.email]],
@@ -71,16 +71,15 @@ export class LoginComponent {
         this.router.navigate(['/home']);
       },
       error: (error) => {
-        this.isError = true;
         switch (error.status) {
           case 409:
-            this.errorText = 'Používateľ už existuje.';
+            this.notificationService.showError('Používateľ už existuje.');
             break;
           case 401:
-            this.errorText = 'Boli zadané nesprávne údaje.';
+            this.notificationService.showError('Boli zadané nesprávne údaje.');
             break;
           default:
-            this.errorText = 'Neznáma chyba.';
+            this.notificationService.showError('Neznáma chyba. Kontaktujte prosím administrátora.');
             break;
         }
       },

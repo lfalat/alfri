@@ -23,19 +23,6 @@
           (ngSubmit)="onSubmit()"
           class="d-flex flex-column row-gap-2 w-100 m-1"
         >
-          <div
-            [class.invisible]="!isError"
-            class="alert alert-danger alert-dismissible fade show"
-            role="alert"
-          >
-            {{ errorText }}
-            <button
-              type="button"
-              class="btn-close"
-              aria-label="Close"
-              (click)="hideError()"
-            ></button>
-          </div>
           <mat-form-field appearance="outline">
             <mat-label>Meno</mat-label>
             <input matInput formControlName="name" required />
