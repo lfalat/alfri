@@ -76,7 +76,6 @@ export class RegistrationComponent implements OnInit, OnDestroy {
           ],
         ],
         confirmPassword: ['', [Validators.required]],
-        roleId: ['', Validators.required],
       },
       formOptions,
     );
@@ -128,7 +127,6 @@ export class RegistrationComponent implements OnInit, OnDestroy {
     const userData: RegisterUserDto = {
       firstName: this.registerForm.value.name,
       lastName: this.registerForm.value.surname,
-      rolesIds: [this.registerForm.value.roleId],
       email: this.registerForm.value.email,
       password: this.registerForm.value.password,
     };

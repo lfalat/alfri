@@ -14,6 +14,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import sk.uniza.fri.alfri.constant.UserRoles;
 import sk.uniza.fri.alfri.dto.user.ChangePasswordDto;
 import sk.uniza.fri.alfri.entity.Role;
 import sk.uniza.fri.alfri.entity.User;
@@ -45,7 +46,7 @@ public class AuthService implements IAuthService {
 
   @Override
   @Transactional
-  public User registerUser(User userToRegister, List<Integer> rolesIds)
+  public User registerUser(User userToRegister)
       throws UserAlreadyRegisteredException {
     log.info("Trying to register user with email {}", userToRegister.getEmail());
 
@@ -55,9 +56,8 @@ public class AuthService implements IAuthService {
           String.format("User with email %s is already registered!", userToRegister.getEmail()));
     }
 
-    List<Role> roles = rolesIds.stream().map(roleId -> roleRepository.findById(roleId).orElseThrow(
-        () -> new EntityNotFoundException(String.format("Role with id %d was not found", roleId))))
-        .toList();
+    List<Role> roles = List.of(this.roleRepository.findById(UserRoles.STUDENT.getRoleId()).orElseThrow(
+            () -> new EntityNotFoundException(String.format("Role with id %d was not found", UserRoles.STUDENT.getRoleId()))));
 
     User user = User.builder().firstName(userToRegister.getFirstName())
         .lastName(userToRegister.getLastName()).email(userToRegister.getEmail())

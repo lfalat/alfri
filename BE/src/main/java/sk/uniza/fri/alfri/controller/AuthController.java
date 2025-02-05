@@ -50,7 +50,7 @@ public class AuthController {
     log.info("Starting registration of user with email {}", registerUserDto.getEmail());
     User userToRegister = modelMapper.map(registerUserDto, User.class);
 
-    User registeredUser = authService.registerUser(userToRegister, registerUserDto.getRolesIds());
+    User registeredUser = authService.registerUser(userToRegister);
 
     log.info("User {} was successfully registered!", registeredUser.getEmail());
     UserDto userDto = this.modelMapper.map(registeredUser, UserDto.class);

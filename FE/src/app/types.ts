@@ -17,7 +17,6 @@ export interface Role {
 export interface RegisterUserDto {
   firstName: string;
   lastName: string;
-  rolesIds: number[];
   email: string;
   password: string;
 }
