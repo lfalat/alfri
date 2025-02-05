@@ -6,16 +6,17 @@ import { USER_FORM_ID } from '../home.component';
 import { Router } from '@angular/router';
 import { FormService } from '@services/form.service';
 import { AnsweredForm } from '../../../types';
+import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 
 @Component({
   selector: 'app-user-home',
   standalone: true,
-  imports: [MatButton, NgIf, NgOptimizedImage, UserFormResultsComponent],
+  imports: [MatButton, NgIf, NgOptimizedImage, UserFormResultsComponent, NgxSkeletonLoaderModule],
   templateUrl: './user-home.component.html',
   styleUrl: './user-home.component.scss',
 })
 export class UserHomeComponent implements OnInit {
-  hasUserFilledForm = false;
+  loading = true;
   formData: AnsweredForm | undefined;
 
   constructor(
@@ -27,10 +28,10 @@ export class UserHomeComponent implements OnInit {
     this.formService.getExistingFormAnswers(USER_FORM_ID).subscribe({
       next: (data: AnsweredForm) => {
         this.formData = data;
-        this.hasUserFilledForm = true;
+        this.loading = false;
       },
       error: () => {
-        this.hasUserFilledForm = false;
+        this.loading = false;
       },
     });
   }

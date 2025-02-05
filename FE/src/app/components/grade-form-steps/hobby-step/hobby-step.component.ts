@@ -26,10 +26,6 @@ export class HobbyStepComponent {
   @Input() basicInformationFormGroup!: FormGroup;
   @Output() submitForm = new EventEmitter<unknown>();
 
-  ngOnInit() {
-    console.log(this.currentFormGroup)
-  }
-
   submit() {
     this.submitForm.emit();
   }

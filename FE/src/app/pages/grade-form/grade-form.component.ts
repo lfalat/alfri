@@ -47,6 +47,7 @@ import { BasicInformationStepComponent } from '@components/grade-form-steps/basi
 import { MandatorySubjectsStepComponent } from '@components/grade-form-steps/mandatory-subjects-step/mandatory-subjects-step.component';
 import { FocusStepComponent } from '@components/grade-form-steps/focus-step/focus-step.component';
 import { HobbyStepComponent } from '@components/grade-form-steps/hobby-step/hobby-step.component';
+import { QuestionTypes } from '@pages/grade-form/grade-form-types';
 
 @Component({
   selector: 'app-grade-form',
@@ -129,7 +130,6 @@ export class GradeFormComponent implements OnInit {
       )
       .subscribe({
         next: (answers) => {
-          console.log(answers)
           this.existingAnswers = answers;
           this.createFormGroups();
           this.loading = false;
@@ -142,19 +142,18 @@ export class GradeFormComponent implements OnInit {
   }
 
   onStepChange(event: StepperSelectionEvent) {
+    console.log(this.formGroups)
     const selectedIndex = event.selectedIndex;
-    console.log(selectedIndex);
     this.activeStep.set(selectedIndex);
   }
 
   createFormGroups() {
-    console.log(this.form)
     this.formGroups = this.form.sections.map((section) => {
       const group: { [key: string]: any } = {};
 
       section.questions.forEach((question) => {
         // Default values
-        let defaultValue = question.answerType === 'NUMERIC' ? 0 : '';
+        let defaultValue = question.answerType === QuestionTypes.NUMERIC ? 0 : '';
 
         // If existing answers exist, find the corresponding answer
         if (this.existingAnswers) {
@@ -168,7 +167,7 @@ export class GradeFormComponent implements OnInit {
             );
 
             if (existingQuestion) {
-              if (question.answerType === 'CHECKBOX' && question.options) {
+              if (question.answerType === QuestionTypes.CHECKBOX && question.options) {
                 // Handle checkbox answers
                 question.options.forEach((option, index) => {
                   const isChecked = existingQuestion.answers.some((answer) =>
@@ -176,7 +175,7 @@ export class GradeFormComponent implements OnInit {
                       (answer) => answer.textOfAnswer === option.questionOption,
                     ),
                   );
-                  group[question.questionIdentifier] = [isChecked];
+                  group[question.questionIdentifier + index.toString()] = [isChecked];
                 });
                 return; // Skip setting default value for checkbox
               } else {
@@ -213,6 +212,7 @@ export class GradeFormComponent implements OnInit {
 
   onSubmit() {
     let allValid = true;
+    console.log(this.formGroups)
     this.formGroups.forEach((group) => {
       Object.keys(group.controls).forEach((key) => {
         group.controls[key].markAsTouched();
@@ -235,7 +235,7 @@ export class GradeFormComponent implements OnInit {
           questionId: question.id,
           texts: [],
         };
-        if (question.answerType === 'CHECKBOX') {
+        if (question.answerType === QuestionTypes.CHECKBOX) {
           question.options.forEach((option: Option, index) => {
             if (group.get(`${question.questionIdentifier}${index}`)?.value) {
               answer.texts.push({ textOfAnswer: option.questionOption });

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, effect, Input, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, Input, signal } from '@angular/core';
 import { QuestionTypes } from '@pages/grade-form/grade-form-types';
 import { GradeFormUtil } from '@pages/grade-form/grade-form-util';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -78,13 +78,4 @@ export class FormQuestionComponent {
     }
     return [];
   });
-
-  constructor() {
-  }
-
-  ngOnInit() {
-    this.formGroup.valueChanges.subscribe((value) => {
-      console.log(value);
-    });
-  }
 }

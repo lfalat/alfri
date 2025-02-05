@@ -4,7 +4,28 @@
       <h2 class="card-title mb-0">Dotazník študenta</h2>
     </div>
     <div class="card-body">
-      <ng-container *ngIf="!hasUserFilledForm; else content">
+
+      <ng-container *ngIf="loading; else finishedLoading" class="row">
+        <ngx-skeleton-loader count="5" appearance="line"></ngx-skeleton-loader>
+        <div class="mt-3">
+          <ngx-skeleton-loader count="5" appearance="line" [theme]="{
+          'height.px': 50,
+        }"></ngx-skeleton-loader>
+        </div>
+        <div class="mt-3 col-12 col-md-6">
+          <ngx-skeleton-loader count="1" appearance="circle" [theme]="{
+      'width.%': 50,
+      'height.%': 50,
+      'min-height.px': 100,
+      'aspect-ratio': '1 / 1',
+      'clip-path': 'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)'
+    }"></ngx-skeleton-loader>
+
+        </div>
+      </ng-container>
+
+      <ng-template #finishedLoading>
+      <ng-container *ngIf="!formData; else content">
         <div class="alert alert-primary" role="alert">
           Ešte nemáš vyplnený dotazník! Povedz nám niečo o sebe, aby sme ti
           mohli zobraziť relevantnejšie dáta.
@@ -32,6 +53,7 @@
 
       <ng-template #content>
         <app-user-form-results [existingAnswers]="formData" />
+      </ng-template>
       </ng-template>
     </div>
   </div>

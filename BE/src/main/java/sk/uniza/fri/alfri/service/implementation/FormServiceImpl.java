@@ -27,6 +27,7 @@ import sk.uniza.fri.alfri.entity.Questionnaire;
 import sk.uniza.fri.alfri.entity.QuestionnaireSection;
 import sk.uniza.fri.alfri.entity.StudyProgramSubject;
 import sk.uniza.fri.alfri.entity.User;
+import sk.uniza.fri.alfri.exception.QuestionnaireNotFilledException;
 import sk.uniza.fri.alfri.mapper.AnswerMapper;
 import sk.uniza.fri.alfri.mapper.QuestionnaireMapper;
 import sk.uniza.fri.alfri.repository.AnswerRepository;
@@ -274,7 +275,16 @@ public class FormServiceImpl implements FormService {
         Optional<Questionnaire> questionnaireOptional = this.questionnaireRepository.findById(formId);
 
         if (questionnaireOptional.isEmpty()) {
-            throw new IllegalArgumentException(
+            throw new QuestionnaireNotFilledException(
+                    String.format("The questionnaire with the specified formId %d does not exist.", formId));
+        }
+
+        int totalUserAnswers = questionnaireOptional.get().getSections().stream()
+                .mapToInt(section -> section.getQuestions().size())
+                .sum();
+
+        if (totalUserAnswers == 0) {
+            throw new QuestionnaireNotFilledException(
                     String.format("The questionnaire with the specified formId %d does not exist.", formId));
         }
 

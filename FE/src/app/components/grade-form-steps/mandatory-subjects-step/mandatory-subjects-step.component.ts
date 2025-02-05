@@ -1,10 +1,10 @@
 import { Component, effect, Input, signal, Signal } from '@angular/core';
-import { Form, Question, Section } from '../../../types';
+import { AnsweredForm, Form, Question, Section } from '../../../types';
 import {
   FormControl,
   FormGroup,
   FormsModule,
-  ReactiveFormsModule,
+  ReactiveFormsModule, Validators,
 } from '@angular/forms';
 import {
   MatStepContent,
@@ -15,7 +15,6 @@ import {
 import { MatButton } from '@angular/material/button';
 import { FormQuestionComponent } from '@components/form-question/form-question.component';
 import { NgForOf, NgIf } from '@angular/common';
-import { QuestionTypes } from '@pages/grade-form/grade-form-types';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { FormService } from '@services/form.service';
 
@@ -49,12 +48,37 @@ export class MandatorySubjectsStepComponent {
   selectedYear: string | undefined;
   selectedStudyProgram: string | undefined;
   @Input() form!: Form;
+  @Input() formAnswers: AnsweredForm | null = null;
 
   constructor(private formService: FormService) {
     effect(
       () => {
         if (this.activeStep() === 1) {
-          this.loadMandatorySubjects();
+          if (!this.selectedYear || !this.selectedStudyProgram) {
+            if (!this.formAnswers) {
+              this.selectedStudyProgram =  this.basicInformationFormGroup.get('question_odbor')?.value;
+              this.selectedYear = this.basicInformationFormGroup.get('question_rocnik')?.value;
+            } else {
+              this.selectedStudyProgram = this.formAnswers.sections[0].questions.find(question => question.questionTitle === 'Odbor')?.answers[0].texts[0].textOfAnswer;
+              this.selectedYear = this.formAnswers.sections[0].questions.find(question => question.questionTitle === 'Ročník v škole')?.answers[0].texts[0].textOfAnswer;
+            }
+          }
+
+          this.isLoading.set(true);
+
+          if (this.formAnswers) {
+            if (this.selectedStudyProgram === this.formAnswers.sections[0].questions.find(question => question.questionTitle === 'Odbor')?.answers[0].texts[0].textOfAnswer &&
+            this.selectedYear === this.formAnswers.sections[0].questions.find(question => question.questionTitle === 'Ročník v škole')?.answers[0].texts[0].textOfAnswer) {
+              this.initFormGroup();
+            }
+          }
+          // When the study program or year are different from the previously selected ones load new data from BE
+          if (this.yearOrStudyProgramAreDifferent()) {
+            this.loadMandatorySubjects();
+            return;
+          }
+
+          this.initFormGroup();
         }
       },
       { allowSignalWrites: true },
@@ -62,26 +86,11 @@ export class MandatorySubjectsStepComponent {
   }
 
   private loadMandatorySubjects() {
-    // if (!this.shouldFetchData) {
-    //   console.log(this.formGroup)
-    //   return;
-    // }
-
-    const studyProgram =
-      this.basicInformationFormGroup.get('question_odbor')?.value;
+    const studyProgram = this.basicInformationFormGroup.get('question_odbor')?.value;
     const year = this.basicInformationFormGroup.get('question_rocnik')?.value;
 
-    if (
-      this.selectedYear === year &&
-      this.selectedStudyProgram === studyProgram
-    ) {
-      return;
-    } else if (!this.selectedYear && !this.selectedStudyProgram) {
-      this.selectedStudyProgram = studyProgram;
-      this.selectedYear = year;
-    }
-
-    this.isLoading.set(true);
+    this.selectedStudyProgram = studyProgram;
+    this.selectedYear = year;
 
     this.formService
       .getMandatorySubjectsByStudyProgramIdAndYear(studyProgram, year)
@@ -89,10 +98,14 @@ export class MandatorySubjectsStepComponent {
         next: (data) => {
           this.questions.set(data);
 
+          Object.keys(this.formGroup.controls).forEach((key) => {
+            this.formGroup.removeControl(key);
+          });
+
           data.forEach((question) => {
             this.formGroup.addControl(
               question.questionIdentifier,
-              new FormControl(''),
+              new FormControl('', question.optional ? [] : Validators.required),
             );
           });
           this.form.sections[1].questions = data;
@@ -105,7 +118,39 @@ export class MandatorySubjectsStepComponent {
       });
   }
 
-  mapSectionValues() {
-    console.log( this.formGroup.value);
+  private initFormGroup() {
+    if (!this.formAnswers) {
+      return;
+    }
+
+    const group: Record<string, any[]> = {};
+
+    this.formAnswers.sections[1].questions.forEach(question => {
+      group[question.questionIdentifier] = [
+        question.answers[0]?.texts[0]?.textOfAnswer || '',
+        question.optional ? [] : Validators.required
+      ];
+    });
+
+    Object.keys(this.formGroup.controls).forEach((key) => {
+      this.formGroup.removeControl(key);
+    });
+
+    Object.keys(group).forEach(key => {
+      this.formGroup.addControl(key, new FormControl(group[key][0], group[key][1]));
+    });
+
+    console.log(this.formGroup)
+
+    this.questions.set(this.formAnswers.sections[1].questions)
+    this.isLoading.set(false);
+  }
+
+  private yearOrStudyProgramAreDifferent(): boolean {
+    const filledStudyProgram = this.basicInformationFormGroup.get('question_odbor')?.value;
+    const filledYear = this.basicInformationFormGroup.get('question_rocnik')?.value;
+    console.log(filledYear, this.selectedYear, filledStudyProgram, this.selectedStudyProgram)
+
+    return filledYear !== this.selectedYear || filledStudyProgram !== this.selectedStudyProgram;
   }
 }

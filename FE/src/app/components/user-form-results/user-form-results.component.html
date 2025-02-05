@@ -7,9 +7,16 @@
         *ngFor="let information of existingAnswers.sections[0].questions"
       >
         <p class="m-0">{{ information.questionTitle }}</p>
-        <p class="fw-bolder">
-          {{ information.answers[0].texts[0].textOfAnswer }}
+
+        <p *ngIf="information.questionTitle === 'Odbor'; else others" class="fw-bolder">
+          {{ StudyPrograms[Number(information.answers[0].texts[0].textOfAnswer)] }}
         </p>
+
+        <ng-template #others>
+          <p class="fw-bolder">
+            {{ information.answers[0].texts[0].textOfAnswer }}
+          </p>
+        </ng-template>
       </div>
     </div>
   </li>

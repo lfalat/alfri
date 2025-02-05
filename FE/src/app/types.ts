@@ -231,3 +231,8 @@ export interface KeywordDto {
   keyword: string;
   subjects: SubjectDto[];
 }
+
+export enum StudyPrograms {
+  Informatika = 3,
+  Manažment = 4
+}

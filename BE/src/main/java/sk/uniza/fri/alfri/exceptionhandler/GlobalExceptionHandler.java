@@ -59,7 +59,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
   public ResponseEntity<Object> handleQuestionnaireNotFilledException(
       QuestionnaireNotFilledException ex, WebRequest request) {
     log.error(ex.getMessage());
-    return buildResponseEntity(HttpStatus.I_AM_A_TEAPOT, ex.getMessage(),
+    return buildResponseEntity(HttpStatus.NOT_FOUND, ex.getMessage(),
         request.getDescription(false));
   }
 

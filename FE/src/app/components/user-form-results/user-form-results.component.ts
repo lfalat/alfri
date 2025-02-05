@@ -39,7 +39,7 @@ import {
 } from '@angular/material/table';
 import { NgForOf, NgIf } from '@angular/common';
 import { MatChip, MatChipSet } from '@angular/material/chips';
-import { AnsweredForm } from '../../types';
+import { AnsweredForm, StudyPrograms } from '../../types';
 import { MatPaginator } from '@angular/material/paginator';
 
 @Component({
@@ -71,6 +71,7 @@ export class UserFormResultsComponent implements OnInit, AfterViewInit {
   existingAnswers: AnsweredForm | undefined;
   @ViewChild('radarChart') chart!: ElementRef<HTMLCanvasElement>;
   radarChart: Chart | undefined;
+  protected readonly StudyPrograms = StudyPrograms;
 
   // Data source for the table
   dataSource: MatTableDataSource<{ subjectName: string; grade: string }> = new MatTableDataSource();
@@ -222,4 +223,6 @@ export class UserFormResultsComponent implements OnInit, AfterViewInit {
       this.radarChart.update();
     }
   }
+
+  protected readonly Number = Number;
 }
