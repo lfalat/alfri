@@ -1,10 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import {
-  FormBuilder,
-  FormGroup,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators, } from '@angular/forms';
 import { UserService } from '@services/user.service';
 import { Subject, takeUntil } from 'rxjs';
 import { NgForOf, NgIf } from '@angular/common';
@@ -82,7 +77,7 @@ export class ProfileComponent implements OnInit {
     private authService: AuthService,
     private notificationService: NotificationService,
     private router: Router,
-    private formService: FormService,
+    private formService: FormService
   ) {
     this.profileForm = this.formBuilder.group(
       {
@@ -104,12 +99,14 @@ export class ProfileComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.formService.getExistingFormAnswers(USER_FORM_ID).subscribe({
-      next: (data: AnsweredForm) => {
-        this.formData = data;
-      },
-      error: () => {},
-    });
+    if (this.authService.hasRole(AuthRole.STUDENT)) {
+      this.formService.getExistingFormAnswers(USER_FORM_ID).subscribe({
+        next: (data: AnsweredForm) => {
+          this.formData = data;
+        },
+        error: () => {},
+      });
+    }
   }
 
   mustMatch(controlName: string, matchingControlName: string) {
