@@ -1,6 +1,9 @@
 <div class="card">
   <div class="card-header">
-    <h2 class="card-title">Administrácia</h2>
+    <div class="d-flex justify-content-between">
+      <h2 class="card-title">Administrácia</h2>
+      <button mat-raised-button color="primary" (click)="openUserFormDialog()">Pridať používateľa</button>
+    </div>
   </div>
 
   <div id="admin-table-wrapper">

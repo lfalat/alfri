@@ -9,7 +9,7 @@ import {
   UserDto,
 } from '../../types';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
-import { MatIconButton } from '@angular/material/button';
+import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatDialog } from '@angular/material/dialog';
 import { PasswordChangeModalComponent } from '@components/password-change-modal/password-change-modal.component';
@@ -26,12 +26,13 @@ import {
   MatHeaderCellDef,
   MatHeaderRow, MatHeaderRowDef, MatRow, MatRowDef, MatTable
 } from '@angular/material/table';
+import { CreateUserModalComponent } from '@components/create-user-modal/create-user-modal.component';
 
 @Component({
   selector: 'app-admin',
   templateUrl: './admin-page.component.html',
   styleUrls: ['./admin-page.component.scss'],
-  imports: [NgForOf, NgIf, FormsModule, MatMenu, MatMenuItem, MatIconButton, MatMenuTrigger, MatIcon, HasRoleDirective, MatColumnDef, MatHeaderCell, MatCell, MatCellDef, MatHeaderCellDef, MatHeaderRow, MatRow, MatRowDef, MatHeaderRowDef, MatTable],
+  imports: [NgForOf, NgIf, FormsModule, MatMenu, MatMenuItem, MatIconButton, MatMenuTrigger, MatIcon, HasRoleDirective, MatColumnDef, MatHeaderCell, MatCell, MatCellDef, MatHeaderCellDef, MatHeaderRow, MatRow, MatRowDef, MatHeaderRowDef, MatTable, MatButton],
   standalone: true,
 })
 export class AdminPageComponent implements OnInit {
@@ -138,6 +139,26 @@ export class AdminPageComponent implements OnInit {
         this.authService.changePassword(passwordChange).subscribe({
           next: () => {
             this.notificationService.showSuccess('Údaje úspešne zmenené.');
+          },
+          error: () => {
+            this.notificationService.showError('Neočakávaná chyba systému.');
+          }
+        })
+      }
+    });
+  }
+
+  openUserFormDialog(): void {
+    const dialogRef = this.dialog.open(CreateUserModalComponent, {
+      width: '400px',
+      disableClose: false,
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.authService.postUser(result).subscribe({
+          next: () => {
+            this.notificationService.showSuccess('Používateľ bol úspešne vytvorený');
           },
           error: () => {
             this.notificationService.showError('Neočakávaná chyba systému.');
