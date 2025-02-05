@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { HttpClient } from '@angular/common/http';
-import { Observable, ReplaySubject, take } from 'rxjs';
+import { BehaviorSubject, Observable, take } from 'rxjs';
 import { Role, UserDto } from '../types';
 import { environment } from '../../environments/environment';
 
@@ -9,13 +9,18 @@ import { environment } from '../../environments/environment';
   providedIn: 'root',
 })
 export class UserService {
-  get userData(): Observable<UserDto> {
-    return this._userData.asObservable();
+  get userData(): UserDto {
+    const value = this._userData.getValue();
+    if (!value) {
+      throw new Error('User data is not available');
+    }
+
+    return value;
   }
 
-  public userId: number | undefined;
+  userId: number | undefined;
 
-  private readonly _userData: ReplaySubject<UserDto> = new ReplaySubject(1);
+  private readonly _userData: BehaviorSubject<UserDto | undefined> = new BehaviorSubject<UserDto | undefined>(undefined);
   private readonly BE_URL = `${environment.API_URL}/user`;
 
   constructor(
@@ -28,8 +33,11 @@ export class UserService {
   public loadUserData() {
     this.loadUserInfo()
       .pipe(take(1))
-      .subscribe((userData: UserDto) => {
-        this._userData.next(userData);
+      .subscribe({
+        next: (userData: UserDto) => {
+          this._userData.next(userData);
+        },
+        error: () => {this._userData.next(undefined)}
       });
   }
 

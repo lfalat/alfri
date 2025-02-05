@@ -40,6 +40,11 @@ export interface ChangePasswordDto {
   newPassword: string;
 }
 
+export interface PasswordPair {
+  oldPassword: string;
+  newPassword: string;
+}
+
 export interface AuthResponseDto {
   jwtToken: string;
   expiresIn: number;

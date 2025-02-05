@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { ActivatedRoute, CanActivateFn, Router } from '@angular/router';
+import { ActivatedRouteSnapshot, CanActivateFn, Router, RouterStateSnapshot } from '@angular/router';
 import { UserService } from '@services/user.service';
 import { AuthService } from '@services/auth.service';
 
@@ -21,12 +21,12 @@ export const tokenAppGuard: CanActivateFn = (): boolean => {
 /**
  * Role based auth guard
  */
-export const roleAppGuard: CanActivateFn = () => {
-  const activatedRoute = inject(ActivatedRoute);
+export const roleAppGuard: CanActivateFn = (route: ActivatedRouteSnapshot, state: RouterStateSnapshot) => {
   const authService = inject(AuthService);
   const router = inject(Router);
 
-  const expectedRole = activatedRoute.snapshot.data['role'];
+  const expectedRole = route.data['role'];
+
   if (authService.hasRole(expectedRole)) {
     return true;
   }

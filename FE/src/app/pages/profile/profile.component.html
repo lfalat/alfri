@@ -1,6 +1,6 @@
 <div *ngIf="!isLoading" class="container mt-2">
   <h1>Môj profil</h1>
-  <div class="row row-gap-2" *appHasRole="AuthRole.STUDENT">
+  <div class="row row-gap-2">
     <div class="col-12 col-md-6 p-1">
       <div class="card h-100">
         <div class="card-header">
@@ -27,7 +27,7 @@
 
               <div class="col-12 col-md-6">
                 <p class="m-0">Rola</p>
-                <p class="fw-bolder">Student</p>
+                <p class="fw-bolder">{{ userData.roles[0].name }}</p>
               </div>
             </div>
           </div>
@@ -86,7 +86,7 @@
       </div>
     </div>
 
-    <div class="col-12 p-0" *ngIf="formData">
+    <div class="col-12 p-0" *appHasRole="AuthRole.STUDENT">
       <div class="card">
         <div class="card-header">
           <div class="row">
