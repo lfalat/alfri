@@ -86,26 +86,28 @@
       </div>
     </div>
 
-    <div class="col-12 p-0" *appHasRole="AuthRole.STUDENT">
-      <div class="card">
-        <div class="card-header">
-          <div class="row">
-            <div class="col">
-              <h2 class="card-title mb-0">Vyplnený dotazník</h2>
-            </div>
-            <div class="col d-flex justify-content-end">
-              <button
-                mat-raised-button
-                color="primary"
-                (click)="redirectToUserForm()"
-              >
-                Upraviť dotazník
-              </button>
+    <div *ngIf="formData">
+      <div class="col-12 p-0" *appHasRole="[AuthRole.STUDENT]">
+        <div class="card">
+          <div class="card-header">
+            <div class="row">
+              <div class="col">
+                <h2 class="card-title mb-0">Vyplnený dotazník</h2>
+              </div>
+              <div class="col d-flex justify-content-end">
+                <button
+                  mat-raised-button
+                  color="primary"
+                  (click)="redirectToUserForm()"
+                >
+                  Upraviť dotazník
+                </button>
+              </div>
             </div>
           </div>
-        </div>
-        <div class="card-body">
-          <app-user-form-results [existingAnswers]="formData" />
+          <div class="card-body">
+            <app-user-form-results [existingAnswers]="formData" />
+          </div>
         </div>
       </div>
     </div>

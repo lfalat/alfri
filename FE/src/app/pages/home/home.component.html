@@ -1,8 +1,8 @@
 <div class="container my-2">
-  <ng-container *appHasRole="AuthRole.STUDENT">
+  <ng-container *appHasRole="[AuthRole.STUDENT]">
     <app-user-home></app-user-home>
   </ng-container>
-  <ng-container *appHasRole="AuthRole.TEACHER">
+  <ng-container *appHasRole="[AuthRole.TEACHER]">
     <app-teacher-home></app-teacher-home>
   </ng-container>
 </div>

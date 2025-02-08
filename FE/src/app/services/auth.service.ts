@@ -77,8 +77,8 @@ export class AuthService {
     );
   }
 
-  hasRole(expectedRole: AuthRole | undefined): boolean {
-    if (!expectedRole) {
+  hasRole(expectedRoles: AuthRole[] | undefined): boolean {
+    if (!expectedRoles) {
       return false;
     }
 
@@ -88,8 +88,6 @@ export class AuthService {
       return false;
     }
 
-    console.log(expectedRole, userRoles);
-
-    return userRoles.includes(expectedRole);
+    return userRoles.some((role: AuthRole) => expectedRoles.includes(role));
   }
 }

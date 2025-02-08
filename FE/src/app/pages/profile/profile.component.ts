@@ -99,7 +99,7 @@ export class ProfileComponent implements OnInit {
   }
 
   ngOnInit() {
-    if (this.authService.hasRole(AuthRole.STUDENT)) {
+    if (this.authService.hasRole([AuthRole.STUDENT])) {
       this.formService.getExistingFormAnswers(USER_FORM_ID).subscribe({
         next: (data: AnsweredForm) => {
           this.formData = data;

@@ -1,82 +1,85 @@
-<div class="search-container">
-  <mat-form-field appearance="outline" class="search-bar">
-    <mat-label>Vyhľadaj kĺúčové slová</mat-label>
-    <input
-      matInput
-      (input)="onSearch($event)"
-      placeholder="Type to search..."
-    />
-  </mat-form-field>
-</div>
+<div class="container">
+  <h2>Kľúčové slová predmetov</h2>
+  <div>
+    <mat-form-field appearance="outline" class="search-bar">
+      <mat-label>Vyhľadaj kĺúčové slová</mat-label>
+      <input
+        matInput
+        (input)="onSearch($event)"
+        placeholder="Type to search..."
+      />
+    </mat-form-field>
+  </div>
 
-<div class="chips-container">
-  <mat-chip-listbox multiple>
-    <mat-chip-option
-      *ngFor="let keyword of filteredKeywords"
-      (click)="onKeywordSelect(keyword)"
-      [selected]="selectedKeywords.includes(keyword)"
-    >
-      {{ keyword }}
-    </mat-chip-option>
-  </mat-chip-listbox>
-</div>
+  <div class="chips-container">
+    <mat-chip-listbox multiple>
+      <mat-chip-option
+        *ngFor="let keyword of filteredKeywords"
+        (click)="onKeywordSelect(keyword)"
+        [selected]="selectedKeywords.includes(keyword)"
+      >
+        {{ keyword }}
+      </mat-chip-option>
+    </mat-chip-listbox>
+  </div>
 
-<div *ngFor="let keyword of selectedKeywords" class="table-container">
-  <h3>{{ keyword }}</h3>
-  <div *ngIf="keywordSubjects[keyword] && keywordSubjects[keyword].length > 0">
-    <table
-      mat-table
-      [dataSource]="keywordSubjects[keyword]"
-      class="mat-elevation-z8 custom-table"
-    >
-      <ng-container matColumnDef="name">
-        <th mat-header-cell *matHeaderCellDef class="fixed-width">Názov</th>
-        <td mat-cell *matCellDef="let subject">
-          <a
-            class="text-decoration-none"
-            href="javascript:void(0)"
-            (click)="navigateToSubjectDetail(subject.code)"
-          >
-            {{ subject.name }}
-          </a>
-        </td>
-      </ng-container>
+  <div *ngFor="let keyword of selectedKeywords" class="table-container">
+    <h3>{{ keyword }}</h3>
+    <div *ngIf="keywordSubjects[keyword] && keywordSubjects[keyword].length > 0">
+      <table
+        mat-table
+        [dataSource]="keywordSubjects[keyword]"
+        class="mat-elevation-z8 custom-table"
+      >
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef class="fixed-width">Názov</th>
+          <td mat-cell *matCellDef="let subject">
+            <a
+              class="text-decoration-none"
+              href="javascript:void(0)"
+              (click)="navigateToSubjectDetail(subject.code)"
+            >
+              {{ subject.name }}
+            </a>
+          </td>
+        </ng-container>
 
-      <ng-container matColumnDef="code">
-        <th mat-header-cell *matHeaderCellDef class="fixed-width">
-          Kód Predmetu
-        </th>
-        <td mat-cell *matCellDef="let subject">{{ subject.code }}</td>
-      </ng-container>
+        <ng-container matColumnDef="code">
+          <th mat-header-cell *matHeaderCellDef class="fixed-width">
+            Kód Predmetu
+          </th>
+          <td mat-cell *matCellDef="let subject">{{ subject.code }}</td>
+        </ng-container>
 
-      <ng-container matColumnDef="abbreviation">
-        <th mat-header-cell *matHeaderCellDef class="fixed-width">Skratka</th>
-        <td mat-cell *matCellDef="let subject">{{ subject.abbreviation }}</td>
-      </ng-container>
+        <ng-container matColumnDef="abbreviation">
+          <th mat-header-cell *matHeaderCellDef class="fixed-width">Skratka</th>
+          <td mat-cell *matCellDef="let subject">{{ subject.abbreviation }}</td>
+        </ng-container>
 
-      <ng-container matColumnDef="studyProgramName">
-        <th mat-header-cell *matHeaderCellDef class="fixed-width">
-          Študijný Program
-        </th>
-        <td mat-cell *matCellDef="let subject">
-          {{ subject.studyProgramName }}
-        </td>
-      </ng-container>
+        <ng-container matColumnDef="studyProgramName">
+          <th mat-header-cell *matHeaderCellDef class="fixed-width">
+            Študijný Program
+          </th>
+          <td mat-cell *matCellDef="let subject">
+            {{ subject.studyProgramName }}
+          </td>
+        </ng-container>
 
-      <ng-container matColumnDef="recommendedYear">
-        <th mat-header-cell *matHeaderCellDef class="fixed-width">Ročník</th>
-        <td mat-cell *matCellDef="let subject">
-          {{ subject.recommendedYear }}
-        </td>
-      </ng-container>
+        <ng-container matColumnDef="recommendedYear">
+          <th mat-header-cell *matHeaderCellDef class="fixed-width">Ročník</th>
+          <td mat-cell *matCellDef="let subject">
+            {{ subject.recommendedYear }}
+          </td>
+        </ng-container>
 
-      <ng-container matColumnDef="semester">
-        <th mat-header-cell *matHeaderCellDef class="fixed-width">Semester</th>
-        <td mat-cell *matCellDef="let subject">{{ subject.semester }}</td>
-      </ng-container>
+        <ng-container matColumnDef="semester">
+          <th mat-header-cell *matHeaderCellDef class="fixed-width">Semester</th>
+          <td mat-cell *matCellDef="let subject">{{ subject.semester }}</td>
+        </ng-container>
 
-      <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
-      <tr mat-row *matRowDef="let row; columns: columnsToDisplay"></tr>
-    </table>
+        <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
+        <tr mat-row *matRowDef="let row; columns: columnsToDisplay"></tr>
+      </table>
+    </div>
   </div>
 </div>

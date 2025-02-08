@@ -1,6 +1,8 @@
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import {
+  FocusCategorySumDTO,
+  KeywordDTO,
   Page,
   SubjectDto,
   SubjectExtendedDto,
@@ -173,6 +175,30 @@ export class SubjectService {
 
     return this.http.get<SubjectDto[]>(`${this.URL}/subjects`, {
       params: urlParameters,
+      headers: httpOptions.headers,
+    });
+  }
+
+  public getAllKeywords(): Observable<KeywordDTO[]> {
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+      }),
+    };
+
+    return this.http.get<KeywordDTO[]>(`${this.URL}/all-keywords`, {
+      headers: httpOptions.headers,
+    });
+  }
+
+  public getCategorySums(): Observable<FocusCategorySumDTO[]> {
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+      }),
+    };
+
+    return this.http.get<FocusCategorySumDTO[]>(`${this.URL}/category-sums`, {
       headers: httpOptions.headers,
     });
   }

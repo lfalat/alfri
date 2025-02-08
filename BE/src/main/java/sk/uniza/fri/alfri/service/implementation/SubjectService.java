@@ -7,6 +7,8 @@ import jakarta.persistence.EntityNotFoundException;
 import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import jakarta.persistence.Tuple;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -16,6 +18,8 @@ import org.springframework.stereotype.Service;
 import sk.uniza.fri.alfri.common.pagitation.PageDefinition;
 import sk.uniza.fri.alfri.common.pagitation.SearchDefinition;
 import sk.uniza.fri.alfri.constant.ModelType;
+import sk.uniza.fri.alfri.dto.KeywordDTO;
+import sk.uniza.fri.alfri.dto.focus.FocusCategorySumDTO;
 import sk.uniza.fri.alfri.entity.Answer;
 import sk.uniza.fri.alfri.entity.AnswerText;
 import sk.uniza.fri.alfri.entity.Focus;
@@ -29,6 +33,7 @@ import sk.uniza.fri.alfri.repository.AnswerRepository;
 import sk.uniza.fri.alfri.repository.FocusRepository;
 import sk.uniza.fri.alfri.repository.StudyProgramSubjectRepository;
 import sk.uniza.fri.alfri.repository.SubjectGradeRepository;
+import sk.uniza.fri.alfri.repository.SubjectKeywordRepository;
 import sk.uniza.fri.alfri.repository.SubjectRepository;
 import sk.uniza.fri.alfri.service.FormService;
 import sk.uniza.fri.alfri.service.ISubjectService;
@@ -65,6 +70,8 @@ public class SubjectService implements ISubjectService {
   private final SubjectGradeRepository subjectGradeRepository;
   private final StudentService studentService;
   private final FormService formService;
+  private final SubjectKeywordRepository subjectKeywordRepository;
+
 
   @Value("${python.executable_path}")
   private String pythonExcecutablePath;
@@ -84,8 +91,8 @@ public class SubjectService implements ISubjectService {
   public SubjectService(StudyProgramSubjectRepository studyProgramSubjectRepository,
       SubjectRepository subjectRepository, AnswerRepository answerRepository,
       FocusRepository focusRepository, SubjectGradeRepository subjectGradeRepository,
-      StudentService studentService, FormService formService) {
-
+      StudentService studentService, FormService formService,
+        SubjectKeywordRepository subjectKeywordRepository) {
     this.studyProgramSubjectRepository = studyProgramSubjectRepository;
     this.subjectRepository = subjectRepository;
     this.subjectGradeRepository = subjectGradeRepository;
@@ -93,6 +100,7 @@ public class SubjectService implements ISubjectService {
     this.focusRepository = focusRepository;
     this.studentService = studentService;
     this.formService = formService;
+    this.subjectKeywordRepository = subjectKeywordRepository;
   }
 
   private static List<List<Integer>> getFocusesAttributes(List<Focus> subjectsFocuses) {
@@ -336,6 +344,28 @@ public class SubjectService implements ISubjectService {
     return predictions.entrySet().stream().map(entry -> entry.getKey() + ": " + entry.getValue())
         .toList();
   }
+
+    @Override
+    public List<FocusCategorySumDTO> getMostPopularFocuses() {
+        List<Tuple> tuples = this.focusRepository.findFocusCategorySums();
+        return tuples.stream()
+                .map(tuple -> new FocusCategorySumDTO(
+                        tuple.get("focus_category", String.class),
+                        tuple.get("total_sum", Long.class)
+                ))
+                .toList();
+    }
+
+    @Override
+    public List<KeywordDTO> getAllKeywords() {
+        List<Tuple> tuples = this.subjectKeywordRepository.getAllSummed();
+        return tuples.stream()
+                .map(tuple -> new KeywordDTO(
+                        tuple.get("keyword", String.class),
+                        tuple.get("count", Long.class)
+                ))
+                .toList();
+    }
 
     private List<Integer> getMarksRequiredToPredictSubjectFromQuestionnaire(String subjectName,
       User user) {

@@ -240,3 +240,13 @@ export enum StudyPrograms {
   Informatika = 3,
   Manažment = 4
 }
+
+export interface KeywordDTO {
+  keyword: string;
+  count: number;
+}
+
+export interface FocusCategorySumDTO {
+  focusCategory: string;
+  totalSum: number;
+}

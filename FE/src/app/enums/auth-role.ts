@@ -3,4 +3,5 @@ export enum AuthRole {
   TEACHER = 'ROLE_TEACHER',
   ADMIN = 'ROLE_ADMIN',
   VISITOR = 'ROLE_VISITOR',
+  VEDENIE = 'ROLE_VEDENIE'
 }

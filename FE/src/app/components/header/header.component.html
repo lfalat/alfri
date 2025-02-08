@@ -105,7 +105,7 @@
       </mat-expansion-panel>
 
       <a
-        *appHasRole="AuthRole.ADMIN"
+        *appHasRole="[AuthRole.ADMIN]"
         mat-list-item
         href="javascript:void(0)"
         (click)="navigateToAdminPage()"
@@ -150,7 +150,7 @@
           <span role="button" class="curs" (click)="navigateToHome()">ALFRI</span>
 
           <div class="d-none d-md-block">
-            <button mat-button [matMenuTriggerFor]="subjects_menu">
+          <button mat-button [matMenuTriggerFor]="subjects_menu" *appHasRole="[AuthRole.STUDENT, AuthRole.TEACHER]">
               <mat-icon>book</mat-icon>
               Predmety
             </button>
@@ -158,11 +158,6 @@
             <button mat-button [matMenuTriggerFor]="reports_menu">
               <mat-icon>bar_chart</mat-icon>
               Analýzy a Reporty
-            </button>
-
-            <button mat-button (click)="navigateToKeywords()">
-              <mat-icon>vpn_key</mat-icon>
-              Kľúčové slová
             </button>
           </div>
         </div>
@@ -180,7 +175,7 @@
             <button
               mat-menu-item
               (click)="navigateToAdminPage()"
-              *appHasRole="AuthRole.ADMIN"
+              *appHasRole="[AuthRole.ADMIN]"
             >
               <mat-icon>admin_panel_settings</mat-icon>
               Administrácia
@@ -206,7 +201,7 @@
 
       <button mat-menu-item (click)="navigateToPrediction()">
         <mat-icon>interests</mat-icon>
-        <span>Záujmy</span>
+        <span>Záujmové predmety</span>
       </button>
 
       <button mat-menu-item (click)="navigateToSubjectsClustering()">
@@ -229,6 +224,11 @@
       <button mat-menu-item (click)="navigateToSubjectGradeCorrelation()">
         <mat-icon>query_stats</mat-icon>
         Korelačná analýza známok
+      </button>
+
+      <button mat-menu-item (click)="navigateToKeywords()">
+        <mat-icon>vpn_key</mat-icon>
+        Kľúčové slová
       </button>
     </mat-menu>
 

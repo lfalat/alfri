@@ -23,8 +23,10 @@ import sk.uniza.fri.alfri.common.pagitation.PagitationRequestQuery;
 import sk.uniza.fri.alfri.common.pagitation.SearchDefinition;
 import sk.uniza.fri.alfri.common.pagitation.SortDefinition;
 import sk.uniza.fri.alfri.common.pagitation.SortRequestQuery;
+import sk.uniza.fri.alfri.dto.KeywordDTO;
 import sk.uniza.fri.alfri.dto.SubjectGradeDto;
 import sk.uniza.fri.alfri.dto.SubjectsPredictionsResult;
+import sk.uniza.fri.alfri.dto.focus.FocusCategorySumDTO;
 import sk.uniza.fri.alfri.dto.subject.SubjectDto;
 import sk.uniza.fri.alfri.dto.subject.SubjectExtendedDto;
 import sk.uniza.fri.alfri.entity.StudyProgramSubject;
@@ -219,4 +221,17 @@ public class SubjectController {
 
     return ResponseEntity.ok(result);
   }
+
+    @GetMapping("/category-sums")
+    public ResponseEntity<List<FocusCategorySumDTO>> getCategorySums() {
+        List<FocusCategorySumDTO> focusCategorySumDTOS = this.subjectService.getMostPopularFocuses();
+        return ResponseEntity.ok().body(focusCategorySumDTOS);
+    }
+
+    @GetMapping("/all-keywords")
+    public ResponseEntity<List<KeywordDTO>> getAllKeywords() {
+      List<KeywordDTO> keywordDTOS = this.subjectService.getAllKeywords();
+
+      return ResponseEntity.ok(keywordDTOS);
+    }
 }

@@ -31,7 +31,7 @@
     </mat-radio-group>
   </div>
 
-  <div *ngIf="dataSource$ | async as dataSource">
+  <div *ngIf="dataSource$ | async as dataSource" id="subject-report-table-wrapper">
     <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
       <ng-container matColumnDef="name">
         <th mat-header-cell *matHeaderCellDef>Názov</th>

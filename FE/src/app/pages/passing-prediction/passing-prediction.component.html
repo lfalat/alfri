@@ -1,6 +1,9 @@
 <div class="subject-prediction-container">
   @if (isLoading) {
-    <mat-spinner></mat-spinner>
+    <div class="d-flex align-items-center flex-column row-gap-3">
+      <mat-spinner></mat-spinner>
+      <p>Načítavam predikcie. Čakajte prosím</p>
+    </div>
   }
   <app-subject-passing-prediction-result
     *ngFor="let subject of subjects"

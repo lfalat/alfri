@@ -20,7 +20,10 @@
         ></apx-chart>
       </div>
     } @else {
-      <mat-spinner></mat-spinner>
+      <div class="d-flex align-items-center flex-column row-gap-3">
+        <mat-spinner></mat-spinner>
+        <p>Načítavam dáta. Čakajte prosím</p>
+      </div>
     }
   </mat-tab>
 

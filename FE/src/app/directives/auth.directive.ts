@@ -16,7 +16,7 @@ import { AuthRole } from '@enums/auth-role';
   selector: '[appHasRole]',
 })
 export class HasRoleDirective implements OnInit {
-  @Input('appHasRole') role: AuthRole | undefined;
+  @Input('appHasRole') roles: AuthRole[] | undefined;
 
   constructor(
     private authService: AuthService,
@@ -29,7 +29,7 @@ export class HasRoleDirective implements OnInit {
   }
 
   private checkAndRenderView(): void {
-    if (this.authService.hasRole(this.role)) {
+    if (this.authService.hasRole(this.roles)) {
       console.log('Permission granted');
       this.viewContainer.createEmbeddedView(this.templateRef);
     } else {

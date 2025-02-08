@@ -1,3 +1,5 @@
+@import "../../../../node_modules/bootstrap/scss/bootstrap";  // TODO relative import
+
 select {
   padding: 8px;
   border: 1px solid #ccc;
@@ -12,4 +14,12 @@ h1 {
   text-align: center;
   color: #333;
   margin: 20px;
+}
+
+
+#subject-report-table-wrapper {
+  overflow-x: scroll;
+  @include media-breakpoint-up(md) {
+    overflow-x: auto;
+  }
 }
