@@ -33,15 +33,10 @@ public class AuthController {
       produces = APPLICATION_JSON_VALUE)
   public ResponseEntity<AuthResponseDto> authenticateUser(
       @RequestBody @Valid UserCredentialsDto credentialsDTO) throws InvalidCredentialsException {
-    // Authenticate user
     log.info("AuthenticateUser of user {} started!", credentialsDTO);
 
     User user = this.modelMapper.map(credentialsDTO, User.class);
-
-    User authenticatedUser;
-    authenticatedUser = authService.verifyUser(user);
-
-    // Generate JWT token for the authenticated user
+    User authenticatedUser = authService.verifyUser(user);
     String token = jwtService.generateToken(authenticatedUser);
 
     log.info("User {} was authenticated!", user.getUsername());
@@ -55,7 +50,7 @@ public class AuthController {
     log.info("Starting registration of user with email {}", registerUserDto.getEmail());
     User userToRegister = modelMapper.map(registerUserDto, User.class);
 
-    User registeredUser = authService.registerUser(userToRegister, registerUserDto.getRolesIds());
+    User registeredUser = authService.registerUser(userToRegister);
 
     log.info("User {} was successfully registered!", registeredUser.getEmail());
     UserDto userDto = this.modelMapper.map(registeredUser, UserDto.class);
@@ -63,7 +58,7 @@ public class AuthController {
     return ResponseEntity.ok(userDto);
   }
 
-  @PreAuthorize("hasAnyRole({'ROLE_STUDENT', 'ROLE_TEACHER', 'ROLE_ADMIN', 'ROLE_VISITOR'})")
+  @PreAuthorize("hasAnyRole({'ROLE_STUDENT', 'ROLE_TEACHER', 'ROLE_ADMIN', 'ROLE_VISITOR', 'ROLE_VEDENIE'})")
   @PostMapping(value = "/change-password", consumes = APPLICATION_JSON_VALUE)
   public void changePassword(@RequestBody @Valid ChangePasswordDto changePasswordDto)
       throws UserAlreadyRegisteredException {

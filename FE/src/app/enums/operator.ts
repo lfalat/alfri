@@ -5,5 +5,4 @@ export enum Operator {
   LESS_OR_EQUAL = '<=',
   EQUAL = '=',
   NOT_EQUAL = '<>',
-
 }

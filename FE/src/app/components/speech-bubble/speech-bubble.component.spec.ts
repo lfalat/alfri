@@ -8,10 +8,9 @@ describe('SpeechBubbleComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [SpeechBubbleComponent]
-    })
-    .compileComponents();
-    
+      imports: [SpeechBubbleComponent],
+    }).compileComponents();
+
     fixture = TestBed.createComponent(SpeechBubbleComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

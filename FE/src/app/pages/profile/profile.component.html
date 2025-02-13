@@ -1,0 +1,115 @@
+<div *ngIf="!isLoading" class="container mt-2">
+  <h1>Môj profil</h1>
+  <div class="row row-gap-2">
+    <div class="col-12 col-md-6 p-1">
+      <div class="card h-100">
+        <div class="card-header">
+          <h2 class="card-title mb-0">Osobne informacie</h2>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-12 row">
+              <div class="col-12 col-md-6">
+                <p class="m-0">Meno</p>
+                <p class="fw-bolder">{{ userData.firstName }}</p>
+              </div>
+
+              <div class="col-12 col-md-6">
+                <p class="m-0">Priezvisko</p>
+                <p class="fw-bolder">{{ userData.lastName }}</p>
+              </div>
+            </div>
+            <div class="col-12 row">
+              <div class="col-12 col-md-6">
+                <p class="m-0">Email</p>
+                <p class="fw-bolder">{{ userData.email }}</p>
+              </div>
+
+              <div class="col-12 col-md-6">
+                <p class="m-0">Rola</p>
+                <p class="fw-bolder">{{ userData.roles[0].name }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-md-6 p-1">
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title mb-0">Zmena hesla</h2>
+        </div>
+        <div class="card-body">
+          <form [formGroup]="profileForm" (ngSubmit)="changePassword()">
+            <div class="form-group">
+              <mat-form-field appearance="fill" class="w-100">
+                <mat-label>Pôvodné heslo</mat-label>
+                <input
+                  matInput
+                  type="password"
+                  id="currentPassword"
+                  formControlName="currentPassword"
+                  required
+                />
+              </mat-form-field>
+            </div>
+            <div class="form-group">
+              <mat-form-field appearance="fill" class="w-100">
+                <mat-label>Nové heslo</mat-label>
+                <input
+                  matInput
+                  type="password"
+                  id="newPassword"
+                  formControlName="newPassword"
+                  required
+                />
+              </mat-form-field>
+            </div>
+            <div class="form-group">
+              <mat-form-field appearance="fill" class="w-100">
+                <mat-label>Potvrď nové heslo</mat-label>
+                <input
+                  matInput
+                  type="password"
+                  id="confirmNewPassword"
+                  formControlName="confirmNewPassword"
+                  required
+                />
+              </mat-form-field>
+            </div>
+            <button mat-raised-button color="primary" type="submit">
+              Zmeň heslo
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="formData">
+      <div class="col-12 p-0" *appHasRole="[AuthRole.STUDENT]">
+        <div class="card">
+          <div class="card-header">
+            <div class="row">
+              <div class="col">
+                <h2 class="card-title mb-0">Vyplnený dotazník</h2>
+              </div>
+              <div class="col d-flex justify-content-end">
+                <button
+                  mat-raised-button
+                  color="primary"
+                  (click)="redirectToUserForm()"
+                >
+                  Upraviť dotazník
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="card-body">
+            <app-user-form-results [existingAnswers]="formData" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

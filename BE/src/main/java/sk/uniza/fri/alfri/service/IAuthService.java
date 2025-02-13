@@ -8,11 +8,13 @@ import sk.uniza.fri.alfri.exception.InvalidCredentialsException;
 import sk.uniza.fri.alfri.exception.UserAlreadyRegisteredException;
 
 public interface IAuthService {
-  User registerUser(User user, List<Integer> rolesIds) throws UserAlreadyRegisteredException;
+  User registerUser(User user) throws UserAlreadyRegisteredException;
 
   User verifyUser(User user) throws InvalidCredentialsException;
 
   void changePassword(ChangePasswordDto changePasswordDto);
 
   Optional<String> getCurrentUserEmail();
+
+  Optional<User> getCurrentUser();
 }

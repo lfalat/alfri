@@ -26,7 +26,7 @@ public class AnswerText {
   private int answerTextId;
 
   @Column(name = "answer_text", nullable = false)
-  private String answerText;
+  private String textOfAnswer;
 
   @ManyToOne(fetch = FetchType.LAZY, optional = false)
   @JoinColumn(name = "answer_id", nullable = false)

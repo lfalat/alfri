@@ -15,7 +15,7 @@ import java.util.List;
 
 @RestController
 @Slf4j
-@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_TEACHER')")
+@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_TEACHER', 'ROLE_VEDENIE')")
 @RequestMapping("/api/department")
 public class DepartmentController {
   private final ModelMapper modelMapper;

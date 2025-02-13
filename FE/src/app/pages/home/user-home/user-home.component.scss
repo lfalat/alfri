@@ -1,0 +1,16 @@
+.wordcloud-container {
+  max-width: 100%;
+  height: 400px;
+}
+
+@media (max-width: 768px) {
+  .wordcloud-container {
+    height: 300px;
+  }
+}
+
+@media (max-width: 576px) {
+  .wordcloud-container {
+    height: 200px;
+  }
+}

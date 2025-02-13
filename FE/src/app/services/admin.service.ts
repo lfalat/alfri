@@ -1,9 +1,8 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { catchError, EMPTY, Observable } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { Role, SubjectDto, UserDto } from '../types';
-import { NotificationService } from './notification.service';
 
 @Injectable({
   providedIn: 'root',
@@ -11,8 +10,9 @@ import { NotificationService } from './notification.service';
 export class AdminService {
   private readonly BE_URL = `${environment.API_URL}`;
 
-  constructor(private readonly http: HttpClient, private readonly notificationService: NotificationService) {
-  }
+  constructor(
+    private readonly http: HttpClient,
+  ) {}
 
   getAllUsers(): Observable<UserDto[]> {
     return this.http.get<UserDto[]>(`${this.BE_URL}/admin/users`);
@@ -21,14 +21,13 @@ export class AdminService {
   updateUserRole(userId: number, role: Role, isAdd: boolean): Observable<any> {
     return this.http.post(`${this.BE_URL}/admin/user/${userId}/roles`, {
       roleIds: [role.id],
-      add: isAdd
+      add: isAdd,
     });
   }
 
   deleteUser(userId: number): Observable<void> {
     return this.http.delete<void>(`${this.BE_URL}/admin/user/${userId}`);
   }
-
 
   getAllSubjects(): Observable<SubjectDto[]> {
     return this.http.get<SubjectDto[]>(`${this.BE_URL}/subject/all`);

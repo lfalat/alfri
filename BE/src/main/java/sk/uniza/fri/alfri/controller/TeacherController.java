@@ -19,7 +19,7 @@ import java.util.List;
 
 @RestController
 @Slf4j
-@PreAuthorize("hasAnyRole('ROLE_TEACHER', 'ROLE_ADMIN')")
+@PreAuthorize("hasAnyRole('ROLE_TEACHER', 'ROLE_ADMIN', 'ROLE_VEDENIE')")
 @RequestMapping("/api/teacher")
 public class TeacherController {
   private final ModelMapper modelMapper;

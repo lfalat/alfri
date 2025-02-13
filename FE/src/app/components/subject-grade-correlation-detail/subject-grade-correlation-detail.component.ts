@@ -1,5 +1,10 @@
 import { Component, Input } from '@angular/core';
-import { MatCard, MatCardContent, MatCardHeader, MatCardTitle } from '@angular/material/card';
+import {
+  MatCard,
+  MatCardContent,
+  MatCardHeader,
+  MatCardTitle,
+} from '@angular/material/card';
 import { SubjectGradeCorrelation } from '../../types';
 import { DecimalPipe, NgIf, PercentPipe } from '@angular/common';
 import { Router } from '@angular/router';
@@ -14,17 +19,15 @@ import { Router } from '@angular/router';
     MatCardTitle,
     PercentPipe,
     NgIf,
-    DecimalPipe
+    DecimalPipe,
   ],
   templateUrl: './subject-grade-correlation-detail.component.html',
-  styleUrl: './subject-grade-correlation-detail.component.scss'
+  styleUrl: './subject-grade-correlation-detail.component.scss',
 })
 export class SubjectGradeCorrelationDetailComponent {
   @Input() correlationData: SubjectGradeCorrelation | undefined;
 
-  constructor(private readonly router: Router) {
-  }
-
+  constructor(private readonly router: Router) {}
 
   navigateToSubjectDetail(code: string) {
     this.router.navigate(['/subjects/' + code]);

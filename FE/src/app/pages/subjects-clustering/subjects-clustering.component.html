@@ -1,0 +1,86 @@
+<div class="container-fluid m-0">
+  <div class="row m-0 p-0">
+    <mat-card class="overflow-auto col-12 col-md-5 m-0">
+      <mat-card-header>
+        <mat-card-title>
+          Výberom troch predmetov zobraz podobné predmety
+        </mat-card-title>
+        <mat-card-subtitle>
+          <button
+            mat-raised-button
+            color="primary"
+            class="mt-3 w-100"
+            (click)="getSimilarSubjects()"
+            [disabled]="selectedSubjects.length === 0"
+          >
+            <mat-icon>search</mat-icon>
+            Vyhľadať predmety
+          </button>
+
+          @if (isLoadingRecommendetSubjects) {
+            <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+          }
+        </mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+        <app-subjects-table
+          [dataSource$]="allSubjectsDataSource$"
+          [pageData]="allSubjectsPageData"
+          [isLoading]="isLoadingAllSubjects"
+          (pageChange)="onPageChangeAllSubjects($event)"
+          [displayFullInfo]="false"
+          [isSelectable]="true"
+          [maxSelectableSubjects]="3"
+          (selectedSubjects)="onSelectedSubjectsChanged($event)"
+          (subjectDetailNavigate)="navigateToSubjectDetail($event)"
+        >
+        </app-subjects-table>
+      </mat-card-content>
+
+    </mat-card>
+    <div class="col-md-2 d-flex align-items-center justify-content-center">
+      <mat-icon>arrow_forward</mat-icon>
+    </div>
+    <div class="col-md-5">
+      <mat-card class="overflow-auto">
+        <mat-card-header>
+          <mat-card-title>
+            Podobné predmety
+          </mat-card-title>
+        </mat-card-header>
+
+        <div class="d-flex flex-column clustering-max-height-75vh">
+        @if (recommendedSubjectsDataSource$ | async; as recommendedSubjects) {
+          @if (recommendedSubjects.length > 0) {
+            <mat-card-content>
+
+                <app-subjects-table
+                  class="w-100 h-100"
+                  [dataSource$]="recommendedSubjectsDataSource$"
+                  [isLoading]="isLoadingRecommendetSubjects"
+                  [displayFullInfo]="false"
+                  [isPageable]="false"
+                  [isScrollable]="true"
+                  (subjectDetailNavigate)="navigateToSubjectDetail($event)"
+                >
+                </app-subjects-table>
+            </mat-card-content>
+          }
+        } @else if (isLoadingRecommendetSubjects) {
+          <mat-card-content>
+            <div class="d-flex flex-column clustering-max-height-75vh">
+              <ngx-skeleton-loader count="5" appearance="line"></ngx-skeleton-loader>
+            </div>
+          </mat-card-content>
+        } @else {
+          <mat-card-content>
+            Vyber si predmety
+          </mat-card-content>
+        }
+        </div>
+
+      </mat-card>
+    </div>
+  </div>
+</div>

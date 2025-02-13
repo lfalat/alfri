@@ -1,11 +1,17 @@
 package sk.uniza.fri.alfri.service.implementation;
 
+import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
+
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.Session;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 import sk.uniza.fri.alfri.dto.questionnaire.AnswerDTO;
@@ -19,13 +25,16 @@ import sk.uniza.fri.alfri.entity.Question;
 import sk.uniza.fri.alfri.entity.QuestionOption;
 import sk.uniza.fri.alfri.entity.Questionnaire;
 import sk.uniza.fri.alfri.entity.QuestionnaireSection;
+import sk.uniza.fri.alfri.entity.StudyProgramSubject;
 import sk.uniza.fri.alfri.entity.User;
 import sk.uniza.fri.alfri.exception.QuestionnaireNotFilledException;
 import sk.uniza.fri.alfri.mapper.AnswerMapper;
 import sk.uniza.fri.alfri.mapper.QuestionnaireMapper;
 import sk.uniza.fri.alfri.repository.AnswerRepository;
+import sk.uniza.fri.alfri.repository.AnswerTextRepository;
 import sk.uniza.fri.alfri.repository.QuestionRepository;
 import sk.uniza.fri.alfri.repository.QuestionnaireRepository;
+import sk.uniza.fri.alfri.repository.StudyProgramSubjectRepository;
 import sk.uniza.fri.alfri.service.FormService;
 
 @Service
@@ -35,12 +44,20 @@ public class FormServiceImpl implements FormService {
   private final QuestionnaireRepository questionnaireRepository;
   private final QuestionRepository questionRepository;
   private final AnswerRepository answerRepository;
+  private final AnswerTextRepository answerTextRepository;
+  private final StudyProgramSubjectRepository studyProgramSubjectRepository;
+    private final EntityManager entityManager;
 
   public FormServiceImpl(QuestionnaireRepository questionnaireRepository,
-      QuestionRepository questionRepository, AnswerRepository answerRepository) {
+      QuestionRepository questionRepository, AnswerRepository answerRepository,
+                         AnswerTextRepository answerTextRepository,
+                         StudyProgramSubjectRepository studyProgramSubjectRepository, EntityManager entityManager) {
     this.questionnaireRepository = questionnaireRepository;
     this.questionRepository = questionRepository;
     this.answerRepository = answerRepository;
+    this.answerTextRepository = answerTextRepository;
+    this.studyProgramSubjectRepository = studyProgramSubjectRepository;
+    this.entityManager = entityManager;
   }
 
   public void saveQuestionnaire(QuestionnaireDTO questionnaireDTO) {
@@ -99,20 +116,40 @@ public class FormServiceImpl implements FormService {
     this.questionnaireRepository.save(questionnaire);
   }
 
+  @Transactional
   public void submitFormAnswers(UserFormAnswersDTO userFormAnswersDTO, User user) {
-    // Fetch the questionnaire by formId
-    Questionnaire questionnaire = questionnaireRepository.findById(userFormAnswersDTO.formId())
-        .orElseThrow(() -> new ResourceNotFoundException(
-            "Questionnaire not found with id: " + userFormAnswersDTO.formId()));
+      // Explicitly fetch the questionnaire with its answers
+      Questionnaire questionnaire = questionnaireRepository.findById(userFormAnswersDTO.formId())
+              .orElseThrow(() -> new ResourceNotFoundException(
+                      "Questionnaire not found with id: " + userFormAnswersDTO.formId()));
 
-    // Check if the user has already submitted answers for this questionnaire
-    // if (answerRepository.existsByAnswerQuestionnaireAndUserId(questionnaire, user)) {
-    // throw new IllegalArgumentException(
-    // "User has already submitted answers for this questionnaire.");
-    // }
+      // Or use a custom query to fetch answers
+      List<Answer> existingAnswers = answerRepository.findByAnswerQuestionnaireAndUserId(questionnaire, user.getId());
+
+      if (!existingAnswers.isEmpty()) {
+          // Collect all answer text IDs
+          List<Integer> answerTextIds = existingAnswers.stream()
+                  .flatMap(answer -> answer.getTexts().stream())
+                  .map(AnswerText::getAnswerTextId)
+                  .toList();
+
+          // Collect all answer IDs
+          List<Integer> answerIds = existingAnswers.stream()
+                  .map(Answer::getAnswerId)
+                  .toList();
+
+          // Perform deletions
+          answerTextRepository.deleteAllByIdInBatch(answerTextIds);
+          answerRepository.deleteAllByIdInBatch(answerIds);
+      }
 
     // Validate answers for each question in the questionnaire
     for (QuestionnaireSection section : questionnaire.getSections()) {
+        // If the section data was fetched independently, skip it
+        if (Boolean.FALSE.equals(section.getShouldFetchData())) {
+            continue;
+        }
+
       for (Question question : section.getQuestions()) {
         // Find the answer for the current question
         Optional<AnswerDTO> answerOptional = userFormAnswersDTO.answers().stream()
@@ -147,7 +184,7 @@ public class FormServiceImpl implements FormService {
   private void validateRadioOrCheckboxAnswer(Question question, AnswerDTO answerDTO) {
     for (AnswerTextDTO answerTextDTO : answerDTO.texts()) {
       boolean validAnswerText = question.getOptions().stream()
-          .anyMatch(option -> option.getQuestionOption().equals(answerTextDTO.answerText()));
+          .anyMatch(option -> answerTextDTO.textOfAnswer().equals(option.getQuestionOption()));
 
       if (!validAnswerText) {
         throw new IllegalArgumentException(
@@ -165,7 +202,7 @@ public class FormServiceImpl implements FormService {
 
     // Fetch and delete existing answers for the user and questionnaire
     List<Answer> existingAnswers =
-        answerRepository.findByAnswerQuestionnaireAndUserId(questionnaire, user);
+        answerRepository.findByAnswerQuestionnaireAndUserId(questionnaire, user.getId());
     if (existingAnswers.isEmpty()) {
       throw new IllegalArgumentException(String.format(
           "Questions for the questionnaire with ID %d for user with ID %d do not exist.",
@@ -189,18 +226,14 @@ public class FormServiceImpl implements FormService {
   }
 
   @Override
-  public void hasUserFilledForm(int formId, User user) {
+  public boolean hasUserFilledForm(int formId, User user) {
     Optional<Questionnaire> questionnaire = this.questionnaireRepository.findById(formId);
 
     if (questionnaire.isEmpty()) {
       throw new IllegalArgumentException("Questionnaire with id " + formId + " does not exist.");
     }
 
-    if (!this.answerRepository.existsByAnswerQuestionnaireAndUserId(questionnaire.get(), user)) {
-      throw new QuestionnaireNotFilledException(
-          String.format("User with id %d has not filled form with id %d", user.getId(),
-              questionnaire.get().getId()));
-    }
+    return this.answerRepository.existsByAnswerQuestionnaireAndUserId(questionnaire.get(), user);
   }
 
   @Override
@@ -208,15 +241,75 @@ public class FormServiceImpl implements FormService {
     return questionnaireRepository.getAnswerOfQuestionByQuestionText(subjectName, user.getId());
   }
 
-  private void saveFormAnswers(UserFormAnswersDTO userFormAnswersDTO, User user,
+    @Override
+    public List<Question> getMandatorySubjects(Long studyProgramId, int year) {
+        // First fetch all the StudyProgramSubjects for the given parameters
+        List<StudyProgramSubject> mandatorySubjects = this.studyProgramSubjectRepository.findMandatorySubjects(studyProgramId, year);
+        // Now join the data with the question entity
+        return this.questionRepository.findAllByQuestionIdentifierIn(mandatorySubjects.stream()
+                .map(obj -> obj.getId().getSubject().getCode())
+                .toList());
+    }
+
+    @Override
+    public Questionnaire getForm(int formId) {
+        Optional<Questionnaire> questionnaireOptional = this.questionnaireRepository.findById(formId);
+
+        if (questionnaireOptional.isEmpty()) {
+            throw new IllegalArgumentException(
+                    String.format("The questionnaire with the specified formId %d does not exist.", formId));
+        }
+
+        Questionnaire questionnaire = questionnaireOptional.get();
+        questionnaire.getSections().forEach(s -> s.getQuestions().sort(Comparator.comparing(Question::getPositionInQuestionnaire)));
+
+        return questionnaire;
+    }
+
+    @Transactional
+    @Override
+    public Questionnaire getUserFilledForm(int formId, Integer userId) {
+        Session session = entityManager.unwrap(Session.class);
+        session.enableFilter("answeredByUserFilter").setParameter("userId", userId);
+
+        Optional<Questionnaire> questionnaireOptional = this.questionnaireRepository.findById(formId);
+
+        if (questionnaireOptional.isEmpty()) {
+            throw new QuestionnaireNotFilledException(
+                    String.format("The questionnaire with the specified formId %d does not exist.", formId));
+        }
+
+        int totalUserAnswers = questionnaireOptional.get().getSections().stream()
+                .mapToInt(section -> section.getQuestions().size())
+                .sum();
+
+        if (totalUserAnswers == 0) {
+            throw new QuestionnaireNotFilledException(
+                    String.format("The questionnaire with the specified formId %d does not exist.", formId));
+        }
+
+        return questionnaireOptional.get();
+    }
+
+    private void saveFormAnswers(UserFormAnswersDTO userFormAnswersDTO, User user,
       Questionnaire questionnaire) {
     for (AnswerDTO answerDTO : userFormAnswersDTO.answers()) {
       Question question = questionRepository.findById(answerDTO.questionId())
           .orElseThrow(() -> new ResourceNotFoundException(
               "Question not found with id: " + answerDTO.questionId()));
 
+      // Set the new study year for the user
+      if (question.getQuestionIdentifier().equals("question_rocnik")) {
+          user.getStudent().setYear(Integer.valueOf(answerDTO.texts().getFirst().textOfAnswer()));
+      }
+
+      // Set the new study program for the user
+        if (question.getQuestionIdentifier().equals("question_odbor")) {
+            user.getStudent().setStudyProgramId(Integer.valueOf(answerDTO.texts().getFirst().textOfAnswer()));
+        }
+
       Answer answer = AnswerMapper.INSTANCE.toEntity(answerDTO);
-      answer.setUserId(user);
+      answer.setUser(user);
       answer.setAnswerQuestionnaire(questionnaire);
       answer.setAnswerQuestion(question);
 

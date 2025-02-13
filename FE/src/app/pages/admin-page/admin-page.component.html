@@ -1,0 +1,67 @@
+<div class="card">
+  <div class="card-header">
+    <div class="d-flex justify-content-between">
+      <h2 class="card-title">Administrácia</h2>
+      <button mat-raised-button color="primary" (click)="openUserFormDialog()">Pridať používateľa</button>
+    </div>
+  </div>
+
+  <div id="admin-table-wrapper">
+    <mat-table [dataSource]="users" class="d-table w-100">
+      <ng-container matColumnDef="firstName">
+        <th mat-header-cell *matHeaderCellDef>Meno</th>
+        <td mat-cell *matCellDef="let user">{{ user.firstName }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="lastName">
+        <th mat-header-cell *matHeaderCellDef>Priezvisko</th>
+        <td mat-cell *matCellDef="let user">{{ user.lastName }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="email">
+        <th mat-header-cell *matHeaderCellDef>Email</th>
+        <td mat-cell *matCellDef="let user">{{ user.email }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="roles">
+        <th mat-header-cell *matHeaderCellDef>Rola</th>
+        <td mat-cell *matCellDef="let user">
+          <div class="roles-container">
+            <label *ngFor="let role of availableRoles" class="role-label">
+              <input
+                type="checkbox"
+                [checked]="userHasRole(user, role)"
+                (change)="onRoleToggle(user, role, $event)"
+              />
+              {{ role.name }}
+            </label>
+          </div>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="options">
+        <th mat-header-cell *matHeaderCellDef>Možnosti</th>
+        <td mat-cell *matCellDef="let user">
+          <mat-menu #menu="matMenu">
+            <button mat-menu-item (click)="openChangePasswordModal(user)">
+              <mat-icon>vpn_key</mat-icon> Zmena hesla
+            </button>
+            <button mat-menu-item (click)="openSubjectModal(user.userId)" *ngIf="isUserTeacher(user)">
+              <mat-icon>edit</mat-icon> Zmena predmetov
+            </button>
+            <button mat-menu-item (click)="deleteUser(user.userId)" class="text-danger">
+              <mat-icon class="text-danger">delete</mat-icon> Odstrániť
+            </button>
+          </mat-menu>
+
+          <button mat-icon-button [matMenuTriggerFor]="menu">
+            <mat-icon>more_vert</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </mat-table>
+  </div>
+</div>

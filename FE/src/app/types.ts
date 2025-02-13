@@ -5,8 +5,9 @@ import {
   ApexPlotOptions,
   ApexResponsive,
   ApexTitleSubtitle,
-  ApexXAxis
+  ApexXAxis,
 } from 'ng-apexcharts';
+import { AuthRole } from '@enums/auth-role';
 
 export interface Role {
   id: number;
@@ -16,7 +17,6 @@ export interface Role {
 export interface RegisterUserDto {
   firstName: string;
   lastName: string;
-  rolesIds: number[];
   email: string;
   password: string;
 }
@@ -35,14 +35,20 @@ export interface LoginUserDto {
 }
 
 export interface ChangePasswordDto {
-  email: string,
-  oldPassword: string
-  newPassword: string
+  email: string;
+  oldPassword: string;
+  newPassword: string;
+}
+
+export interface PasswordPair {
+  oldPassword: string;
+  newPassword: string;
 }
 
 export interface AuthResponseDto {
   jwtToken: string;
   expiresIn: number;
+  userRoles: AuthRole[];
 }
 
 export interface FocusDto {
@@ -70,7 +76,7 @@ export interface SubjectDto {
 }
 
 export interface SubjectExtendedDto extends SubjectDto {
-  focusDTO: FocusDto
+  focusDTO: FocusDto;
 }
 
 export interface StudyProgramDto {
@@ -120,25 +126,51 @@ export interface Page<T> {
   empty: boolean;
 }
 
-
 // Questionnaire types
 export interface Option {
-  questionOption: string;
+  questionOption: string; // The label to be displayed
+  questionValue: string; // The value to be sent to the backend
 }
 
 export interface Question {
   id: number;
   questionTitle: string;
-  answerType: 'RADIO' | 'CHECKBOX' | 'TEXT' | 'NUMERIC';
+  answerType: 'TEXT' | 'NUMERIC' | 'RADIO' | 'CHECKBOX' | 'DROPDOWN' | 'GRADE';
   optional: boolean;
   questionIdentifier: string;
   positionInQuestionnaire: number;
   options: Option[];
 }
 
+export interface AnsweredQuestion {
+  id: number;
+  questionTitle: string;
+  answerType: 'TEXT' | 'NUMERIC' | 'RADIO' | 'CHECKBOX' | 'DROPDOWN' | 'GRADE';
+  optional: boolean;
+  questionIdentifier: string;
+  positionInQuestionnaire: number;
+  options: Option[];
+  answers: Answer[];
+}
+
 export interface Section {
   sectionTitle: string;
+  sectionDescription: string;
   questions: Question[];
+}
+
+export interface AnsweredSection {
+  sectionTitle: string;
+  sectionDescription: string;
+  questions: AnsweredQuestion[];
+}
+
+export interface AnsweredForm {
+  id: number;
+  title: string;
+  description: string;
+  dateOfCreation: string;
+  sections: AnsweredSection[];
 }
 
 export interface Form {
@@ -150,7 +182,7 @@ export interface Form {
 }
 
 export interface AnswerText {
-  answerText: string;
+  textOfAnswer: string;
 }
 
 export interface Answer {
@@ -194,7 +226,32 @@ export interface ApexChartOptions {
   dataLabels: ApexDataLabels;
   title: ApexTitleSubtitle;
   colors: string[];
-  plotOptions: ApexPlotOptions,
-  xAxis: ApexXAxis,
-  responsive: ApexResponsive[]
+  plotOptions: ApexPlotOptions;
+  xAxis: ApexXAxis;
+  responsive: ApexResponsive[];
+}
+
+export interface KeywordDto {
+  keyword: string;
+  subjects: SubjectDto[];
+}
+
+export enum StudyPrograms {
+  Informatika = 3,
+  Manažment = 4
+}
+
+export interface KeywordDTO {
+  keyword: string;
+  count: number;
+}
+
+export interface FocusCategorySumDTO {
+  focusCategory: string;
+  totalSum: number;
+}
+
+export interface StudentYearCountDTO {
+  year: number;
+  studentsCount: number;
 }

@@ -1,0 +1,8 @@
+@import "../../../../node_modules/bootstrap/scss/bootstrap";  // TODO relative import
+
+#admin-table-wrapper {
+  overflow-x: scroll;
+  @include media-breakpoint-up(md) {
+    overflow-x: auto;
+  }
+}

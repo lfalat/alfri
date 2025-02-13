@@ -4,6 +4,8 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import jakarta.validation.constraints.NotNull;
 import java.util.Objects;
+
+import jakarta.validation.constraints.Positive;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.Hibernate;
@@ -21,6 +23,11 @@ public class StudentSubjectId {
   @Column(name = "subject_id", nullable = false)
   private Integer subjectId;
 
+  @Column(name = "year", nullable = false)
+  @NotNull(message = "StudentSubject's year cannot be null!")
+  @Positive(message = "StudentSubject's year must be positive!")
+  private Integer year;
+
   @Override
   public boolean equals(Object o) {
     if (this == o)
@@ -29,7 +36,8 @@ public class StudentSubjectId {
       return false;
     StudentSubjectId entity = (StudentSubjectId) o;
     return Objects.equals(this.studentId, entity.studentId)
-        && Objects.equals(this.subjectId, entity.subjectId);
+        && Objects.equals(this.subjectId, entity.subjectId)
+        && Objects.equals(this.year, entity.year);
   }
 
   @Override
