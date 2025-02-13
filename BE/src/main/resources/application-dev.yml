@@ -17,13 +17,14 @@ spring:
 
 python:
   executable_path: ${PYTHON_DEV_EXECUTABLE_PATH:python3}
-  clustering_prediction_INF_model_path: ${PROD_CLUSTERING_PREDICTION_MODEL_INF_PATH:/app/python_scripts/models/kmeans_model.pkl}
-  clustering_prediction_MAN_model_path: ${PROD_CLUSTERING_PREDICTION_MODEL_MAN_PATH:/app/python_scripts/models/kmeans_model_manazment.pkl}
-  clustering_prediction_script_path: ${DEV_CLUSTERING_PREDICTION_SCRIPT_PATH:/app/python_scripts/subject_clustering.py}
-  clustering_prediction_model_path: ${DEV_CLUSTERING_PREDICTION_MODEL_PATH:/app/python_scripts/models/kmeans_model.pkl}
-  passing_change_prediction_script_path: ${DEV_PASSING_CHANGE_PREDICTION_SCRIPT_PATH:/app/python_scripts/passing_chance_prediction.py}
-  passing_mark_prediction_script_path: ${DEV_PASSING_MARK_PREDICTION_SCRIPT_PATH:/app/python_scripts/neural_network_marks_predictions.py}
-  
+  clustering_prediction_script_path: ${DEV_CLUSTERING_PREDICTION_SCRIPT_PATH:./python_scripts/subject_clustering.py}
+  clustering_prediction_INF_model_path: ${PROD_CLUSTERING_PREDICTION_MODEL_INF_PATH}
+  clustering_prediction_MAN_model_path: ${PROD_CLUSTERING_PREDICTION_MODEL_MAN_PATH}
+  passing_change_prediction_script_path: ${DEV_PASSING_CHANGE_PREDICTION_SCRIPT_PATH:./python_scripts/passing_chance_prediction.py}
+  passing_mark_prediction_script_path: ${DEV_PASSING_MARK_PREDICTION_SCRIPT_PATH:./python_scripts/neural_network_marks_predictions.py}
+
+
+
 frontend-url: ${FRONTEND_DEV_URL:*}
 # email of user that you want to act as
 default-user-email: szathmary@stud.uniza.sk

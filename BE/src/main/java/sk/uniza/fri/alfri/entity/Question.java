@@ -19,6 +19,7 @@ import org.hibernate.annotations.ParamDef;
 @Setter
 @Entity
 @Table(name = "question")
+@FilterDef(name = "answeredQuestionByUserFilter", parameters = @ParamDef(name = "userId", type = Integer.class))
 public class Question {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -60,5 +61,6 @@ public class Question {
     @OneToMany(mappedBy = "answerQuestion", fetch = FetchType.LAZY, cascade = CascadeType.ALL,
       orphanRemoval = true)
     @JsonBackReference
+    @Filter(name = "answeredQuestionByUserFilter", condition = "user_id = :userId")
     private List<Answer> answers = new ArrayList<>();
 }
