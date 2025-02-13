@@ -149,7 +149,6 @@ export class GradeFormComponent implements OnInit {
   }
 
   onStepChange(event: StepperSelectionEvent) {
-    console.log(this.formGroups);
     const selectedIndex = event.selectedIndex;
     this.activeStep.set(selectedIndex);
   }
@@ -225,7 +224,6 @@ export class GradeFormComponent implements OnInit {
 
   onSubmit() {
     let allValid = true;
-    console.log(this.formGroups);
     this.formGroups.forEach((group) => {
       Object.keys(group.controls).forEach((key) => {
         group.controls[key].markAsTouched();

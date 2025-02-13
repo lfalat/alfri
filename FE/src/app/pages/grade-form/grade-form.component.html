@@ -1,5 +1,6 @@
 <div
   class="d-flex justify-content-center align-items-center h-100"
+  *ngIf="!loading"
 >
   <div class="row bg-white w-100">
   <ng-container *ngIf="loading; else content">
@@ -8,72 +9,72 @@
 
   <ng-template #content>
       <div class="px-4">
-        <h2>{{ form.title }}</h2>
-        <p>
-          {{ form.description }}
-        </p>
-      </div>
-      <mat-stepper
-        linear
-        (selectionChange)="onStepChange($event)"
-        class="w-100"
-        [orientation]="(stepperOrientation | async)!"
+      <h2>{{ form.title }}</h2>
+      <p>
+        {{ form.description }}
+      </p>
+    </div>
+    <mat-stepper
+      linear
+      (selectionChange)="onStepChange($event)"
+      class="w-100"
+      [orientation]="(stepperOrientation | async)!"
+    >
+      <mat-step
+        [stepControl]="formGroups[0]"
+        class="step"
+        [label]="form.sections[0].sectionTitle"
       >
-        <mat-step
-          [stepControl]="formGroups[0]"
-          class="step"
-          [label]="form.sections[0].sectionTitle"
-        >
-          <app-basic-information-step
-            [formGroup]="formGroups[0]"
-            [section]="form.sections[0]"
-          ></app-basic-information-step>
-        </mat-step>
+        <app-basic-information-step
+          [formGroup]="formGroups[0]"
+          [section]="form.sections[0]"
+        ></app-basic-information-step>
+      </mat-step>
 
-        <mat-step
-          [stepControl]="formGroups[1]"
-          class="step"
-          [label]="form.sections[1].sectionTitle"
-        >
-          <ng-template matStepContent>
-            <app-mandatory-subjects-step
-              [form]="form"
-              [formGroup]="formGroups[1]"
-              [section]="form.sections[1]"
-              [basicInformationFormGroup]="formGroups[0]"
-              [activeStep]="activeStep"
-              [shouldFetchData]="formGroups[1].invalid"
-              [formAnswers]="existingAnswers"
-            ></app-mandatory-subjects-step>
-          </ng-template>
-        </mat-step>
-
-        <mat-step
-          [stepControl]="formGroups[2]"
-          class="step"
-          [label]="form.sections[2].sectionTitle"
-        >
-          <app-focus-step
-            [formGroup]="formGroups[2]"
-            [section]="form.sections[2]"
+      <mat-step
+        [stepControl]="formGroups[1]"
+        class="step"
+        [label]="form.sections[1].sectionTitle"
+      >
+        <ng-template matStepContent>
+          <app-mandatory-subjects-step
+            [form]="form"
+            [formGroup]="formGroups[1]"
+            [section]="form.sections[1]"
+            [basicInformationFormGroup]="formGroups[0]"
             [activeStep]="activeStep"
-          >
-          </app-focus-step>
-        </mat-step>
+            [shouldFetchData]="formGroups[1].invalid"
+            [formAnswers]="existingAnswers"
+          ></app-mandatory-subjects-step>
+        </ng-template>
+      </mat-step>
 
-        <mat-step
-          [stepControl]="formGroups[3]"
-          class="step"
-          [label]="form.sections[3].sectionTitle"
+      <mat-step
+        [stepControl]="formGroups[2]"
+        class="step"
+        [label]="form.sections[2].sectionTitle"
+      >
+        <app-focus-step
+          [formGroup]="formGroups[2]"
+          [section]="form.sections[2]"
+          [activeStep]="activeStep"
         >
-          <app-hobby-step
-            [currentFormGroup]="formGroups[3]"
-            [section]="form.sections[3]"
-            (submitForm)="onSubmit()"
-          >
-          </app-hobby-step>
-        </mat-step>
-      </mat-stepper>
+        </app-focus-step>
+      </mat-step>
+
+      <mat-step
+        [stepControl]="formGroups[3]"
+        class="step"
+        [label]="form.sections[3].sectionTitle"
+      >
+        <app-hobby-step
+          [currentFormGroup]="formGroups[3]"
+          [section]="form.sections[3]"
+          (submitForm)="onSubmit()"
+        >
+        </app-hobby-step>
+      </mat-step>
+    </mat-stepper>
 
   </ng-template>
   </div>
