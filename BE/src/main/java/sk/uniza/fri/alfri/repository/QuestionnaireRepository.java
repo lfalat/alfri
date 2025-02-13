@@ -5,6 +5,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import sk.uniza.fri.alfri.entity.Questionnaire;
 
+import java.util.Optional;
+
 public interface QuestionnaireRepository extends JpaRepository<Questionnaire, Integer> {
 
   @Query(nativeQuery = true, value = """

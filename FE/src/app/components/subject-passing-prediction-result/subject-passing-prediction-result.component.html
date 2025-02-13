@@ -1,29 +1,39 @@
-<mat-card class="prediction-card" *ngIf="passingPrediction$ | async as data">
+<mat-card class="p-2" *ngIf="passingPrediction$ | async as data">
   <div class="subject-mark-section">
     <mat-card-title class="subject-name">{{ data.subjectName }}</mat-card-title>
-    <div class="mark-section">
-      Známka: <span [ngClass]="getMarkClass(data.mark)" class="mark-value">{{ data.mark }}</span>
-    </div>
+    <mat-card-subtitle>
+      <div>
+        Známka:
+        <span [ngClass]="getMarkClass(data.mark)" class="mark-value h3">{{
+            data.mark
+          }}</span>
+      </div>
+    </mat-card-subtitle>
   </div>
 
   <span class="probability-label">Pravdepodobnosť absolvovania predmetu:</span>
-  <div class="progress-section-wide" matTooltip="Pravdepodobnosť absolvovania predmetu">
+  <div
+    class="progress-section-wide"
+    matTooltip="Pravdepodobnosť absolvovania predmetu"
+  >
     <div class="percentage-label">{{ data.passingProbability }} %</div>
     <mat-progress-bar
       mode="determinate"
       [value]="data.passingProbability"
-      [color]="getProgressColor(data.passingProbability)">
+      [color]="getProgressColor(data.passingProbability)"
+    >
     </mat-progress-bar>
-
   </div>
 
   <div class="recommendations-section">
     <mat-card-subtitle>Typy pre zlepšenie úspechu:</mat-card-subtitle>
     <mat-list>
-      <mat-list-item *ngFor="let recommendation of data.recommendations">
-        <mat-icon matListItemIcon>lightbulb</mat-icon>
-        <p matLine>{{ recommendation }}</p>
-      </mat-list-item>
+      <div class="row row-gap-2">
+        <div *ngFor="let recommendation of data.recommendations" class="col-12 d-flex align-items-center">
+          <mat-icon matListItemIcon style="color: #ffd242">lightbulb</mat-icon>
+          <p matLine>{{ recommendation }}</p>
+        </div>
+      </div>
     </mat-list>
   </div>
 </mat-card>

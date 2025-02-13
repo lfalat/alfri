@@ -1,8 +1,10 @@
 package sk.uniza.fri.alfri.repository;
 
+import jakarta.persistence.Tuple;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import sk.uniza.fri.alfri.dto.focus.FocusCategorySumDTO;
 import sk.uniza.fri.alfri.entity.Focus;
 import sk.uniza.fri.alfri.entity.Subject;
 
@@ -30,4 +32,57 @@ public interface FocusRepository extends JpaRepository<Focus, Integer> {
       @Param("hardwareFocus") Integer hardwareFocus, @Param("networkFocus") Integer networkFocus,
       @Param("dataFocus") Integer dataFocus, @Param("testingFocus") Integer testingFocus,
       @Param("languageFocus") Integer languageFocus, @Param("physicalFocus") Integer physicalFocus);
+
+
+  @Query(nativeQuery = true, value = """
+    SELECT
+        'math_focus' AS focus_category, SUM(math_focus) AS total_sum
+    FROM public.focus
+    UNION ALL
+    SELECT
+        'logic_focus', SUM(logic_focus)
+    FROM public.focus
+    UNION ALL
+    SELECT
+        'programming_focus', SUM(programming_focus)
+    FROM public.focus
+    UNION ALL
+    SELECT
+        'design_focus', SUM(design_focus)
+    FROM public.focus
+    UNION ALL
+    SELECT
+        'economics_focus', SUM(economics_focus)
+    FROM public.focus
+    UNION ALL
+    SELECT
+        'management_focus', SUM(management_focus)
+    FROM public.focus
+    UNION ALL
+    SELECT
+        'hardware_focus', SUM(hardware_focus)
+    FROM public.focus
+    UNION ALL
+    SELECT
+        'network_focus', SUM(network_focus)
+    FROM public.focus
+    UNION ALL
+    SELECT
+        'data_focus', SUM(data_focus)
+    FROM public.focus
+    UNION ALL
+    SELECT
+        'testing_focus', SUM(testing_focus)
+    FROM public.focus
+    UNION ALL
+    SELECT
+        'language_focus', SUM(language_focus)
+    FROM public.focus
+    UNION ALL
+    SELECT
+        'physical_focus', SUM(physical_focus)
+    FROM public.focus
+    ORDER BY total_sum DESC;
+    """)
+  List<Tuple> findFocusCategorySums();
 }

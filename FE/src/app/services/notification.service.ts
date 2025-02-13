@@ -1,37 +1,58 @@
 import { Injectable } from '@angular/core';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class NotificationService {
-  constructor(private snackBar: MatSnackBar) {
-  }
+  constructor(private snackBar: MatSnackBar) {}
 
-  public showError(message: string, action: string = 'X', duration: number = 6000): void {
-    this.snackBar.open(message, action, {
-      duration: duration,
+  public showError(
+    message: string,
+    action: string = 'X',
+    duration: number = 6000,
+  ): void {
+    const config: MatSnackBarConfig = {
+      duration,
       panelClass: ['error-snackbar'],
-      horizontalPosition: 'right',
-      verticalPosition: 'top'
-    });
+      horizontalPosition: 'end',
+      verticalPosition: 'top',
+    };
+
+    this.snackBar.open(message, action, config);
   }
 
-  public showSuccess(message: string, action: string = 'X', duration: number = 6000): void {
-    this.snackBar.open(message, action, {
-      duration: duration,
+  public showSuccess(
+    message: string,
+    action: string = 'X',
+    duration: number = 6000,
+  ): void {
+    const config: MatSnackBarConfig = {
+      duration,
       panelClass: ['success-snackbar'],
-      horizontalPosition: 'right',
-      verticalPosition: 'top'
-    });
+      horizontalPosition: 'end',
+      verticalPosition: 'top',
+    };
+
+    this.snackBar.open(message, action, config);
   }
 
-  public showWarning(message: string, action: string = 'X', duration: number = 6000): void {
-    this.snackBar.open(message, action, {
-      duration: duration,
+  public showWarning(
+    message: string,
+    action: string = 'X',
+    duration: number = 6000000,
+  ): void {
+    const config: MatSnackBarConfig = {
+      duration,
       panelClass: ['warning-snackbar'],
-      horizontalPosition: 'right',
-      verticalPosition: 'top'
-    });
+      horizontalPosition: 'end',
+      verticalPosition: 'top',
+    };
+
+    this.snackBar.open(message, action, config);
+  }
+
+  public hideSnackbar(): void {
+    this.snackBar.dismiss();
   }
 }

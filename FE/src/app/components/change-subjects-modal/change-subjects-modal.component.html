@@ -1,0 +1,60 @@
+<h2 mat-dialog-title>
+  Zmena predmetov pre {{ selectedUser?.firstName }} {{ selectedUser?.lastName }}
+</h2>
+
+<div mat-dialog-content>
+  <h3>Katedra</h3>
+  <mat-form-field appearance="fill" class="w-100">
+    <mat-label>Katedra</mat-label>
+    <mat-select [(ngModel)]="selectedDepartmentId">
+      <mat-option *ngFor="let department of availableDepartments" [value]="department.id" >
+        {{ department.name }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <h3>Priradené predmety</h3>
+  <table mat-table [dataSource]="selectedTeacherSubjects">
+    <ng-container matColumnDef="name">
+      <th mat-header-cell *matHeaderCellDef>Predmet</th>
+      <td mat-cell *matCellDef="let subject">{{ subject.name }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="assigned">
+      <th mat-header-cell *matHeaderCellDef>Priradenie</th>
+      <td mat-cell *matCellDef="let subject">
+        <mat-checkbox [checked]="true" (change)="onSubjectToggle(subject, $event)">
+        </mat-checkbox>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+
+  <h3>Ostatné predmety</h3>
+  <table mat-table [dataSource]="availableSubjects">
+    <ng-container matColumnDef="name">
+      <th mat-header-cell *matHeaderCellDef>Predmet</th>
+      <td mat-cell *matCellDef="let subject">{{ subject.name }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="assigned">
+      <th mat-header-cell *matHeaderCellDef>Priradenie</th>
+      <td mat-cell *matCellDef="let subject">
+        <mat-checkbox [checked]="isSubjectAssigned(subject)" (change)="onSubjectToggle(subject, $event)">
+        </mat-checkbox>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+
+</div>
+
+
+<div mat-dialog-actions class="d-flex justify-content-end">
+  <button mat-button type="button" (click)="closeSubjectModal()">Zrušiť</button>
+  <button mat-button color="primary" (click)="saveTeacherSubjects()">Zmeniť predmety</button>
+</div>

@@ -1,0 +1,29 @@
+<h1 mat-dialog-title>Vytvoriť používateľa</h1>
+<div mat-dialog-content>
+  <form [formGroup]="userForm">
+    <mat-form-field appearance="fill" class="w-100">
+      <mat-label>Meno</mat-label>
+      <input matInput formControlName="firstName" required>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="w-100">
+      <mat-label>Priezvisko</mat-label>
+      <input matInput formControlName="lastName" required>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="w-100">
+      <mat-label>Email</mat-label>
+      <input matInput formControlName="email" required>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="w-100">
+      <mat-label>Heslo</mat-label>
+      <input matInput formControlName="password" type="password" required>
+    </mat-form-field>
+  </form>
+</div>
+
+<div mat-dialog-actions class="d-flex justify-content-end">
+  <button mat-button (click)="onCancel()">Zrušiť</button>
+  <button mat-button [disabled]="userForm.invalid" (click)="onSubmit()">Vytvoriť</button>
+</div>

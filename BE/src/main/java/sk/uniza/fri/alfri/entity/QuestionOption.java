@@ -28,6 +28,9 @@ public class QuestionOption {
   @Column(name = "question_option")
   private String questionOption;
 
+    @Column(name = "question_value")
+    private String questionValue;
+
   @ManyToOne(fetch = FetchType.LAZY, optional = false)
   @JoinColumn(name = "question_id", nullable = false)
   private Question question;

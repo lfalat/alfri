@@ -3,6 +3,9 @@ package sk.uniza.fri.alfri.service;
 import org.springframework.data.domain.Page;
 import sk.uniza.fri.alfri.common.pagitation.PageDefinition;
 import sk.uniza.fri.alfri.common.pagitation.SearchDefinition;
+import sk.uniza.fri.alfri.dto.KeywordDTO;
+import sk.uniza.fri.alfri.dto.StudentYearCountDTO;
+import sk.uniza.fri.alfri.dto.focus.FocusCategorySumDTO;
 import sk.uniza.fri.alfri.entity.StudyProgramSubject;
 import sk.uniza.fri.alfri.entity.Subject;
 import sk.uniza.fri.alfri.entity.User;
@@ -31,4 +34,10 @@ public interface ISubjectService {
   List<String> makePassingChancePrediction(String userEmail);
 
   List<String> makePassingMarkPrediction(String userEmail);
+
+  List<FocusCategorySumDTO> getMostPopularFocuses();
+
+    List<KeywordDTO> getAllKeywords();
+
+    List<StudentYearCountDTO> getStudentCountsByYear();
 }

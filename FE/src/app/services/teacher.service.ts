@@ -11,35 +11,59 @@ import { environment } from '../../environments/environment';
 export class TeacherService {
   private readonly BE_URL = `${environment.API_URL}`;
 
-  constructor(private http: HttpClient, private readonly notificationService: NotificationService) {
-  }
+  constructor(
+    private http: HttpClient,
+    private readonly notificationService: NotificationService,
+  ) {}
 
   getTeacherById(userId: number): Observable<TeacherDto> {
-    return this.http.get<TeacherDto>(`${this.BE_URL}/teacher/${userId}`).pipe(catchError((error: HttpErrorResponse) => {
-      this.notificationService.showError(error.error.message);
-      return EMPTY;
-    }));
+    return this.http.get<TeacherDto>(`${this.BE_URL}/teacher/${userId}`).pipe(
+      catchError((error: HttpErrorResponse) => {
+        this.notificationService.showError(error.error.message);
+        return EMPTY;
+      }),
+    );
   }
 
   getTeacherSubjects(userId: number): Observable<SubjectDto[]> {
-    return this.http.get<SubjectDto[]>(`${this.BE_URL}/teacher/${userId}/subjects`).pipe(catchError((error: HttpErrorResponse) => {
-      this.notificationService.showError(error.error.message);
-      return EMPTY;
-    }));
+    return this.http
+      .get<SubjectDto[]>(`${this.BE_URL}/teacher/${userId}/subjects`)
+      .pipe(
+        catchError((error: HttpErrorResponse) => {
+          this.notificationService.showError(error.error.message);
+          return EMPTY;
+        }),
+      );
   }
 
   getTeacherDepartment(userId: number): Observable<DepartmentDto> {
-    return this.http.get<DepartmentDto>(`${this.BE_URL}/admin/teacher/${userId}/department`).pipe(catchError((error: HttpErrorResponse) => {
-      this.notificationService.showError(error.error.message);
-      return EMPTY;
-    }));
+    return this.http
+      .get<DepartmentDto>(`${this.BE_URL}/admin/teacher/${userId}/department`)
+      .pipe(
+        catchError((error: HttpErrorResponse) => {
+          this.notificationService.showError(error.error.message);
+          return EMPTY;
+        }),
+      );
   }
 
-  updateTeacherSubjects(userId: number, subjectCodes: string[]): Observable<TeacherDto> {
-    return this.http.post<TeacherDto>(`${this.BE_URL}/admin/teacher/${userId}/subjects`, subjectCodes);
+  updateTeacherSubjects(
+    userId: number,
+    subjectCodes: string[],
+  ): Observable<TeacherDto> {
+    return this.http.post<TeacherDto>(
+      `${this.BE_URL}/admin/teacher/${userId}/subjects`,
+      subjectCodes,
+    );
   }
 
-  updateTeacherDepartment(userId: number, departmentId: number | null | undefined): Observable<void> {
-    return this.http.post<void>(`${this.BE_URL}/admin/teacher/${userId}/department`, { departmentId: departmentId });
+  updateTeacherDepartment(
+    userId: number,
+    departmentId: number | null | undefined,
+  ): Observable<void> {
+    return this.http.post<void>(
+      `${this.BE_URL}/admin/teacher/${userId}/department`,
+      { departmentId: departmentId },
+    );
   }
 }

@@ -1,14 +1,18 @@
-<div class="subject-table-wrapper" [ngClass]="{'subject-table-scrollable': isScrollable}">
+<div class="table-wrapper">
   <table mat-table [dataSource]="dataSource$" aria-description="subject table">
     <ng-container matColumnDef="select">
-      <th mat-header-cell *matHeaderCellDef>
-      </th>
+      <th mat-header-cell *matHeaderCellDef></th>
       <td mat-cell *matCellDef="let subject">
-        <mat-checkbox (click)="$event.stopPropagation()"
-                      (change)="toggleSelection(subject)"
-                      (keyup.enter)="toggleSelection(subject)"
-                      [checked]="selectedSubjectsMap.has(subject.code)"
-                      [disabled]="(!selectedSubjectsMap.has(subject.code) && getSelectedSubjectsCount() >= maxSelectableSubjects)">
+        <mat-checkbox
+          (click)="$event.stopPropagation()"
+          (change)="toggleSelection(subject)"
+          (keyup.enter)="toggleSelection(subject)"
+          [checked]="selectedSubjectsMap.has(subject.code)"
+          [disabled]="
+            !selectedSubjectsMap.has(subject.code) &&
+            getSelectedSubjectsCount() >= maxSelectableSubjects
+          "
+        >
         </mat-checkbox>
       </td>
     </ng-container>
@@ -16,7 +20,11 @@
     <ng-container matColumnDef="name">
       <th mat-header-cell *matHeaderCellDef>Názov</th>
       <td mat-cell *matCellDef="let subject">
-        <a class="text-decoration-none" href="javascript:void(0)" (click)="navigateToSubjectDetail(subject.code)">
+        <a
+          class="text-decoration-none"
+          href="javascript:void(0)"
+          (click)="navigateToSubjectDetail(subject.code)"
+        >
           {{ subject.name }}
         </a>
       </td>
@@ -33,7 +41,9 @@
     </ng-container>
 
     <ng-container matColumnDef="obligation">
-      <th mat-header-cell class="center" *matHeaderCellDef>Povinnosť predmetu</th>
+      <th mat-header-cell class="center" *matHeaderCellDef>
+        Povinnosť predmetu
+      </th>
       <td mat-cell *matCellDef="let subject">{{ subject.obligation }}</td>
     </ng-container>
 
@@ -54,17 +64,19 @@
     <tr mat-header-row *matHeaderRowDef="columnsToDisplay; sticky: true"></tr>
     <tr mat-row *matRowDef="let row; columns: columnsToDisplay"></tr>
   </table>
-
-  @if (isPageable) {
-    <div>
-      <mat-progress-bar *ngIf="isLoading" mode="indeterminate"></mat-progress-bar>
-      <mat-paginator
-        [length]="pageData.totalElements"
-        [pageSize]="pageData.size"
-        [pageIndex]="pageData.number"
-        (page)="onPageChange($event)"
-        [pageSizeOptions]="[5, 10, 100]"
-      ></mat-paginator>
-    </div>
-  }
 </div>
+@if (isPageable) {
+  <div>
+    <mat-progress-bar
+      *ngIf="isLoading"
+      mode="indeterminate"
+    ></mat-progress-bar>
+    <mat-paginator
+      [length]="pageData.totalElements"
+      [pageSize]="pageData.size"
+      [pageIndex]="pageData.number"
+      (page)="onPageChange($event)"
+      [pageSizeOptions]="[5, 10, 100]"
+    ></mat-paginator>
+  </div>
+}

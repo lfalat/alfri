@@ -26,21 +26,23 @@ import { SubjectPassingPrediction } from '../../types';
     NgForOf,
     AsyncPipe,
     NgIf,
-    NgClass
+    NgClass,
   ],
   templateUrl: './subject-passing-prediction-result.component.html',
-  styleUrl: './subject-passing-prediction-result.component.scss'
+  styleUrl: './subject-passing-prediction-result.component.scss',
 })
-export class SubjectPassingPredictionResultComponent implements OnChanges{
+export class SubjectPassingPredictionResultComponent implements OnChanges {
   @Input() passingPrediction: SubjectPassingPrediction = {
     subjectName: '',
     passingProbability: 0,
     mark: '',
-    recommendations: []
+    recommendations: [],
   };
 
-  private readonly passingPredictionSubject = new BehaviorSubject<SubjectPassingPrediction>(this.passingPrediction);
-  public passingPrediction$: Observable<SubjectPassingPrediction> = this.passingPredictionSubject.asObservable();
+  private readonly passingPredictionSubject =
+    new BehaviorSubject<SubjectPassingPrediction>(this.passingPrediction);
+  public passingPrediction$: Observable<SubjectPassingPrediction> =
+    this.passingPredictionSubject.asObservable();
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['passingPrediction']) {

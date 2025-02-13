@@ -15,6 +15,9 @@ import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.Filter;
+import org.hibernate.annotations.FilterDef;
+import org.hibernate.annotations.ParamDef;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +26,7 @@ import java.util.List;
 @Getter
 @Setter
 @Table(name = "questionnaire_section")
+@FilterDef(name = "answeredByUserFilter", parameters = @ParamDef(name = "userId", type = Integer.class))
 public class QuestionnaireSection {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -38,7 +42,16 @@ public class QuestionnaireSection {
   @Column(name = "section_title")
   private String sectionTitle;
 
+  @Basic
+  @Column(name = "section_description")
+  private String sectionDescription;
+
+  @Basic
+  @Column(name = "should_fetch_data")
+  private Boolean shouldFetchData;
+
   @OneToMany(mappedBy = "questionnaireSection", fetch = FetchType.LAZY, cascade = CascadeType.ALL,
       orphanRemoval = true)
+  @Filter(name = "answeredByUserFilter", condition = "EXISTS (SELECT 1 FROM answer a WHERE a.question_id = question_id AND a.user_id = :userId)")
   private List<Question> questions = new ArrayList<>();
 }

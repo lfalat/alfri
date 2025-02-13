@@ -14,8 +14,6 @@ public class RegisterUserDto {
   @NotBlank(message = "Last name cannot be null or blank!")
   String lastName;
 
-  List<Integer> rolesIds;
-
   @Email(message = "Email must have format of email!")
   String email;
 

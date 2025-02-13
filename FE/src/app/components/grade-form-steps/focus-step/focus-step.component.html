@@ -1,0 +1,25 @@
+<form [formGroup]="formGroup">
+  <ng-template matStepLabel>{{ section.sectionTitle }}</ng-template>
+  <div class="row">
+    <p>{{ section.sectionDescription }}</p>
+    <div
+      class="col-12 col-md-auto d-flex align-items-center justify-content-center"
+    >
+      <canvas #radarChart id="chart"></canvas>
+    </div>
+    <div class="col-12 col-md-6 col-lg-8 row">
+      <app-form-question
+        class="col-12 col-md-6 col-lg-4 pe-0"
+        *ngFor="let question of section.questions"
+        [question]="question"
+        [formGroup]="formGroup"
+      ></app-form-question>
+    </div>
+  </div>
+  <div>
+    <button mat-button matStepperPrevious>Späť</button>
+    <button mat-button matStepperNext [disabled]="formGroup.invalid">
+      Pokračovať
+    </button>
+  </div>
+</form>

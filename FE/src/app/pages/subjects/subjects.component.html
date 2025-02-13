@@ -1,0 +1,36 @@
+<mat-card>
+  <mat-card-header>
+    <h2>Prehľad predmetov</h2>
+  </mat-card-header>
+  <mat-card-content>
+    <div>
+      <form [formGroup]="filterForm" (ngSubmit)="studyProgramChanged()">
+        <mat-form-field appearance="outline" class="col-12 col-md-4 col-lg-3 col-xl-2">
+          <mat-label>Študijný program</mat-label>
+          <mat-select
+            formControlName="subjectForm"
+            [(value)]="selectedStudyProgramId"
+            (selectionChange)="studyProgramChanged()"
+          >
+            <mat-option
+              *ngFor="let program of studyPrograms$ | async"
+              [value]="program.id"
+            >
+              {{ program.name }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </form>
+    </div>
+
+    <app-subjects-table
+      class="overflow-x-scroll"
+      [dataSource$]="dataSource$"
+      [pageData]="pageData"
+      [isLoading]="isLoading"
+      (pageChange)="onPageChange($event)"
+      (subjectDetailNavigate)="navigateToSubjectDetail($event)"
+    >
+    </app-subjects-table>
+  </mat-card-content>
+</mat-card>

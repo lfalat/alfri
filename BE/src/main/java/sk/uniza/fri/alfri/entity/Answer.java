@@ -36,13 +36,12 @@ public class Answer {
 
   @OneToOne(fetch = FetchType.LAZY, optional = false)
   @JoinColumn(name = "user_id", nullable = false)
-  private User userId;
+  private User user;
 
   @ManyToOne(fetch = FetchType.LAZY, optional = false)
   @JoinColumn(name = "questionnaire_id", nullable = false)
   private Questionnaire answerQuestionnaire;
 
-  @OneToMany(mappedBy = "answer", fetch = FetchType.LAZY, cascade = CascadeType.ALL,
-      orphanRemoval = true)
+  @OneToMany(mappedBy = "answer", fetch = FetchType.LAZY, cascade = {CascadeType.REMOVE, CascadeType.PERSIST}, orphanRemoval = true)
   private List<AnswerText> texts = new ArrayList<>();
 }

@@ -1,17 +1,23 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { AsyncPipe, NgClass, NgIf } from '@angular/common';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
-import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatSidenav, MatSidenavModule } from '@angular/material/sidenav';
 import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
-import { UserService } from '../../services/user.service';
-import { AuthService } from '../../services/auth.service';
-import { Router } from '@angular/router';
+import { UserService } from '@services/user.service';
+import { AuthService } from '@services/auth.service';
+import { NavigationEnd, Router } from '@angular/router';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
-import { MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle } from '@angular/material/expansion';
-import { UserDto } from '../../types';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import {
+  MatExpansionPanel,
+  MatExpansionPanelHeader,
+  MatExpansionPanelTitle,
+} from '@angular/material/expansion';
+import { HasRoleDirective } from '@directives/auth.directive';
+import { AuthRole } from '@enums/auth-role';
+import { NotificationService } from '@services/notification.service';
+import { filter, Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-header',
@@ -32,32 +38,32 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
     MatMenuTrigger,
     MatExpansionPanel,
     MatExpansionPanelTitle,
-    MatExpansionPanelHeader
-  ]
+    MatExpansionPanelHeader,
+    HasRoleDirective,
+  ],
 })
-export class HeaderComponent {
-  private userData: UserDto | undefined;
+export class HeaderComponent implements OnInit {
+  readonly AuthRole = AuthRole;
+  @ViewChild('drawer') drawer!: MatSidenav;
+  routerSubscription!: Subscription;
 
-  private readonly ROLE_STUDENT = 'ROLE_STUDENT';
-  private readonly ROLE_TEACHER = 'ROLE_TEACHER';
-  private readonly ROLE_ADMIN = 'ROLE_ADMIN';
 
-  get isUserStudent(): boolean {
-    return this.userData?.roles.map((role) => role.name).includes(this.ROLE_STUDENT) ?? false;
-  }
+  constructor(
+    private readonly userService: UserService,
+    private readonly authService: AuthService,
+    private readonly router: Router,
+    private notificationService: NotificationService,
+  ) {}
 
-  get isUserTeacher(): boolean {
-    return this.userData?.roles.map((role) => role.name).includes(this.ROLE_TEACHER) ?? false;
-  }
-
-  get isUserAdmin(): boolean {
-    return this.userData?.roles.map((role) => role.name).includes(this.ROLE_ADMIN) ?? false;
-  }
-
-  constructor(private readonly userService: UserService, private readonly authService: AuthService, private readonly router: Router) {
-    this.userService.userData.pipe(takeUntilDestroyed()).subscribe((userData: UserDto) => {
-      this.userData = userData;
-    });
+  ngOnInit() {
+    // Subscribe to router events
+    this.routerSubscription = this.router.events
+      .pipe(filter((event) => event instanceof NavigationEnd)) // Listen only for NavigationEnd events
+      .subscribe(() => {
+        if (this.drawer.opened) {
+          this.drawer.close(); // Close the drawer if it's open
+        }
+      });
   }
 
   loggedIn() {
@@ -108,5 +114,14 @@ export class HeaderComponent {
 
   navigateToAdminPage() {
     this.router.navigate(['admin-page']);
+  }
+
+  navigateToKeywords() {
+    this.router.navigate(['keywords']);
+  }
+
+  openDrawer() {
+    this.drawer.toggle();
+    this.notificationService.hideSnackbar();
   }
 }

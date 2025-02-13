@@ -18,6 +18,7 @@ public class ProcessUtils {
     StringBuilder output = new StringBuilder();
     String line;
     while ((line = reader.readLine()) != null) {
+        System.out.println(line);
       output.append(line).append("\n");
     }
 

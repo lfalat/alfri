@@ -6,6 +6,9 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.List;
+import java.util.Set;
+
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
@@ -41,4 +44,8 @@ public class Subject implements Serializable {
   @OneToOne(mappedBy = "subject")
   @JsonBackReference
   private Focus focus;
+
+    @OneToMany(mappedBy = "subject", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonBackReference
+    private List<StudyProgramSubject> studyProgramSubjects;
 }

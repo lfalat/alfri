@@ -18,11 +18,6 @@ public class StudentSubject {
   @EmbeddedId
   private StudentSubjectId id;
 
-  @Column(name = "year", nullable = false)
-  @NotNull(message = "StudentSubject's year cannot be null!")
-  @Positive(message = "StudentSubject's year must be positive!")
-  private Integer year;
-
   @Size(max = 2)
   @Column(name = "mark", length = 2)
   private String mark;

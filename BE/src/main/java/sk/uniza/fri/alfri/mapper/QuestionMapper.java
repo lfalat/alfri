@@ -5,6 +5,7 @@ import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 import org.mapstruct.factory.Mappers;
 import sk.uniza.fri.alfri.dto.questionnaire.AnswerType;
+import sk.uniza.fri.alfri.dto.questionnaire.AnsweredQuestionDTO;
 import sk.uniza.fri.alfri.dto.questionnaire.QuestionDTO;
 import sk.uniza.fri.alfri.entity.Question;
 
@@ -29,4 +30,7 @@ public interface QuestionMapper {
   @Mapping(target = "answerType", source = "answerType", qualifiedByName = "intToEnum")
   @Mapping(target = "id", source = "id")
   QuestionDTO toDto(Question dto);
+
+  @Mapping(target = "answerType", source = "answerType", qualifiedByName = "intToEnum")
+  AnsweredQuestionDTO toAnsweredDto(Question dto);
 }

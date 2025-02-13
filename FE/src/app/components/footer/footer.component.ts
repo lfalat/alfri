@@ -4,13 +4,8 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 @Component({
   selector: 'app-footer',
   standalone: true,
-  imports: [
-    MatCard,
-    MatCardContent
-  ],
+  imports: [MatCard, MatCardContent],
   templateUrl: './footer.component.html',
-  styleUrl: './footer.component.scss'
+  styleUrl: './footer.component.scss',
 })
-export class FooterComponent {
-
-}
+export class FooterComponent {}

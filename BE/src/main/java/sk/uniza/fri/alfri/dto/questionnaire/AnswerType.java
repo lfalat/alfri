@@ -4,7 +4,7 @@ import lombok.Getter;
 
 @Getter
 public enum AnswerType {
-  TEXT(1), NUMERIC(2), RADIO(3), CHECKBOX(4), DROPDOWN(5);
+  TEXT(1), NUMERIC(2), RADIO(3), CHECKBOX(4), DROPDOWN(5), GRADE(6);
 
   private final int id;
 
