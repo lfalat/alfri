@@ -60,6 +60,7 @@ export class MandatorySubjectsStepComponent {
               this.selectedYear = this.basicInformationFormGroup.get('question_rocnik')?.value;
               this.loadMandatorySubjects();
             } else {
+              this.form.sections[1].questions = this.formAnswers.sections[1].questions;
               this.selectedStudyProgram = this.formAnswers.sections[0].questions.find(question => question.questionTitle === 'Odbor')?.answers[0].texts[0].textOfAnswer;
               this.selectedYear = this.formAnswers.sections[0].questions.find(question => question.questionTitle === 'Ročník v škole')?.answers[0].texts[0].textOfAnswer;
               this.initFormGroup();

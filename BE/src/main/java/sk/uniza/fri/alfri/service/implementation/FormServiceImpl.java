@@ -243,7 +243,7 @@ public class FormServiceImpl implements FormService {
 
   @Override
   public String getMarkOfSubjectFromQuesionnaire(String subjectName, User user) {
-    return questionnaireRepository.getAnswerOfQuestionByQuestionText(subjectName, user.getId());
+    return questionnaireRepository.getAnswerOfQuestionByQuestionText(subjectName.toLowerCase(), user.getId());
   }
 
     @Override

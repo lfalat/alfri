@@ -18,6 +18,8 @@ import { HasRoleDirective } from '@directives/auth.directive';
 import { AuthRole } from '@enums/auth-role';
 import { NotificationService } from '@services/notification.service';
 import { filter, Subscription } from 'rxjs';
+import { FormDataService } from '@services/form-data.service';
+import { AnsweredForm } from '../../types';
 
 @Component({
   selector: 'app-header',
@@ -46,13 +48,14 @@ export class HeaderComponent implements OnInit {
   readonly AuthRole = AuthRole;
   @ViewChild('drawer') drawer!: MatSidenav;
   routerSubscription!: Subscription;
-
+  formData: AnsweredForm | undefined;
 
   constructor(
     private readonly userService: UserService,
-    private readonly authService: AuthService,
+    protected readonly authService: AuthService,
     private readonly router: Router,
     private notificationService: NotificationService,
+    private formDataService: FormDataService
   ) {}
 
   ngOnInit() {
@@ -64,6 +67,11 @@ export class HeaderComponent implements OnInit {
           this.drawer.close(); // Close the drawer if it's open
         }
       });
+
+    this.formDataService.fetchFormData();
+    this.formDataService.formData$.subscribe((data) => {
+      this.formData = data;
+    });
   }
 
   loggedIn() {
