@@ -276,6 +276,7 @@ public class FormServiceImpl implements FormService {
     public Questionnaire getUserFilledForm(int formId, Integer userId) {
         Session session = entityManager.unwrap(Session.class);
         session.enableFilter("answeredByUserFilter").setParameter("userId", userId);
+        session.enableFilter("answeredQuestionByUserFilter").setParameter("userId", userId);
 
         Optional<Questionnaire> questionnaireOptional = this.questionnaireRepository.findById(formId);
 
