@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { SubjectService } from '@services/subject.service';
 import { ActivatedRoute } from '@angular/router';
 import { NgIf } from '@angular/common';
@@ -26,18 +26,19 @@ import {
 } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
 import { SubjectExtendedDto } from '../../types';
+import { MatCard, MatCardContent, MatCardHeader, MatCardTitle } from '@angular/material/card';
 
 @Component({
   selector: 'app-subject-detail',
   standalone: true,
-  imports: [NgIf, BaseChartDirective],
+  imports: [NgIf, BaseChartDirective, MatCard, MatCardHeader, MatCardContent, MatCardTitle],
   templateUrl: './subject-detail.component.html',
   styleUrl: './subject-detail.component.scss',
 })
-export class SubjectDetailComponent implements OnInit {
+export class SubjectDetailComponent implements OnInit, AfterViewInit {
   @ViewChild('chart') public focusChart!: ElementRef<HTMLCanvasElement>;
   @ViewChild('barChart') public barChartRef!: ElementRef<HTMLCanvasElement>;
-  public subjectData!: SubjectExtendedDto;
+  public subjectData: SubjectExtendedDto | undefined;
   public loading = true;
   private chart!: Chart;
   private barChart!: Chart;
@@ -99,6 +100,13 @@ export class SubjectDetailComponent implements OnInit {
         axis: 'x',
         intersect: false,
       },
+      title: {
+        display: true,
+        text: 'Percentuálny podiel známok',
+        font: {
+          size: 16,
+        },
+      },
     },
   };
 
@@ -125,6 +133,10 @@ export class SubjectDetailComponent implements OnInit {
     );
   }
 
+  ngAfterViewInit(): void {
+    this.chartGeneration();
+  }
+
   private chartGeneration() {
     const canvas = this.focusChart.nativeElement;
     const barCanvas = this.barChartRef.nativeElement;
@@ -136,8 +148,6 @@ export class SubjectDetailComponent implements OnInit {
       this.barCtx = barValue;
       this.generateRadarChart();
       this.generateBarChart();
-      this.chart.update();
-      this.barChart.update();
     }
   }
 
@@ -148,9 +158,22 @@ export class SubjectDetailComponent implements OnInit {
         .subscribe((data) => {
           this.subjectData = data;
           this.loading = false;
-          this.chartGeneration();
+          this.updateCharts();
         });
     });
+  }
+
+  private updateCharts() {
+    if (this.chart) {
+      this.chart.data.labels = this.getRadarChartLabels();
+      this.chart.data.datasets = [this.getFocusData()];
+      this.chart.update();
+    }
+
+    if (this.barChart) {
+      this.barChart.data.datasets[0].data = this.generateRandomValues(100, this.barChartLabels.length); // TODO: Replace with real data
+      this.barChart.update();
+    }
   }
 
   private generateBarChart() {
@@ -162,27 +185,10 @@ export class SubjectDetailComponent implements OnInit {
   }
 
   private generateRadarChart() {
-    const focusLabelMapping: { [key: string]: string } = {
-      mathFocus: 'Matematika',
-      logicFocus: 'Logika',
-      programmingFocus: 'Programovanie',
-      designFocus: 'Dizajn',
-      economicsFocus: 'Ekonomika',
-      managementFocus: 'Manažment',
-      hardwareFocus: 'Hardvér',
-      networkFocus: 'Sieťové technológie',
-      dataFocus: 'Práca s dátami',
-      testingFocus: 'Testovanie',
-      languageFocus: 'Jazyky',
-      physicalFocus: 'Fyzické zameranie',
-    };
-
     this.chart = new Chart(this.ctx, {
       type: 'radar',
       data: {
-        labels: Object.keys(this.subjectData?.focusDTO).map((key) => {
-          return focusLabelMapping[key];
-        }),
+        labels: this.getRadarChartLabels(),
         datasets: this.chartDatasets,
       },
       options: {
@@ -197,6 +203,13 @@ export class SubjectDetailComponent implements OnInit {
           },
         },
         plugins: {
+          title: {
+            display: true,
+            text: 'Zameranie predmetu',
+            font: {
+              size: 16,
+            },
+          },
           tooltip: {
             callbacks: {
               label: (context) => {
@@ -212,7 +225,25 @@ export class SubjectDetailComponent implements OnInit {
         },
       },
     });
-    this.chartDatasets[0] = this.getFocusData();
+  }
+
+  private getRadarChartLabels(): string[] {
+    const focusLabelMapping: { [key: string]: string } = {
+      mathFocus: 'Matematika',
+      logicFocus: 'Logika',
+      programmingFocus: 'Programovanie',
+      designFocus: 'Dizajn',
+      economicsFocus: 'Ekonomika',
+      managementFocus: 'Manažment',
+      hardwareFocus: 'Hardvér',
+      networkFocus: 'Sieťové technológie',
+      dataFocus: 'Práca s dátami',
+      testingFocus: 'Testovanie',
+      languageFocus: 'Jazyky',
+      physicalFocus: 'Fyzické zameranie',
+    };
+
+    return this.subjectData ? Object.keys(this.subjectData.focusDTO).map((key) => focusLabelMapping[key]) : [];
   }
 
   private getFocusData(): ChartDataset {
@@ -222,7 +253,7 @@ export class SubjectDetailComponent implements OnInit {
       backgroundColor: this.colors,
       borderColor: this.colors,
       borderWidth: 1,
-      data: Object.values(this.subjectData?.focusDTO),
+      data: this.subjectData ? Object.values(this.subjectData.focusDTO) : [],
     };
   }
 

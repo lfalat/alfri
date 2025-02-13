@@ -33,8 +33,8 @@ public class StudyProgramSubjectRepositoryImpl implements StudyProgramSubjectRep
   }
 
   @Override
-  public Optional<StudyProgramSubject> findByIdSubjectId(Integer id) {
-    return studyProgramSubjectSpringDataRepository.findByIdSubjectId(id);
+  public Optional<StudyProgramSubject> findByIdSubjectId(Integer id, Integer studyProgramId) {
+    return studyProgramSubjectSpringDataRepository.findById_SubjectIdAndId_StudyProgramId(id, studyProgramId);
   }
 
     @Override

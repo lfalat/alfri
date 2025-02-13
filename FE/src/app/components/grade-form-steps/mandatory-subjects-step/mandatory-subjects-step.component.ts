@@ -58,9 +58,11 @@ export class MandatorySubjectsStepComponent {
             if (!this.formAnswers) {
               this.selectedStudyProgram =  this.basicInformationFormGroup.get('question_odbor')?.value;
               this.selectedYear = this.basicInformationFormGroup.get('question_rocnik')?.value;
+              this.loadMandatorySubjects();
             } else {
               this.selectedStudyProgram = this.formAnswers.sections[0].questions.find(question => question.questionTitle === 'Odbor')?.answers[0].texts[0].textOfAnswer;
               this.selectedYear = this.formAnswers.sections[0].questions.find(question => question.questionTitle === 'Ročník v škole')?.answers[0].texts[0].textOfAnswer;
+              this.initFormGroup();
             }
           }
 
@@ -74,6 +76,7 @@ export class MandatorySubjectsStepComponent {
           }
           // When the study program or year are different from the previously selected ones load new data from BE
           if (this.yearOrStudyProgramAreDifferent()) {
+            console.log('different')
             this.loadMandatorySubjects();
             return;
           }
@@ -98,6 +101,7 @@ export class MandatorySubjectsStepComponent {
         next: (data) => {
           this.questions.set(data);
 
+          console.log('remove')
           Object.keys(this.formGroup.controls).forEach((key) => {
             this.formGroup.removeControl(key);
           });
@@ -112,7 +116,7 @@ export class MandatorySubjectsStepComponent {
           this.isLoading.set(false);
         },
         error: (error) => {
-          console.error('Error loading mandatory subjects:', error);
+          console.error(error);
           this.isLoading.set(false);
         },
       });
@@ -120,6 +124,8 @@ export class MandatorySubjectsStepComponent {
 
   private initFormGroup() {
     if (!this.formAnswers) {
+      this.questions.set(this.form.sections[1].questions);
+      this.isLoading.set(false);
       return;
     }
 
@@ -132,6 +138,7 @@ export class MandatorySubjectsStepComponent {
       ];
     });
 
+    console.log('remove')
     Object.keys(this.formGroup.controls).forEach((key) => {
       this.formGroup.removeControl(key);
     });

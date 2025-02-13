@@ -147,7 +147,9 @@
             <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
           </button>
 
-          <span role="button" class="curs" (click)="navigateToHome()">ALFRI</span>
+          <span role="button" class="curs" (click)="navigateToHome()"
+            >ALFRI</span
+          >
 
           <div class="d-none d-md-block">
           <button mat-button [matMenuTriggerFor]="subjects_menu" *appHasRole="[AuthRole.STUDENT, AuthRole.TEACHER]">
@@ -201,7 +203,7 @@
 
       <button mat-menu-item (click)="navigateToPrediction()">
         <mat-icon>interests</mat-icon>
-        <span>Záujmové predmety</span>
+        <span>Zaujímavé predmety</span>
       </button>
 
       <button mat-menu-item (click)="navigateToSubjectsClustering()">

@@ -12,7 +12,7 @@ import sk.uniza.fri.alfri.entity.StudyProgramSubjectId;
 public interface StudyProgramSubjectSpringDataRepository
     extends JpaRepository<StudyProgramSubject, StudyProgramSubjectId>,
     JpaSpecificationExecutor<StudyProgramSubject> {
-  Optional<StudyProgramSubject> findByIdSubjectId(Integer id);
+  Optional<StudyProgramSubject> findById_SubjectIdAndId_StudyProgramId(Integer id, Integer studyProgramId);
 
   @Query("""
         SELECT s FROM StudyProgramSubject s

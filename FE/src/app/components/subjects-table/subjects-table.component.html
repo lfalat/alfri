@@ -1,7 +1,4 @@
-<div
-  class="subject-table-wrapper"
-  [ngClass]="{ 'subject-table-scrollable': isScrollable }"
->+
+<div class="table-wrapper">
   <table mat-table [dataSource]="dataSource$" aria-description="subject table">
     <ng-container matColumnDef="select">
       <th mat-header-cell *matHeaderCellDef></th>
@@ -67,20 +64,19 @@
     <tr mat-header-row *matHeaderRowDef="columnsToDisplay; sticky: true"></tr>
     <tr mat-row *matRowDef="let row; columns: columnsToDisplay"></tr>
   </table>
-
-  @if (isPageable) {
-    <div>
-      <mat-progress-bar
-        *ngIf="isLoading"
-        mode="indeterminate"
-      ></mat-progress-bar>
-      <mat-paginator
-        [length]="pageData.totalElements"
-        [pageSize]="pageData.size"
-        [pageIndex]="pageData.number"
-        (page)="onPageChange($event)"
-        [pageSizeOptions]="[5, 10, 100]"
-      ></mat-paginator>
-    </div>
-  }
 </div>
+@if (isPageable) {
+  <div>
+    <mat-progress-bar
+      *ngIf="isLoading"
+      mode="indeterminate"
+    ></mat-progress-bar>
+    <mat-paginator
+      [length]="pageData.totalElements"
+      [pageSize]="pageData.size"
+      [pageIndex]="pageData.number"
+      (page)="onPageChange($event)"
+      [pageSizeOptions]="[5, 10, 100]"
+    ></mat-paginator>
+  </div>
+}

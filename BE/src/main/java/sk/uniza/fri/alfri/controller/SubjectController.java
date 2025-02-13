@@ -24,6 +24,7 @@ import sk.uniza.fri.alfri.common.pagitation.SearchDefinition;
 import sk.uniza.fri.alfri.common.pagitation.SortDefinition;
 import sk.uniza.fri.alfri.common.pagitation.SortRequestQuery;
 import sk.uniza.fri.alfri.dto.KeywordDTO;
+import sk.uniza.fri.alfri.dto.StudentYearCountDTO;
 import sk.uniza.fri.alfri.dto.SubjectGradeDto;
 import sk.uniza.fri.alfri.dto.SubjectsPredictionsResult;
 import sk.uniza.fri.alfri.dto.focus.FocusCategorySumDTO;
@@ -43,7 +44,7 @@ import sk.uniza.fri.alfri.service.implementation.JwtService;
 
 @RequestMapping("/api/subject")
 @RestController
-@PreAuthorize("hasAnyRole({'ROLE_STUDENT', 'ROLE_TEACHER', 'ROLE_ADMIN'})")
+@PreAuthorize("hasAnyRole({'ROLE_STUDENT', 'ROLE_TEACHER', 'ROLE_ADMIN', 'ROLE_VEDENIE'})")
 @Slf4j
 public class SubjectController {
   private final ModelMapper modelMapper;
@@ -108,7 +109,7 @@ public class SubjectController {
     List<Subject> subjects = this.subjectService.makeSubjectsFocusPrediction(user);
 
     List<SubjectExtendedDto> similarSubjectsDto =
-        subjects.stream().map(SubjectMapper.INSTANCE::toSubjectExtendedDto).toList();
+        subjects.stream().map(SubjectMapper.INSTANCE::toCustomSubjectExtendedDto).toList();
 
     return ResponseEntity.ok(similarSubjectsDto);
   }
@@ -233,5 +234,10 @@ public class SubjectController {
       List<KeywordDTO> keywordDTOS = this.subjectService.getAllKeywords();
 
       return ResponseEntity.ok(keywordDTOS);
+    }
+
+    @GetMapping("/counts-by-year")
+    public ResponseEntity<List<StudentYearCountDTO>> getStudentCountsByYear() {
+      return ResponseEntity.ok(this.subjectService.getStudentCountsByYear());
     }
 }

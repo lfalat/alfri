@@ -102,7 +102,7 @@ export class ChangeSubjectsModalComponent implements OnInit {
         this.availableSubjects = availableSubjects;
       },
       error: (error) => {
-        console.error('Error fetching data:', error);
+        console.error(error);
       }
     });
   }
@@ -137,7 +137,7 @@ export class ChangeSubjectsModalComponent implements OnInit {
           this.dialogRef.close();
         },
         error: (error) => {
-          console.error('Error updating teacher information:', error);
+          console.error(error);
         }
     });
   }

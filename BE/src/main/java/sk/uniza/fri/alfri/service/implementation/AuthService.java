@@ -95,6 +95,15 @@ public class AuthService implements IAuthService {
     return Optional.empty();
   }
 
+    @Override
+    public Optional<User> getCurrentUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.getPrincipal() instanceof UserDetails userDetails) {
+            return Optional.of((User) userDetails); // Handle null username
+        }
+        return Optional.empty();
+    }
+
   @Override
   @Transactional
   public void changePassword(ChangePasswordDto changePasswordDto) {

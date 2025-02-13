@@ -298,6 +298,16 @@ public class FormServiceImpl implements FormService {
           .orElseThrow(() -> new ResourceNotFoundException(
               "Question not found with id: " + answerDTO.questionId()));
 
+      // Set the new study year for the user
+      if (question.getQuestionIdentifier().equals("question_rocnik")) {
+          user.getStudent().setYear(Integer.valueOf(answerDTO.texts().getFirst().textOfAnswer()));
+      }
+
+      // Set the new study program for the user
+        if (question.getQuestionIdentifier().equals("question_odbor")) {
+            user.getStudent().setStudyProgramId(Integer.valueOf(answerDTO.texts().getFirst().textOfAnswer()));
+        }
+
       Answer answer = AnswerMapper.INSTANCE.toEntity(answerDTO);
       answer.setUser(user);
       answer.setAnswerQuestionnaire(questionnaire);

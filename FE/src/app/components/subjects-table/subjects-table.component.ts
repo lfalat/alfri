@@ -1,10 +1,11 @@
 import {
+  AfterViewInit,
   Component,
   EventEmitter,
   Input,
   OnDestroy,
   OnInit,
-  Output,
+  Output, ViewChild,
 } from '@angular/core';
 import { Observable, Subject, takeUntil } from 'rxjs';
 import { Page, SubjectDto } from '../../types';
@@ -19,12 +20,13 @@ import {
   MatHeaderRowDef,
   MatRow,
   MatRowDef,
-  MatTable,
+  MatTable, MatTableDataSource,
 } from '@angular/material/table';
 import { MatProgressBar } from '@angular/material/progress-bar';
 import { AsyncPipe, NgClass, NgIf } from '@angular/common';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { SelectionModel } from '@angular/cdk/collections';
+import { MatCard } from '@angular/material/card';
 
 @Component({
   selector: 'app-subjects-table',
@@ -46,12 +48,13 @@ import { SelectionModel } from '@angular/cdk/collections';
     MatCheckbox,
     AsyncPipe,
     NgClass,
+    MatCard,
   ],
   templateUrl: './subjects-table.component.html',
   styleUrl: './subjects-table.component.scss',
 })
-export class SubjectsTableComponent implements OnInit, OnDestroy {
-  @Input() dataSource$!: Observable<SubjectDto[]>;
+export class SubjectsTableComponent implements OnInit, OnDestroy, AfterViewInit {
+  @Input() dataSource$!: Observable<SubjectDto[]> | MatTableDataSource<SubjectDto>
   @Input() pageData!: Page<SubjectDto>;
   @Input() isLoading = false;
   @Input() displayFullInfo = true;
@@ -71,9 +74,16 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
   private _selection = new SelectionModel<SubjectDto>(true, []);
   // public selectedSubjectsMap: Map<SubjectDto, boolean> = new Map();
   public selectedSubjectsMap: Map<string, SubjectDto> = new Map();
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
 
   public get columnsToDisplay(): string[] {
     return this._columnsToDisplay;
+  }
+
+  ngAfterViewInit(): void {
+    if (this.dataSource$ instanceof MatTableDataSource) {
+      this.dataSource$.paginator = this.paginator;
+    }
   }
 
   ngOnInit(): void {

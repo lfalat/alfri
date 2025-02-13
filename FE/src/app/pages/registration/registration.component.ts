@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import {
   AbstractControl,
   AbstractControlOptions,
@@ -21,7 +21,7 @@ import { AuthService } from '@services/auth.service';
 import { NotificationService } from '@services/notification.service';
 import { UserService } from '@services/user.service';
 import { JwtService } from '@services/jwt.service';
-import { ReplaySubject, takeUntil } from 'rxjs';
+import { ReplaySubject } from 'rxjs';
 import { RegisterUserDto, Role } from '../../types';
 
 @Component({
@@ -44,7 +44,7 @@ import { RegisterUserDto, Role } from '../../types';
   templateUrl: './registration.component.html',
   styleUrl: './registration.component.scss',
 })
-export class RegistrationComponent implements OnInit, OnDestroy {
+export class RegistrationComponent implements OnDestroy {
   registerForm: FormGroup;
   roles: Role[] = [];
   readonly destroyed$: ReplaySubject<void> = new ReplaySubject(1);
@@ -78,15 +78,6 @@ export class RegistrationComponent implements OnInit, OnDestroy {
       },
       formOptions,
     );
-  }
-
-  ngOnInit() {
-    this.userService
-      .getRoles()
-      .pipe(takeUntil(this.destroyed$))
-      .subscribe((roles: Role[]) => {
-        this.roles = roles;
-      });
   }
 
   ngOnDestroy() {

@@ -15,4 +15,6 @@ public interface IAuthService {
   void changePassword(ChangePasswordDto changePasswordDto);
 
   Optional<String> getCurrentUserEmail();
+
+  Optional<User> getCurrentUser();
 }

@@ -72,6 +72,8 @@ export class UserFormResultsComponent implements OnInit, AfterViewInit {
   @ViewChild('radarChart') chart!: ElementRef<HTMLCanvasElement>;
   radarChart: Chart | undefined;
   protected readonly StudyPrograms = StudyPrograms;
+  protected readonly Number = Number;
+
 
   // Data source for the table
   dataSource: MatTableDataSource<{ subjectName: string; grade: string }> = new MatTableDataSource();
@@ -224,5 +226,4 @@ export class UserFormResultsComponent implements OnInit, AfterViewInit {
     }
   }
 
-  protected readonly Number = Number;
 }

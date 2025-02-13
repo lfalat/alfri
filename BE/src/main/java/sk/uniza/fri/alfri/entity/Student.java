@@ -20,7 +20,6 @@ public class Student {
 
   @OneToOne()
   @JoinColumn(name = "user_id")
-  @JsonManagedReference
   private User user;
 
   @NotNull(message = "Student's studyProgramId cannot be null!")

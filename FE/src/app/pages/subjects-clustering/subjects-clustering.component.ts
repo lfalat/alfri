@@ -29,6 +29,8 @@ import {
   SubjectDto,
   SubjectExtendedDto,
 } from '../../types';
+import { MatCard, MatCardContent, MatCardHeader, MatCardSubtitle, MatCardTitle } from '@angular/material/card';
+import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 
 @Component({
   selector: 'app-subjects-clustering',
@@ -40,6 +42,12 @@ import {
     MatIcon,
     MatProgressBar,
     AsyncPipe,
+    MatCard,
+    MatCardHeader,
+    MatCardContent,
+    MatCardTitle,
+    MatCardSubtitle,
+    NgxSkeletonLoaderModule,
   ],
   templateUrl: './subjects-clustering.component.html',
   styleUrl: './subjects-clustering.component.scss',
@@ -89,6 +97,10 @@ export class SubjectsClusteringComponent implements OnInit, OnDestroy {
     }
 
     return this._allSubjectsDataSource$.pipe(map((page) => page.content));
+  }
+
+  get selectedSubjects() {
+    return this._selectedSubjects;
   }
 
   get recommendedSubjectsDataSource$(): Observable<SubjectDto[]> {
@@ -207,14 +219,16 @@ export class SubjectsClusteringComponent implements OnInit, OnDestroy {
   }
 
   public getSimilarSubjects() {
-    if (this._selectedSubjects.length === 0) {
-      this.errorService.showError('Vyber si 1 až 3 predmety!');
-      return;
-    }
     this.isLoadingRecommendetSubjects = true;
     this._recommendedSubjectsDataSource$ = this.subjectService
       .getSimilarSubjects(this._selectedSubjects)
-      .pipe(finalize(() => (this.isLoadingRecommendetSubjects = false)));
+      .pipe(
+        shareReplay(1), // Share the result of the HTTP request
+        finalize(() => {
+          this.isLoadingRecommendetSubjects = false;
+          console.log('finished');
+        }),
+      );
   }
 
   public onSelectedSubjectsChanged($event: SubjectDto[]) {

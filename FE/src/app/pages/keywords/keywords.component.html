@@ -1,27 +1,56 @@
 <div class="container">
-  <h2>Kľúčové slová predmetov</h2>
-  <div>
-    <mat-form-field appearance="outline" class="search-bar">
-      <mat-label>Vyhľadaj kĺúčové slová</mat-label>
-      <input
-        matInput
-        (input)="onSearch($event)"
-        placeholder="Type to search..."
-      />
-    </mat-form-field>
-  </div>
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>
+        Kľúčové slová predmetov
+      </mat-card-title>
+      <mat-card-subtitle>
+        Zobrazí top 3 predmety pre dané kľúčové slovo
+      </mat-card-subtitle>
+    </mat-card-header>
 
-  <div class="chips-container">
-    <mat-chip-listbox multiple>
-      <mat-chip-option
-        *ngFor="let keyword of filteredKeywords"
-        (click)="onKeywordSelect(keyword)"
-        [selected]="selectedKeywords.includes(keyword)"
-      >
-        {{ keyword }}
-      </mat-chip-option>
-    </mat-chip-listbox>
-  </div>
+    <mat-card-content class="mt-2">
+      <mat-form-field appearance="outline" class="search-bar">
+        <mat-label>Vyhľadaj a vyber kĺúčové slová</mat-label>
+        <input
+          matInput
+          [matAutocomplete]="auto"
+          (input)="onSearch($event)"
+          #keywordInput
+        />
+      </mat-form-field>
+
+      <p>Vybrané kľučové slová</p>
+      <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayKeyword">
+        <mat-option
+          *ngFor="let keyword of filteredKeywords"
+          [value]="keyword"
+          (onSelectionChange)="onKeywordSelect(keyword, keywordInput)"
+        >
+          {{ keyword }}
+        </mat-option>
+        <ng-container *ngIf="filteredKeywords.length === 0 && isError">
+          <mat-option disabled>
+            <div class="no-options-found">Žiadne slová neboli nájdené</div>
+          </mat-option>
+        </ng-container>
+      </mat-autocomplete>
+    </mat-card-content>
+
+    <div class="px-3">
+      <mat-chip-listbox multiple>
+        <mat-chip-option
+          *ngFor="let keyword of selectedKeywords"
+          (removed)="onKeywordRemove(keyword)"
+          [selectable]="false"
+        >
+          {{ keyword }}
+          <mat-icon matChipRemove>cancel</mat-icon>
+        </mat-chip-option>
+      </mat-chip-listbox>
+    </div>
+
+  </mat-card>
 
   <div *ngFor="let keyword of selectedKeywords" class="table-container">
     <h3>{{ keyword }}</h3>
@@ -54,27 +83,6 @@
         <ng-container matColumnDef="abbreviation">
           <th mat-header-cell *matHeaderCellDef class="fixed-width">Skratka</th>
           <td mat-cell *matCellDef="let subject">{{ subject.abbreviation }}</td>
-        </ng-container>
-
-        <ng-container matColumnDef="studyProgramName">
-          <th mat-header-cell *matHeaderCellDef class="fixed-width">
-            Študijný Program
-          </th>
-          <td mat-cell *matCellDef="let subject">
-            {{ subject.studyProgramName }}
-          </td>
-        </ng-container>
-
-        <ng-container matColumnDef="recommendedYear">
-          <th mat-header-cell *matHeaderCellDef class="fixed-width">Ročník</th>
-          <td mat-cell *matCellDef="let subject">
-            {{ subject.recommendedYear }}
-          </td>
-        </ng-container>
-
-        <ng-container matColumnDef="semester">
-          <th mat-header-cell *matHeaderCellDef class="fixed-width">Semester</th>
-          <td mat-cell *matCellDef="let subject">{{ subject.semester }}</td>
         </ng-container>
 
         <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>

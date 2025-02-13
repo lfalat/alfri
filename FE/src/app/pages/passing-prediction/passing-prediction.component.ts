@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { SubjectPassingPredictionResultComponent } from '@components/subject-passing-prediction-result/subject-passing-prediction-result.component';
-import { NgForOf } from '@angular/common';
+import { NgForOf, NgIf } from '@angular/common';
 import { SubjectService } from '@services/subject.service';
 import { take } from 'rxjs';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { SubjectPassingPrediction } from '../../types';
+import { MatCard, MatCardContent, MatCardHeader } from '@angular/material/card';
 
 @Component({
   selector: 'app-passing-prediction',
@@ -13,6 +14,10 @@ import { SubjectPassingPrediction } from '../../types';
     SubjectPassingPredictionResultComponent,
     NgForOf,
     MatProgressSpinner,
+    NgIf,
+    MatCard,
+    MatCardHeader,
+    MatCardContent,
   ],
   templateUrl: './passing-prediction.component.html',
   styleUrls: ['./passing-prediction.component.scss'],

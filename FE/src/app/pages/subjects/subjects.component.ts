@@ -28,6 +28,7 @@ import { MatButton } from '@angular/material/button';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SubjectsTableComponent } from '@components/subjects-table/subjects-table.component';
 import { Page, StudyProgramDto, SubjectDto } from '../../types';
+import { MatCard, MatCardContent, MatCardHeader } from '@angular/material/card';
 
 @Component({
   selector: 'app-subjects',
@@ -43,6 +44,9 @@ import { Page, StudyProgramDto, SubjectDto } from '../../types';
     ReactiveFormsModule,
     MatButton,
     SubjectsTableComponent,
+    MatCard,
+    MatCardHeader,
+    MatCardContent,
   ],
   templateUrl: './subjects.component.html',
   styleUrl: './subjects.component.scss',

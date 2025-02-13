@@ -8,6 +8,10 @@ import { KeywordService } from '@services/keyword.service';
 import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
 import { MatInput } from '@angular/material/input';
 import { SubjectExtendedDto } from '../../types';
+import { MatCard, MatCardContent, MatCardHeader, MatCardSubtitle, MatCardTitle } from '@angular/material/card';
+import { MatOption, MatSelect } from '@angular/material/select';
+import { MatAutocomplete, MatAutocompleteTrigger } from '@angular/material/autocomplete';
+import { MatIcon } from '@angular/material/icon';
 
 @Component({
   selector: 'app-keywords',
@@ -22,6 +26,16 @@ import { SubjectExtendedDto } from '../../types';
     MatFormField,
     MatInput,
     MatLabel,
+    MatCard,
+    MatCardHeader,
+    MatCardTitle,
+    MatCardSubtitle,
+    MatCardContent,
+    MatSelect,
+    MatOption,
+    MatAutocompleteTrigger,
+    MatAutocomplete,
+    MatIcon,
   ],
 })
 export class KeywordsComponent implements OnInit {
@@ -30,15 +44,9 @@ export class KeywordsComponent implements OnInit {
   selectedKeywords: string[] = [];
   keywordSubjects: { [key: string]: SubjectExtendedDto[] } = {};
 
-  readonly columnsToDisplay: string[] = [
-    'name',
-    'code',
-    'abbreviation',
-    'studyProgramName',
-    'recommendedYear',
-    'semester',
-  ];
+  readonly columnsToDisplay: string[] = ['name', 'code', 'abbreviation'];
   searchSubject = new Subject<string>();
+  isError = false;
 
   constructor(
     private router: Router,
@@ -64,29 +72,42 @@ export class KeywordsComponent implements OnInit {
       return;
     }
 
-    this.keywordService.searchKeywords(searchText).subscribe((results) => {
-      this.filteredKeywords = results;
-      if (!results.length) {
+    this.keywordService.searchKeywords(searchText).subscribe({
+      next: (results) => {
+        this.filteredKeywords = results;
+        if (!results.length) {
+          this.filteredKeywords = [];
+        }
+        this.isError = false;
+      },
+      error: () => {
         this.filteredKeywords = [];
+        this.isError = true;
       }
     });
   }
 
-  onKeywordSelect(keyword: string): void {
+  onKeywordSelect(keyword: string, inputElement: HTMLInputElement): void {
     if (!this.selectedKeywords.includes(keyword)) {
-      this.selectedKeywords.push(keyword);
+      this.selectedKeywords.push(keyword); // Add keyword if not already selected
       this.keywordService.showSubjects(keyword).subscribe((subjects) => {
         this.keywordSubjects[keyword] = subjects;
       });
-    } else {
-      this.selectedKeywords = this.selectedKeywords.filter(
-        (item) => item !== keyword,
-      );
-      delete this.keywordSubjects[keyword];
     }
+    inputElement.value = ''; // Clear the input field
+    this.filteredKeywords = []; // Clear the filtered keywords
+  }
+
+  onKeywordRemove(keyword: string): void {
+    this.selectedKeywords = this.selectedKeywords.filter((item) => item !== keyword);
+    delete this.keywordSubjects[keyword];
   }
 
   public navigateToSubjectDetail(code: string): void {
     this.router.navigate(['/subjects/' + code]);
+  }
+
+  displayKeyword(keyword: string): string {
+    return keyword || '';
   }
 }

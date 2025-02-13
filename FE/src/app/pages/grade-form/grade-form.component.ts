@@ -136,7 +136,7 @@ export class GradeFormComponent implements OnInit {
         },
         error: (error) => {
           this.loading = false;
-          console.error('Error loading form data:', error);
+          console.error(error);
         },
       });
   }
@@ -223,7 +223,7 @@ export class GradeFormComponent implements OnInit {
     });
 
     if (!allValid) {
-      console.error('Form is invalid');
+      console.error();
       return;
     }
 

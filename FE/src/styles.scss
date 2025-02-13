@@ -163,3 +163,10 @@ body {
     min-height: 300px; /* Adjust height for smaller screens */
   }
 }
+
+.table-wrapper {
+  overflow-x: scroll;
+  @include media-breakpoint-up(md) {
+    overflow-x: auto;
+  }
+}

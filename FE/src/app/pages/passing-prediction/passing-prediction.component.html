@@ -1,12 +1,26 @@
-<div class="subject-prediction-container">
-  @if (isLoading) {
-    <div class="d-flex align-items-center flex-column row-gap-3">
-      <mat-spinner></mat-spinner>
-      <p>Načítavam predikcie. Čakajte prosím</p>
-    </div>
-  }
-  <app-subject-passing-prediction-result
-    *ngFor="let subject of subjects"
-    [passingPrediction]="subject"
-  ></app-subject-passing-prediction-result>
-</div>
+<ng-container *ngIf="isLoading; else content">
+  <div class="d-flex align-items-center flex-column row-gap-3">
+    <mat-spinner></mat-spinner>
+    <p>Načítavam predikcie. Čakajte prosím</p>
+  </div>
+</ng-container>
+
+<ng-template #content>
+  <mat-card>
+    <mat-card-header>
+      <h2>Predikcia úspešnosti úspešného absolvovania predmetu</h2>
+    </mat-card-header>
+
+    <mat-card-content>
+      <p>Nižšie môžeš vidieť predikcie povinných predmetov, ktoré ťa tento rok čakajú. Známka a pravdepodobnosť úspešnosti boli určené na základe známok z povinných predmetov, ktoré si už absolvoval a na základe prospechu študentov z minulých rokov.</p>
+    </mat-card-content>
+  </mat-card>
+
+  <div class="row row-gap-3 mt-3">
+    <app-subject-passing-prediction-result
+      *ngFor="let subject of subjects"
+      [passingPrediction]="subject"
+      class="col-12 col-md-6 col-lg-4"
+    ></app-subject-passing-prediction-result>
+  </div>
+</ng-template>

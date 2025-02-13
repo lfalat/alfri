@@ -3,6 +3,9 @@ package sk.uniza.fri.alfri.entity;
 import jakarta.persistence.Column;
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -32,6 +35,10 @@ public class StudyProgramSubject {
   @Column(name = "semester_winter")
   @NotNull(message = "Semester winter for subject must not be null!")
   private Boolean semesterWinter;
+
+    @ManyToOne
+    @JoinColumn(name = "subject_id", insertable = false, updatable = false)
+    private Subject subject;
 
   @Override
   public final boolean equals(Object o) {

@@ -4,24 +4,33 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { SubjectService } from '@services/subject.service';
 import { NotificationService } from '@services/notification.service';
 import { StudentService } from '@services/student.service';
-import { PageEvent } from '@angular/material/paginator';
-import { map, Observable, of, Subject } from 'rxjs';
+import { Observable, of, Subject } from 'rxjs';
 import { catchError, switchMap, takeUntil, tap } from 'rxjs/operators';
 import { SubjectsTableComponent } from '@components/subjects-table/subjects-table.component';
 import { MatButton } from '@angular/material/button';
 import { AsyncPipe } from '@angular/common';
 import { Page, StudyProgramDto, SubjectDto } from '../../types';
+import { MatTableDataSource } from '@angular/material/table';
+import { MatCard, MatCardHeader, MatCardSubtitle, MatCardTitle } from '@angular/material/card';
 
 @Component({
   selector: 'app-recommendation',
   templateUrl: './recommendation.component.html',
   standalone: true,
-  imports: [SubjectsTableComponent, MatButton, AsyncPipe],
+  imports: [
+    SubjectsTableComponent,
+    MatButton,
+    AsyncPipe,
+    MatCard,
+    MatCardHeader,
+    MatCardSubtitle,
+    MatCardTitle
+  ],
   styleUrls: ['./recommendation.component.scss'],
 })
 export class RecommendationComponent implements OnInit, OnDestroy {
   private readonly _destroy$: Subject<void> = new Subject();
-  private _dataSource$!: Observable<SubjectDto[]>;
+  private _dataSource$ = new MatTableDataSource<SubjectDto>();
   private _userStudyProgramId!: number;
   public readonly columnsToDisplay: string[] = [
     'name',
@@ -32,12 +41,12 @@ export class RecommendationComponent implements OnInit, OnDestroy {
     'semester',
   ];
 
-  get dataSource$(): Observable<SubjectDto[]> {
+  get dataSource$() {
     if (!this._dataSource$) {
       return of([]);
     }
 
-    return this._dataSource$.pipe(map((page) => page));
+    return this._dataSource$;
   }
 
   public pageData: Page<SubjectDto> = {
@@ -54,7 +63,7 @@ export class RecommendationComponent implements OnInit, OnDestroy {
       offset: 0,
       pageNumber: 0,
       pageSize: 0,
-      paged: false,
+      paged: true,
       unpaged: false,
     },
     last: false,
@@ -69,8 +78,8 @@ export class RecommendationComponent implements OnInit, OnDestroy {
     empty: true,
   };
 
-  public readonly pageSizeOptions: number[] = [5, 10, 20]; // Static number of elements per page
-  public pageSize = 10; // Default page size
+  public readonly pageSizeOptions: number[] = [5, 10, 20];
+  public pageSize = 10;
 
   public isLoading = false;
 
@@ -91,7 +100,7 @@ export class RecommendationComponent implements OnInit, OnDestroy {
       .pipe(
         switchMap((studyProgram: StudyProgramDto) => {
           this._userStudyProgramId = studyProgram.id;
-          return this.getSubjects(0, this.pageSize, this._userStudyProgramId);
+          return this.getSubjects();
         }),
         catchError((error: HttpErrorResponse) => {
           this.errorService.showError(error.error);
@@ -99,15 +108,11 @@ export class RecommendationComponent implements OnInit, OnDestroy {
         }),
       )
       .subscribe((subjects) => {
-        this._dataSource$ = of(subjects);
+        this._dataSource$.data = subjects;
       });
   }
 
-  private getSubjects(
-    pageNumber: number,
-    pageSize: number,
-    studyProgramId: number,
-  ): Observable<SubjectDto[]> {
+  private getSubjects(): Observable<SubjectDto[]> {
     this.isLoading = true;
     return this.subjectService.getSubjectFocusPrediction().pipe(
       tap((subjects: SubjectDto[]) => {
@@ -121,19 +126,6 @@ export class RecommendationComponent implements OnInit, OnDestroy {
         return of([]);
       }),
     );
-  }
-
-  public onPageChange($event: PageEvent) {
-    this.isLoading = true;
-    this.pageSize = $event.pageSize;
-
-    this.getSubjects(
-      $event.pageIndex,
-      $event.pageSize,
-      this._userStudyProgramId,
-    ).subscribe((subjects) => {
-      this._dataSource$ = of(subjects);
-    });
   }
 
   ngOnDestroy() {

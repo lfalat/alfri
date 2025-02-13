@@ -74,15 +74,6 @@
             </mat-error>
           </mat-form-field>
 
-          <mat-form-field appearance="outline">
-            <mat-label>Rola</mat-label>
-            <mat-select formControlName="roleId" required>
-              <mat-option *ngFor="let role of roles" [value]="role.id">{{
-                role.name
-              }}</mat-option>
-            </mat-select>
-          </mat-form-field>
-
           <div class="text-center">
             <p>
               Už máte účet ?

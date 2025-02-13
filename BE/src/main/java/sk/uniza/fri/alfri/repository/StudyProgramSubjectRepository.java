@@ -11,7 +11,7 @@ public interface StudyProgramSubjectRepository {
   Page<StudyProgramSubject> findAllByFilter(SearchDefinition searchDefinition,
       PageDefinition pageDefinition);
 
-  Optional<StudyProgramSubject> findByIdSubjectId(Integer id);
+  Optional<StudyProgramSubject> findByIdSubjectId(Integer id, Integer studyProgramId);
 
   List<StudyProgramSubject> findMandatorySubjects(Long studyProgramId, int year);
 }

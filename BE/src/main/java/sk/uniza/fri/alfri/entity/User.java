@@ -53,9 +53,9 @@ public class User implements UserDetails {
   @Column(name = "password", nullable = false, length = 72)
   private String password;
 
-  @OneToOne(mappedBy = "user")
+  @OneToOne(mappedBy = "user", fetch = FetchType.EAGER)
   @JsonBackReference
-  private transient Student student;
+  private Student student;
 
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {

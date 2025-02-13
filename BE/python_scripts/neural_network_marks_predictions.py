@@ -88,6 +88,10 @@ def main():
     """
 
     if len(sys.argv) != 3:
+        print(sys.argv[1])
+        print(sys.argv[2])
+        print(sys.argv[3])
+
         print("Usage: python run_models.py <input_json> <model_paths_json>")
         sys.exit(1)
 

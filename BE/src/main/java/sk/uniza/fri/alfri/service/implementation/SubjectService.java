@@ -19,6 +19,7 @@ import sk.uniza.fri.alfri.common.pagitation.PageDefinition;
 import sk.uniza.fri.alfri.common.pagitation.SearchDefinition;
 import sk.uniza.fri.alfri.constant.ModelType;
 import sk.uniza.fri.alfri.dto.KeywordDTO;
+import sk.uniza.fri.alfri.dto.StudentYearCountDTO;
 import sk.uniza.fri.alfri.dto.focus.FocusCategorySumDTO;
 import sk.uniza.fri.alfri.entity.Answer;
 import sk.uniza.fri.alfri.entity.AnswerText;
@@ -31,6 +32,7 @@ import sk.uniza.fri.alfri.entity.User;
 import sk.uniza.fri.alfri.exception.PythonOutputParsingException;
 import sk.uniza.fri.alfri.repository.AnswerRepository;
 import sk.uniza.fri.alfri.repository.FocusRepository;
+import sk.uniza.fri.alfri.repository.StudentSubjectRepository;
 import sk.uniza.fri.alfri.repository.StudyProgramSubjectRepository;
 import sk.uniza.fri.alfri.repository.SubjectGradeRepository;
 import sk.uniza.fri.alfri.repository.SubjectKeywordRepository;
@@ -48,20 +50,20 @@ public class SubjectService implements ISubjectService {
       Map.of("A", 0, "B", 1, "C", 2, "D", 3, "E", 4, "Fx", 5, "*", 6);
 
   private static final Map<String, String> CHANCE_MODEL_PATHS =
-      Map.of("Matematicka analyza 1", "/app/python_scripts/models/mata1.pkl",
-          "Diskretna pravdepodobnost", "/app/python_scripts/models/dp.pkl",
-          "Algoritmy a udajove struktury 1", "/app/python_scripts/models/aus1.pkl",
-          "Diskretna simulacia", "/app/python_scripts/models/model_DIS.pkl", "Optimalizacia sieti",
-          "/app/python_scripts/models/model_OPTS.pkl", "Algoritmy a udajove struktury 2",
-          "/app/python_scripts/models/model_AUS.pkl");
+      Map.of("Matematicka analyza 1", "python_scripts/models/mata1.pkl",
+          "Diskretna pravdepodobnost", "python_scripts/models/dp.pkl",
+          "Algoritmy a udajove struktury 1", "python_scripts/models/aus1.pkl",
+          "Diskretna simulacia", "python_scripts/models/model_DIS.pkl", "Optimalizacia sieti",
+          "python_scripts/models/model_OPTS.pkl", "Algoritmy a udajove struktury 2",
+          "python_scripts/models/model_AUS.pkl");
 
   private static final Map<String, String> MARK_MODEL_PATHS =
-      Map.of("Matematicka analyza 1", "/app/python_scripts/models/mata1.h5",
-          "Diskretna pravdepodobnost", "/app/python_scripts/models/dp.h5",
-          "Algoritmy a udajove struktury 1", "/app/python_scripts/models/aus1.h5",
-          "Diskretna simulacia", "/app/python_scripts/models/best_model_DIS.h5",
-          "Optimalizacia sieti", "/app/python_scripts/models/best_model_OPTS.h5",
-          "Algoritmy a udajove struktury 2", "/app/python_scripts/models/best_model_AUS.h5");
+      Map.of("Matematicka analyza 1", "python_scripts/models/mata1.h5",
+          "Diskretna pravdepodobnost", "python_scripts/models/dp.h5",
+          "Algoritmy a udajove struktury 1", "python_scripts/models/aus1.h5",
+          "Diskretna simulacia", "python_scripts/models/best_model_DIS.h5",
+          "Optimalizacia sieti", "python_scripts/models/best_model_OPTS.h5",
+          "Algoritmy a udajove struktury 2", "python_scripts/models/best_model_AUS.h5");
 
   private final StudyProgramSubjectRepository studyProgramSubjectRepository;
   private final SubjectRepository subjectRepository;
@@ -71,6 +73,8 @@ public class SubjectService implements ISubjectService {
   private final StudentService studentService;
   private final FormService formService;
   private final SubjectKeywordRepository subjectKeywordRepository;
+  private final AuthService authService;
+  private final StudentSubjectRepository studentSubjectRepository;
 
 
   @Value("${python.executable_path}")
@@ -79,8 +83,11 @@ public class SubjectService implements ISubjectService {
   @Value("${python.clustering_prediction_script_path}")
   private String clusteringPredictionScriptPath;
 
-  @Value("${python.clustering_prediction_model_path}")
-  private String clusteringPredictionModelPath;
+  @Value("${python.clustering_prediction_INF_model_path}")
+  private String clusteringPredictionINFModelPath;
+
+    @Value("${python.clustering_prediction_MAN_model_path}")
+    private String clusteringPredictionMANModelPath;
 
   @Value("${python.passing_change_prediction_script_path}")
   private String passingChangePredictionScriptPath;
@@ -92,7 +99,7 @@ public class SubjectService implements ISubjectService {
       SubjectRepository subjectRepository, AnswerRepository answerRepository,
       FocusRepository focusRepository, SubjectGradeRepository subjectGradeRepository,
       StudentService studentService, FormService formService,
-        SubjectKeywordRepository subjectKeywordRepository) {
+        SubjectKeywordRepository subjectKeywordRepository, AuthService authService, StudentSubjectRepository studentSubjectRepository) {
     this.studyProgramSubjectRepository = studyProgramSubjectRepository;
     this.subjectRepository = subjectRepository;
     this.subjectGradeRepository = subjectGradeRepository;
@@ -101,6 +108,8 @@ public class SubjectService implements ISubjectService {
     this.studentService = studentService;
     this.formService = formService;
     this.subjectKeywordRepository = subjectKeywordRepository;
+    this.authService = authService;
+    this.studentSubjectRepository = studentSubjectRepository;
   }
 
   private static List<List<Integer>> getFocusesAttributes(List<Focus> subjectsFocuses) {
@@ -142,10 +151,12 @@ public class SubjectService implements ISubjectService {
 
     List<Focus> subjectsFocuses = originalSubjects.stream().map(Subject::getFocus).toList();
     List<List<Integer>> focusesAttributes = getFocusesAttributes(subjectsFocuses);
+    User currentUser = this.authService.getCurrentUser().orElseThrow(() -> new RuntimeException("Cannot find user."));
+    Integer studyProgramId = currentUser.getStudent().getStudyProgramId();
 
     ProcessBuilder processBuilder =
         new ProcessBuilder(pythonExcecutablePath, clusteringPredictionScriptPath,
-            Arrays.toString(focusesAttributes.toArray()), clusteringPredictionModelPath);
+            Arrays.toString(focusesAttributes.toArray()), studyProgramId == 3 ? this.clusteringPredictionINFModelPath : this.clusteringPredictionMANModelPath);
     String output = ProcessUtils.getOutputFromProces(processBuilder);
     log.info("Output of clustering: {}", output);
 
@@ -157,7 +168,8 @@ public class SubjectService implements ISubjectService {
         continue;
       }
       part = part.strip();
-      result.add(Integer.parseInt(part) + 89);
+      // TODO adds a constant number of subjects due to the model returning indexes from 0 for management subjects, FIX
+      result.add(studyProgramId == 3 ? Integer.parseInt(part) : Integer.parseInt(part) + 87);
     }
 
     return findSubjectByIds(result);
@@ -167,8 +179,11 @@ public class SubjectService implements ISubjectService {
   public List<StudyProgramSubject> findSubjectByIds(List<Integer> ids) {
     List<StudyProgramSubject> subjectList = new ArrayList<>();
 
+    User currentUser = this.authService.getCurrentUser().orElseThrow(() -> new RuntimeException("Cannot find user."));
+
     ids.forEach(id -> {
-      StudyProgramSubject subject = studyProgramSubjectRepository.findByIdSubjectId(id)
+        Integer fixedId = id + 1; // Due to data change
+      StudyProgramSubject subject = studyProgramSubjectRepository.findByIdSubjectId(fixedId, currentUser.getStudent().getStudyProgramId())
           .orElseThrow(() -> new EntityNotFoundException(
               String.format("Subject with id %d was not found!", id)));
       subjectList.add(subject);
@@ -179,54 +194,61 @@ public class SubjectService implements ISubjectService {
 
   @Override
   public List<Subject> makeSubjectsFocusPrediction(User user) {
-    List<Integer> questionIds =
-        Arrays.asList(115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126);
-    List<Answer> focusUserAnswers =
-        this.answerRepository.findByQuestionIdsAndUser(questionIds, user);
+      List<Integer> questionIds =
+              Arrays.asList(115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126);
+      List<Answer> focusUserAnswers =
+              this.answerRepository.findByQuestionIdsAndUser(questionIds, user);
 
-    List<Answer> filteredAnswers = focusUserAnswers.stream()
-        .filter(answer -> answer.getTexts().stream().map(AnswerText::getTextOfAnswer)
-            .map(Integer::parseInt).anyMatch(value -> value > 5))
-        .toList();
+      List<Answer> filteredAnswers = focusUserAnswers.stream()
+              .filter(answer -> answer.getTexts().stream().map(AnswerText::getTextOfAnswer)
+                      .map(Integer::parseInt).anyMatch(value -> value > 5))
+              .toList();
 
-    Map<String, String> questionToFocusMap = new HashMap<>();
-    questionToFocusMap.put("question_matematika_focus", "math_focus");
-    questionToFocusMap.put("question_dizajn_focus", "design_focus");
-    questionToFocusMap.put("question_hardver_focus", "hardware_focus");
-    questionToFocusMap.put("question_testovanie_focus", "testing_focus");
-    questionToFocusMap.put("question_logika_focus", "logic_focus");
-    questionToFocusMap.put("question_ekonomika_focus", "economics_focus");
-    questionToFocusMap.put("question_siete_focus", "network_focus");
-    questionToFocusMap.put("question_jazyky_focus", "language_focus");
-    questionToFocusMap.put("question_programovanie_focus", "programming_focus");
-    questionToFocusMap.put("question_manazment_focus", "management_focus");
-    questionToFocusMap.put("question_data_focus", "data_focus");
-    questionToFocusMap.put("question_fyzicka_aktivita_focus", "physical_focus");
+      Map<String, String> questionToFocusMap = new HashMap<>();
+      questionToFocusMap.put("question_matematika_focus", "math_focus");
+      questionToFocusMap.put("question_dizajn_focus", "design_focus");
+      questionToFocusMap.put("question_hardver_focus", "hardware_focus");
+      questionToFocusMap.put("question_testovanie_focus", "testing_focus");
+      questionToFocusMap.put("question_logika_focus", "logic_focus");
+      questionToFocusMap.put("question_ekonomika_focus", "economics_focus");
+      questionToFocusMap.put("question_siete_focus", "network_focus");
+      questionToFocusMap.put("question_jazyky_focus", "language_focus");
+      questionToFocusMap.put("question_programovanie_focus", "programming_focus");
+      questionToFocusMap.put("question_manazment_focus", "management_focus");
+      questionToFocusMap.put("question_data_focus", "data_focus");
+      questionToFocusMap.put("question_fyzicka_aktivita_focus", "physical_focus");
 
-    Map<String, Integer> values =
-        filteredAnswers.stream().flatMap(answer -> answer.getTexts().stream())
-            .collect(Collectors.toMap(
-                answerText -> questionToFocusMap.getOrDefault(
-                    answerText.getAnswer().getAnswerQuestion().getQuestionIdentifier(), null),
-                answerText -> Integer.parseInt(answerText.getTextOfAnswer()),
-                (oldValue, newValue) -> newValue));
+      Map<String, Integer> values =
+              filteredAnswers.stream().flatMap(answer -> answer.getTexts().stream())
+                      .collect(Collectors.toMap(
+                              answerText -> questionToFocusMap.getOrDefault(
+                                      answerText.getAnswer().getAnswerQuestion().getQuestionIdentifier(), null),
+                              answerText -> Integer.parseInt(answerText.getTextOfAnswer()),
+                              (oldValue, newValue) -> newValue));
 
-    Integer mathFocus = values.getOrDefault("math_focus", null);
-    Integer logicFocus = values.getOrDefault("logic_focus", null);
-    Integer programmingFocus = values.getOrDefault("programming_focus", null);
-    Integer designFocus = values.getOrDefault("design_focus", null);
-    Integer economicsFocus = values.getOrDefault("economics_focus", null);
-    Integer managementFocus = values.getOrDefault("management_focus", null);
-    Integer hardwareFocus = values.getOrDefault("hardware_focus", null);
-    Integer networkFocus = values.getOrDefault("network_focus", null);
-    Integer dataFocus = values.getOrDefault("data_focus", null);
-    Integer testingFocus = values.getOrDefault("testing_focus", null);
-    Integer languageFocus = values.getOrDefault("language_focus", null);
-    Integer physicalFocus = values.getOrDefault("physical_focus", null);
+      Integer mathFocus = values.getOrDefault("math_focus", null);
+      Integer logicFocus = values.getOrDefault("logic_focus", null);
+      Integer programmingFocus = values.getOrDefault("programming_focus", null);
+      Integer designFocus = values.getOrDefault("design_focus", null);
+      Integer economicsFocus = values.getOrDefault("economics_focus", null);
+      Integer managementFocus = values.getOrDefault("management_focus", null);
+      Integer hardwareFocus = values.getOrDefault("hardware_focus", null);
+      Integer networkFocus = values.getOrDefault("network_focus", null);
+      Integer dataFocus = values.getOrDefault("data_focus", null);
+      Integer testingFocus = values.getOrDefault("testing_focus", null);
+      Integer languageFocus = values.getOrDefault("language_focus", null);
+      Integer physicalFocus = values.getOrDefault("physical_focus", null);
 
-    return focusRepository.findSubjectByHashMapValues(mathFocus, logicFocus, programmingFocus,
-        designFocus, economicsFocus, managementFocus, hardwareFocus, networkFocus, dataFocus,
-        testingFocus, languageFocus, physicalFocus);
+      return focusRepository.findSubjectByHashMapValues(
+                      mathFocus, logicFocus, programmingFocus, designFocus, economicsFocus, managementFocus,
+                      hardwareFocus, networkFocus, dataFocus, testingFocus, languageFocus, physicalFocus)
+              .stream()
+              .filter(subject -> subject.getStudyProgramSubjects().stream()
+                      .anyMatch(studyProgramSubject ->
+                              Objects.equals(studyProgramSubject.getId().getStudyProgramId(), user.getStudent().getStudyProgramId())
+                      ))
+              .filter(subject -> subject.getStudyProgramSubjects().stream().anyMatch(studyProgramSubject -> studyProgramSubject.getRecommendedYear() >= user.getStudent().getYear()))
+              .toList();
   }
 
   @Override
@@ -261,8 +283,14 @@ public class SubjectService implements ISubjectService {
       throw new PythonOutputParsingException("Failed to create JSON input for the python script");
     }
 
-    ProcessBuilder processBuilder = new ProcessBuilder(pythonExcecutablePath,
-        passingChangePredictionScriptPath, inputJson, modelPathsJson);
+      List<String> command = new ArrayList<>();
+      command.add(pythonExcecutablePath);
+      command.add(passingChangePredictionScriptPath);
+      command.add("\"" + inputJson.replace("\"", "\\\"") + "\"");
+      command.add("\"" + modelPathsJson.replace("\"", "\\\"") + "\"");
+
+    ProcessBuilder processBuilder = new ProcessBuilder();
+    processBuilder.command(command);
 
     String output;
     try {
@@ -318,8 +346,15 @@ public class SubjectService implements ISubjectService {
     }
 
 
-    ProcessBuilder processBuilder = new ProcessBuilder(pythonExcecutablePath,
-        passingMarkPredictionScriptPath, inputJson, modelPathsJson);
+      List<String> command = new ArrayList<>();
+      command.add(pythonExcecutablePath);
+      command.add(passingMarkPredictionScriptPath);
+      command.add("\"" + inputJson.replace("\"", "\\\"") + "\"");
+      command.add("\"" + modelPathsJson.replace("\"", "\\\"") + "\"");
+
+
+    ProcessBuilder processBuilder = new ProcessBuilder();
+    processBuilder.command(command);
 
     String output;
     try {
@@ -363,6 +398,16 @@ public class SubjectService implements ISubjectService {
                 .map(tuple -> new KeywordDTO(
                         tuple.get("keyword", String.class),
                         tuple.get("count", Long.class)
+                ))
+                .toList();
+    }
+
+    @Override
+    public List<StudentYearCountDTO> getStudentCountsByYear() {
+        return this.studentSubjectRepository.countStudentsByYear().stream()
+                .map(tuple -> new StudentYearCountDTO(
+                        tuple.get("year", Integer.class),
+                        tuple.get("studentCount", Long .class)
                 ))
                 .toList();
     }
