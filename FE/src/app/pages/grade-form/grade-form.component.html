@@ -3,7 +3,12 @@
   *ngIf="!loading"
 >
   <div class="row bg-white w-100">
-    <div class="px-4">
+  <ng-container *ngIf="loading; else content">
+    <ngx-skeleton-loader count="10" appearance="line"></ngx-skeleton-loader>
+  </ng-container>
+
+  <ng-template #content>
+      <div class="px-4">
       <h2>{{ form.title }}</h2>
       <p>
         {{ form.description }}
@@ -70,5 +75,7 @@
         </app-hobby-step>
       </mat-step>
     </mat-stepper>
+
+  </ng-template>
   </div>
 </div>
