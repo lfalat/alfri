@@ -4,6 +4,7 @@ import org.springframework.data.domain.Page;
 import sk.uniza.fri.alfri.common.pagitation.PageDefinition;
 import sk.uniza.fri.alfri.common.pagitation.SearchDefinition;
 import sk.uniza.fri.alfri.dto.KeywordDTO;
+import sk.uniza.fri.alfri.dto.StudentYearCountDTO;
 import sk.uniza.fri.alfri.dto.focus.FocusCategorySumDTO;
 import sk.uniza.fri.alfri.entity.StudyProgramSubject;
 import sk.uniza.fri.alfri.entity.Subject;
@@ -37,4 +38,6 @@ public interface ISubjectService {
   List<FocusCategorySumDTO> getMostPopularFocuses();
 
     List<KeywordDTO> getAllKeywords();
+
+    List<StudentYearCountDTO> getStudentCountsByYear();
 }

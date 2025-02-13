@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import {
   FocusCategorySumDTO,
   KeywordDTO,
-  Page,
+  Page, StudentYearCountDTO,
   SubjectDto,
   SubjectExtendedDto,
   SubjectGradesDto,
@@ -199,6 +199,18 @@ export class SubjectService {
     };
 
     return this.http.get<FocusCategorySumDTO[]>(`${this.URL}/category-sums`, {
+      headers: httpOptions.headers,
+    });
+  }
+
+  public getStudentCountsByYear(): Observable<StudentYearCountDTO[]> {
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+      }),
+    };
+
+    return this.http.get<StudentYearCountDTO[]>(`${this.URL}/counts-by-year`, {
       headers: httpOptions.headers,
     });
   }

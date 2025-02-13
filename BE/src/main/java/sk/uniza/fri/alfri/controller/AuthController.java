@@ -58,7 +58,7 @@ public class AuthController {
     return ResponseEntity.ok(userDto);
   }
 
-  @PreAuthorize("hasAnyRole({'ROLE_STUDENT', 'ROLE_TEACHER', 'ROLE_ADMIN', 'ROLE_VISITOR'})")
+  @PreAuthorize("hasAnyRole({'ROLE_STUDENT', 'ROLE_TEACHER', 'ROLE_ADMIN', 'ROLE_VISITOR', 'ROLE_VEDENIE'})")
   @PostMapping(value = "/change-password", consumes = APPLICATION_JSON_VALUE)
   public void changePassword(@RequestBody @Valid ChangePasswordDto changePasswordDto)
       throws UserAlreadyRegisteredException {

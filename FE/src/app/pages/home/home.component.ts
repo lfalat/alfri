@@ -5,6 +5,7 @@ import { UserHomeComponent } from './user-home/user-home.component';
 import { TeacherHomeComponent } from './teacher-home/teacher-home.component';
 import { HasRoleDirective } from '@directives/auth.directive';
 import { NotificationService } from '@services/notification.service';
+import { VedenieHomeComponent } from '@pages/home/vedenie-home/vedenie-home.component';
 export const USER_FORM_ID = 69;
 
 @Component({
@@ -16,6 +17,7 @@ export const USER_FORM_ID = 69;
     UserHomeComponent,
     TeacherHomeComponent,
     HasRoleDirective,
+    VedenieHomeComponent,
   ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
@@ -23,6 +25,5 @@ export const USER_FORM_ID = 69;
 export class HomeComponent {
   protected readonly AuthRole = AuthRole;
 
-  constructor() {
-  }
+  constructor() {}
 }

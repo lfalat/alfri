@@ -28,7 +28,7 @@ import sk.uniza.fri.alfri.service.implementation.JwtService;
 
 @RestController
 @RequestMapping("/api/form")
-@PreAuthorize("hasAnyRole({'ROLE_STUDENT', 'ROLE_TEACHER', 'ROLE_ADMIN'})")
+@PreAuthorize("hasAnyRole({'ROLE_STUDENT', 'ROLE_TEACHER', 'ROLE_ADMIN', 'ROLE_VEDENIE'})")
 @Slf4j
 public class FormController {
 

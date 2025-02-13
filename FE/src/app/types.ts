@@ -250,3 +250,8 @@ export interface FocusCategorySumDTO {
   focusCategory: string;
   totalSum: number;
 }
+
+export interface StudentYearCountDTO {
+  year: number;
+  studentsCount: number;
+}
