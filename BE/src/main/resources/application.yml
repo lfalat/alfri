@@ -24,6 +24,7 @@ python:
   clustering_prediction_script_path: ${PROD_CLUSTERING_PREDICTION_SCRIPT_PATH}
   clustering_prediction_INF_model_path: ${PROD_CLUSTERING_PREDICTION_MODEL_INF_PATH}
   clustering_prediction_MAN_model_path: ${PROD_CLUSTERING_PREDICTION_MODEL_MAN_PATH}
+  clustering_prediction_model_path: ${PROD_CLUSTERING_PREDICTION_MODEL_PATH}
   passing_change_prediction_script_path: ${PROD_PASSING_CHANGE_PREDICTION_SCRIPT_PATH}
   passing_mark_prediction_script_path: ${PROD_PASSING_MARK_PREDICTION_SCRIPT_PATH}
 
