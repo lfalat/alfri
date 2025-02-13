@@ -25,6 +25,7 @@ import sk.uniza.fri.alfri.entity.Question;
 import sk.uniza.fri.alfri.entity.QuestionOption;
 import sk.uniza.fri.alfri.entity.Questionnaire;
 import sk.uniza.fri.alfri.entity.QuestionnaireSection;
+import sk.uniza.fri.alfri.entity.Student;
 import sk.uniza.fri.alfri.entity.StudyProgramSubject;
 import sk.uniza.fri.alfri.entity.User;
 import sk.uniza.fri.alfri.exception.QuestionnaireNotFilledException;
@@ -34,6 +35,7 @@ import sk.uniza.fri.alfri.repository.AnswerRepository;
 import sk.uniza.fri.alfri.repository.AnswerTextRepository;
 import sk.uniza.fri.alfri.repository.QuestionRepository;
 import sk.uniza.fri.alfri.repository.QuestionnaireRepository;
+import sk.uniza.fri.alfri.repository.StudentRepository;
 import sk.uniza.fri.alfri.repository.StudyProgramSubjectRepository;
 import sk.uniza.fri.alfri.service.FormService;
 
@@ -47,17 +49,20 @@ public class FormServiceImpl implements FormService {
   private final AnswerTextRepository answerTextRepository;
   private final StudyProgramSubjectRepository studyProgramSubjectRepository;
     private final EntityManager entityManager;
+    private final StudentRepository studentRepository;
 
   public FormServiceImpl(QuestionnaireRepository questionnaireRepository,
       QuestionRepository questionRepository, AnswerRepository answerRepository,
                          AnswerTextRepository answerTextRepository,
-                         StudyProgramSubjectRepository studyProgramSubjectRepository, EntityManager entityManager) {
+                         StudyProgramSubjectRepository studyProgramSubjectRepository, EntityManager entityManager,
+                         StudentRepository studentRepository) {
     this.questionnaireRepository = questionnaireRepository;
     this.questionRepository = questionRepository;
     this.answerRepository = answerRepository;
     this.answerTextRepository = answerTextRepository;
     this.studyProgramSubjectRepository = studyProgramSubjectRepository;
     this.entityManager = entityManager;
+    this.studentRepository = studentRepository;
   }
 
   public void saveQuestionnaire(QuestionnaireDTO questionnaireDTO) {
@@ -293,6 +298,9 @@ public class FormServiceImpl implements FormService {
 
     private void saveFormAnswers(UserFormAnswersDTO userFormAnswersDTO, User user,
       Questionnaire questionnaire) {
+        boolean isRegisteredStudent = user.getStudent() != null;
+        Integer year = -1;
+        Integer studyProgram = -1;
     for (AnswerDTO answerDTO : userFormAnswersDTO.answers()) {
       Question question = questionRepository.findById(answerDTO.questionId())
           .orElseThrow(() -> new ResourceNotFoundException(
@@ -300,12 +308,20 @@ public class FormServiceImpl implements FormService {
 
       // Set the new study year for the user
       if (question.getQuestionIdentifier().equals("question_rocnik")) {
-          user.getStudent().setYear(Integer.valueOf(answerDTO.texts().getFirst().textOfAnswer()));
+          if (isRegisteredStudent) {
+              user.getStudent().setYear(Integer.valueOf(answerDTO.texts().getFirst().textOfAnswer()));
+          } else {
+              year = Integer.valueOf(answerDTO.texts().getFirst().textOfAnswer());
+          }
       }
 
       // Set the new study program for the user
         if (question.getQuestionIdentifier().equals("question_odbor")) {
-            user.getStudent().setStudyProgramId(Integer.valueOf(answerDTO.texts().getFirst().textOfAnswer()));
+            if (isRegisteredStudent) {
+                user.getStudent().setStudyProgramId(Integer.valueOf(answerDTO.texts().getFirst().textOfAnswer()));
+            } else {
+                studyProgram = Integer.valueOf(answerDTO.texts().getFirst().textOfAnswer());
+            }
         }
 
       Answer answer = AnswerMapper.INSTANCE.toEntity(answerDTO);
@@ -318,6 +334,14 @@ public class FormServiceImpl implements FormService {
       }
 
       this.answerRepository.save(answer);
+    }
+
+    if (!isRegisteredStudent) {
+        Student student = new Student();
+        student.setUser(user);
+        student.setStudyProgramId(studyProgram);
+        student.setYear(year);
+        this.studentRepository.save(student);
     }
   }
 }

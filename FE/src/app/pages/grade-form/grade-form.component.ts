@@ -48,6 +48,8 @@ import { MandatorySubjectsStepComponent } from '@components/grade-form-steps/man
 import { FocusStepComponent } from '@components/grade-form-steps/focus-step/focus-step.component';
 import { HobbyStepComponent } from '@components/grade-form-steps/hobby-step/hobby-step.component';
 import { QuestionTypes } from '@pages/grade-form/grade-form-types';
+import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
+import { MatCard, MatCardHeader, MatCardSubtitle, MatCardTitle } from '@angular/material/card';
 
 @Component({
   selector: 'app-grade-form',
@@ -87,6 +89,11 @@ import { QuestionTypes } from '@pages/grade-form/grade-form-types';
     MatStepContent,
     FocusStepComponent,
     HobbyStepComponent,
+    NgxSkeletonLoaderModule,
+    MatCard,
+    MatCardHeader,
+    MatCardTitle,
+    MatCardSubtitle
   ],
   templateUrl: './grade-form.component.html',
   styleUrl: './grade-form.component.scss',
@@ -142,7 +149,7 @@ export class GradeFormComponent implements OnInit {
   }
 
   onStepChange(event: StepperSelectionEvent) {
-    console.log(this.formGroups)
+    console.log(this.formGroups);
     const selectedIndex = event.selectedIndex;
     this.activeStep.set(selectedIndex);
   }
@@ -153,7 +160,8 @@ export class GradeFormComponent implements OnInit {
 
       section.questions.forEach((question) => {
         // Default values
-        let defaultValue = question.answerType === QuestionTypes.NUMERIC ? 0 : '';
+        let defaultValue =
+          question.answerType === QuestionTypes.NUMERIC ? 0 : '';
 
         // If existing answers exist, find the corresponding answer
         if (this.existingAnswers) {
@@ -167,7 +175,10 @@ export class GradeFormComponent implements OnInit {
             );
 
             if (existingQuestion) {
-              if (question.answerType === QuestionTypes.CHECKBOX && question.options) {
+              if (
+                question.answerType === QuestionTypes.CHECKBOX &&
+                question.options
+              ) {
                 // Handle checkbox answers
                 question.options.forEach((option, index) => {
                   const isChecked = existingQuestion.answers.some((answer) =>
@@ -175,7 +186,9 @@ export class GradeFormComponent implements OnInit {
                       (answer) => answer.textOfAnswer === option.questionOption,
                     ),
                   );
-                  group[question.questionIdentifier + index.toString()] = [isChecked];
+                  group[question.questionIdentifier + index.toString()] = [
+                    isChecked,
+                  ];
                 });
                 return; // Skip setting default value for checkbox
               } else {
@@ -212,7 +225,7 @@ export class GradeFormComponent implements OnInit {
 
   onSubmit() {
     let allValid = true;
-    console.log(this.formGroups)
+    console.log(this.formGroups);
     this.formGroups.forEach((group) => {
       Object.keys(group.controls).forEach((key) => {
         group.controls[key].markAsTouched();
