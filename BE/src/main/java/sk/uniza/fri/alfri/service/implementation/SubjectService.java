@@ -157,7 +157,7 @@ public class SubjectService implements ISubjectService {
     ProcessBuilder processBuilder =
         new ProcessBuilder(pythonExcecutablePath, clusteringPredictionScriptPath,
             Arrays.toString(focusesAttributes.toArray()), studyProgramId == 3 ? this.clusteringPredictionINFModelPath : this.clusteringPredictionMANModelPath);
-    String output = ProcessUtils.getOutputFromProces(processBuilder);
+    String output = ProcessUtils.getOutputFromProces(processBuilder, false);
     log.info("Output of clustering: {}", output);
 
     String cleaned = output.replace("[", "").replace("]", "").replace("\"", "");
@@ -294,7 +294,7 @@ public class SubjectService implements ISubjectService {
 
     String output;
     try {
-      output = ProcessUtils.getOutputFromProces(processBuilder);
+      output = ProcessUtils.getOutputFromProces(processBuilder, false);
     } catch (IOException e) {
       throw new PythonOutputParsingException(
           "Error running Python passing chance script: " + e.getMessage());
@@ -345,12 +345,20 @@ public class SubjectService implements ISubjectService {
       throw new PythonOutputParsingException("Failed to create JSON input for the python script");
     }
 
-      ProcessBuilder processBuilder = new ProcessBuilder(pythonExcecutablePath,
-              passingMarkPredictionScriptPath, inputJson, modelPathsJson);
+
+      List<String> command = new ArrayList<>();
+      command.add(pythonExcecutablePath);
+      command.add(passingMarkPredictionScriptPath);
+      command.add("\"" + inputJson.replace("\"", "\\\"") + "\"");
+      command.add("\"" + modelPathsJson.replace("\"", "\\\"") + "\"");
+
+
+      ProcessBuilder processBuilder = new ProcessBuilder();
+      processBuilder.command(command);
 
     String output;
     try {
-      output = ProcessUtils.getOutputFromProces(processBuilder);
+      output = ProcessUtils.getOutputFromProces(processBuilder, true);
     } catch (IOException e) {
       throw new PythonOutputParsingException(
           "Error running Python prediction script: " + e.getMessage());
