@@ -4,12 +4,21 @@ import warnings
 import sys
 import json
 import numpy as np
-import tensorflow as tf
 
-# Suppress TensorFlow logging and warnings
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
-logging.getLogger('tensorflow').setLevel(logging.ERROR)
-warnings.filterwarnings('ignore')
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'  # FATAL
+stderr = sys.stderr
+sys.stderr = open(os.devnull, 'w')
+
+import tensorflow as tf
+tf.get_logger().setLevel(tf.compat.v1.logging.FATAL)
+tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
+logging.getLogger('tensorflow').setLevel(tf.compat.v1.logging.FATAL)
+
+sys.stderr = stderr
+
+import absl.logging
+logging.root.removeHandler(absl.logging._absl_handler)
+absl.logging._warn_preinit_stderr = False
 
 # Decode map for predictions
 DECODE_MAP = {
@@ -61,10 +70,6 @@ def main():
     if len(sys.argv) != 3:
         sys.exit(1)
 
-    # Redirect stdout to suppress unwanted output
-    original_stdout = sys.stdout
-    sys.stdout = open(os.devnull, 'w')
-
     try:
         input_data = json.loads(sys.argv[1])
         model_paths = json.loads(sys.argv[2])
@@ -83,9 +88,6 @@ def main():
         if subject_input is None:
             sys.exit(1)
         results[subject_name] = run_model(model, subject_input)
-
-    # Restore stdout and print only the results
-    sys.stdout = original_stdout
     print(json.dumps(results, indent=4))
 
 if __name__ == "__main__":
