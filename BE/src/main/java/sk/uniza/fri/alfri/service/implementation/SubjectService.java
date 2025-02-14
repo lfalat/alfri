@@ -345,16 +345,8 @@ public class SubjectService implements ISubjectService {
       throw new PythonOutputParsingException("Failed to create JSON input for the python script");
     }
 
-
-      List<String> command = new ArrayList<>();
-      command.add(pythonExcecutablePath);
-      command.add(passingMarkPredictionScriptPath);
-      command.add("\"" + inputJson.replace("\"", "\\\"") + "\"");
-      command.add("\"" + modelPathsJson.replace("\"", "\\\"") + "\"");
-
-
-    ProcessBuilder processBuilder = new ProcessBuilder();
-    processBuilder.command(command);
+      ProcessBuilder processBuilder = new ProcessBuilder(pythonExcecutablePath,
+              passingChangePredictionScriptPath, inputJson, modelPathsJson);
 
     String output;
     try {

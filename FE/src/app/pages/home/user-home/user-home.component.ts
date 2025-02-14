@@ -7,6 +7,7 @@ import { Router } from '@angular/router';
 import { FormService } from '@services/form.service';
 import { AnsweredForm } from '../../../types';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
+import { FormDataService } from '@services/form-data.service';
 
 @Component({
   selector: 'app-user-home',
@@ -22,12 +23,14 @@ export class UserHomeComponent implements OnInit {
   constructor(
     private router: Router,
     private formService: FormService,
+    private formDataService: FormDataService
   ) {
   }
 
   ngOnInit() {
     this.formService.getExistingFormAnswers(USER_FORM_ID).subscribe({
       next: (data: AnsweredForm) => {
+        this.formDataService.setFormData(data);
         this.formData = data;
         this.loading = false;
       },

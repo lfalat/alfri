@@ -10,7 +10,7 @@
     <mat-toolbar>ALFRI</mat-toolbar>
     <mat-nav-list>
       <mat-expansion-panel [class.mat-elevation-z0]="true">
-        <mat-expansion-panel-header style="padding: 0 16px">
+        <mat-expansion-panel-header *ngIf="formData || authService.hasRole([AuthRole.VEDENIE, AuthRole.ADMIN, AuthRole.TEACHER])" style="padding: 0 16px">
           <mat-panel-title>
             <div class="d-flex align-items-center gap-1">
               <mat-icon>book</mat-icon>
@@ -71,7 +71,7 @@
         <!--        </a>-->
       </mat-expansion-panel>
 
-      <mat-expansion-panel [class.mat-elevation-z0]="true">
+      <mat-expansion-panel [class.mat-elevation-z0]="true" *ngIf="formData || authService.hasRole([AuthRole.VEDENIE, AuthRole.ADMIN, AuthRole.TEACHER])">
         <mat-expansion-panel-header style="padding: 0 16px">
           <mat-panel-title>
             <div class="d-flex align-items-center gap-1">
@@ -152,12 +152,12 @@
           >
 
           <div class="d-none d-md-block">
-          <button mat-button [matMenuTriggerFor]="subjects_menu" *appHasRole="[AuthRole.STUDENT, AuthRole.TEACHER]">
+          <button mat-button [matMenuTriggerFor]="subjects_menu" *ngIf="formData || authService.hasRole([AuthRole.VEDENIE, AuthRole.ADMIN, AuthRole.TEACHER])">
               <mat-icon>book</mat-icon>
               Predmety
             </button>
 
-            <button mat-button [matMenuTriggerFor]="reports_menu">
+            <button mat-button [matMenuTriggerFor]="reports_menu" *ngIf="formData || authService.hasRole([AuthRole.VEDENIE, AuthRole.ADMIN, AuthRole.TEACHER])">
               <mat-icon>bar_chart</mat-icon>
               Analýzy a Reporty
             </button>
