@@ -346,7 +346,7 @@ public class SubjectService implements ISubjectService {
     }
 
       ProcessBuilder processBuilder = new ProcessBuilder(pythonExcecutablePath,
-              passingChangePredictionScriptPath, inputJson, modelPathsJson);
+              passingMarkPredictionScriptPath, inputJson, modelPathsJson);
 
     String output;
     try {
