@@ -7,9 +7,9 @@ import sk.uniza.fri.alfri.entity.QuestionOption;
 
 @Mapper
 public interface QuestionOptionMapper {
-  QuestionOptionMapper INSTANCE = Mappers.getMapper(QuestionOptionMapper.class);
+    QuestionOptionMapper INSTANCE = Mappers.getMapper(QuestionOptionMapper.class);
 
-  QuestionOption toEntity(QuestionOptionDTO dto);
+    QuestionOption toEntity(QuestionOptionDTO dto);
 
-  QuestionOptionDTO toDto(QuestionOption dto);
+    QuestionOptionDTO toDto(QuestionOption dto);
 }

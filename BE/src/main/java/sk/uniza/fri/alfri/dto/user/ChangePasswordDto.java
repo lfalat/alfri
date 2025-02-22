@@ -7,12 +7,12 @@ import lombok.Data;
 @Data
 public class ChangePasswordDto {
 
-  @Email(message = "Email must have format of email!")
-  String email;
+    @Email(message = "Email must have format of email!")
+    String email;
 
-  @NotBlank(message = "Password cannot be null or blank!")
-  String oldPassword;
+    @NotBlank(message = "Password cannot be null or blank!")
+    String oldPassword;
 
-  @NotBlank(message = "Password cannot be null or blank!")
-  String newPassword;
+    @NotBlank(message = "Password cannot be null or blank!")
+    String newPassword;
 }

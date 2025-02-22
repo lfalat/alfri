@@ -12,11 +12,12 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
-import java.util.ArrayList;
-import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -24,24 +25,24 @@ import org.hibernate.annotations.ColumnDefault;
 @Table(name = "answer")
 public class Answer {
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @ColumnDefault("nextval('answer_answer_id_seq')")
-  @Column(name = "answer_id", nullable = false)
-  private Integer answerId;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @ColumnDefault("nextval('answer_answer_id_seq')")
+    @Column(name = "answer_id", nullable = false)
+    private Integer answerId;
 
-  @ManyToOne(fetch = FetchType.LAZY, optional = false)
-  @JoinColumn(name = "question_id", nullable = false)
-  private Question answerQuestion;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "question_id", nullable = false)
+    private Question answerQuestion;
 
-  @OneToOne(fetch = FetchType.LAZY, optional = false)
-  @JoinColumn(name = "user_id", nullable = false)
-  private User user;
+    @OneToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
-  @ManyToOne(fetch = FetchType.LAZY, optional = false)
-  @JoinColumn(name = "questionnaire_id", nullable = false)
-  private Questionnaire answerQuestionnaire;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "questionnaire_id", nullable = false)
+    private Questionnaire answerQuestionnaire;
 
-  @OneToMany(mappedBy = "answer", fetch = FetchType.LAZY, cascade = {CascadeType.REMOVE, CascadeType.PERSIST}, orphanRemoval = true)
-  private List<AnswerText> texts = new ArrayList<>();
+    @OneToMany(mappedBy = "answer", fetch = FetchType.LAZY, cascade = {CascadeType.REMOVE, CascadeType.PERSIST}, orphanRemoval = true)
+    private List<AnswerText> texts = new ArrayList<>();
 }

@@ -6,5 +6,5 @@ import sk.uniza.fri.alfri.entity.Teacher;
 import java.util.Optional;
 
 public interface TeacherRepository extends JpaRepository<Teacher, Integer> {
-  Optional<Teacher> findByUserId(Integer userId);
+    Optional<Teacher> findByUserId(Integer userId);
 }

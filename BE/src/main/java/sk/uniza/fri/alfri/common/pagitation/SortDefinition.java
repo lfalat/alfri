@@ -1,20 +1,20 @@
 package sk.uniza.fri.alfri.common.pagitation;
 
+import lombok.Getter;
+
 import java.util.List;
 
+@Getter
 public class SortDefinition {
 
-  public List<OrderRequestQuery> orders;
+    public List<OrderRequestQuery> orders;
 
-  public SortDefinition(List<OrderRequestQuery> orders) {
-    this.orders = orders;
-  }
+    public SortDefinition(List<OrderRequestQuery> orders) {
+        this.orders = orders;
+    }
 
-  public static SortDefinition by(List<OrderRequestQuery> ordersList) {
-    return new SortDefinition(ordersList);
-  }
+    public static SortDefinition by(List<OrderRequestQuery> ordersList) {
+        return new SortDefinition(ordersList);
+    }
 
-  public List<OrderRequestQuery> getOrders() {
-    return this.orders;
-  }
 }

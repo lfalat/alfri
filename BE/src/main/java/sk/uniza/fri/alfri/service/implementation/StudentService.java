@@ -1,9 +1,6 @@
 package sk.uniza.fri.alfri.service.implementation;
 
 import jakarta.persistence.EntityNotFoundException;
-
-import java.io.IOException;
-
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Service;
 import sk.uniza.fri.alfri.entity.Student;
@@ -14,33 +11,35 @@ import sk.uniza.fri.alfri.repository.StudyProgramRepository;
 import sk.uniza.fri.alfri.service.IStudentService;
 import sk.uniza.fri.alfri.util.ProcessUtils;
 
+import java.io.IOException;
+
 @Service
 public class StudentService implements IStudentService {
-  private final StudentRepository studentRepository;
-  private final StudyProgramRepository studyProgramRepository;
-  private final ResourceLoader resourceLoader;
+    private final StudentRepository studentRepository;
+    private final StudyProgramRepository studyProgramRepository;
+    private final ResourceLoader resourceLoader;
 
-  public StudentService(StudentRepository studentRepository,
-      StudyProgramRepository studyProgramRepository, ResourceLoader resourceLoader) {
-    this.studentRepository = studentRepository;
-    this.studyProgramRepository = studyProgramRepository;
-    this.resourceLoader = resourceLoader;
-  }
+    public StudentService(StudentRepository studentRepository,
+                          StudyProgramRepository studyProgramRepository, ResourceLoader resourceLoader) {
+        this.studentRepository = studentRepository;
+        this.studyProgramRepository = studyProgramRepository;
+        this.resourceLoader = resourceLoader;
+    }
 
-  public StudyProgram getUsersStudyProgram(String userEmail) {
-    Student student =
-        studentRepository.findByUser_Email(userEmail).orElseThrow(() -> new EntityNotFoundException(
-            String.format("User with email %s is not student", userEmail)));
+    public StudyProgram getUsersStudyProgram(String userEmail) {
+        Student student =
+                studentRepository.findByUser_Email(userEmail).orElseThrow(() -> new EntityNotFoundException(
+                        String.format("User with email %s is not student", userEmail)));
 
-    return studyProgramRepository.findById(student.getStudyProgramId())
-        .orElseThrow(() -> new EntityNotFoundException(
-            String.format("No study program was found for student %s", student)));
-  }
+        return studyProgramRepository.findById(student.getStudyProgramId())
+                .orElseThrow(() -> new EntityNotFoundException(
+                        String.format("No study program was found for student %s", student)));
+    }
 
-  @Override
-  public StudyProgram getUsersStudyProgram(User user) {
-    return getUsersStudyProgram(user.getEmail());
-  }
+    @Override
+    public StudyProgram getUsersStudyProgram(User user) {
+        return getUsersStudyProgram(user.getEmail());
+    }
 
   @Override
   public void makePrediction() throws IOException {
@@ -50,10 +49,10 @@ public class StudentService implements IStudentService {
     System.out.println(output);
   }
 
-  @Override
-  public Student getStudentByUserEmail(String userEmail) {
-    return studentRepository.findByUser_Email(userEmail)
-        .orElseThrow(() -> new EntityNotFoundException(
-            String.format("User with email %s is not a student!", userEmail)));
-  }
+    @Override
+    public Student getStudentByUserEmail(String userEmail) {
+        return studentRepository.findByUser_Email(userEmail)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        String.format("User with email %s is not a student!", userEmail)));
+    }
 }

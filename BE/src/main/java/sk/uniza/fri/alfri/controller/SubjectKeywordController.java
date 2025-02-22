@@ -11,6 +11,7 @@ import sk.uniza.fri.alfri.mapper.SubjectMapper;
 import sk.uniza.fri.alfri.service.implementation.SubjectKeywordService;
 
 import java.util.List;
+
 @RequestMapping("/api/keyword")
 @RestController
 public class SubjectKeywordController {

@@ -11,27 +11,27 @@ import sk.uniza.fri.alfri.repository.UserRepository;
 
 @Configuration
 public class ApplicationConfiguration {
-  private final UserRepository userRepository;
+    private final UserRepository userRepository;
 
-  public ApplicationConfiguration(UserRepository userRepository) {
-    this.userRepository = userRepository;
-  }
+    public ApplicationConfiguration(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
-  @Bean
-  UserDetailsService userDetailsService() {
-    return email -> userRepository.findByEmail(email)
-        .orElseThrow(() -> new UsernameNotFoundException(
-            String.format("User with email %s was not found!", email)));
-  }
+    @Bean
+    UserDetailsService userDetailsService() {
+        return email -> userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException(
+                        String.format("User with email %s was not found!", email)));
+    }
 
-  @Bean
-  public AuthenticationManager authenticationManager(AuthenticationConfiguration config)
-      throws Exception {
-    return config.getAuthenticationManager();
-  }
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration config)
+            throws Exception {
+        return config.getAuthenticationManager();
+    }
 
-  @Bean
-  BCryptPasswordEncoder passwordEncoder() {
-    return new BCryptPasswordEncoder();
-  }
+    @Bean
+    BCryptPasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 }

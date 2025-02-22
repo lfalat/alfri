@@ -8,5 +8,5 @@ import sk.uniza.fri.alfri.projection.SubjectIdProjection;
 import java.util.List;
 
 public interface TeacherSubjectRepository extends JpaRepository<TeacherSubject, TeacherSubjectId> {
-  List<SubjectIdProjection> findIdByIdTeacherId(Integer teacherId);
+    List<SubjectIdProjection> findIdByIdTeacherId(Integer teacherId);
 }

@@ -7,11 +7,11 @@ import sk.uniza.fri.alfri.entity.User;
 import java.io.IOException;
 
 public interface IStudentService {
-  StudyProgram getUsersStudyProgram(String userEmail);
+    StudyProgram getUsersStudyProgram(String userEmail);
 
-  StudyProgram getUsersStudyProgram(User user);
+    StudyProgram getUsersStudyProgram(User user);
 
-  void makePrediction() throws IOException;
+    void makePrediction() throws IOException;
 
-  Student getStudentByUserEmail(String userEmail);
+    Student getStudentByUserEmail(String userEmail);
 }

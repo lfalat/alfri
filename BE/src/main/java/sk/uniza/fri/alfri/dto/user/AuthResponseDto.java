@@ -7,9 +7,9 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class AuthResponseDto {
-  @NotBlank(message = "Jwt token cannot be blank!")
-  String jwtToken;
+    @NotBlank(message = "Jwt token cannot be blank!")
+    String jwtToken;
 
-  @NotBlank(message = "Jwt token cannot be blank!")
-  long expiresIn;
+    @NotBlank(message = "Jwt token cannot be blank!")
+    long expiresIn;
 }

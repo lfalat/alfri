@@ -6,13 +6,13 @@ import sk.uniza.fri.alfri.entity.Teacher;
 import java.util.List;
 
 public interface TeacherService {
-  List<Subject> getSubjectsOfTeacherById(Integer userId);
+    List<Subject> getSubjectsOfTeacherById(Integer userId);
 
-  Teacher findByUserId(Integer userId);
+    Teacher findByUserId(Integer userId);
 
-  Teacher createTeacher(Integer userId);
+    Teacher createTeacher(Integer userId);
 
-  void deleteTeacher(Integer userId);
+    void deleteTeacher(Integer userId);
 
-  Teacher changeDepartment(Integer departmentId, Integer userId);
+    Teacher changeDepartment(Integer departmentId, Integer userId);
 }

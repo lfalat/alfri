@@ -1,8 +1,9 @@
 package sk.uniza.fri.alfri.service;
 
-import java.util.List;
 import sk.uniza.fri.alfri.entity.StudyProgram;
 
+import java.util.List;
+
 public interface IStudyProgramService {
-  List<StudyProgram> findAll();
+    List<StudyProgram> findAll();
 }

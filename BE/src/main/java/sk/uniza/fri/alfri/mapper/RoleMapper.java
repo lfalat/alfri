@@ -8,13 +8,13 @@ import sk.uniza.fri.alfri.entity.Role;
 
 @Mapper
 public interface RoleMapper {
-  RoleMapper INSTANCE = Mappers.getMapper(RoleMapper.class);
+    RoleMapper INSTANCE = Mappers.getMapper(RoleMapper.class);
 
-  @Mapping(target = "name", ignore = true)
-  @Mapping(source = "roleId", target = "id")
-  Role mapRoleIdToRole(Integer roleId);
+    @Mapping(target = "name", ignore = true)
+    @Mapping(source = "roleId", target = "id")
+    Role mapRoleIdToRole(Integer roleId);
 
-  @Mapping(source = "role.name", target = "name")
-  @Mapping(source = "role.id", target = "id")
-  RoleDto mapRoleToRoleDto(Role role);
+    @Mapping(source = "role.name", target = "name")
+    @Mapping(source = "role.id", target = "id")
+    RoleDto mapRoleToRoleDto(Role role);
 }

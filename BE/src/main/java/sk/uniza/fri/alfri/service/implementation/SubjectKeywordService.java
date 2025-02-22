@@ -6,6 +6,7 @@ import sk.uniza.fri.alfri.entity.Subject;
 import sk.uniza.fri.alfri.repository.SubjectKeywordRepository;
 
 import java.util.List;
+
 @Service
 public class SubjectKeywordService {
     @Autowired

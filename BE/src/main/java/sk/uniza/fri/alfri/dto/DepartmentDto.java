@@ -8,18 +8,20 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
-/** DTO for {@link sk.uniza.fri.alfri.entity.Department} */
+/**
+ * DTO for {@link sk.uniza.fri.alfri.entity.Department}
+ */
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
 public class DepartmentDto implements Serializable {
-  Integer id;
+    Integer id;
 
-  @NotNull
-  @Size(max = 255)
-  String name;
+    @NotNull
+    @Size(max = 255)
+    String name;
 
-  @NotNull
-  @Size(max = 10)
-  String abbreviation;
+    @NotNull
+    @Size(max = 10)
+    String abbreviation;
 }

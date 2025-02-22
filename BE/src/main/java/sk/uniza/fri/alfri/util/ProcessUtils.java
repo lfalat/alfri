@@ -12,23 +12,21 @@ import java.util.stream.Collectors;
 
 @Slf4j
 public class ProcessUtils {
-  private ProcessUtils() {}
-
-  public static String getOutputFromProces(ProcessBuilder processBuilder, boolean isNeuralNetwork) throws IOException {
-    processBuilder.redirectErrorStream(true);
-
-    Process process = processBuilder.start();
-    BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-    StringBuilder output = new StringBuilder();
-    String line;
-      List<String> lines = new ArrayList<>();
-      while ((line = reader.readLine()) != null) {
-        System.out.println(line);
-        lines.add(line);
-      output.append(line).append("\n");
+    private ProcessUtils() {
     }
 
-    if (isNeuralNetwork) {
+    public static String getOutputFromProces(ProcessBuilder processBuilder, boolean isNeuralNetwork) throws IOException {
+        processBuilder.redirectErrorStream(true);
+
+        Process process = processBuilder.start();
+        BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+        StringBuilder output = new StringBuilder();
+        String line;
+        List<String> lines = new ArrayList<>();while ((line = reader.readLine()) != null) {
+            output.append(line).append("\n");
+        }
+
+        if (isNeuralNetwork) {
         ListIterator<String> iterator = lines.listIterator();
         while (iterator.hasNext()) {
             String lineIter = iterator.next();
@@ -42,16 +40,12 @@ public class ProcessUtils {
             }
         }
 
-        String outputNeural = lines.stream().collect(Collectors.joining("\n"));
+        String outputNeural = String.join("\n", lines);
         log.info("Output of script: {}", outputNeural);
         return outputNeural;
-    }
-
-    log.info("Output of script: {}", output);
-    return output.toString();
-  }
-
-    private static boolean isJsonStart(String line) {
+    }log.info("Output of script: {}", output);
+        return output.toString();
+    }private static boolean isJsonStart(String line) {
         if (line == null || line.isBlank()) {
             return false;
         }

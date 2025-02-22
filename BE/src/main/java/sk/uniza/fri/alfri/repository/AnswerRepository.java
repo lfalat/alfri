@@ -10,11 +10,11 @@ import sk.uniza.fri.alfri.entity.User;
 import java.util.List;
 
 public interface AnswerRepository extends JpaRepository<Answer, Integer> {
-  boolean existsByAnswerQuestionnaireAndUserId(Questionnaire questionnaire, User user);
+    boolean existsByAnswerQuestionnaireAndUserId(Questionnaire questionnaire, User user);
 
-  List<Answer> findByAnswerQuestionnaireAndUserId(Questionnaire questionnaire, Integer user);
+    List<Answer> findByAnswerQuestionnaireAndUserId(Questionnaire questionnaire, Integer user);
 
-  @Query("SELECT a FROM Answer a WHERE a.answerQuestion.id IN :questionIds AND a.user = :user")
-  List<Answer> findByQuestionIdsAndUser(@Param("questionIds") List<Integer> questionIds,
-      @Param("user") User user);
+    @Query("SELECT a FROM Answer a WHERE a.answerQuestion.id IN :questionIds AND a.user = :user")
+    List<Answer> findByQuestionIdsAndUser(@Param("questionIds") List<Integer> questionIds,
+                                          @Param("user") User user);
 }
