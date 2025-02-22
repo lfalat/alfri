@@ -6,6 +6,7 @@ import lombok.Getter;
 public enum UserRoles {
     STUDENT(1),
     TEACHER(2),
+    VEDENIE(3),
     ADMIN(4);
 
     private final int roleId;
