@@ -1,32 +1,36 @@
 import { Component, OnInit } from '@angular/core';
-import { SubjectService } from '@services/subject.service';
 import { Chart, registerables } from 'chart.js';
 import 'echarts-wordcloud';
 import * as echarts from 'echarts';
 import { StudentYearCountDTO } from '../../../types';
+import { StudentMarksReportComponent } from '@components/student-marks-report/student-marks-report.component';
+import { SubjectService } from '@services/subject.service';
+import { LeadService } from '@services/lead.service';
 
 @Component({
   selector: 'app-vedenie-home',
   standalone: true,
-  imports: [],
+  imports: [StudentMarksReportComponent],
   templateUrl: './vedenie-home.component.html',
-  styleUrl: './vedenie-home.component.scss'
+  styleUrl: './vedenie-home.component.scss',
 })
 export class VedenieHomeComponent implements OnInit {
-
   constructor(
-    private subjectService: SubjectService
+    private readonly subjectService: SubjectService,
+    private readonly leadService: LeadService,
   ) {
     Chart.register(...registerables);
   }
 
   ngOnInit() {
-    this.subjectService.getAllKeywords().subscribe({
+    this.leadService.getAllKeywords().subscribe({
       next: (data) => {
-        const chart = echarts.init(document.getElementById('wordcloud-chart') as HTMLDivElement);
+        const chart = echarts.init(
+          document.getElementById('wordcloud-chart') as HTMLDivElement,
+        );
 
         // Transform your data into the format expected by ECharts
-        const wordCloudData = data.map(item => ({
+        const wordCloudData = data.map((item) => ({
           name: item.keyword,
           value: item.count,
         }));
@@ -68,12 +72,12 @@ export class VedenieHomeComponent implements OnInit {
         };
 
         // Set options and render the chart
-        console.log(options)
+        console.log(options);
         chart.setOption(options);
-      }
+      },
     });
 
-    this.subjectService.getCategorySums().subscribe({
+    this.leadService.getCategorySums().subscribe({
       next: (data) => {
         const totalSum = data.reduce((sum, item) => sum + item.totalSum, 0);
 
@@ -94,7 +98,9 @@ export class VedenieHomeComponent implements OnInit {
         // Calculate percentages
         const labels = data.map((item) => item.focusCategory);
 
-        const percentages = data.map((item) => ((item.totalSum / totalSum) * 100).toFixed(2));
+        const percentages = data.map((item) =>
+          ((item.totalSum / totalSum) * 100).toFixed(2),
+        );
 
         // Chart.js configuration
         const ctx = document.getElementById('pieChart') as HTMLCanvasElement;
@@ -108,9 +114,18 @@ export class VedenieHomeComponent implements OnInit {
               {
                 data: percentages,
                 backgroundColor: [
-                  '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF',
-                  '#FF9F40', '#E7E9ED', '#8C9EFF', '#00CC99', '#FF6666',
-                  '#CC99FF', '#66FF66',
+                  '#FF6384',
+                  '#36A2EB',
+                  '#FFCE56',
+                  '#4BC0C0',
+                  '#9966FF',
+                  '#FF9F40',
+                  '#E7E9ED',
+                  '#8C9EFF',
+                  '#00CC99',
+                  '#FF6666',
+                  '#CC99FF',
+                  '#66FF66',
                 ],
               },
             ],
@@ -133,11 +148,11 @@ export class VedenieHomeComponent implements OnInit {
             },
           },
         });
-      }
+      },
     });
 
     // Call the new service for student counts by year
-    this.subjectService.getStudentCountsByYear().subscribe({
+    this.leadService.getStudentCountsByYear().subscribe({
       next: (data: StudentYearCountDTO[]) => {
         // Extract years and counts from the data
         const years = data.map((item) => item.year.toString());

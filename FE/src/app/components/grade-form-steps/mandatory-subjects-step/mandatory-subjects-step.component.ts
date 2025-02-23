@@ -4,10 +4,10 @@ import {
   FormControl,
   FormGroup,
   FormsModule,
-  ReactiveFormsModule, Validators,
+  ReactiveFormsModule,
+  Validators,
 } from '@angular/forms';
 import {
-  MatStepContent,
   MatStepLabel,
   MatStepperNext,
   MatStepperPrevious,
@@ -22,7 +22,6 @@ import { FormService } from '@services/form.service';
   selector: 'app-mandatory-subjects-step',
   standalone: true,
   imports: [
-    MatStepContent,
     MatButton,
     MatStepperNext,
     MatStepperPrevious,
@@ -56,13 +55,21 @@ export class MandatorySubjectsStepComponent {
         if (this.activeStep() === 1) {
           if (!this.selectedYear || !this.selectedStudyProgram) {
             if (!this.formAnswers) {
-              this.selectedStudyProgram =  this.basicInformationFormGroup.get('question_odbor')?.value;
-              this.selectedYear = this.basicInformationFormGroup.get('question_rocnik')?.value;
+              this.selectedStudyProgram =
+                this.basicInformationFormGroup.get('question_odbor')?.value;
+              this.selectedYear =
+                this.basicInformationFormGroup.get('question_rocnik')?.value;
               this.loadMandatorySubjects();
             } else {
-              this.form.sections[1].questions = this.formAnswers.sections[1].questions;
-              this.selectedStudyProgram = this.formAnswers.sections[0].questions.find(question => question.questionTitle === 'Odbor')?.answers[0].texts[0].textOfAnswer;
-              this.selectedYear = this.formAnswers.sections[0].questions.find(question => question.questionTitle === 'Ročník v škole')?.answers[0].texts[0].textOfAnswer;
+              this.form.sections[1].questions =
+                this.formAnswers.sections[1].questions;
+              this.selectedStudyProgram =
+                this.formAnswers.sections[0].questions.find(
+                  (question) => question.questionTitle === 'Odbor',
+                )?.answers[0].texts[0].textOfAnswer;
+              this.selectedYear = this.formAnswers.sections[0].questions.find(
+                (question) => question.questionTitle === 'Ročník v škole',
+              )?.answers[0].texts[0].textOfAnswer;
               this.initFormGroup();
             }
           }
@@ -70,14 +77,22 @@ export class MandatorySubjectsStepComponent {
           this.isLoading.set(true);
 
           if (this.formAnswers) {
-            if (this.selectedStudyProgram === this.formAnswers.sections[0].questions.find(question => question.questionTitle === 'Odbor')?.answers[0].texts[0].textOfAnswer &&
-            this.selectedYear === this.formAnswers.sections[0].questions.find(question => question.questionTitle === 'Ročník v škole')?.answers[0].texts[0].textOfAnswer) {
+            if (
+              this.selectedStudyProgram ===
+                this.formAnswers.sections[0].questions.find(
+                  (question) => question.questionTitle === 'Odbor',
+                )?.answers[0].texts[0].textOfAnswer &&
+              this.selectedYear ===
+                this.formAnswers.sections[0].questions.find(
+                  (question) => question.questionTitle === 'Ročník v škole',
+                )?.answers[0].texts[0].textOfAnswer
+            ) {
               this.initFormGroup();
             }
           }
           // When the study program or year are different from the previously selected ones load new data from BE
           if (this.yearOrStudyProgramAreDifferent()) {
-            console.log('different')
+            console.log('different');
             this.loadMandatorySubjects();
             return;
           }
@@ -90,7 +105,8 @@ export class MandatorySubjectsStepComponent {
   }
 
   private loadMandatorySubjects() {
-    const studyProgram = this.basicInformationFormGroup.get('question_odbor')?.value;
+    const studyProgram =
+      this.basicInformationFormGroup.get('question_odbor')?.value;
     const year = this.basicInformationFormGroup.get('question_rocnik')?.value;
 
     this.selectedStudyProgram = studyProgram;
@@ -102,7 +118,7 @@ export class MandatorySubjectsStepComponent {
         next: (data) => {
           this.questions.set(data);
 
-          console.log('remove')
+          console.log('remove');
           Object.keys(this.formGroup.controls).forEach((key) => {
             this.formGroup.removeControl(key);
           });
@@ -132,33 +148,46 @@ export class MandatorySubjectsStepComponent {
 
     const group: Record<string, any[]> = {};
 
-    this.formAnswers.sections[1].questions.forEach(question => {
+    this.formAnswers.sections[1].questions.forEach((question) => {
       group[question.questionIdentifier] = [
         question.answers[0]?.texts[0]?.textOfAnswer || '',
-        question.optional ? [] : Validators.required
+        question.optional ? [] : Validators.required,
       ];
     });
 
-    console.log('remove')
+    console.log('remove');
     Object.keys(this.formGroup.controls).forEach((key) => {
       this.formGroup.removeControl(key);
     });
 
-    Object.keys(group).forEach(key => {
-      this.formGroup.addControl(key, new FormControl(group[key][0], group[key][1]));
+    Object.keys(group).forEach((key) => {
+      this.formGroup.addControl(
+        key,
+        new FormControl(group[key][0], group[key][1]),
+      );
     });
 
-    console.log(this.formGroup)
+    console.log(this.formGroup);
 
-    this.questions.set(this.formAnswers.sections[1].questions)
+    this.questions.set(this.formAnswers.sections[1].questions);
     this.isLoading.set(false);
   }
 
   private yearOrStudyProgramAreDifferent(): boolean {
-    const filledStudyProgram = this.basicInformationFormGroup.get('question_odbor')?.value;
-    const filledYear = this.basicInformationFormGroup.get('question_rocnik')?.value;
-    console.log(filledYear, this.selectedYear, filledStudyProgram, this.selectedStudyProgram)
+    const filledStudyProgram =
+      this.basicInformationFormGroup.get('question_odbor')?.value;
+    const filledYear =
+      this.basicInformationFormGroup.get('question_rocnik')?.value;
+    console.log(
+      filledYear,
+      this.selectedYear,
+      filledStudyProgram,
+      this.selectedStudyProgram,
+    );
 
-    return filledYear !== this.selectedYear || filledStudyProgram !== this.selectedStudyProgram;
+    return (
+      filledYear !== this.selectedYear ||
+      filledStudyProgram !== this.selectedStudyProgram
+    );
   }
 }

@@ -37,7 +37,6 @@
         >
         </app-subjects-table>
       </mat-card-content>
-
     </mat-card>
     <div class="col-md-2 d-flex align-items-center justify-content-center">
       <mat-icon>arrow_forward</mat-icon>
@@ -45,16 +44,13 @@
     <div class="col-md-5">
       <mat-card class="overflow-auto">
         <mat-card-header>
-          <mat-card-title>
-            Podobné predmety
-          </mat-card-title>
+          <mat-card-title> Podobné predmety </mat-card-title>
         </mat-card-header>
 
         <div class="d-flex flex-column clustering-max-height-75vh">
-        @if (recommendedSubjectsDataSource$ | async; as recommendedSubjects) {
-          @if (recommendedSubjects.length > 0) {
-            <mat-card-content>
-
+          @if (recommendedSubjectsDataSource$ | async; as recommendedSubjects) {
+            @if (recommendedSubjects.length > 0) {
+              <mat-card-content>
                 <app-subjects-table
                   class="w-100 h-100"
                   [dataSource$]="recommendedSubjectsDataSource$"
@@ -65,21 +61,21 @@
                   (subjectDetailNavigate)="navigateToSubjectDetail($event)"
                 >
                 </app-subjects-table>
+              </mat-card-content>
+            }
+          } @else if (isLoadingRecommendetSubjects) {
+            <mat-card-content>
+              <div class="d-flex flex-column clustering-max-height-75vh">
+                <ngx-skeleton-loader
+                  count="5"
+                  appearance="line"
+                ></ngx-skeleton-loader>
+              </div>
             </mat-card-content>
+          } @else {
+            <mat-card-content> Vyber si predmety </mat-card-content>
           }
-        } @else if (isLoadingRecommendetSubjects) {
-          <mat-card-content>
-            <div class="d-flex flex-column clustering-max-height-75vh">
-              <ngx-skeleton-loader count="5" appearance="line"></ngx-skeleton-loader>
-            </div>
-          </mat-card-content>
-        } @else {
-          <mat-card-content>
-            Vyber si predmety
-          </mat-card-content>
-        }
         </div>
-
       </mat-card>
     </div>
   </div>

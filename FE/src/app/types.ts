@@ -238,7 +238,7 @@ export interface KeywordDto {
 
 export enum StudyPrograms {
   Informatika = 3,
-  Manažment = 4
+  Manažment = 4,
 }
 
 export interface KeywordDTO {
@@ -255,3 +255,51 @@ export interface StudentYearCountDTO {
   year: number;
   studentsCount: number;
 }
+
+export interface StudentFilterDTO {
+  studyProgramId?: number;
+  year?: number;
+  page: number;
+  size: number;
+  sortBy: string;
+  direction: 'ASC' | 'DESC';
+}
+
+export interface StudentAverageGradeDTO {
+  id: number;
+  avgMark: number;
+  year: number;
+  studyProgramId: number;
+}
+
+export interface PageResponseDTO<T> {
+  content: T[];
+  pageable: {
+    pageNumber: number;
+    pageSize: number;
+    sort: {
+      sorted: boolean;
+      unsorted: boolean;
+      empty: boolean;
+    };
+    offset: number;
+    paged: boolean;
+    unpaged: boolean;
+  };
+  totalPages: number;
+  totalElements: number;
+  last: boolean;
+  size: number;
+  number: number;
+  sort: {
+    sorted: boolean;
+    unsorted: boolean;
+    empty: boolean;
+  };
+  numberOfElements: number;
+  first: boolean;
+  empty: boolean;
+}
+
+export type StudentAverageGradePageResponse =
+  PageResponseDTO<StudentAverageGradeDTO>;

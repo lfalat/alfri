@@ -10,9 +10,7 @@ import { AnsweredForm, Form, Question, UserFormAnswers } from '../types';
 export class FormService {
   private readonly URL = `${environment.API_URL}/form`;
 
-  constructor(
-    private http: HttpClient,
-  ) {}
+  constructor(private http: HttpClient) {}
 
   getForm(formId: number): Observable<Form> {
     return this.http.get<Form>(`${this.URL}/get-form/${formId}`);
@@ -57,7 +55,10 @@ export class FormService {
     );
   }
 
-  getMandatorySubjectsByStudyProgramIdAndYear(studyProgram: number, year: number) {
+  getMandatorySubjectsByStudyProgramIdAndYear(
+    studyProgram: number,
+    year: number,
+  ) {
     const httpOptions = {
       headers: new HttpHeaders({
         'Content-Type': 'application/json',
@@ -68,6 +69,5 @@ export class FormService {
       `${this.URL}/get-mandatory-subjects/${studyProgram}/${year - 1}`,
       httpOptions,
     );
-
   }
 }

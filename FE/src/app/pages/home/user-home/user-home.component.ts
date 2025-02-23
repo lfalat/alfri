@@ -12,7 +12,13 @@ import { FormDataService } from '@services/form-data.service';
 @Component({
   selector: 'app-user-home',
   standalone: true,
-  imports: [MatButton, NgIf, NgOptimizedImage, UserFormResultsComponent, NgxSkeletonLoaderModule],
+  imports: [
+    MatButton,
+    NgIf,
+    NgOptimizedImage,
+    UserFormResultsComponent,
+    NgxSkeletonLoaderModule,
+  ],
   templateUrl: './user-home.component.html',
   styleUrl: './user-home.component.scss',
 })
@@ -23,9 +29,8 @@ export class UserHomeComponent implements OnInit {
   constructor(
     private router: Router,
     private formService: FormService,
-    private formDataService: FormDataService
-  ) {
-  }
+    private formDataService: FormDataService,
+  ) {}
 
   ngOnInit() {
     this.formService.getExistingFormAnswers(USER_FORM_ID).subscribe({

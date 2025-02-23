@@ -56,7 +56,7 @@ export class AuthService {
   }
 
   logOut(): Promise<void> {
-    return new Promise((resolve, _) => {
+    return new Promise((resolve) => {
       this.jwtService.removeToken();
       resolve();
     });

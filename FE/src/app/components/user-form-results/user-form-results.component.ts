@@ -24,7 +24,6 @@ import {
   Title,
   Tooltip,
 } from 'chart.js';
-import { BaseChartDirective } from 'ng2-charts';
 import {
   MatCell,
   MatCellDef,
@@ -35,7 +34,8 @@ import {
   MatHeaderRowDef,
   MatRow,
   MatRowDef,
-  MatTable, MatTableDataSource,
+  MatTable,
+  MatTableDataSource,
 } from '@angular/material/table';
 import { NgForOf, NgIf } from '@angular/common';
 import { MatChip, MatChipSet } from '@angular/material/chips';
@@ -46,7 +46,6 @@ import { MatPaginator } from '@angular/material/paginator';
   selector: 'app-user-form-results',
   standalone: true,
   imports: [
-    BaseChartDirective,
     MatCell,
     NgForOf,
     MatChip,
@@ -74,9 +73,9 @@ export class UserFormResultsComponent implements OnInit, AfterViewInit {
   protected readonly StudyPrograms = StudyPrograms;
   protected readonly Number = Number;
 
-
   // Data source for the table
-  dataSource: MatTableDataSource<{ subjectName: string; grade: string }> = new MatTableDataSource();
+  dataSource: MatTableDataSource<{ subjectName: string; grade: string }> =
+    new MatTableDataSource();
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
   displayedColumns: string[] = ['nazovPredmetu', 'znamka'];
@@ -225,5 +224,4 @@ export class UserFormResultsComponent implements OnInit, AfterViewInit {
       this.radarChart.update();
     }
   }
-
 }

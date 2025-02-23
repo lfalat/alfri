@@ -3,24 +3,29 @@ package sk.uniza.fri.alfri.service.implementation;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.Tuple;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import sk.uniza.fri.alfri.common.pagitation.PageDefinition;
 import sk.uniza.fri.alfri.common.pagitation.SearchDefinition;
 import sk.uniza.fri.alfri.constant.ModelType;
 import sk.uniza.fri.alfri.dto.KeywordDTO;
+import sk.uniza.fri.alfri.dto.StudentAverageGradeDTO;
 import sk.uniza.fri.alfri.dto.StudentYearCountDTO;
 import sk.uniza.fri.alfri.dto.focus.FocusCategorySumDTO;
 import sk.uniza.fri.alfri.entity.Answer;
 import sk.uniza.fri.alfri.entity.AnswerText;
 import sk.uniza.fri.alfri.entity.Focus;
 import sk.uniza.fri.alfri.entity.Student;
+import sk.uniza.fri.alfri.entity.StudentAvgMark;
 import sk.uniza.fri.alfri.entity.StudyProgramSubject;
 import sk.uniza.fri.alfri.entity.Subject;
 import sk.uniza.fri.alfri.entity.SubjectGrade;
@@ -28,6 +33,7 @@ import sk.uniza.fri.alfri.entity.User;
 import sk.uniza.fri.alfri.exception.PythonOutputParsingException;
 import sk.uniza.fri.alfri.repository.AnswerRepository;
 import sk.uniza.fri.alfri.repository.FocusRepository;
+import sk.uniza.fri.alfri.repository.StudentAvgMarkRepository;
 import sk.uniza.fri.alfri.repository.StudentSubjectRepository;
 import sk.uniza.fri.alfri.repository.StudyProgramSubjectRepository;
 import sk.uniza.fri.alfri.repository.SubjectGradeRepository;
@@ -80,6 +86,8 @@ public class SubjectService implements ISubjectService {
     private final SubjectKeywordRepository subjectKeywordRepository;
     private final AuthService authService;
     private final StudentSubjectRepository studentSubjectRepository;
+    private final StudentAvgMarkRepository studentAvgMarkRepository;
+    private final EntityManager entityManager;
 
 
     @Value("${python.executable_path}")
@@ -104,7 +112,7 @@ public class SubjectService implements ISubjectService {
                           SubjectRepository subjectRepository, AnswerRepository answerRepository,
                           FocusRepository focusRepository, SubjectGradeRepository subjectGradeRepository,
                           StudentService studentService, FormService formService,
-                          SubjectKeywordRepository subjectKeywordRepository, AuthService authService, StudentSubjectRepository studentSubjectRepository) {
+                          SubjectKeywordRepository subjectKeywordRepository, AuthService authService, StudentSubjectRepository studentSubjectRepository, StudentAvgMarkRepository studentAvgMarkRepository, EntityManager entityManager) {
         this.studyProgramSubjectRepository = studyProgramSubjectRepository;
         this.subjectRepository = subjectRepository;
         this.subjectGradeRepository = subjectGradeRepository;
@@ -115,6 +123,8 @@ public class SubjectService implements ISubjectService {
         this.subjectKeywordRepository = subjectKeywordRepository;
         this.authService = authService;
         this.studentSubjectRepository = studentSubjectRepository;
+        this.studentAvgMarkRepository = studentAvgMarkRepository;
+        this.entityManager = entityManager;
     }
 
     private static List<List<Integer>> getFocusesAttributes(List<Focus> subjectsFocuses) {
@@ -162,7 +172,7 @@ public class SubjectService implements ISubjectService {
         ProcessBuilder processBuilder =
                 new ProcessBuilder(pythonExcecutablePath, clusteringPredictionScriptPath,
                         Arrays.toString(focusesAttributes.toArray()), studyProgramId == 3 ? this.clusteringPredictionINFModelPath : this.clusteringPredictionMANModelPath);
-        String output = ProcessUtils.getOutputFromProces(processBuilder, false);
+        String output = ProcessUtils.getOutputFromProcess(processBuilder, false);
         log.info("Output of clustering: {}", output);
 
         String cleaned = output.replace("[", "").replace("]", "").replace("\"", "");
@@ -293,7 +303,7 @@ public class SubjectService implements ISubjectService {
 
         String output;
         try {
-            output = ProcessUtils.getOutputFromProces(processBuilder, false);
+            output = ProcessUtils.getOutputFromProcess(processBuilder, false);
         } catch (IOException e) {
             throw new PythonOutputParsingException(
                     "Error running Python passing chance script: " + e.getMessage());
@@ -350,7 +360,7 @@ public class SubjectService implements ISubjectService {
 
         String output;
         try {
-            output = ProcessUtils.getOutputFromProces(processBuilder, true);
+            output = ProcessUtils.getOutputFromProcess(processBuilder, true);
         } catch (IOException e) {
             throw new PythonOutputParsingException(
                     "Error running Python prediction script: " + e.getMessage());
@@ -397,8 +407,6 @@ public class SubjectService implements ISubjectService {
 
     @Override
     public List<StudentYearCountDTO> getStudentCountsByYear() {
-//      Pageable pageable = PageRequest.of(0, 100);
-//        List<StudentAverageGradeDTO> studentAverageGradeDTOS = this.studentSubjectRepository.findTopStudentsWithWorstAverageGrade(pageable);
         return this.studentSubjectRepository.countStudentsByYear().stream()
                 .map(tuple -> new StudentYearCountDTO(
                         tuple.get("year", Integer.class),

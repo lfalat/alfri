@@ -84,11 +84,13 @@ export const routes: Routes = [
     component: KeywordsComponent,
     canActivate: [() => inject(AuthGuards).canActivate()],
   },
-  { path: 'profile',
+  {
+    path: 'profile',
     component: ProfileComponent,
     canActivate: [tokenAppGuard],
   },
-  { path: 'grade-form',
+  {
+    path: 'grade-form',
     component: GradeFormComponent,
     canActivate: [tokenAppGuard],
   },

@@ -229,22 +229,4 @@ public class SubjectController {
 
         return ResponseEntity.ok(result);
     }
-
-    @GetMapping("/category-sums")
-    public ResponseEntity<List<FocusCategorySumDTO>> getCategorySums() {
-        List<FocusCategorySumDTO> focusCategorySumDTOS = this.subjectService.getMostPopularFocuses();
-        return ResponseEntity.ok().body(focusCategorySumDTOS);
-    }
-
-    @GetMapping("/all-keywords")
-    public ResponseEntity<List<KeywordDTO>> getAllKeywords() {
-        List<KeywordDTO> keywordDTOS = this.subjectService.getAllKeywords();
-
-        return ResponseEntity.ok(keywordDTOS);
-    }
-
-    @GetMapping("/counts-by-year")
-    public ResponseEntity<List<StudentYearCountDTO>> getStudentCountsByYear() {
-        return ResponseEntity.ok(this.subjectService.getStudentCountsByYear());
-    }
 }

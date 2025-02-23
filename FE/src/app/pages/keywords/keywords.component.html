@@ -1,9 +1,7 @@
 <div class="container">
   <mat-card>
     <mat-card-header>
-      <mat-card-title>
-        Kľúčové slová predmetov
-      </mat-card-title>
+      <mat-card-title> Kľúčové slová predmetov </mat-card-title>
       <mat-card-subtitle>
         Zobrazí top 3 predmety pre dané kľúčové slovo
       </mat-card-subtitle>
@@ -49,12 +47,13 @@
         </mat-chip-option>
       </mat-chip-listbox>
     </div>
-
   </mat-card>
 
   <div *ngFor="let keyword of selectedKeywords" class="table-container">
     <h3>{{ keyword }}</h3>
-    <div *ngIf="keywordSubjects[keyword] && keywordSubjects[keyword].length > 0">
+    <div
+      *ngIf="keywordSubjects[keyword] && keywordSubjects[keyword].length > 0"
+    >
       <table
         mat-table
         [dataSource]="keywordSubjects[keyword]"

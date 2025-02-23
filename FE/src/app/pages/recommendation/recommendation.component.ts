@@ -1,17 +1,20 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
-import { SubjectService } from '@services/subject.service';
 import { NotificationService } from '@services/notification.service';
 import { StudentService } from '@services/student.service';
 import { Observable, of, Subject } from 'rxjs';
 import { catchError, switchMap, takeUntil, tap } from 'rxjs/operators';
 import { SubjectsTableComponent } from '@components/subjects-table/subjects-table.component';
-import { MatButton } from '@angular/material/button';
-import { AsyncPipe } from '@angular/common';
 import { Page, StudyProgramDto, SubjectDto } from '../../types';
 import { MatTableDataSource } from '@angular/material/table';
-import { MatCard, MatCardHeader, MatCardSubtitle, MatCardTitle } from '@angular/material/card';
+import {
+  MatCard,
+  MatCardHeader,
+  MatCardSubtitle,
+  MatCardTitle,
+} from '@angular/material/card';
+import { SubjectService } from '@services/subject.service';
 
 @Component({
   selector: 'app-recommendation',
@@ -19,12 +22,10 @@ import { MatCard, MatCardHeader, MatCardSubtitle, MatCardTitle } from '@angular/
   standalone: true,
   imports: [
     SubjectsTableComponent,
-    MatButton,
-    AsyncPipe,
     MatCard,
     MatCardHeader,
     MatCardSubtitle,
-    MatCardTitle
+    MatCardTitle,
   ],
   styleUrls: ['./recommendation.component.scss'],
 })

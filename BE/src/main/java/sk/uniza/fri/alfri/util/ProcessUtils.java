@@ -8,14 +8,13 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.stream.Collectors;
 
 @Slf4j
 public class ProcessUtils {
     private ProcessUtils() {
     }
 
-    public static String getOutputFromProces(ProcessBuilder processBuilder, boolean isNeuralNetwork) throws IOException {
+    public static String getOutputFromProcess(ProcessBuilder processBuilder, boolean isNeuralNetwork) throws IOException {
         processBuilder.redirectErrorStream(true);
 
         Process process = processBuilder.start();

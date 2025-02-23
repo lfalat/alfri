@@ -8,10 +8,9 @@ describe('PasswordChangeModalComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [PasswordChangeModalComponent]
-    })
-    .compileComponents();
-    
+      imports: [PasswordChangeModalComponent],
+    }).compileComponents();
+
     fixture = TestBed.createComponent(PasswordChangeModalComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

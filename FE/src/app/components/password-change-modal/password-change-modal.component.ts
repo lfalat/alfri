@@ -1,11 +1,20 @@
 import { Component, Inject } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MAT_DIALOG_DATA, MatDialogActions, MatDialogRef, MatDialogTitle } from '@angular/material/dialog';
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
+import {
+  MAT_DIALOG_DATA,
+  MatDialogActions,
+  MatDialogRef,
+  MatDialogTitle,
+} from '@angular/material/dialog';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { MatButton } from '@angular/material/button';
-import { PasswordPair, UserDto } from '../../types';
-import { UserService } from '@services/user.service';
+import { UserDto } from '../../types';
 
 @Component({
   selector: 'app-password-change-modal',
@@ -20,7 +29,7 @@ import { UserService } from '@services/user.service';
     MatLabel,
   ],
   templateUrl: './password-change-modal.component.html',
-  styleUrl: './password-change-modal.component.scss'
+  styleUrl: './password-change-modal.component.scss',
 })
 export class PasswordChangeModalComponent {
   passwordForm: FormGroup;
@@ -28,19 +37,19 @@ export class PasswordChangeModalComponent {
   constructor(
     private fb: FormBuilder,
     private dialogRef: MatDialogRef<PasswordChangeModalComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: {user: UserDto},
-    private userService: UserService
+    @Inject(MAT_DIALOG_DATA) public data: { user: UserDto },
   ) {
     this.passwordForm = this.fb.group({
       oldPassword: ['', Validators.required],
       newPassword: ['', [Validators.required, Validators.minLength(6)]],
-      confirmPassword: ['', Validators.required]
+      confirmPassword: ['', Validators.required],
     });
   }
 
   submit() {
     if (this.passwordForm.valid) {
-      const { oldPassword, newPassword, confirmPassword } = this.passwordForm.value;
+      const { oldPassword, newPassword, confirmPassword } =
+        this.passwordForm.value;
       if (newPassword !== confirmPassword) {
         alert('New password and confirmation do not match!');
         return;

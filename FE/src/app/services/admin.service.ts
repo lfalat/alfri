@@ -10,16 +10,14 @@ import { Role, SubjectDto, UserDto } from '../types';
 export class AdminService {
   private readonly BE_URL = `${environment.API_URL}`;
 
-  constructor(
-    private readonly http: HttpClient,
-  ) {}
+  constructor(private readonly http: HttpClient) {}
 
   getAllUsers(): Observable<UserDto[]> {
     return this.http.get<UserDto[]>(`${this.BE_URL}/admin/users`);
   }
 
-  updateUserRole(userId: number, role: Role, isAdd: boolean): Observable<any> {
-    return this.http.post(`${this.BE_URL}/admin/user/${userId}/roles`, {
+  updateUserRole(userId: number, role: Role, isAdd: boolean): Observable<UserDto> {
+    return this.http.post<UserDto>(`${this.BE_URL}/admin/user/${userId}/roles`, {
       roleIds: [role.id],
       add: isAdd,
     });

@@ -5,7 +5,8 @@ import {
   Input,
   OnDestroy,
   OnInit,
-  Output, ViewChild,
+  Output,
+  ViewChild,
 } from '@angular/core';
 import { Observable, Subject, takeUntil } from 'rxjs';
 import { Page, SubjectDto } from '../../types';
@@ -20,13 +21,13 @@ import {
   MatHeaderRowDef,
   MatRow,
   MatRowDef,
-  MatTable, MatTableDataSource,
+  MatTable,
+  MatTableDataSource,
 } from '@angular/material/table';
 import { MatProgressBar } from '@angular/material/progress-bar';
-import { AsyncPipe, NgClass, NgIf } from '@angular/common';
+import { NgIf } from '@angular/common';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { SelectionModel } from '@angular/cdk/collections';
-import { MatCard } from '@angular/material/card';
 
 @Component({
   selector: 'app-subjects-table',
@@ -46,15 +47,16 @@ import { MatCard } from '@angular/material/card';
     MatRowDef,
     NgIf,
     MatCheckbox,
-    AsyncPipe,
-    NgClass,
-    MatCard,
   ],
   templateUrl: './subjects-table.component.html',
   styleUrl: './subjects-table.component.scss',
 })
-export class SubjectsTableComponent implements OnInit, OnDestroy, AfterViewInit {
-  @Input() dataSource$!: Observable<SubjectDto[]> | MatTableDataSource<SubjectDto>
+export class SubjectsTableComponent
+  implements OnInit, OnDestroy, AfterViewInit
+{
+  @Input() dataSource$!:
+    | Observable<SubjectDto[]>
+    | MatTableDataSource<SubjectDto>;
   @Input() pageData!: Page<SubjectDto>;
   @Input() isLoading = false;
   @Input() displayFullInfo = true;

@@ -20,7 +20,8 @@ export class UserService {
 
   userId: number | undefined;
 
-  private readonly _userData: BehaviorSubject<UserDto | undefined> = new BehaviorSubject<UserDto | undefined>(undefined);
+  private readonly _userData: BehaviorSubject<UserDto | undefined> =
+    new BehaviorSubject<UserDto | undefined>(undefined);
   private readonly BE_URL = `${environment.API_URL}/user`;
 
   constructor(
@@ -37,7 +38,9 @@ export class UserService {
         next: (userData: UserDto) => {
           this._userData.next(userData);
         },
-        error: () => {this._userData.next(undefined)}
+        error: () => {
+          this._userData.next(undefined);
+        },
       });
   }
 

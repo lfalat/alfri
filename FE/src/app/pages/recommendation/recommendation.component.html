@@ -5,19 +5,18 @@
     </mat-card-title>
 
     <mat-card-subtitle>
-      Zobrazené predmety zodpovedajú tvojím oblastiam záujmov, ktoré si zadal vo vstupnom dotazníku.
+      Zobrazené predmety zodpovedajú tvojím oblastiam záujmov, ktoré si zadal vo
+      vstupnom dotazníku.
     </mat-card-subtitle>
   </mat-card-header>
 
-
-
-<app-subjects-table
-  [dataSource$]="dataSource$"
-  [pageData]="pageData"
-  [isLoading]="isLoading"
-  (subjectDetailNavigate)="navigateToSubjectDetail($event)"
-  [displayFullInfo]="true"
-  [isPageable]="true"
->
-</app-subjects-table>
+  <app-subjects-table
+    [dataSource$]="dataSource$"
+    [pageData]="pageData"
+    [isLoading]="isLoading"
+    (subjectDetailNavigate)="navigateToSubjectDetail($event)"
+    [displayFullInfo]="true"
+    [isPageable]="true"
+  >
+  </app-subjects-table>
 </mat-card>

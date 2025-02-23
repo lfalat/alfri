@@ -8,10 +8,9 @@ describe('HobbyStepComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [HobbyStepComponent]
-    })
-    .compileComponents();
-    
+      imports: [HobbyStepComponent],
+    }).compileComponents();
+
     fixture = TestBed.createComponent(HobbyStepComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

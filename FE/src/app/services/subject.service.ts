@@ -1,16 +1,14 @@
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { environment } from '../../environments/environment';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import {
-  FocusCategorySumDTO,
-  KeywordDTO,
-  Page, StudentYearCountDTO,
+  Page,
   SubjectDto,
   SubjectExtendedDto,
   SubjectGradesDto,
   SubjectPassingPrediction,
 } from '../types';
 import { Observable } from 'rxjs';
-import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
@@ -59,7 +57,10 @@ export class SubjectService {
     urlParameters = urlParameters
       .append('page', pageNumber)
       .append('size', pageSize)
-      .append('search', `id.studyProgramId:${studyProgramId},recommendedYear<${studyYear - 1},obligation:Pov.`);
+      .append(
+        'search',
+        `id.studyProgramId:${studyProgramId},recommendedYear<${studyYear - 1},obligation:Pov.`,
+      );
 
     return this.http.get<Page<SubjectDto>>(`${this.URL}`, {
       params: urlParameters,
@@ -175,42 +176,6 @@ export class SubjectService {
 
     return this.http.get<SubjectDto[]>(`${this.URL}/subjects`, {
       params: urlParameters,
-      headers: httpOptions.headers,
-    });
-  }
-
-  public getAllKeywords(): Observable<KeywordDTO[]> {
-    const httpOptions = {
-      headers: new HttpHeaders({
-        'Content-Type': 'application/json',
-      }),
-    };
-
-    return this.http.get<KeywordDTO[]>(`${this.URL}/all-keywords`, {
-      headers: httpOptions.headers,
-    });
-  }
-
-  public getCategorySums(): Observable<FocusCategorySumDTO[]> {
-    const httpOptions = {
-      headers: new HttpHeaders({
-        'Content-Type': 'application/json',
-      }),
-    };
-
-    return this.http.get<FocusCategorySumDTO[]>(`${this.URL}/category-sums`, {
-      headers: httpOptions.headers,
-    });
-  }
-
-  public getStudentCountsByYear(): Observable<StudentYearCountDTO[]> {
-    const httpOptions = {
-      headers: new HttpHeaders({
-        'Content-Type': 'application/json',
-      }),
-    };
-
-    return this.http.get<StudentYearCountDTO[]>(`${this.URL}/counts-by-year`, {
       headers: httpOptions.headers,
     });
   }

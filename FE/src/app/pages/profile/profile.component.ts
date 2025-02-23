@@ -1,29 +1,19 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators, } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { UserService } from '@services/user.service';
 import { Subject, takeUntil } from 'rxjs';
-import { NgForOf, NgIf } from '@angular/common';
+import { NgIf } from '@angular/common';
 import { AuthService } from '@services/auth.service';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { MatButton } from '@angular/material/button';
 import { NotificationService } from '@services/notification.service';
 import { Router } from '@angular/router';
-import { MatCard } from '@angular/material/card';
-import {
-  MatCell,
-  MatCellDef,
-  MatColumnDef,
-  MatHeaderCell,
-  MatHeaderCellDef,
-  MatHeaderRow,
-  MatHeaderRowDef,
-  MatRow,
-  MatRowDef,
-  MatTable,
-} from '@angular/material/table';
-import { BaseChartDirective } from 'ng2-charts';
-import { MatChip, MatChipSet } from '@angular/material/chips';
 import { UserFormResultsComponent } from '@components/user-form-results/user-form-results.component';
 import { USER_FORM_ID } from '@pages/home/home.component';
 import { FormService } from '@services/form.service';
@@ -42,21 +32,6 @@ import { AuthRole } from '@enums/auth-role';
     MatFormField,
     MatInput,
     MatButton,
-    MatCard,
-    MatTable,
-    MatColumnDef,
-    MatHeaderCell,
-    MatCell,
-    MatHeaderRow,
-    MatRow,
-    MatRowDef,
-    MatCellDef,
-    MatHeaderRowDef,
-    MatHeaderCellDef,
-    BaseChartDirective,
-    MatChipSet,
-    MatChip,
-    NgForOf,
     UserFormResultsComponent,
     HasRoleDirective,
   ],
@@ -77,7 +52,7 @@ export class ProfileComponent implements OnInit {
     private authService: AuthService,
     private notificationService: NotificationService,
     private router: Router,
-    private formService: FormService
+    private formService: FormService,
   ) {
     this.profileForm = this.formBuilder.group(
       {

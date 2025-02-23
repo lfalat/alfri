@@ -5,8 +5,8 @@
       <div>
         Známka:
         <span [ngClass]="getMarkClass(data.mark)" class="mark-value h3">{{
-            data.mark
-          }}</span>
+          data.mark
+        }}</span>
       </div>
     </mat-card-subtitle>
   </div>
@@ -29,7 +29,10 @@
     <mat-card-subtitle>Typy pre zlepšenie úspechu:</mat-card-subtitle>
     <mat-list>
       <div class="row row-gap-2">
-        <div *ngFor="let recommendation of data.recommendations" class="col-12 d-flex align-items-center">
+        <div
+          *ngFor="let recommendation of data.recommendations"
+          class="col-12 d-flex align-items-center"
+        >
           <mat-icon matListItemIcon style="color: #ffd242">lightbulb</mat-icon>
           <p matLine>{{ recommendation }}</p>
         </div>

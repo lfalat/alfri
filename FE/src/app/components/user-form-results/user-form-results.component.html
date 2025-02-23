@@ -8,8 +8,13 @@
       >
         <p class="m-0">{{ information.questionTitle }}</p>
 
-        <p *ngIf="information.questionTitle === 'Odbor'; else others" class="fw-bolder">
-          {{ StudyPrograms[Number(information.answers[0].texts[0].textOfAnswer)] }}
+        <p
+          *ngIf="information.questionTitle === 'Odbor'; else others"
+          class="fw-bolder"
+        >
+          {{
+            StudyPrograms[Number(information.answers[0].texts[0].textOfAnswer)]
+          }}
         </p>
 
         <ng-template #others>
@@ -26,7 +31,6 @@
       <table
         mat-table
         [dataSource]="dataSource"
-
         class="mat-table striped-table"
       >
         <ng-container matColumnDef="nazovPredmetu">

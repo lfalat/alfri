@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { AsyncPipe, NgClass, NgIf } from '@angular/common';
+import { NgIf } from '@angular/common';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSidenav, MatSidenavModule } from '@angular/material/sidenav';
@@ -32,8 +32,6 @@ import { AnsweredForm } from '../../types';
     MatSidenavModule,
     MatListModule,
     MatIconModule,
-    AsyncPipe,
-    NgClass,
     NgIf,
     MatMenu,
     MatMenuItem,
@@ -55,7 +53,7 @@ export class HeaderComponent implements OnInit {
     protected readonly authService: AuthService,
     private readonly router: Router,
     private notificationService: NotificationService,
-    private formDataService: FormDataService
+    private formDataService: FormDataService,
   ) {}
 
   ngOnInit() {

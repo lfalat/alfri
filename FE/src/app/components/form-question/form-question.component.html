@@ -68,9 +68,9 @@
     <mat-list>
       <mat-list-item
         *ngFor="
-        let option of questionComputed().options;
-        let optionIndex = index
-      "
+          let option of questionComputed().options;
+          let optionIndex = index
+        "
       >
         <mat-checkbox [formControl]="checkboxControls()[optionIndex]">
           {{ option.questionOption }}
@@ -78,10 +78,10 @@
         <!-- Error message for each checkbox -->
         <mat-error
           *ngIf="
-          checkboxControls()[optionIndex].hasError('required') &&
-          checkboxControls()[optionIndex]?.invalid &&
-          checkboxControls()[optionIndex]?.touched
-        "
+            checkboxControls()[optionIndex].hasError('required') &&
+            checkboxControls()[optionIndex]?.invalid &&
+            checkboxControls()[optionIndex]?.touched
+          "
         >
           {{ option.questionOption }} is required
         </mat-error>

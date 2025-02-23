@@ -20,7 +20,7 @@ export class HasRoleDirective implements OnInit {
 
   constructor(
     private authService: AuthService,
-    private templateRef: TemplateRef<any>,
+    private templateRef: TemplateRef<never>,
     private viewContainer: ViewContainerRef,
   ) {}
 

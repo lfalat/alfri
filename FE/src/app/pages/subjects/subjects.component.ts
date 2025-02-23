@@ -10,7 +10,6 @@ import {
   takeUntil,
   tap,
 } from 'rxjs';
-import { SubjectService } from '@services/subject.service';
 import { StudyProgramService } from '@services/study-program.service';
 import { CommonModule } from '@angular/common';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
@@ -23,12 +22,11 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { MatInput } from '@angular/material/input';
-import { MatButton } from '@angular/material/button';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SubjectsTableComponent } from '@components/subjects-table/subjects-table.component';
 import { Page, StudyProgramDto, SubjectDto } from '../../types';
 import { MatCard, MatCardContent, MatCardHeader } from '@angular/material/card';
+import { SubjectService } from '@services/subject.service';
 
 @Component({
   selector: 'app-subjects',
@@ -40,9 +38,7 @@ import { MatCard, MatCardContent, MatCardHeader } from '@angular/material/card';
     MatProgressBarModule,
     MatSelectModule,
     FormsModule,
-    MatInput,
     ReactiveFormsModule,
-    MatButton,
     SubjectsTableComponent,
     MatCard,
     MatCardHeader,

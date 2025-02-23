@@ -1,16 +1,20 @@
 import { Component, OnInit } from '@angular/core';
-import { SubjectService } from '@services/subject.service';
 import { MatTableModule } from '@angular/material/table';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { AsyncPipe, NgForOf, NgIf } from '@angular/common';
 import { Router } from '@angular/router';
 import { Observable, of } from 'rxjs';
-import { MatAnchor } from '@angular/material/button';
 import { MatRadioButton, MatRadioGroup } from '@angular/material/radio';
 import { FormsModule } from '@angular/forms';
 import { SubjectGradesDto } from '../../types';
-import { MatCard, MatCardContent, MatCardHeader, MatCardTitle } from '@angular/material/card';
+import {
+  MatCard,
+  MatCardContent,
+  MatCardHeader,
+  MatCardTitle,
+} from '@angular/material/card';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
+import { SubjectService } from '@services/subject.service';
 
 @Component({
   selector: 'app-subject-reports',
@@ -23,7 +27,6 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
     AsyncPipe,
     NgIf,
     NgForOf,
-    MatAnchor,
     MatRadioButton,
     MatRadioGroup,
     FormsModule,
@@ -70,16 +73,18 @@ export class SubjectReportsComponent implements OnInit {
     this.isLoading = true;
 
     // Fetch filtered subjects based on sort and limit criteria
-    this.subjectsService.getFilteredSubjects(this.sortCriteria, this.subjectCount).subscribe(
-      (data) => {
-        this.dataSource$ = of(data); // Emit the data
-        this.isLoading = false; // Set loading to false after data is received
-      },
-      (error) => {
-        console.error('Error fetching subjects:', error);
-        this.isLoading = false; // Ensure loading is false even if there's an error
-      }
-    );
+    this.subjectsService
+      .getFilteredSubjects(this.sortCriteria, this.subjectCount)
+      .subscribe(
+        (data) => {
+          this.dataSource$ = of(data); // Emit the data
+          this.isLoading = false; // Set loading to false after data is received
+        },
+        (error) => {
+          console.error('Error fetching subjects:', error);
+          this.isLoading = false; // Ensure loading is false even if there's an error
+        },
+      );
   }
 
   // Navigate to subject detail page

@@ -8,10 +8,9 @@ describe('FocusStepComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [FocusStepComponent]
-    })
-    .compileComponents();
-    
+      imports: [FocusStepComponent],
+    }).compileComponents();
+
     fixture = TestBed.createComponent(FocusStepComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

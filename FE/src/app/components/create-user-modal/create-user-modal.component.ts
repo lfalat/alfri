@@ -1,7 +1,18 @@
 import { Component } from '@angular/core';
-import { MatDialogActions, MatDialogContent, MatDialogRef, MatDialogTitle } from '@angular/material/dialog';
+import {
+  MatDialogActions,
+  MatDialogContent,
+  MatDialogRef,
+  MatDialogTitle,
+} from '@angular/material/dialog';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { MatInput } from '@angular/material/input';
 import { MatButton } from '@angular/material/button';
 
@@ -17,17 +28,17 @@ import { MatButton } from '@angular/material/button';
     MatInput,
     MatDialogActions,
     MatButton,
-    ReactiveFormsModule
+    ReactiveFormsModule,
   ],
   templateUrl: './create-user-modal.component.html',
-  styleUrl: './create-user-modal.component.scss'
+  styleUrl: './create-user-modal.component.scss',
 })
 export class CreateUserModalComponent {
   userForm: FormGroup;
 
   constructor(
     public dialogRef: MatDialogRef<CreateUserModalComponent>,
-    private fb: FormBuilder
+    private fb: FormBuilder,
   ) {
     this.userForm = this.fb.group({
       firstName: ['', Validators.required],

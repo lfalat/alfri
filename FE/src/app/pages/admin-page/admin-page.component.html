@@ -2,7 +2,9 @@
   <div class="card-header">
     <div class="d-flex justify-content-between">
       <h2 class="card-title">Administrácia</h2>
-      <button mat-raised-button color="primary" (click)="openUserFormDialog()">Pridať používateľa</button>
+      <button mat-raised-button color="primary" (click)="openUserFormDialog()">
+        Pridať používateľa
+      </button>
     </div>
   </div>
 
@@ -46,10 +48,18 @@
             <button mat-menu-item (click)="openChangePasswordModal(user)">
               <mat-icon>vpn_key</mat-icon> Zmena hesla
             </button>
-            <button mat-menu-item (click)="openSubjectModal(user.userId)" *ngIf="isUserTeacher(user)">
+            <button
+              mat-menu-item
+              (click)="openSubjectModal(user.userId)"
+              *ngIf="isUserTeacher(user)"
+            >
               <mat-icon>edit</mat-icon> Zmena predmetov
             </button>
-            <button mat-menu-item (click)="deleteUser(user.userId)" class="text-danger">
+            <button
+              mat-menu-item
+              (click)="deleteUser(user.userId)"
+              class="text-danger"
+            >
               <mat-icon class="text-danger">delete</mat-icon> Odstrániť
             </button>
           </mat-menu>
@@ -61,7 +71,7 @@
       </ng-container>
 
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
     </mat-table>
   </div>
 </div>

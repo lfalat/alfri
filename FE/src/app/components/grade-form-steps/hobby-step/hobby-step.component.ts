@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output, Signal } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Section } from '../../../types';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { FormQuestionComponent } from '@components/form-question/form-question.component';

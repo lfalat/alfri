@@ -67,10 +67,7 @@
 </div>
 @if (isPageable) {
   <div>
-    <mat-progress-bar
-      *ngIf="isLoading"
-      mode="indeterminate"
-    ></mat-progress-bar>
+    <mat-progress-bar *ngIf="isLoading" mode="indeterminate"></mat-progress-bar>
     <mat-paginator
       [length]="pageData.totalElements"
       [pageSize]="pageData.size"

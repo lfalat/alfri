@@ -8,9 +8,18 @@ import { KeywordService } from '@services/keyword.service';
 import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
 import { MatInput } from '@angular/material/input';
 import { SubjectExtendedDto } from '../../types';
-import { MatCard, MatCardContent, MatCardHeader, MatCardSubtitle, MatCardTitle } from '@angular/material/card';
-import { MatOption, MatSelect } from '@angular/material/select';
-import { MatAutocomplete, MatAutocompleteTrigger } from '@angular/material/autocomplete';
+import {
+  MatCard,
+  MatCardContent,
+  MatCardHeader,
+  MatCardSubtitle,
+  MatCardTitle,
+} from '@angular/material/card';
+import { MatOption } from '@angular/material/select';
+import {
+  MatAutocomplete,
+  MatAutocompleteTrigger,
+} from '@angular/material/autocomplete';
 import { MatIcon } from '@angular/material/icon';
 
 @Component({
@@ -31,7 +40,6 @@ import { MatIcon } from '@angular/material/icon';
     MatCardTitle,
     MatCardSubtitle,
     MatCardContent,
-    MatSelect,
     MatOption,
     MatAutocompleteTrigger,
     MatAutocomplete,
@@ -61,9 +69,13 @@ export class KeywordsComponent implements OnInit {
       });
   }
 
-  onSearch(event: any): void {
-    const searchText = event.target.value;
-    this.searchSubject.next(searchText);
+  onSearch(event: Event): void {
+    const target = event.target as HTMLInputElement;
+
+    if (target) {
+      const searchText = target.value;
+      this.searchSubject.next(searchText);
+    }
   }
 
   fetchKeywords(searchText: string): void {
@@ -83,7 +95,7 @@ export class KeywordsComponent implements OnInit {
       error: () => {
         this.filteredKeywords = [];
         this.isError = true;
-      }
+      },
     });
   }
 
@@ -99,7 +111,9 @@ export class KeywordsComponent implements OnInit {
   }
 
   onKeywordRemove(keyword: string): void {
-    this.selectedKeywords = this.selectedKeywords.filter((item) => item !== keyword);
+    this.selectedKeywords = this.selectedKeywords.filter(
+      (item) => item !== keyword,
+    );
     delete this.keywordSubjects[keyword];
   }
 

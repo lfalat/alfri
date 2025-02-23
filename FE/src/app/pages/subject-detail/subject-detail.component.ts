@@ -1,5 +1,10 @@
-import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { SubjectService } from '@services/subject.service';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { NgIf } from '@angular/common';
 import {
@@ -24,14 +29,25 @@ import {
   Title,
   Tooltip,
 } from 'chart.js';
-import { BaseChartDirective } from 'ng2-charts';
 import { SubjectExtendedDto } from '../../types';
-import { MatCard, MatCardContent, MatCardHeader, MatCardTitle } from '@angular/material/card';
+import {
+  MatCard,
+  MatCardContent,
+  MatCardHeader,
+  MatCardTitle,
+} from '@angular/material/card';
+import { SubjectService } from '@services/subject.service';
 
 @Component({
   selector: 'app-subject-detail',
   standalone: true,
-  imports: [NgIf, BaseChartDirective, MatCard, MatCardHeader, MatCardContent, MatCardTitle],
+  imports: [
+    NgIf,
+    MatCard,
+    MatCardHeader,
+    MatCardContent,
+    MatCardTitle,
+  ],
   templateUrl: './subject-detail.component.html',
   styleUrl: './subject-detail.component.scss',
 })
@@ -171,7 +187,10 @@ export class SubjectDetailComponent implements OnInit, AfterViewInit {
     }
 
     if (this.barChart) {
-      this.barChart.data.datasets[0].data = this.generateRandomValues(100, this.barChartLabels.length); // TODO: Replace with real data
+      this.barChart.data.datasets[0].data = this.generateRandomValues(
+        100,
+        this.barChartLabels.length,
+      ); // TODO: Replace with real data
       this.barChart.update();
     }
   }
@@ -243,7 +262,11 @@ export class SubjectDetailComponent implements OnInit, AfterViewInit {
       physicalFocus: 'Fyzické zameranie',
     };
 
-    return this.subjectData ? Object.keys(this.subjectData.focusDTO).map((key) => focusLabelMapping[key]) : [];
+    return this.subjectData
+      ? Object.keys(this.subjectData.focusDTO).map(
+          (key) => focusLabelMapping[key],
+        )
+      : [];
   }
 
   private getFocusData(): ChartDataset {

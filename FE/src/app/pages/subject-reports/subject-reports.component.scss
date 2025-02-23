@@ -1,4 +1,4 @@
-@import "../../../../node_modules/bootstrap/scss/bootstrap";  // TODO relative import
+@import "../../../../node_modules/bootstrap/scss/bootstrap"; // TODO relative import
 
 select {
   padding: 8px;
@@ -15,7 +15,6 @@ h1 {
   color: #333;
   margin: 20px;
 }
-
 
 #subject-report-table-wrapper {
   overflow-x: scroll;
