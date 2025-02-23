@@ -1,0 +1,14 @@
+/* Loader Container */
+.loader-container {
+  position: absolute; // Position the loader absolutely
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000; // Ensure it appears above other content
+  overflow: hidden; // Prevent content from jumping
+}
+
+/* Progress Bar */
+mat-progress-bar {
+  height: 4px; // Adjust height as needed
+}

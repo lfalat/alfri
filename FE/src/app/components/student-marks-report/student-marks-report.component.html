@@ -1,0 +1,112 @@
+<button
+  mat-raised-button
+  color="primary"
+  (click)="exportToCsv()"
+  [disabled]="isLoading"
+>
+  <mat-icon>download</mat-icon>
+  Exportovat
+</button>
+
+<div class="d-flex gap-2">
+  <!-- Study Program Filter Chip -->
+  <mat-chip-listbox *ngIf="selectedFilterStudyProgram">
+    <mat-chip color="primary" (removed)="clearStudyProgramFilter()">
+      Študijny odbor: {{ selectedFilterStudyProgram.name }}
+      <mat-icon matChipRemove>cancel</mat-icon>
+    </mat-chip>
+  </mat-chip-listbox>
+
+  <!-- Year Filter Chip -->
+  <mat-chip-listbox *ngIf="selectedFilterYear">
+    <mat-chip color="primary" (removed)="clearYearFilter()">
+      Ročník: {{ selectedFilterYear }}
+      <mat-icon matChipRemove>cancel</mat-icon>
+    </mat-chip>
+  </mat-chip-listbox>
+</div>
+
+<div class="position-relative">
+  <!-- Progress Bar -->
+  <div @fadeInOut *ngIf="isLoading" class="loader-container">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  </div>
+</div>
+
+<!-- Table -->
+<table mat-table [dataSource]="dataSource">
+  <!-- ID Column -->
+  <ng-container matColumnDef="id">
+    <th mat-header-cell *matHeaderCellDef>ID študenta</th>
+    <td mat-cell *matCellDef="let element">{{ element.studentId }}</td>
+  </ng-container>
+
+  <!-- Study Program Column -->
+  <ng-container matColumnDef="studyProgram">
+    <th mat-header-cell *matHeaderCellDef>
+      <button mat-button [matMenuTriggerFor]="studyProgramMenu">
+        Študijny odbor
+      </button>
+      <mat-menu #studyProgramMenu="matMenu">
+        <button
+          mat-menu-item
+          *ngFor="let option of filterOptionsStudyProgram"
+          (click)="applyStudyProgramFilter(option)"
+        >
+          <span>{{ option.name }}</span>
+          <mat-icon *ngIf="selectedFilterStudyProgram?.value === option.value"
+            >check</mat-icon
+          >
+        </button>
+      </mat-menu>
+    </th>
+    <td mat-cell *matCellDef="let element">{{ element.studyProgramId }}</td>
+  </ng-container>
+
+  <!-- Year Column -->
+  <ng-container matColumnDef="year">
+    <th mat-header-cell *matHeaderCellDef>
+      <button mat-button [matMenuTriggerFor]="yearMenu">Ročník</button>
+      <mat-menu #yearMenu="matMenu">
+        <button
+          mat-menu-item
+          *ngFor="let option of filterOptionsYear"
+          (click)="applyYearFilter(option)"
+        >
+          <span>{{ option }}</span>
+          <mat-icon *ngIf="selectedFilterYear === option">check</mat-icon>
+        </button>
+      </mat-menu>
+    </th>
+    <td mat-cell *matCellDef="let element">{{ element.year }}</td>
+  </ng-container>
+
+  <!-- Average Mark Column -->
+  <ng-container matColumnDef="avgMark">
+    <th
+      mat-header-cell
+      *matHeaderCellDef
+      (click)="sortByAvgMark()"
+      onKeyDown="sortByAvgMark()"
+    >
+      Priemer
+      <mat-icon *ngIf="filter.sortBy === 'avgMark'">
+        {{ filter.direction === "ASC" ? "arrow_upward" : "arrow_downward" }}
+      </mat-icon>
+    </th>
+    <td mat-cell *matCellDef="let element">{{ element.avgMark.toFixed(2) }}</td>
+  </ng-container>
+
+  <!-- Table Row -->
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+</table>
+
+<!-- Paginator -->
+<mat-paginator
+  [pageSize]="filter.size"
+  [pageSizeOptions]="pageSizeOptions"
+  (page)="onPageChange($event)"
+  [pageIndex]="filter.page"
+>
+</mat-paginator>
