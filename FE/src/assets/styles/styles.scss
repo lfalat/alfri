@@ -1,0 +1,22 @@
+html,
+body {
+  height: 100%;
+}
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+#main-container {
+  display: flex;
+  flex-direction: column;
+  // 100 % - header height
+  min-height: calc(100vh - 64px);
+  background-color: $base-light;
+}
+
+#main-main {
+  flex-grow: 1;
+  display: flex;
+  padding: 20px 0;
+}

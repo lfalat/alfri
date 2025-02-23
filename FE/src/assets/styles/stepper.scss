@@ -1,0 +1,9 @@
+.step {
+  min-height: 400px; /* Set a minimum height for each step */
+}
+
+@media (max-width: 768px) {
+  .step {
+    min-height: 300px; /* Adjust height for smaller screens */
+  }
+}

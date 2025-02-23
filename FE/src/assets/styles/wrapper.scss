@@ -1,0 +1,12 @@
+.info-wrapper {
+  background-color: rgba(229, 229, 247, 0.1); /* 0.5 is the opacity (50%) */
+  background-image: repeating-radial-gradient(
+      circle at 0 0,
+      transparent 0,
+      rgba(229, 229, 247, 0.5) 10px
+  ),
+  repeating-linear-gradient(
+      rgba(126, 129, 194, 0.5),
+      rgba(126, 129, 194, 0.5)
+  );
+}

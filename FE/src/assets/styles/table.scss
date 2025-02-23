@@ -1,0 +1,17 @@
+.striped-table {
+  .mat-mdc-cell,
+  .mat-mdc-header-cell {
+    border: none;
+  }
+  .mat-mdc-row:nth-child(even),
+  .mat-mdc-header-row {
+    background-color: #f9f9f9;
+  }
+}
+
+.table-wrapper {
+  overflow-x: scroll;
+  @include media-breakpoint-up(md) {
+    overflow-x: auto;
+  }
+}

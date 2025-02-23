@@ -34,6 +34,7 @@ import {
 import { NotificationService } from '@services/notification.service';
 import * as Papa from 'papaparse';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
+import { debounceTime, Subject } from 'rxjs';
 
 @Component({
   selector: 'app-student-marks-report',
@@ -73,6 +74,11 @@ import { MatPaginator, PageEvent } from '@angular/material/paginator';
       ),
       transition('void <=> *', animate('200ms ease-in-out')),
     ]),
+    trigger('buttonOpacityChange', [
+      state('enabled', style({ opacity: 1 })),
+      state('disabled', style({ opacity: 0.5 })),
+      transition('enabled <=> disabled', animate('300ms ease-in-out')),
+    ]),
   ],
   templateUrl: './student-marks-report.component.html',
   styleUrl: './student-marks-report.component.scss',
@@ -80,7 +86,7 @@ import { MatPaginator, PageEvent } from '@angular/material/paginator';
 export class StudentMarksReportComponent implements OnInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   pageSizeOptions: readonly number[] = [25, 100, 250, 500, 1000];
-
+  isLoadingSubject = new Subject<boolean>();
   filter: StudentFilterDTO = {
     page: 0,
     size: 10,
@@ -104,7 +110,15 @@ export class StudentMarksReportComponent implements OnInit {
   constructor(
     private readonly leadService: LeadService,
     private readonly notificationService: NotificationService,
-  ) {}
+  ) {
+    this.isLoadingSubject.pipe(debounceTime(200)).subscribe((value) => {
+      this.isLoading = value;
+    });
+  }
+
+  setLoading(state: boolean) {
+    this.isLoadingSubject.next(state);
+  }
 
   ngOnInit(): void {
     this.fetchData();
@@ -150,7 +164,7 @@ export class StudentMarksReportComponent implements OnInit {
     this.leadService.getStudentPerformanceReport(this.filter).subscribe({
       next: (data) => {
         this.dataSource.data = data.content;
-        this.isLoading = false;
+        this.setLoading(false);
 
         if (this.paginator) {
           this.paginator.length = data.totalElements;
@@ -160,7 +174,7 @@ export class StudentMarksReportComponent implements OnInit {
       },
       error: (error) => {
         console.error(error);
-        this.isLoading = false;
+        this.setLoading(false);
       },
     });
   }
