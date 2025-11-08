@@ -17,5 +17,7 @@ public interface PythonMlClient {
 
     @PostMapping(value = "/api/v1/clustering/similar-subjects", consumes = MediaType.APPLICATION_JSON_VALUE)
     ClusteringResponseDto clustering(@RequestBody ClusteringRequestDto request);
-}
 
+    @PostMapping(value = "/api/v1/predictions/trigger")
+    void triggerPrediction();
+}

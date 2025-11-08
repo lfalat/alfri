@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import sk.uniza.fri.alfri.client.dto.*;
+import sk.uniza.fri.alfri.service.PythonPredictionService;
 
 import java.util.List;
 import java.util.Map;
@@ -30,6 +31,9 @@ public class PythonMlClientIntegrationTests {
 
     @Autowired
     private PythonMlClient pythonMlClient;
+
+    @Autowired
+    private PythonPredictionService pythonPredictionService;
 
     @BeforeAll
     static void startWireMock() {
@@ -72,5 +76,18 @@ public class PythonMlClientIntegrationTests {
         assertThat(math.getProbability()).isEqualTo(0.75);
         assertThat(math.getPercentage()).isEqualTo("75%");
     }
-}
 
+    @Test
+    void passingChanceFallbackOnServerError() {
+        wireMockServer.stubFor(post("/api/v1/predictions/passing-chance")
+                .willReturn(aResponse()
+                        .withStatus(500)));
+
+        PassingChanceRequestDto req = new PassingChanceRequestDto();
+        req.setSubjects(Map.of("math", List.of(1.0, 2.0)));
+
+        PassingChanceResponseDto resp = pythonPredictionService.passingChance(req);
+        assertThat(resp).isNotNull();
+        assertThat(resp.getResults()).isEmpty();
+    }
+}
