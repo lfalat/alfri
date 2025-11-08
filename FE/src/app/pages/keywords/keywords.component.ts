@@ -41,8 +41,8 @@ import { MatIcon } from '@angular/material/icon';
     MatOption,
     MatAutocompleteTrigger,
     MatAutocomplete,
-    MatIcon,
-  ],
+    MatIcon
+],
 })
 export class KeywordsComponent implements OnInit {
   filteredKeywords: string[] = [];
