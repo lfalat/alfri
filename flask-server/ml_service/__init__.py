@@ -133,3 +133,4 @@ def create_app(test_config=None):
             return jsonify({"error": "OpenAPI spec not available"}), 404
 
     return app
+
