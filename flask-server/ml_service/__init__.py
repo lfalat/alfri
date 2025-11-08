@@ -132,5 +132,15 @@ def create_app(test_config=None):
         except Exception:
             return jsonify({"error": "OpenAPI spec not available"}), 404
 
+    # --- Serve OpenAPI spec and a tiny Swagger UI page ---
+    @app.route("/openapi.json", methods=["GET"])
+    def _openapi_spec():
+        # Serve the bundled openapi.json from the package static folder
+        try:
+            # use Flask's send_static_file by placing openapi.json under package static
+            return app.send_static_file("openapi.json")
+        except Exception:
+            return jsonify({"error": "OpenAPI spec not available"}), 404
+
     return app
 
