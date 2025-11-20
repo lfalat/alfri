@@ -3,23 +3,23 @@ package sk.uniza.fri.alfri.client.dto;
 import java.util.List;
 
 public class ClusteringRequestDto {
-    private List<List<Double>> focusVectors;
-    private String studyProgramId;
+    private List<Integer> subjectIds;
+    private Integer studyProgramId;
     private Integer n_clusters;
 
-    public List<List<Double>> getFocusVectors() {
-        return focusVectors;
+    public List<Integer> getSubjectIds() {
+        return subjectIds;
     }
 
-    public void setFocusVectors(List<List<Double>> focusVectors) {
-        this.focusVectors = focusVectors;
+    public void setSubjectIds(List<Integer> subjectIds) {
+        this.subjectIds = subjectIds;
     }
 
-    public String getStudyProgramId() {
+    public Integer getStudyProgramId() {
         return studyProgramId;
     }
 
-    public void setStudyProgramId(String studyProgramId) {
+    public void setStudyProgramId(Integer studyProgramId) {
         this.studyProgramId = studyProgramId;
     }
 

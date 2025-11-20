@@ -17,7 +17,7 @@ public interface PythonMlClient {
     @PostMapping(value = "/api/v1/predictions/passing-mark", consumes = MediaType.APPLICATION_JSON_VALUE)
     PassingMarkResponseDto passingMark(@RequestBody PassingMarkRequestDto request);
 
-    @PostMapping(value = "/api/v1/clustering/similar-subjects", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/api/v1/clustering/recommend", consumes = MediaType.APPLICATION_JSON_VALUE)
     ClusteringResponseDto clustering(@RequestBody ClusteringRequestDto request);
 
     @PostMapping(value = "/api/v1/predictions/trigger")
