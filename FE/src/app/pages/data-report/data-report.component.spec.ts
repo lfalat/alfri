@@ -19,4 +19,3 @@ describe('DataReportComponent', () => {
     expect(component).toBeTruthy();
   });
 });
-

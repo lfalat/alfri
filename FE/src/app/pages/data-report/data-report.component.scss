@@ -1,6 +1,8 @@
 .stat-card-material {
   height: 100%;
-  transition: box-shadow 0.3s ease-in-out, transform 0.2s ease-in-out;
+  transition:
+    box-shadow 0.3s ease-in-out,
+    transform 0.2s ease-in-out;
   cursor: default;
   display: flex;
   justify-content: center;
@@ -110,4 +112,3 @@ mat-card-title {
     font-size: 28px;
   }
 }
-
