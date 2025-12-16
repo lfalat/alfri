@@ -3,7 +3,7 @@ import { Section } from '../../../types';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { FormQuestionComponent } from '@components/form-question/form-question.component';
 import { MatButton } from '@angular/material/button';
-import { MatStepLabel, MatStepperPrevious } from '@angular/material/stepper';
+import { MatStepLabel, MatStepperNext, MatStepperPrevious } from '@angular/material/stepper';
 
 @Component({
   selector: 'app-hobby-step',
@@ -14,6 +14,7 @@ import { MatStepLabel, MatStepperPrevious } from '@angular/material/stepper';
     MatStepperPrevious,
     ReactiveFormsModule,
     MatStepLabel,
+    MatStepperNext,
   ],
   templateUrl: './hobby-step.component.html',
   styleUrl: './hobby-step.component.scss',
