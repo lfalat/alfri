@@ -1,5 +1,5 @@
 import { Component, inject, OnDestroy, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { MatCardModule } from '@angular/material/card';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSelectModule } from '@angular/material/select';
@@ -41,15 +41,14 @@ export type ChartOptions = {
   standalone: true,
   styleUrls: ['./data-report.component.scss'],
   imports: [
-    CommonModule,
     MatCardModule,
     MatProgressBarModule,
     MatSelectModule,
     MatFormFieldModule,
     MatIconModule,
     FormsModule,
-    NgApexchartsModule,
-  ],
+    NgApexchartsModule
+],
 })
 export class DataReportComponent implements OnInit, OnDestroy {
   private readonly _destroy$: Subject<void> = new Subject();
