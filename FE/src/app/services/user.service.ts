@@ -8,7 +8,7 @@ import { ConfigService } from '@services/config.service';
 @Injectable({
   providedIn: 'root',
 })
-export class UserService {
+export class UserService  {
   readonly userData = signal<UserDto | undefined>(undefined);
 
   userId: number | undefined;
