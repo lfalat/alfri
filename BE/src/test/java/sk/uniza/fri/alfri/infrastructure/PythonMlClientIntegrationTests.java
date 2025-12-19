@@ -1,4 +1,4 @@
-package sk.uniza.fri.alfri.client;
+package sk.uniza.fri.alfri.infrastructure;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
-import sk.uniza.fri.alfri.client.dto.*;
+import sk.uniza.fri.alfri.infrastructure.dto.*;
 import sk.uniza.fri.alfri.service.PythonPredictionService;
 
 import java.util.List;
