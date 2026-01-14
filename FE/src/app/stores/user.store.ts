@@ -10,14 +10,8 @@ import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { HttpClient } from '@angular/common/http';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { pipe, switchMap, tap } from 'rxjs';
-import { Role, UserDto } from '../types';
-import { environment } from '../../environments/environment';
-
-type UserState = {
-  userData: UserDto | undefined;
-  userId: number | undefined;
-  isLoading: boolean;
-};
+import { Role, UserDto, UserState } from '../types';
+import { ConfigService } from '@services/config.service';
 
 const initialState: UserState = {
   userData: undefined,
@@ -37,7 +31,8 @@ export const UserStore = signalStore(
   }),
   withMethods((store) => {
     const http = inject(HttpClient);
-    const BE_URL = `${environment.API_URL}/user`;
+    const configService = inject(ConfigService);
+    const BE_URL = `${configService.apiUrl()}/user`;
 
     return {
       loadUserData: rxMethod<void>(

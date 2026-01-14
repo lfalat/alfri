@@ -1,17 +1,17 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { environment } from '../../environments/environment';
 import { Observable } from 'rxjs';
 import { SubjectGradeCorrelation } from '../types';
 import { Operator } from '@enums/operator';
+import { ConfigService } from '@services/config.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class SubjectGradeCorrelationService {
-  private BE_URL = environment.API_URL;
-
-  constructor(private http: HttpClient) {}
+  private readonly config = inject(ConfigService);
+  private readonly BE_URL = this.config.apiUrl();
+  private readonly http = inject(HttpClient);
 
   public getSubjectGradeCorrelation(
     correlationTreshold?: number,

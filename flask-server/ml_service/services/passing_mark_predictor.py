@@ -151,11 +151,79 @@ class PassingMarkPredictor(PredictionService):
         Returns:
             Model predictions
         """
-        if hasattr(model, "predict"):
-            return model.predict(X)
-        if hasattr(model, "predict_proba"):
-            return model.predict_proba(X)
-        return model(X)
+        try:
+            if hasattr(model, "predict"):
+                return model.predict(X)
+            if hasattr(model, "predict_proba"):
+                return model.predict_proba(X)
+            return model(X)
+        except Exception as e:
+            # If prediction fails, try with one-hot encoded input
+            current_app.logger.warning("Initial prediction failed, attempting with one-hot encoding: %s", e)
+            X_encoded = self._one_hot_encode_features(X)
+            if hasattr(model, "predict"):
+                return model.predict(X_encoded)
+            if hasattr(model, "predict_proba"):
+                return model.predict_proba(X_encoded)
+            return model(X_encoded)
+
+    def _one_hot_encode_features(self, X):
+        """Convert grade integers to one-hot encoded features.
+
+        Converts each grade value (0-5) to a one-hot encoded vector:
+        - 0 (A)  -> [1, 0, 0, 0, 0, 0]
+        - 1 (B)  -> [0, 1, 0, 0, 0, 0]
+        - 2 (C)  -> [0, 0, 1, 0, 0, 0]
+        - 3 (D)  -> [0, 0, 0, 1, 0, 0]
+        - 4 (E)  -> [0, 0, 0, 0, 1, 0]
+        - 5 (Fx) -> [0, 0, 0, 0, 0, 1]
+
+        Args:
+            X: Input features (numpy array or nested list)
+
+        Returns:
+            One-hot encoded features with same type as input
+        """
+        NUM_GRADES = 6
+
+        if self._numpy is not None:
+            # Handle numpy array
+            X_arr = self._numpy.asarray(X)
+            original_shape = X_arr.shape
+
+            # Flatten to process each value
+            X_flat = X_arr.flatten()
+            encoded_features = []
+
+            for val in X_flat:
+                grade_idx = int(val)
+                # Create one-hot vector
+                one_hot = self._numpy.zeros(NUM_GRADES, dtype=self._numpy.float32)
+                if 0 <= grade_idx < NUM_GRADES:
+                    one_hot[grade_idx] = 1.0
+                encoded_features.extend(one_hot)
+
+            # Reshape to (batch_size, num_features * NUM_GRADES)
+            encoded_array = self._numpy.asarray(encoded_features, dtype=self._numpy.float32)
+            return encoded_array.reshape(original_shape[0], -1)
+        else:
+            # Handle nested list
+            if not X or not isinstance(X[0], (list, tuple)):
+                X = [X]
+
+            encoded_batch = []
+            for sample in X:
+                encoded_sample = []
+                for val in sample:
+                    grade_idx = int(val)
+                    # Create one-hot vector
+                    one_hot = [0.0] * NUM_GRADES
+                    if 0 <= grade_idx < NUM_GRADES:
+                        one_hot[grade_idx] = 1.0
+                    encoded_sample.extend(one_hot)
+                encoded_batch.append(encoded_sample)
+
+            return encoded_batch
 
     def _interpret_with_numpy(self, predictions) -> List[float]:
         """Interpret predictions using numpy.
@@ -181,7 +249,7 @@ class PassingMarkPredictor(PredictionService):
             return arr.astype(float).tolist()
 
         # If scalar, convert to distribution
-        return self._scalar_to_distribution_numpy(float(arr))
+        return self._scalar_to_distribution_numpy(arr[0])
     
     def _scalar_to_distribution_numpy(self, score: float) -> List[float]:
         """Convert scalar prediction to distribution using numpy.

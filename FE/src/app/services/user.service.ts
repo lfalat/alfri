@@ -3,17 +3,17 @@ import { JwtHelperService } from '@auth0/angular-jwt';
 import { HttpClient } from '@angular/common/http';
 import { Observable, take } from 'rxjs';
 import { Role, UserDto } from '../types';
-import { environment } from '../../environments/environment';
+import { ConfigService } from '@services/config.service';
 
 @Injectable({
   providedIn: 'root',
 })
-export class UserService  {
+export class UserService {
   readonly userData = signal<UserDto | undefined>(undefined);
 
   userId: number | undefined;
-
-  private readonly BE_URL = `${environment.API_URL}/user`;
+  private readonly configService = inject(ConfigService);
+  private readonly BE_URL = `${this.configService.apiUrl()}/user`;
 
   private readonly http = inject(HttpClient);
   public readonly jwtHelper = inject(JwtHelperService);

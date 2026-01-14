@@ -10,15 +10,6 @@ from ..validation import SubjectInputValidator
 from ..errors import ModelNotLoadedError, ValidationError
 from ..services import PassingChancePredictor, PassingMarkPredictor
 
-# Legacy model mappings (kept for backward compatibility)
-subject_id_model_map = {
-    "Algoritmy a udajove struktury 1": "best_model_AUS"
-}
-
-subject_chance_model_map = {
-    "Algoritmy a udajove struktury 1": "model_AUS"
-}
-
 predict_bp = Blueprint("predict", __name__)
 
 

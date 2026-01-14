@@ -1,16 +1,16 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { StudyProgramDto } from '../types';
 import { Observable } from 'rxjs';
-import { environment } from '../../environments/environment';
+import { ConfigService } from '@services/config.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class StudentService {
-  private readonly URL = `${environment.API_URL}/student`;
-
-  constructor(private http: HttpClient) {}
+  private readonly http = inject(HttpClient);
+  private readonly config = inject(ConfigService);
+  private readonly URL = `${this.config.apiUrl()}/student`;
 
   public getStudyProgramOfCurrentUser(): Observable<StudyProgramDto> {
     const httpOptions = {

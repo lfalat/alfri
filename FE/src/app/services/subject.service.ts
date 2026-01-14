@@ -1,5 +1,4 @@
 import { inject, Injectable } from '@angular/core';
-import { environment } from '../../environments/environment';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import {
   Page,
@@ -7,16 +6,17 @@ import {
   SubjectExtendedDto,
   SubjectGradesDto,
   SubjectPassingPrediction,
-  PopularSubjectRow,
   GradeAverageByYearDto,
 } from '../types';
 import { Observable } from 'rxjs';
+import { ConfigService } from '@services/config.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class SubjectService {
-  private readonly URL = `${environment.API_URL}/subject`;
+  private readonly configService = inject(ConfigService);
+  private readonly URL = `${this.configService.apiUrl()}/subject`;
   private readonly http = inject(HttpClient);
 
   public getSubjectsWithFocusByStudyProgramId(

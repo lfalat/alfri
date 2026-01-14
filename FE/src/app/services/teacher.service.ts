@@ -1,20 +1,19 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { catchError, EMPTY, Observable } from 'rxjs';
 import { DepartmentDto, SubjectDto, TeacherDto } from '../types';
 import { NotificationService } from './notification.service';
-import { environment } from '../../environments/environment';
+import { ConfigService } from '@services/config.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class TeacherService {
-  private readonly BE_URL = `${environment.API_URL}`;
+  private readonly configService = inject(ConfigService);
+  private readonly http = inject(HttpClient);
+  private readonly notificationService = inject(NotificationService);
 
-  constructor(
-    private http: HttpClient,
-    private readonly notificationService: NotificationService,
-  ) {}
+  private readonly BE_URL = `${this.configService.apiUrl()}`;
 
   getTeacherById(userId: number): Observable<TeacherDto> {
     return this.http.get<TeacherDto>(`${this.BE_URL}/teacher/${userId}`).pipe(

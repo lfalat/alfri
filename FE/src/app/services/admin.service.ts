@@ -1,16 +1,16 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { environment } from '../../environments/environment';
 import { Role, SubjectDto, UserDto } from '../types';
+import { ConfigService } from '@services/config.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AdminService {
-  private readonly BE_URL = `${environment.API_URL}`;
-
-  constructor(private readonly http: HttpClient) {}
+  private readonly http = inject(HttpClient);
+  private readonly config = inject(ConfigService);
+  private readonly BE_URL = `${this.config.apiUrl()}`;
 
   getAllUsers(): Observable<UserDto[]> {
     return this.http.get<UserDto[]>(`${this.BE_URL}/admin/users`);

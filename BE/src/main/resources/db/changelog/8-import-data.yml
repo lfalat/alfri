@@ -2,7 +2,6 @@ databaseChangeLog:
   - changeSet:
       id: 08-import-subjects
       author: liquibase
-      context: seed
       changes:
         - sqlFile:
             path: ../data/subjects.sql
@@ -19,7 +18,6 @@ databaseChangeLog:
   - changeSet:
       id: 08-import-full-scratch2
       author: liquibase
-      context: seed
       changes:
         - sqlFile:
             path: ../data/seed-scratch2.sql
@@ -47,7 +45,6 @@ databaseChangeLog:
   - changeSet:
       id: 08-sequence-setvals
       author: liquibase
-      context: seed
       changes:
         - sql:
             dbms: postgresql
@@ -61,7 +58,6 @@ databaseChangeLog:
   - changeSet:
       id: 08-study-program-subject-data
       author: liquibase
-      context: seed
       changes:
         - sql:
             dbms: postgresql

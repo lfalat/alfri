@@ -109,8 +109,18 @@ def create_app(test_config=None):
         except Exception:
             app.logger.exception("Model loading failed")
 
-    loader_thread = threading.Thread(target=_load_models, daemon=True)
-    loader_thread.start()
+    # Load models synchronously when using gunicorn preload to ensure models are ready
+    # before workers start accepting requests
+    import os
+    preload_mode = os.environ.get('GUNICORN_PRELOAD', '0') == '1'
+    if preload_mode:
+        app.logger.info("Loading models synchronously (preload mode)")
+        _load_models()
+    else:
+        # Load in background thread for development
+        app.logger.info("Loading models in background thread")
+        loader_thread = threading.Thread(target=_load_models, daemon=True)
+        loader_thread.start()
 
     # --- Serve OpenAPI spec and a tiny Swagger UI page ---
     @app.route("/openapi.json", methods=["GET"])

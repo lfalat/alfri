@@ -1,89 +1,178 @@
-# Návod pre nasadenie aplikácie
-Aplikácia je nasadená na Azure Web app, kde beží frontend (FE) aj backend (BE).
+![Screenshot 2026-01-14 at 14-21-47 .png](banner.png)
+[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.3.3-brightgreen.svg)](https://spring.io/projects/spring-boot)
+[![Angular](https://img.shields.io/badge/Angular-20.0-red.svg)](https://angular.io/)
+[![Python](https://img.shields.io/badge/Python-3.12-blue.svg)](https://www.python.org/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15-336791.svg)](https://www.postgresql.org/)
+[![Azure](https://img.shields.io/badge/Deployed%20on-Azure-0078D4.svg)](https://azure.microsoft.com/)
+---
 
-## Nasadenie BE
-### 1. Build aplikácie
-Aplikáciu skompilujeme pomocou príkazu:
-`mvn clean install`
+## 📋 Obsah
 
-### 2. Build docker image
-V termináli musíme byť v zložke BE.
+- [O projekte](#-o-projekte)
+- [Tech Stack](#-tech-stack)
+- [Architektúra systému](#-architektúra-systému)
+- [CI/CD Pipeline](#-cicd-pipeline)
 
-#### 1. Build pomocou systému s architektúrou x86
-1. Image skompilujeme pomocou príkazu:  
-   `docker build . -t groben5558/alfri:alfri-backend`
+---
 
-2. Image pushneme do Docker Hub repozitára pomocou príkazu:  
-   `docker push groben5558/alfri:alfri-backend`
+## 🎯 O projekte
 
-#### 2. Build pomocou systému s architektúrou ARM
-1. Image skompilujeme a pushneme do Docker Hub repozitára pomocou príkazu:  
-   `docker buildx build --platform linux/amd64 -t groben5558/alfri:alfri-backend -f Dockerfile . --push`
+**ALFRI** (Academic Lektor for FRI) je komplexný informačný systém navrhnutý pre študentov Fakulty riadenia a informatiky Žilinskej univerzity. Systém poskytuje:
 
-## Nasadenie FE
-### 1. Build aplikácie
-Aplikáciu skompilujeme pomocou príkazu:  
-`npm run build`
+- 📊 **Dátovú analytiku** - Analýza študijných výsledkov a výkonnosti
+- 🤖 **ML-poháňané odporúčania** - Predikcia známok a odporúčanie predmetov na základe machine learning modelov
+- 📈 **Vizualizácie a reporty** - Interaktívne grafy a reporty pre študentov a vedenie školy
+- 🎯 **Personalizované odporúčania** - Individuálne prispôsobené návrhy na zlepšenie študijných výsledkov
 
-### 2. Build docker image
-V termináli musíme byť v zložke FE.
+### Kľúčové vlastnosti
 
-#### 1. Build pomocou systému s architektúrou x86
-1. Image skompilujeme pomocou príkazu:  
-   `docker build . -t groben5558/alfri:alfri-frontend`
+- ✨ Predikcia študijných výsledkov pomocou TensorFlow
+- 🎨 Moderné Angular rozhranie s Material Design
+- 🚀 Škálovateľná mikroservisová architektúra
+- ☁️ Cloud-native deployment na Azure
+- 📱 Responzívny dizajn pre všetky zariadenia
 
-2. Image pushneme do Docker Hub repozitára pomocou príkazu:  
-   `docker push groben5558/alfri:alfri-frontend`
+---
 
-#### 2. Build pomocou systému s architektúrou ARM
-1. Image skompilujeme a pushneme do Docker Hub repozitára pomocou príkazu:  
-   `docker buildx build --platform linux/amd64 -t groben5558/alfri:alfri-frontend -f Dockerfile . --push`
+## 🛠 Tech Stack
 
-## Po uploadnutí nových imagov je potrebné reštartovať Azure Web app
-Po spustení aplikácie je potrebné otvoriť URL adresu nasadenej aplikácie kvôli jej naštartovaniu, kedže sa jedná o cold-start systém.
-Aplikácia sa štartuje niekoľko minút kvôli nízkemu hardvéru servera. FE sa spustí takmer hneď, no BE sa púšťa o niekoľko minút neskôr. Ak je BE spustený, jeho logy vidíme v `Log stream` alebo v sekcii `Monitoring/Health-check/Instances`, kde aplikáciu vidíme ako "healthy".
+### Frontend
+| Technológia | Verzia | Účel |
+|------------|---------|------|
+| **Angular** | 20.0 | SPA framework |
+| **Angular Material** | 20.0 | UI komponenty |
+| **TypeScript** | 5.7 | Programovací jazyk |
+| **RxJS** | 7.8 | Reaktívne programovanie |
+| **NgRx Signals** | 20.1 | State management |
+| **Chart.js / ApexCharts** | 4.4 / 5.3 | Vizualizácie dát |
+| **ECharts** | 5.6 | Vizualizácie dát |
 
-# Prvé nasadenie aplikácie
-Je potrebné vytvoriť Azure Web app.
+### Backend
+| Technológia | Verzia | Účel |
+|------------|--------|------|
+| **Spring Boot** | 3.3.3 | Backend framework |
+| **Java** | 21 | Programovací jazyk |
+| **Spring Security** | 6.x | Autentifikácia & Autorizácia |
+| **Spring Cloud OpenFeign** | 2023.0.6 | HTTP klient pre mikroservisy |
+| **PostgreSQL** | 15 | Relačná databáza |
+| **Maven** | - | Build tool |
 
-1. V sekcii **Publish** nastaviť *Container*.
-2. **Operating system** je *Linux*.
-3. **Region** je *West Europe*.
+### ML Service
+| Technológia | Verzia | Účel |
+|------------|---------|------|
+| **Flask** | 2.0+ | Web framework |
+| **Python** | 3.12 | Programovací jazyk |
+| **TensorFlow** | 2.20 | ML framework |
+| **Keras** | 3.12 | Neural networks API |
+| **scikit-learn** | 1.7 | ML nástroje |
+| **NumPy** | 2.3 | Numerické výpočty |
+| **Gunicorn** | 23.0 | WSGI server |
 
-V sekcii **Container** je potrebné nastaviť:
-1. **Image source** - Docker Hub or other registries
-2. **Options** - docker compose
+## 🏗 Architektúra systému
 
-V sekcii **Docker Hub options**:
-1. **Public**
-2. **Configuration file** - uploadnúť docker.compose súbor z projektu
+### Prehľad systému
 
-Vytvoriť.
+```mermaid
+graph TB
+    subgraph Azure[Microsoft Azure Cloud]
+        subgraph StaticWebApps[Azure Static Web Apps - FREE]
+            FE[Alfri FE]
+        end
 
-Po vytvorení Web app:
-1. Sekcia **Settings/Environment variables** - nastaviť hodnoty environment variables pre beh BE:
-   - `APPLICATION_NAME` - názov BE aplikácie (ľubovoľný)
-   - `DATABASE_PROD_PASSWORD` - Heslo od databázy - zadávať bez ''
-   - `DATABASE_PROD_URL` - connection string od databázy, napr. `jdbc:postgresql://alfri-database.postgres.database.azure.com:5432/alfri`
-   - `DATABASE_PROD_USER` - meno používateľa v databáze pre BE server
-   - `FRONTEND_PROD_URL` - URL link na frontend, napr. `alfri-whole-ezhhdydubxf7c9gk.westeurope-01.azurewebsites.net`
-   - `JWT_PROD_EXPIRATION_TIME` - čas expirácie JWT tokenu v ms
-   - `JWT_PROD_SECRET_KEY` - privátny kľúč pre šifrovanie a podpisovanie JWT kľúčov (64 znakov) - **Vygenerovať NÁHODNE!**
-   - `PROD_SHOW_SQL` - bool pre zobrazenie SQL selectov v logoch (TRUE/FALSE)
-   - `PYTHON_PROD_EXECUTABLE_PATH` - cesta k python executable
-   - `PROD_CLUSTERING_PREDICTION_SCRIPT_PATH` - cesta k scriptu pre zhlukovanie predmetov
-   - `PROD_CLUSTERING_PREDICTION_MODEL_PATH` - cesta k modelu pre zhlukvoanie predmetov
+        subgraph ContainerApps[Azure Container Apps Environment]
+            BE[Alfri BE]
+            ML[Alfri ML service]
+        end
 
-2. Sekcia **Monitoring/Health-check** - nastaviť health-check aplikácie na `backend/actuator/health`.
+        subgraph Database[Azure Database for PostgreSQL]
+            DB[Alfri DB]
+        end
+    end
 
-Server reštartujeme a čakáme. Po spustení aplikácie je potrebné otvoriť URL adresu nasadenej aplikácie kvôli jej naštartovaniu, kedže sa jedná o cold-start systém.
+    User[Student / Pedagog]
 
-URL aplikácie nájdeme v **Overview - Default domain**.
+    User -->|HTTPS| FE
+    FE -->|REST API + JWT Token| BE
+    BE -->|HTTP Internal| ML
+    BE -->|PostgreSQL Connection| DB
+    ML -->|Read/Write Training Data| DB
+
+    style FE fill:#E0F2FE,stroke:#0284C7,stroke-width:3px
+    style BE fill:#DBEAFE,stroke:#1D4ED8,stroke-width:3px
+    style ML fill:#FEF3C7,stroke:#D97706,stroke-width:3px
+    style DB fill:#DCFCE7,stroke:#15803D,stroke-width:3px
+
+    style Azure fill:#F0F9FF,stroke:#0369A1,stroke-width:2px
+    style StaticWebApps fill:#F8FAFC,stroke:#38BDF8,stroke-width:2px
+    style ContainerApps fill:#F8FAFC,stroke:#2563EB,stroke-width:2px
+    style Database fill:#F8FAFC,stroke:#16A34A,stroke-width:2px
+```
+---
+
+## ⚡ Funkcionality
+
+### Pre študentov
+- 📊 **Dashboard s prehľadom výkonu** - Vizualizácia známok a štatistík
+- 📊 **Dotazník študenta** - Zber dát pre personalizované odporúčania
+- 🎯 **Predikcia známok** - ML model predikuje budúce známky na základe historických dát
+- 📚 **Odporúčanie predmetov** - Inteligentné odporúčania predmetov založené na zhlukovej analýze
+- 📈 **Vizualizácia korelácií** - Word cloud a heatmapa korelácie medzi predmetmi
+
+### Pre pedagógov/administrátorov
+- 👥 **Správa študentov** - CRUD operácie nad študentmi
+- 📚 **Správa predmetov** - Správa katalógu predmetov
+- 📊 **Agregované štatistiky** - Celkové štatistiky výkonu
+- 🔐 **Prístupové práva** - Role-based access control
+- 📄 **Export reportov** - Export výsledkov do PDF
+- 🔍 **Detailné analýzy** - Porovnanie s priemerom programu
+
+---
 
 
-# CI/CD
-Aplikácia má funkčné CI/CD systém.
-## Pri vytvorení Pull requestu do vetvy `develop`
-Pri každom Pull requeste do vetvy `develop` sa FE aj BE vybuilduje a spustia sa testy. Kód sa bude dať mergnut, iba ak tieto testy prejdú.
-## Pri merge do vetvy `master`
-Pri kaźdom merge do vetvy `master` sa vybuildujú Docker image a pushnú sa do registry. Aplikácia sa prenasadí na najnovšiu verziu.
+
+## 🔄 CI/CD Pipeline
+
+Projekt používa GitHub Actions pre automatizované CI/CD.
+
+### Pull Request do `develop`
+- ✅ Build backend (Maven)
+- ✅ Build frontend (npm)
+- ✅ Spustenie unit testov
+- ✅ Linting kontrola
+- ⛔ PR sa môže mergnúť až po úspešnom prechode všetkých kontrol
+
+### Merge do `master`
+- 🏗️ Build Docker images
+- 📦 Push do Azure Container Registry
+- 🚀 Automatické nasadenie na Azure
+- 📧 Notifikácie o úspešnom/neúspešnom deployi
+
+---
+
+
+
+## 📄 Licencia
+
+Tento projekt je vytvorený ako školský projekt na Fakulte riadenia a informatiky, Žilinská univerzita v Žiline.
+
+---
+
+## 👥 Tím
+
+Vyvinuté študentmi FRI UNIZA pre študentov FRI UNIZA pod vedením Ing. Lukáš Falát, PhD.
+
+---
+
+## 📞 Kontakt
+
+Pre otázky a podporu:
+- 📧 Email: [majba@stud.uniza.sk](mailto:majba@stud.uniza.sk)
+- 🎓 Fakulta riadenia a informatiky, UNIZA
+
+---
+
+<div align="center">
+
+Made with ❤️ by FRI UNIZA students
+
+</div>

@@ -36,6 +36,7 @@ import {
 } from '@components/generic-table';
 import { GenericTableUtils } from '@components/generic-table/generic-table.utils';
 import { SortDirection } from '@angular/material/sort';
+import { FormDataService } from '@services/form-data.service';
 
 @Component({
   selector: 'app-subjects',
@@ -143,6 +144,7 @@ export class SubjectsComponent implements OnInit, OnDestroy {
   private readonly formBuilder = inject(FormBuilder);
   private readonly router = inject(Router);
   private readonly activatedRoute = inject(ActivatedRoute);
+  private readonly formDataService = inject(FormDataService);
 
   constructor() {
     this.filterForm = this.formBuilder.group({
@@ -159,7 +161,12 @@ export class SubjectsComponent implements OnInit, OnDestroy {
       .getAll()
       .pipe(takeUntil(this._destroy$));
 
-    this._selectedStudyProgramId = 3;
+    const formData = this.formDataService.getFormData()
+    const studyProgramId = formData?.sections[0].questions.find(question => question.id === 109)?.answers[0].texts[0].textOfAnswer;
+    if (!studyProgramId) {
+      throw new Error('Study program ID not found in form data');
+    }
+    this._selectedStudyProgramId = Number.parseInt(studyProgramId);
     this.filterForm.patchValue({ subjectForm: this._selectedStudyProgramId });
 
     this.setupSearchSubscription();
@@ -174,11 +181,7 @@ export class SubjectsComponent implements OnInit, OnDestroy {
         tap(() => this.isLoading.set(true)),
         switchMap((searchTerm: string) => {
           const searchParam = `studyProgram.id:${this._selectedStudyProgramId},subject.name~${searchTerm}`;
-          return this.getSubjectsWithSearch(
-            0,
-            this.pageSize(),
-            searchParam,
-          );
+          return this.getSubjectsWithSearch(0, this.pageSize(), searchParam);
         }),
         catchError(() => {
           this.isLoading.set(false);
@@ -210,7 +213,7 @@ export class SubjectsComponent implements OnInit, OnDestroy {
   private updateTableData(page: Page<SubjectDto>): void {
     this.subjectsData.set({
       ...page,
-      content: page.content.map(s => this.convertToTableRow(s)),
+      content: page.content.map((s) => this.convertToTableRow(s)),
     });
     this.totalElements.set(page.totalElements);
     this.currentPage.set(page.number);

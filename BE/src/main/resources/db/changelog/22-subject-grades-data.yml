@@ -1,9 +1,55 @@
 databaseChangeLog:
   - changeSet:
-      id: 22-subject-grades-data
+      id: 22-subject-grades-data-part-1
       author: auto-generated
       changes:
         - sqlFile:
-            path: db/data/generated_subject_grades.sql
+            path: db/data/subject_grades_optimized/generated_subject_grades_part_01.sql
             relativeToChangelogFile: false
+            splitStatements: false
+
+  - changeSet:
+      id: 22-subject-grades-data-part-2
+      author: auto-generated
+      changes:
+        - sqlFile:
+            path: db/data/subject_grades_optimized/generated_subject_grades_part_02.sql
+            relativeToChangelogFile: false
+            splitStatements: false
+
+  - changeSet:
+      id: 22-subject-grades-data-part-3
+      author: auto-generated
+      changes:
+        - sqlFile:
+            path: db/data/subject_grades_optimized/generated_subject_grades_part_03.sql
+            relativeToChangelogFile: false
+            splitStatements: false
+
+  - changeSet:
+      id: 22-subject-grades-data-part-4
+      author: auto-generated
+      changes:
+        - sqlFile:
+            path: db/data/subject_grades_optimized/generated_subject_grades_part_04.sql
+            relativeToChangelogFile: false
+            splitStatements: false
+
+  - changeSet:
+      id: 22-subject-grades-data-part-5
+      author: auto-generated
+      changes:
+        - sqlFile:
+            path: db/data/subject_grades_optimized/generated_subject_grades_part_05.sql
+            relativeToChangelogFile: false
+            splitStatements: false
+
+  - changeSet:
+      id: 22-subject-grades-data-part-6
+      author: auto-generated
+      changes:
+        - sqlFile:
+            path: db/data/subject_grades_optimized/generated_subject_grades_part_06.sql
+            relativeToChangelogFile: false
+            splitStatements: false
 

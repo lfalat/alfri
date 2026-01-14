@@ -1,17 +1,20 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { environment } from '../../environments/environment';
 import { DataReportDto, StudyProgramId } from '../types';
+import { ConfigService } from '@services/config.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class DataReportService {
-  private readonly URL = `${environment.API_URL}/data-report`;
   private readonly http = inject(HttpClient);
+  private readonly config = inject(ConfigService);
+  private readonly URL = `${this.config.apiUrl()}/data-report`;
 
-  public getDataReport(studyProgramId: StudyProgramId | null): Observable<DataReportDto> {
+  public getDataReport(
+    studyProgramId: StudyProgramId | null,
+  ): Observable<DataReportDto> {
     let params = new HttpParams();
 
     if (studyProgramId) {

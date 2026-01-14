@@ -1,6 +1,7 @@
 Flask>=2.0
 python-dotenv>=1.0
 gunicorn>=20.0
+gevent>=24.0.0
 psycopg2-binary>=2.9.0
 joblib>=1.5.2
 numpy>=2.3.5

@@ -9,7 +9,7 @@ import {
   UserDto,
 } from '../types';
 import { JwtService } from './jwt.service';
-import { environment } from '../../environments/environment';
+import { ConfigService } from './config.service';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { AuthRole } from '@enums/auth-role';
 
@@ -17,11 +17,14 @@ import { AuthRole } from '@enums/auth-role';
   providedIn: 'root',
 })
 export class AuthService {
-  private readonly URL = `${environment.API_URL}/auth`;
-
   private readonly http = inject(HttpClient);
   private readonly jwtService = inject(JwtService);
   private readonly jwtHelper = inject(JwtHelperService);
+  private readonly configService = inject(ConfigService);
+
+  private get URL() {
+    return `${this.configService.apiUrl()}/auth`;
+  }
 
   postUser(userData: RegisterUserDto): Observable<UserDto> {
     const httpOptions = {

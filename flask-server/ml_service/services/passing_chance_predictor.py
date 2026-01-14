@@ -73,17 +73,22 @@ class PassingChancePredictor(PredictionService):
         """Compute probability from model prediction.
         
         Args:
-            model: Trained model with predict or predict_proba method
+            model: Trained model with predict or predict_proba method, or a dict containing 'model' key
             X: Feature vector
             
         Returns:
             Tuple of (probability, error dict). Error dict is None on success.
         """
         try:
-            if hasattr(model, "predict_proba"):
-                return self._extract_probability_from_proba(model, X), None
-            elif hasattr(model, "predict"):
-                return self._extract_probability_from_predict(model, X), None
+            # Handle case where model is a dictionary with 'model' key
+            actual_model = model
+            if isinstance(model, dict) and 'model' in model:
+                actual_model = model['model']
+
+            if hasattr(actual_model, "predict_proba"):
+                return self._extract_probability_from_proba(actual_model, X), None
+            elif hasattr(actual_model, "predict"):
+                return self._extract_probability_from_predict(actual_model, X), None
             else:
                 return None, {
                     "status": 500,

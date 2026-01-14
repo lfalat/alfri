@@ -43,14 +43,14 @@ DEFAULT_MODEL_MAP = {
     "mata1_pkl": {"type": "logistic", "path": "mata1.pkl", "role": "chance", "subject": "Matematicka analyza 1"},
 
     # Third grade
-    "modelovanie_a_simulacia_h5": {"type": "keras", "path": "mata1.h5", "role": "mark", "subject": "Modelovanie a simulácia"},
-    "modelovanie_a_simulacia_pkl": {"type": "logistic", "path": "mata1.pkl", "role": "chance", "subject": "Modelovanie a simulácia"},
+    "modelovanie_a_simulacia_h5": {"type": "keras", "path": "modelovanie_a_simulacia.h5", "role": "mark", "subject": "Modelovanie a simulácia"},
+    "modelovanie_a_simulacia_pkl": {"type": "logistic", "path": "modelovanie_a_simulacia.pkl", "role": "chance", "subject": "Modelovanie a simulácia"},
 
-    "principy_operacnych_systemov_h5": {"type": "keras", "path": "mata1.h5", "role": "mark", "subject": "Princípy operačných systémov"},
-    "principy_operacnych_systemov_pkl": {"type": "logistic", "path": "mata1.pkl", "role": "chance", "subject": "Princípy operačných systémov"},
+    "principy_operacnych_systemov_h5": {"type": "keras", "path": "principy_operacnych_systemov.h5", "role": "mark", "subject": "Princípy operačných systémov"},
+    "principy_operacnych_systemov_pkl": {"type": "logistic", "path": "principy_operacnych_systemov.pkl", "role": "chance", "subject": "Princípy operačných systémov"},
 
-    "vyvoj_aplikacii_internet_intranet_h5": {"type": "keras", "path": "mata1.h5", "role": "mark", "subject": "Vývoj aplikácií pre internet a intranet"},
-    "vyvoj_aplikacii_internet_intranet_pkl": {"type": "logistic", "path": "mata1.pkl", "role": "chance", "subject": "Vývoj aplikácií pre internet a intranet"},
+    "vyvoj_aplikacii_internet_intranet_h5": {"type": "keras", "path": "vyvoj_aplikacii_internet_intranet.h5", "role": "mark", "subject": "Vývoj aplikácií pre internet a intranet"},
+    "vyvoj_aplikacii_internet_intranet_pkl": {"type": "logistic", "path": "vyvoj_aplikacii_internet_intranet.pkl", "role": "chance", "subject": "Vývoj aplikácií pre internet a intranet"},
 
     # Fourth grade
     "best_model_AUS": {"type": "keras", "path": "best_model_AUS.h5"},

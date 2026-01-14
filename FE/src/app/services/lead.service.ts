@@ -1,5 +1,4 @@
-import { Injectable } from '@angular/core';
-import { environment } from '../../environments/environment';
+import { inject, Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import {
   FocusCategorySumDTO,
@@ -9,14 +8,15 @@ import {
   StudentYearCountDTO,
 } from '../types';
 import { Observable } from 'rxjs';
+import { ConfigService } from '@services/config.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class LeadService {
-  private readonly URL = `${environment.API_URL}/lead`;
-
-  constructor(private readonly http: HttpClient) {}
+  private readonly http = inject(HttpClient);
+  private readonly config = inject(ConfigService);
+  private readonly URL = `${this.config.apiUrl()}/lead`;
 
   public getAllKeywords(): Observable<KeywordDTO[]> {
     const httpOptions = {

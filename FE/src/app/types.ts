@@ -390,3 +390,14 @@ export interface PopularSubjectRow {
   semester: string;
   studentCount: number;
 }
+
+export interface AppConfig {
+  API_URL: string;
+  ENVIRONMENT: string;
+}
+
+export type UserState = {
+  userData: UserDto | undefined;
+  userId: number | undefined;
+  isLoading: boolean;
+};
