@@ -1,0 +1,19 @@
+<div class="container">
+  <h2>Najpopulárnejšie voliteľné predmety</h2>
+
+  <mat-card class="p-2">
+    <mat-card-content>
+      <app-generic-table
+        class="overflow-x-scroll"
+        [data]="subjectsData()"
+        [config]="tableConfig"
+        [loading]="isLoading()"
+        (pageChange)="onPageChange($event)"
+        (sortChange)="onSortChange($event)"
+        (rowClick)="onRowClick($event)"
+      >
+      </app-generic-table>
+    </mat-card-content>
+  </mat-card>
+</div>
+
