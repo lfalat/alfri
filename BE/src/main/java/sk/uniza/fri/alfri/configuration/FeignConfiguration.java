@@ -16,10 +16,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Map;
 
-import java.nio.charset.StandardCharsets;
-import java.util.Collection;
-import java.util.Map;
-
 @Configuration
 public class FeignConfiguration {
 
