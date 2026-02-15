@@ -109,4 +109,3 @@ class Config:
 
     def as_dict(self) -> Dict[str, Any]:
         return {k: v for k, v in self.__class__.__dict__.items() if k.isupper()}
-

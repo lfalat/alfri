@@ -39,4 +39,3 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=5s CMD curl -f http://127
 
 # Use gunicorn to serve the WSGI app. 2 workers is a reasonable default for small containers.
 CMD ["gunicorn", "-w", "2", "-b", "0.0.0.0:5000", "ml_service.wsgi:app"]
-
