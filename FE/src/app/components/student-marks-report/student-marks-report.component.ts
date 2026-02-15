@@ -59,8 +59,8 @@ import { debounceTime, Subject } from 'rxjs';
     MatChip,
     MatChipListbox,
     MatProgressBar,
-    MatPaginator
-],
+    MatPaginator,
+  ],
   animations: [
     trigger('fadeInOut', [
       state(
