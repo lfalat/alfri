@@ -19,7 +19,7 @@ import {
   ApexTitleSubtitle,
   ApexLegend,
   ApexGrid,
-  NgApexchartsModule,
+  NgApexchartsModule
 } from 'ng-apexcharts';
 
 export type ChartOptions = {
@@ -98,20 +98,14 @@ export class DataReportComponent implements OnInit, OnDestroy {
     const series: ApexAxisChartSeries = [];
 
     // Add series based on selected study program
-    if (
-      this.selectedStudyProgram === 'all' ||
-      this.selectedStudyProgram === 'informatika'
-    ) {
+    if (this.selectedStudyProgram === 'all' || this.selectedStudyProgram === 'informatika') {
       series.push({
         name: 'Informatika',
         data: trendData.map((d) => d.informatika),
       });
     }
 
-    if (
-      this.selectedStudyProgram === 'all' ||
-      this.selectedStudyProgram === 'manazment'
-    ) {
+    if (this.selectedStudyProgram === 'all' || this.selectedStudyProgram === 'manazment') {
       series.push({
         name: 'Manažment',
         data: trendData.map((d) => d.manazment),
@@ -172,3 +166,4 @@ export class DataReportComponent implements OnInit, OnDestroy {
     }
   }
 }
+
