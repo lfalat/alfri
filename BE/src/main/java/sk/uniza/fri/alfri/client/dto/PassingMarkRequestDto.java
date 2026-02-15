@@ -1,8 +1,5 @@
 package sk.uniza.fri.alfri.client.dto;
 
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Configuration;
-
 import java.util.List;
 
 public class PassingMarkRequestDto {
