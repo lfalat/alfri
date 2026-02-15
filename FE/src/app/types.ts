@@ -2,10 +2,14 @@ import {
   ApexAxisChartSeries,
   ApexChart,
   ApexDataLabels,
+  ApexGrid,
+  ApexLegend,
   ApexPlotOptions,
   ApexResponsive,
+  ApexStroke,
   ApexTitleSubtitle,
   ApexXAxis,
+  ApexYAxis,
 } from 'ng-apexcharts';
 import { AuthRole } from '@enums/auth-role';
 
