@@ -1,0 +1,47 @@
+databaseChangeLog:
+  - changeSet:
+      id: 24-create-convert-mark-to-grade-function
+      author: liquibase
+      changes:
+        - sql:
+            dbms: postgresql
+            endDelimiter: ";"
+            splitStatements: false
+            stripComments: false
+            sql: |
+              CREATE OR REPLACE FUNCTION convert_mark_to_grade(mark VARCHAR(2))
+              RETURNS DOUBLE PRECISION AS $func$
+              BEGIN
+                RETURN CASE
+                  WHEN mark = 'A' THEN 1.0
+                  WHEN mark = 'B' THEN 1.5
+                  WHEN mark = 'C' THEN 2.0
+                  WHEN mark = 'D' THEN 2.5
+                  WHEN mark = 'E' THEN 3.0
+                  WHEN mark = 'Fx' THEN 4.0
+                  ELSE NULL
+                END;
+              END;
+              $func$ LANGUAGE plpgsql IMMUTABLE;
+      rollback:
+        - sql:
+            sql: DROP FUNCTION IF EXISTS convert_mark_to_grade(VARCHAR(2));
+  - changeSet:
+      id: 24-create-student-avg-marks-view
+      author: liquibase
+      changes:
+        - sql:
+            dbms: postgresql
+            splitStatements: false
+            sql: |
+              CREATE OR REPLACE VIEW student_avg_marks AS
+              SELECT 
+                s.student_id,
+                COALESCE(AVG(convert_mark_to_grade(ss.mark)) FILTER (WHERE ss.mark IS NOT NULL), 0.0) as avgmark
+              FROM student s
+              LEFT JOIN student_subject ss ON s.student_id = ss.student_id
+              GROUP BY s.student_id;
+      rollback:
+        - sql:
+            sql: DROP VIEW IF EXISTS student_avg_marks;
+
