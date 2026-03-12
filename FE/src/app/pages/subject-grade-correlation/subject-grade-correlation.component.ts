@@ -9,6 +9,7 @@ import {
   switchMap,
   takeUntil,
   Subscription,
+  Subject,
 } from 'rxjs';
 import { SubjectGradeCorrelationService } from '@services/subject-grade-correlation.service';
 import { NgApexchartsModule } from 'ng-apexcharts';
@@ -63,9 +64,9 @@ export class SubjectGradeCorrelationComponent implements OnInit, OnDestroy {
     return this._heatmapDataLoaded$.asObservable();
   }
 
-  highCorrelationData$: Observable<SubjectGradeCorrelation[]> | undefined;
-  lowCorrelationData$: Observable<SubjectGradeCorrelation[]> | undefined;
-  noCorrelationData$: Observable<SubjectGradeCorrelation[]> | undefined;
+  highCorrelationData$: Observable<SubjectGradeCorrelation[]> | null = null;
+  lowCorrelationData$: Observable<SubjectGradeCorrelation[]> | null = null;
+  noCorrelationData$: Observable<SubjectGradeCorrelation[]> | null = null;
 
   studyPrograms$!: Observable<StudyProgramDto[]>;
 
@@ -100,6 +101,9 @@ export class SubjectGradeCorrelationComponent implements OnInit, OnDestroy {
 
   // subscription for the heatmap request so we can cancel a previous one when changing study program
   private heatmapSubscription?: Subscription;
+
+  // notify subscribers when study program changes so template async pipes can unsubscribe safely
+  private readonly _studyProgramChange$: Subject<void> = new Subject<void>();
 
   constructor() {
     this._chartOptions = {
@@ -216,6 +220,8 @@ export class SubjectGradeCorrelationComponent implements OnInit, OnDestroy {
     this._destroy$.complete();
     // ensure we also unsubscribe any running heatmap request
     this.heatmapSubscription?.unsubscribe();
+    // complete study program change notifier
+    this._studyProgramChange$.complete();
   }
 
   public onStudyProgramChange(selectedId: number | null) {
@@ -223,22 +229,18 @@ export class SubjectGradeCorrelationComponent implements OnInit, OnDestroy {
       return;
     }
 
+    // signal any template-bound observables to unsubscribe before we replace them
+    this._studyProgramChange$.next();
+
     // reset UI state for new selection
     this.selectedStudyProgramId.set(selectedId);
     this._heatmapDataLoaded$.next(false);
     this.chartOptions.series = [];
 
-    // clear previously loaded observables
-    // prefer setting to undefined so template's async pipe unsubscribes from previous observables
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    this.highCorrelationData$ = undefined;
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    this.lowCorrelationData$ = undefined;
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    this.noCorrelationData$ = undefined;
+    // clear previously loaded observables safely so async pipe has null instead of undefined
+    this.highCorrelationData$ = null;
+    this.lowCorrelationData$ = null;
+    this.noCorrelationData$ = null;
 
     // Cancel any ongoing heatmap request before starting a new one
     this.heatmapSubscription?.unsubscribe();
@@ -277,7 +279,7 @@ export class SubjectGradeCorrelationComponent implements OnInit, OnDestroy {
 
     this.heatmapSubscription = this.subjectGradeCorrelationService
       .getSubjectGradeCorrelation(spId)
-      .pipe(takeUntil(this._destroy$))
+      .pipe(takeUntil(this._studyProgramChange$), takeUntil(this._destroy$))
       .subscribe((data: SubjectGradeCorrelation[]) => {
         this.chartOptions.series = [];
 
@@ -346,7 +348,7 @@ export class SubjectGradeCorrelationComponent implements OnInit, OnDestroy {
 
     this.highCorrelationData$ = this.subjectGradeCorrelationService
       .getSubjectGradeCorrelation(spId, 0.75, Operator.GREATER_OR_EQUAL)
-      .pipe(takeUntil(this._destroy$));
+      .pipe(takeUntil(this._studyProgramChange$), takeUntil(this._destroy$));
   }
 
   private loadLowCorrelationData() {
@@ -357,7 +359,7 @@ export class SubjectGradeCorrelationComponent implements OnInit, OnDestroy {
 
     this.lowCorrelationData$ = this.subjectGradeCorrelationService
       .getSubjectGradeCorrelation(spId, -0.75, Operator.LESS_OR_EQUAL)
-      .pipe(takeUntil(this._destroy$));
+      .pipe(takeUntil(this._studyProgramChange$), takeUntil(this._destroy$));
   }
 
   private loadNoCorrelationData() {
@@ -369,6 +371,7 @@ export class SubjectGradeCorrelationComponent implements OnInit, OnDestroy {
     this.noCorrelationData$ = this.subjectGradeCorrelationService
       .getSubjectGradeCorrelation(spId, -0.05, Operator.GREATER_OR_EQUAL)
       .pipe(
+        takeUntil(this._studyProgramChange$),
         takeUntil(this._destroy$),
         switchMap(
           (negativeNeutralCorrelationData: SubjectGradeCorrelation[]) => {

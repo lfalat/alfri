@@ -17,7 +17,7 @@
 
   <mat-tab-group (selectedTabChange)="onTabChange($event)">
     <!-- Heatmap Correlation Tab -->
-    <mat-tab>
+    <mat-tab [disabled]="!isStudent() && !selectedStudyProgramId()">
       <ng-template mat-tab-label>
         <mat-icon class="tab-icon">bar_chart</mat-icon>
         Heatmap korelácie
@@ -51,7 +51,7 @@
     </mat-tab>
 
     <!-- High Correlation Tab -->
-    <mat-tab>
+    <mat-tab [disabled]="!isStudent() && !selectedStudyProgramId()">
       <ng-template mat-tab-label>
         <mat-icon class="tab-icon">arrow_upward</mat-icon>
         Vysoko korelované predmety
@@ -72,7 +72,7 @@
     </mat-tab>
 
     <!-- Low Correlation Tab -->
-    <mat-tab>
+    <mat-tab [disabled]="!isStudent() && !selectedStudyProgramId()">
       <ng-template mat-tab-label>
         <mat-icon class="tab-icon">arrow_downward</mat-icon>
         Nízko korelované predmety
@@ -93,7 +93,7 @@
     </mat-tab>
 
     <!-- No Correlation Tab -->
-    <mat-tab>
+    <mat-tab [disabled]="!isStudent() && !selectedStudyProgramId()">
       <ng-template mat-tab-label>
         <mat-icon class="tab-icon">remove</mat-icon>
         Nekorelujúce predmety
