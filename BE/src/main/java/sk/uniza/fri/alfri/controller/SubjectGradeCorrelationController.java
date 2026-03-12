@@ -32,16 +32,17 @@ public class SubjectGradeCorrelationController {
     @GetMapping(path = "/correlation", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<SubjectGradeCorrelationDto> getAllSubjectGradesCorrelations(
             @RequestParam(required = false) Double correlationTreshold,
-            @RequestParam(required = false) String operator) {
+            @RequestParam(required = false) String operator,
+            @RequestParam(required = false) Integer studyProgramId) {
         log.info("Getting all subject grade correlations");
 
         List<SubjectGradeCorrelation> subjectGradeCorrelations;
 
         if (correlationTreshold == null || operator == null) {
-            subjectGradeCorrelations = subjectGradeCorrelationService.findAll();
+            subjectGradeCorrelations = subjectGradeCorrelationService.findAll(studyProgramId);
         } else {
             subjectGradeCorrelations =
-                    subjectGradeCorrelationService.findAllWithCorrelation(correlationTreshold, operator);
+                    subjectGradeCorrelationService.findAllWithCorrelation(correlationTreshold, operator, studyProgramId);
         }
 
         List<SubjectGradeCorrelationDto> subjectGradeCorrelationDtos =

@@ -117,12 +117,17 @@ public class AuthService implements IAuthService {
     public void changePassword(ChangePasswordDto changePasswordDto) {
         if (changePasswordDto.getNewPassword().equals(changePasswordDto.getOldPassword())) {
             throw new InvalidCredentialsException(
-                    String.format("Cannot change password for user with email %s, password are not matching!",
-                            changePasswordDto.getEmail()));
+                    "New password cannot be the same as the old password!");
         }
+
         User foundUser = this.userRepository.findByEmail(changePasswordDto.getEmail())
                 .orElseThrow(() -> new EntityNotFoundException(
                         String.format("User with email %s was not found!", changePasswordDto.getEmail())));
+
+        // Verify the old password matches the current password
+        if (!passwordEncoder.matches(changePasswordDto.getOldPassword(), foundUser.getPassword())) {
+            throw new InvalidCredentialsException("Old password is incorrect!");
+        }
 
         foundUser.setPassword(passwordEncoder.encode(changePasswordDto.getNewPassword()));
         this.userRepository.save(foundUser);

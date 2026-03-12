@@ -1,4 +1,4 @@
-import { Component, inject, OnDestroy, OnInit } from '@angular/core';
+import { Component, computed, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import {
   BehaviorSubject,
   forkJoin,
@@ -8,6 +8,7 @@ import {
   ReplaySubject,
   switchMap,
   takeUntil,
+  Subscription,
 } from 'rxjs';
 import { SubjectGradeCorrelationService } from '@services/subject-grade-correlation.service';
 import { NgApexchartsModule } from 'ng-apexcharts';
@@ -23,7 +24,16 @@ import { Operator } from '@enums/operator';
 import { AsyncPipe } from '@angular/common';
 import { SubjectGradeCorrelationDetailComponent } from '@components/subject-grade-correlation-detail/subject-grade-correlation-detail.component';
 import { MatIcon } from '@angular/material/icon';
-import { ApexChartOptions, SubjectGradeCorrelation } from '../../types';
+import {
+  ApexChartOptions,
+  StudyProgramDto,
+  SubjectGradeCorrelation,
+} from '../../types';
+import { UserService } from '@services/user.service';
+import { StudyProgramService } from '@services/study-program.service';
+import { AuthRole } from '@enums/auth-role';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
 
 @Component({
   selector: 'app-subject-grade-correlation',
@@ -32,6 +42,8 @@ import { ApexChartOptions, SubjectGradeCorrelation } from '../../types';
     NgApexchartsModule,
     MatProgressSpinner,
     FormsModule,
+    MatFormFieldModule,
+    MatSelectModule,
     MatTabGroup,
     MatTab,
     AsyncPipe,
@@ -51,9 +63,11 @@ export class SubjectGradeCorrelationComponent implements OnInit, OnDestroy {
     return this._heatmapDataLoaded$.asObservable();
   }
 
-  highCorrelationData$!: Observable<SubjectGradeCorrelation[]>;
-  lowCorrelationData$!: Observable<SubjectGradeCorrelation[]>;
-  noCorrelationData$!: Observable<SubjectGradeCorrelation[]>;
+  highCorrelationData$: Observable<SubjectGradeCorrelation[]> | undefined;
+  lowCorrelationData$: Observable<SubjectGradeCorrelation[]> | undefined;
+  noCorrelationData$: Observable<SubjectGradeCorrelation[]> | undefined;
+
+  studyPrograms$!: Observable<StudyProgramDto[]>;
 
   private readonly _heatmapDataLoaded$: BehaviorSubject<boolean> =
     new BehaviorSubject(false);
@@ -63,6 +77,29 @@ export class SubjectGradeCorrelationComponent implements OnInit, OnDestroy {
   private readonly subjectGradeCorrelationService = inject(
     SubjectGradeCorrelationService,
   );
+
+  private readonly userService = inject(UserService);
+  private readonly studyProgramService = inject(StudyProgramService);
+
+  // studyProgramId from user's profile (for students this will always be set)
+  studyProgramId = computed(() => this.userService.userData()?.studyProgramId);
+
+  // whether current user is a student
+  isStudent = computed(
+    () =>
+      this.userService
+        .userData()
+        ?.roles?.some((r) => r.name === AuthRole.STUDENT) ?? false,
+  );
+
+  // selected study program for fetching correlations (null until chosen for non-students)
+  selectedStudyProgramId = signal<number | null>(null);
+
+  // track currently selected tab so we can reload it when study program changes
+  private currentTabIndex = 0;
+
+  // subscription for the heatmap request so we can cancel a previous one when changing study program
+  private heatmapSubscription?: Subscription;
 
   constructor() {
     this._chartOptions = {
@@ -78,15 +115,15 @@ export class SubjectGradeCorrelationComponent implements OnInit, OnDestroy {
       title: {},
       plotOptions: {
         heatmap: {
-          enableShades: true,
-          reverseNegativeShade: true,
+          enableShades: false,
+          reverseNegativeShade: false,
           colorScale: {
             inverse: false,
             ranges: [
-              { from: -1, to: -0.75, color: '#5E0B15' },
-              { from: -0.75, to: -0.5, color: '#D32F2F' },
-              { from: -0.5, to: -0.25, color: '#F57C00' },
-              { from: -0.25, to: 0, color: '#FFEB3B' },
+              { from: -1, to: -0.75, color: '#4A148C' },
+              { from: -0.75, to: -0.5, color: '#1976D2' },
+              { from: -0.5, to: -0.25, color: '#388E3C' },
+              { from: -0.25, to: 0, color: '#AEEA00' },
               { from: 0, to: 0.25, color: '#AEEA00' },
               { from: 0.25, to: 0.5, color: '#388E3C' },
               { from: 0.5, to: 0.75, color: '#1976D2' },
@@ -135,6 +172,7 @@ export class SubjectGradeCorrelationComponent implements OnInit, OnDestroy {
   }
 
   public onTabChange(event: MatTabChangeEvent) {
+    this.currentTabIndex = event.index; // track current tab
     switch (event.index) {
       case 0:
         if (!this._heatmapDataLoaded$.value) {
@@ -160,17 +198,85 @@ export class SubjectGradeCorrelationComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.loadHeatmapData();
+    // If current user is a student, auto-select their study program and load data
+    if (this.isStudent()) {
+      const spId = this.studyProgramId();
+      if (spId) {
+        this.selectedStudyProgramId.set(spId);
+        this.loadHeatmapData();
+      }
+    } else {
+      // For other roles, fetch available study programs for the dropdown
+      this.studyPrograms$ = this.studyProgramService.getAll();
+    }
   }
 
   ngOnDestroy() {
     this._destroy$.next();
     this._destroy$.complete();
+    // ensure we also unsubscribe any running heatmap request
+    this.heatmapSubscription?.unsubscribe();
+  }
+
+  public onStudyProgramChange(selectedId: number | null) {
+    if (!selectedId) {
+      return;
+    }
+
+    // reset UI state for new selection
+    this.selectedStudyProgramId.set(selectedId);
+    this._heatmapDataLoaded$.next(false);
+    this.chartOptions.series = [];
+
+    // clear previously loaded observables
+    // prefer setting to undefined so template's async pipe unsubscribes from previous observables
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    this.highCorrelationData$ = undefined;
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    this.lowCorrelationData$ = undefined;
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    this.noCorrelationData$ = undefined;
+
+    // Cancel any ongoing heatmap request before starting a new one
+    this.heatmapSubscription?.unsubscribe();
+
+    // Reload the currently visible tab so user sees updated data immediately
+    switch (this.currentTabIndex) {
+      case 0:
+        this.loadHeatmapData();
+        break;
+      case 1:
+        this.loadHighCorrelationData();
+        break;
+      case 2:
+        this.loadLowCorrelationData();
+        break;
+      case 3:
+        this.loadNoCorrelationData();
+        break;
+      default:
+        this.loadHeatmapData();
+    }
   }
 
   private loadHeatmapData(): void {
-    this.subjectGradeCorrelationService
-      .getSubjectGradeCorrelation()
+    const spId = this.selectedStudyProgramId();
+    if (!spId) {
+      // no study program selected yet
+      return;
+    }
+
+    // clear existing series before fetching
+    this.chartOptions.series = [];
+
+    // Cancel any previously running heatmap request to avoid race conditions
+    this.heatmapSubscription?.unsubscribe();
+
+    this.heatmapSubscription = this.subjectGradeCorrelationService
+      .getSubjectGradeCorrelation(spId)
       .pipe(takeUntil(this._destroy$))
       .subscribe((data: SubjectGradeCorrelation[]) => {
         this.chartOptions.series = [];
@@ -233,26 +339,42 @@ export class SubjectGradeCorrelationComponent implements OnInit, OnDestroy {
   }
 
   private loadHighCorrelationData() {
+    const spId = this.selectedStudyProgramId();
+    if (!spId) {
+      return;
+    }
+
     this.highCorrelationData$ = this.subjectGradeCorrelationService
-      .getSubjectGradeCorrelation(0.75, Operator.GREATER_OR_EQUAL)
+      .getSubjectGradeCorrelation(spId, 0.75, Operator.GREATER_OR_EQUAL)
       .pipe(takeUntil(this._destroy$));
   }
 
   private loadLowCorrelationData() {
+    const spId = this.selectedStudyProgramId();
+    if (!spId) {
+      return;
+    }
+
     this.lowCorrelationData$ = this.subjectGradeCorrelationService
-      .getSubjectGradeCorrelation(-0.75, Operator.LESS_OR_EQUAL)
+      .getSubjectGradeCorrelation(spId, -0.75, Operator.LESS_OR_EQUAL)
       .pipe(takeUntil(this._destroy$));
   }
 
   private loadNoCorrelationData() {
+    const spId = this.selectedStudyProgramId();
+    if (!spId) {
+      return;
+    }
+
     this.noCorrelationData$ = this.subjectGradeCorrelationService
-      .getSubjectGradeCorrelation(-0.05, Operator.GREATER_OR_EQUAL)
+      .getSubjectGradeCorrelation(spId, -0.05, Operator.GREATER_OR_EQUAL)
       .pipe(
         takeUntil(this._destroy$),
         switchMap(
           (negativeNeutralCorrelationData: SubjectGradeCorrelation[]) => {
             const positiveNeutralCorrelation$ =
               this.subjectGradeCorrelationService.getSubjectGradeCorrelation(
+                spId,
                 0.05,
                 Operator.LESS_OR_EQUAL,
               );

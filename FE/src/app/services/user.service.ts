@@ -2,14 +2,14 @@ import { inject, Injectable, signal } from '@angular/core';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { HttpClient } from '@angular/common/http';
 import { Observable, take } from 'rxjs';
-import { Role, UserDto } from '../types';
+import { Role, UserDtoExtended } from '../types';
 import { ConfigService } from '@services/config.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class UserService {
-  readonly userData = signal<UserDto | undefined>(undefined);
+  readonly userData = signal<UserDtoExtended | null>(null);
 
   userId: number | undefined;
   private readonly configService = inject(ConfigService);
@@ -27,11 +27,11 @@ export class UserService {
     this.loadUserInfo()
       .pipe(take(1))
       .subscribe({
-        next: (userData: UserDto) => {
+        next: (userData) => {
           this.userData.set(userData);
         },
         error: () => {
-          this.userData.set(undefined);
+          this.userData.set(null);
         },
       });
   }
@@ -75,8 +75,8 @@ export class UserService {
     }
   };
 
-  loadUserInfo(): Observable<UserDto> {
-    return this.http.get<UserDto>(`${this.BE_URL}/profile`);
+  loadUserInfo(): Observable<UserDtoExtended> {
+    return this.http.get<UserDtoExtended>(`${this.BE_URL}/profile`);
   }
 
   public getRoles(): Observable<Role[]> {

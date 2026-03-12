@@ -29,6 +29,10 @@ export interface UserDto {
   email: string;
 }
 
+export interface UserDtoExtended extends UserDto {
+  studyProgramId?: number;
+}
+
 export interface LoginUserDto {
   email: string;
   password: string;

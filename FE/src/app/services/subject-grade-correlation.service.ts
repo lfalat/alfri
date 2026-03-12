@@ -14,6 +14,7 @@ export class SubjectGradeCorrelationService {
   private readonly http = inject(HttpClient);
 
   public getSubjectGradeCorrelation(
+    studyProgramId: number,
     correlationTreshold?: number,
     operator?: Operator,
   ): Observable<SubjectGradeCorrelation[]> {
@@ -23,6 +24,9 @@ export class SubjectGradeCorrelationService {
         .append('correlationTreshold', correlationTreshold)
         .append('operator', operator);
     }
+
+    params = params.append('studyProgramId', studyProgramId);
+
     return this.http.get<SubjectGradeCorrelation[]>(
       `${this.BE_URL}/subject-grade-correlation-controller/correlation`,
       { params },

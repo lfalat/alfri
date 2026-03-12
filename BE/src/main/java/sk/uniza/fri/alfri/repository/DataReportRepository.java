@@ -43,20 +43,19 @@ public interface DataReportRepository extends JpaRepository<Student, Integer> {
     Long countStudyPrograms(@Param("studyProgramId") Integer studyProgramId);
 
     /**
-     * Get student trend data - count of students by calendar year and study program
+     * Get student trend data - count of students by enrollment year and study program
      * @param studyProgramId optional study program filter
-     * @param startYear starting calendar year for historical data
+     * @param startYear starting enrollment year for historical data
      * @return list of student trend projections
      */
-    @Query("SELECT ss.calendarYear as calendarYear, " +
+    @Query("SELECT s.enrollmentYear as calendarYear, " +
             "s.studyProgramId as studyProgramId, " +
-            "COUNT(DISTINCT ss.studentId) as count " +
-            "FROM StudentSubject ss " +
-            "JOIN Student s ON ss.studentId = s.id " +
+            "COUNT(DISTINCT s.id) as count " +
+            "FROM Student s " +
             "WHERE (:studyProgramId IS NULL OR s.studyProgramId = :studyProgramId) " +
-            "AND ss.calendarYear >= :startYear " +
-            "GROUP BY ss.calendarYear, s.studyProgramId " +
-            "ORDER BY ss.calendarYear, s.studyProgramId")
+            "AND s.enrollmentYear >= :startYear " +
+            "GROUP BY s.enrollmentYear, s.studyProgramId " +
+            "ORDER BY s.enrollmentYear, s.studyProgramId")
     List<StudentTrendProjection> getStudentTrendByYear(@Param("studyProgramId") Integer studyProgramId,
                                           @Param("startYear") Integer startYear);
 

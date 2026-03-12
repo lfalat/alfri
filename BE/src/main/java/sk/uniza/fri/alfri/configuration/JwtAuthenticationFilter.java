@@ -40,7 +40,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         // TODO ak bude cas, je potrebne prerobit security config, aby tam fungovali endpointy, ktore
     // TODO nepotrebuju autentifikaciu. Teraz je potrebne ich specifikovat tu
-    if (request.getServletPath().startsWith("/api/auth")
+    if ((request.getServletPath().startsWith("/api/auth")
+            && !request.getServletPath().equals("/api/auth/change-password"))
         || request.getServletPath().startsWith("/api/user/roles")) {
       filterChain.doFilter(request, response);
       return;

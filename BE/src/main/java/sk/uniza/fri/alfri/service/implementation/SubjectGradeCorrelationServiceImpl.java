@@ -21,42 +21,80 @@ public class SubjectGradeCorrelationServiceImpl implements SubjectGradeCorrelati
     }
 
     @Override
-    public List<SubjectGradeCorrelation> findAll() {
-        Specification<SubjectGradeCorrelation> specification = (root, query, criteriaBuilder) ->
-                criteriaBuilder.notEqual(root.get(FIRST_SUBJECT), root.get(SECOND_SUBJECT));
+    public List<SubjectGradeCorrelation> findAll(Integer studyProgramId) {
+        Specification<SubjectGradeCorrelation> specification = (root, query, criteriaBuilder) -> {
+            // first ensure subjects are not the same
+            var notEqual = criteriaBuilder.notEqual(root.get(FIRST_SUBJECT), root.get(SECOND_SUBJECT));
+
+            if (studyProgramId == null) {
+                return notEqual;
+            }
+
+            // join from firstSubject -> studyProgramSubjects -> studyProgram -> id
+            var firstJoin = root.join(FIRST_SUBJECT).join("studyProgramSubjects");
+            var secondJoin = root.join(SECOND_SUBJECT).join("studyProgramSubjects");
+
+            var firstProgramIdPath = firstJoin.get("studyProgram").get("id");
+            var secondProgramIdPath = secondJoin.get("studyProgram").get("id");
+
+            var firstEq = criteriaBuilder.equal(firstProgramIdPath, studyProgramId);
+            var secondEq = criteriaBuilder.equal(secondProgramIdPath, studyProgramId);
+
+            return criteriaBuilder.and(notEqual, firstEq, secondEq);
+        };
 
         return subjectGradeCorrelationRepository.findAll(specification);
     }
 
     @Override
     public List<SubjectGradeCorrelation> findAllWithCorrelation(double correlationTreshold,
-                                                                String operator) {
+                                                                String operator, Integer studyProgramId) {
+        Specification<SubjectGradeCorrelation> basePredicate = (root, query, criteriaBuilder) -> {
+            var notEqual = criteriaBuilder.notEqual(root.get(FIRST_SUBJECT), root.get(SECOND_SUBJECT));
+
+            if (studyProgramId == null) {
+                return notEqual;
+            }
+
+            var firstJoin = root.join(FIRST_SUBJECT).join("studyProgramSubjects");
+            var secondJoin = root.join(SECOND_SUBJECT).join("studyProgramSubjects");
+
+            var firstProgramIdPath = firstJoin.get("studyProgram").get("id");
+            var secondProgramIdPath = secondJoin.get("studyProgram").get("id");
+
+            var firstEq = criteriaBuilder.equal(firstProgramIdPath, studyProgramId);
+            var secondEq = criteriaBuilder.equal(secondProgramIdPath, studyProgramId);
+
+            return criteriaBuilder.and(notEqual, firstEq, secondEq);
+        };
+
         Specification<SubjectGradeCorrelation> specification;
 
         switch (operator) {
             case ">" -> specification = (root, query, criteriaBuilder) -> criteriaBuilder.and(
                     criteriaBuilder.gt(root.get(CORRELATION), correlationTreshold),
-                    criteriaBuilder.notEqual(root.get(FIRST_SUBJECT), root.get(SECOND_SUBJECT))
+                    // include base predicates
+                    basePredicate.toPredicate(root, query, criteriaBuilder)
             );
             case ">=" -> specification = (root, query, criteriaBuilder) -> criteriaBuilder.and(
                     criteriaBuilder.greaterThanOrEqualTo(root.get(CORRELATION), correlationTreshold),
-                    criteriaBuilder.notEqual(root.get(FIRST_SUBJECT), root.get(SECOND_SUBJECT))
+                    basePredicate.toPredicate(root, query, criteriaBuilder)
             );
             case "<" -> specification = (root, query, criteriaBuilder) -> criteriaBuilder.and(
                     criteriaBuilder.lt(root.get(CORRELATION), correlationTreshold),
-                    criteriaBuilder.notEqual(root.get(FIRST_SUBJECT), root.get(SECOND_SUBJECT))
+                    basePredicate.toPredicate(root, query, criteriaBuilder)
             );
             case "<=" -> specification = (root, query, criteriaBuilder) -> criteriaBuilder.and(
                     criteriaBuilder.lessThanOrEqualTo(root.get(CORRELATION), correlationTreshold),
-                    criteriaBuilder.notEqual(root.get(FIRST_SUBJECT), root.get(SECOND_SUBJECT))
+                    basePredicate.toPredicate(root, query, criteriaBuilder)
             );
             case "=" -> specification = (root, query, criteriaBuilder) -> criteriaBuilder.and(
                     criteriaBuilder.equal(root.get(CORRELATION), correlationTreshold),
-                    criteriaBuilder.notEqual(root.get(FIRST_SUBJECT), root.get(SECOND_SUBJECT))
+                    basePredicate.toPredicate(root, query, criteriaBuilder)
             );
             case "<>" -> specification = (root, query, criteriaBuilder) -> criteriaBuilder.and(
                     criteriaBuilder.notEqual(root.get(CORRELATION), correlationTreshold),
-                    criteriaBuilder.notEqual(root.get(FIRST_SUBJECT), root.get(SECOND_SUBJECT))
+                    basePredicate.toPredicate(root, query, criteriaBuilder)
             );
 
             default -> throw new IllegalArgumentException("Invalid operator: " + operator);

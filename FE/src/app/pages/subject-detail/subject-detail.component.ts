@@ -364,7 +364,7 @@ export class SubjectDetailComponent
   }
 
   private updateRadarChartOptions() {
-    if (!this.subjectData) return;
+    if (!this.subjectData || !this.subjectData.focusDTO) return;
 
     this.radarChartOptions = {
       data: {
@@ -413,7 +413,7 @@ export class SubjectDetailComponent
       physicalFocus: 'Fyzické zameranie',
     };
 
-    return this.subjectData
+    return this.subjectData && this.subjectData.focusDTO
       ? Object.keys(this.subjectData.focusDTO).map(
           (key) => focusLabelMapping[key],
         )

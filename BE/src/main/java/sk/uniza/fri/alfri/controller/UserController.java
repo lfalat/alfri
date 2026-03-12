@@ -7,8 +7,10 @@ import org.springframework.security.authentication.AuthenticationCredentialsNotF
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import sk.uniza.fri.alfri.assembler.UserAssembler;
 import sk.uniza.fri.alfri.dto.user.RoleDto;
 import sk.uniza.fri.alfri.dto.user.UserDto;
+import sk.uniza.fri.alfri.dto.user.UserDtoExtended;
 import sk.uniza.fri.alfri.entity.Role;
 import sk.uniza.fri.alfri.entity.User;
 import sk.uniza.fri.alfri.mapper.RoleMapper;
@@ -34,13 +36,13 @@ public class UserController {
     }
 
     @GetMapping(value = "/profile", produces = APPLICATION_JSON_VALUE)
-    public UserDto getUser() {
+    public UserDtoExtended getUser() {
         log.info("Loading user profile");
         String userEmail = authService.getCurrentUserEmail()
                 .orElseThrow(() -> new EntityNotFoundException("Cannot extract user email"));
         User user = this.userService.getUser(userEmail);
 
-        return this.modelMapper.map(user, UserDto.class);
+        return UserAssembler.toUserDtoExtended(user);
     }
 
     @GetMapping(value = "/roles", produces = APPLICATION_JSON_VALUE)

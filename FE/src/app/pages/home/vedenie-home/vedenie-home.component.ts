@@ -7,6 +7,8 @@ import {
   ViewChild,
   inject,
   NgZone,
+  computed,
+  signal,
 } from '@angular/core';
 
 import { Chart, ChartConfiguration, registerables } from 'chart.js';
@@ -17,11 +19,33 @@ import {
   FocusCategorySumDTO,
   KeywordDTO,
   StudentYearCountDTO,
+  DataReportDto,
+  StudyProgramDto,
+  StudyProgramId,
+  StudentTrendDataPoint,
 } from '../../../types';
 import { StudentMarksReportComponent } from '@components/student-marks-report/student-marks-report.component';
 import { LeadService } from '@services/lead.service';
 import { Router } from '@angular/router';
 import { forkJoin, Subscription } from 'rxjs';
+import { DataReportService } from '@services/data-report.service';
+import { StudyProgramService } from '@services/study-program.service';
+import { LineChartComponent, PieChartComponent } from '@components/charts';
+import { ApexAxisChartSeries, ApexOptions } from 'ng-apexcharts';
+import {
+  INFORMATICS_STUDY_PROGRAM_ID,
+  MANAGEMENT_STUDY_PROGRAM_ID,
+} from '../../../const';
+import {
+  getStudentTrendChartOptions,
+  getGradeChartOptions,
+  getGradeDistributionChartOptions,
+} from '../teacher-home/teacher-home.const';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
+import { FormsModule } from '@angular/forms';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatIconModule } from '@angular/material/icon';
 
 const FOCUS_LABEL_MAPPING: Record<string, string> = {
   math_focus: 'Matematika',
@@ -178,7 +202,16 @@ const buildYearBarConfig = (
 @Component({
   selector: 'app-vedenie-home',
   standalone: true,
-  imports: [StudentMarksReportComponent],
+  imports: [
+    StudentMarksReportComponent,
+    LineChartComponent,
+    PieChartComponent,
+    MatFormFieldModule,
+    MatSelectModule,
+    FormsModule,
+    MatProgressBarModule,
+    MatIconModule,
+  ],
   templateUrl: './vedenie-home.component.html',
   styleUrl: './vedenie-home.component.scss',
 })
@@ -201,10 +234,46 @@ export class VedenieHomeComponent implements OnInit, AfterViewInit, OnDestroy {
   private readonly leadService = inject(LeadService);
   private readonly router = inject(Router);
   private readonly zone = inject(NgZone);
+  private readonly dataReportService = inject(DataReportService);
+  private readonly studyProgramService = inject(StudyProgramService);
 
   private dataSubscription?: Subscription;
+  private reportSubscription?: Subscription;
   private isViewReady = false;
   private chartPayload?: ChartPayload;
+
+  // Signals for teacher-home data
+  dataReport = signal<DataReportDto | null>(null);
+  selectedStudyProgramId = signal<StudyProgramId | null>(null);
+  studyPrograms = signal<StudyProgramDto[]>([]);
+  isLoadingReport = signal(false);
+
+  // Computed properties for teacher-home charts
+  chartOptions = computed<ApexOptions | null>(() => {
+    const report = this.dataReport();
+    if (!report) {
+      return null;
+    }
+
+    const trendData = report.studentTrend;
+    const series = this.getSeriesData(trendData);
+
+    return getStudentTrendChartOptions(trendData, series);
+  });
+
+  gradeChartOptions = computed<ApexOptions | null>(() => {
+    const report = this.dataReport();
+    if (!report?.averageGradeByYear) return null;
+
+    return getGradeChartOptions(report.averageGradeByYear);
+  });
+
+  gradeDistributionChartOptions = computed<ApexOptions | null>(() => {
+    const report = this.dataReport();
+    if (!report?.gradeDistribution) return null;
+
+    return getGradeDistributionChartOptions(report.gradeDistribution);
+  });
 
   constructor() {
     Chart.register(...registerables);
@@ -212,6 +281,7 @@ export class VedenieHomeComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnInit(): void {
     this.loadChartData();
+    this.loadTeacherHomeData();
   }
 
   ngAfterViewInit(): void {
@@ -221,6 +291,7 @@ export class VedenieHomeComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.dataSubscription?.unsubscribe();
+    this.reportSubscription?.unsubscribe();
     this.disposeCharts();
   }
 
@@ -313,5 +384,79 @@ export class VedenieHomeComponent implements OnInit, AfterViewInit, OnDestroy {
     this.barChart?.destroy();
     this.pieChart?.destroy();
     this.wordCloudChart?.dispose();
+  }
+
+  // Teacher-home specific methods
+  private loadTeacherHomeData(): void {
+    this.isLoadingReport.set(true);
+    this.studyProgramService.getAll().subscribe({
+      next: (studyPrograms) => {
+        this.studyPrograms.set(studyPrograms);
+        this.fetchDataReport(this.selectedStudyProgramId());
+      },
+      error: () => {
+        this.isLoadingReport.set(false);
+      },
+    });
+  }
+
+  private fetchDataReport(studyProgramId: StudyProgramId | null): void {
+    this.isLoadingReport.set(true);
+    this.reportSubscription?.unsubscribe();
+    this.reportSubscription = this.dataReportService
+      .getDataReport(studyProgramId)
+      .subscribe({
+        next: (dataReport) => {
+          this.dataReport.set(dataReport);
+          this.isLoadingReport.set(false);
+        },
+        error: () => {
+          this.isLoadingReport.set(false);
+        },
+      });
+  }
+
+  onStudyProgramChange(studyProgramId: StudyProgramId | null): void {
+    this.selectedStudyProgramId.set(studyProgramId);
+    this.fetchDataReport(studyProgramId);
+  }
+
+  getSeriesData(trendData: StudentTrendDataPoint[]): ApexAxisChartSeries {
+    let series: ApexAxisChartSeries = [];
+
+    const selectedId = this.selectedStudyProgramId();
+    if (selectedId) {
+      const selectedProgram = this.studyPrograms().find(
+        (p) => p.id === selectedId,
+      );
+      if (selectedProgram) {
+        series = [
+          {
+            name: selectedProgram.name,
+            data: trendData.map(
+              (d: StudentTrendDataPoint) =>
+                d.programCounts[selectedId],
+            ),
+          },
+        ];
+      }
+    } else {
+      series = [
+        {
+          name: 'Informatika',
+          data: trendData.map(
+            (d) => d.programCounts[INFORMATICS_STUDY_PROGRAM_ID],
+          ),
+        },
+        {
+          name: 'Manažment',
+          data: trendData.map(
+            (d) => d.programCounts[MANAGEMENT_STUDY_PROGRAM_ID],
+          ),
+        },
+      ];
+    }
+
+    return series;
   }
 }
