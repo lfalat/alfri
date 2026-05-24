@@ -78,7 +78,10 @@ describe('GenericTableComponent', () => {
     expect(component.dataSource.data.length).toBe(3);
 
     // Update signal
-    dataSignal.set([...mockData, { id: 4, name: 'Alice', email: 'alice@example.com', active: true }]);
+    dataSignal.set([
+      ...mockData,
+      { id: 4, name: 'Alice', email: 'alice@example.com', active: true },
+    ]);
     fixture.detectChanges();
 
     expect(component.dataSource.data.length).toBe(4);
@@ -165,7 +168,10 @@ describe('GenericTableComponent', () => {
 
   it('should handle selection', () => {
     fixture.componentRef.setInput('data', signal(mockData));
-    fixture.componentRef.setInput('config', signal({ ...basicConfig, enableSelection: true }));
+    fixture.componentRef.setInput(
+      'config',
+      signal({ ...basicConfig, enableSelection: true }),
+    );
     fixture.detectChanges();
 
     component.toggleRow(mockData[0]);
@@ -177,7 +183,10 @@ describe('GenericTableComponent', () => {
 
   it('should select all rows with masterToggle', () => {
     fixture.componentRef.setInput('data', signal(mockData));
-    fixture.componentRef.setInput('config', signal({ ...basicConfig, enableSelection: true }));
+    fixture.componentRef.setInput(
+      'config',
+      signal({ ...basicConfig, enableSelection: true }),
+    );
     fixture.detectChanges();
 
     component.masterToggle();
@@ -210,7 +219,10 @@ describe('GenericTableComponent', () => {
 
   it('should emit selectionChange event', () => {
     fixture.componentRef.setInput('data', signal(mockData));
-    fixture.componentRef.setInput('config', signal({ ...basicConfig, enableSelection: true }));
+    fixture.componentRef.setInput(
+      'config',
+      signal({ ...basicConfig, enableSelection: true }),
+    );
     fixture.detectChanges();
 
     let selectedRows: TestData[] = [];
@@ -263,7 +275,7 @@ describe('GenericTableComponent', () => {
   });
 
   it('should handle actions correctly', () => {
-    const actionClicked = jasmine.createSpy('actionClicked');
+    const actionClicked = vi.fn();
 
     const configWithActions: TableConfig<TestData> = {
       ...basicConfig,
@@ -291,7 +303,10 @@ describe('GenericTableComponent', () => {
     const action = configWithActions.columns[3].actionsConfig![0];
     component.onActionClick(action, mockData[0], new MouseEvent('click'));
 
-    expect(actionClicked).toHaveBeenCalledWith(mockData[0], jasmine.any(MouseEvent));
+    expect(actionClicked).toHaveBeenCalledWith(
+      mockData[0],
+      expect.any(MouseEvent),
+    );
   });
 
   it('should check if action is disabled', () => {
@@ -382,8 +397,16 @@ describe('GenericTableComponent', () => {
 
   it('should get column alignment class', () => {
     const leftColumn = { id: 'left', header: 'Left', align: 'left' as const };
-    const centerColumn = { id: 'center', header: 'Center', align: 'center' as const };
-    const rightColumn = { id: 'right', header: 'Right', align: 'right' as const };
+    const centerColumn = {
+      id: 'center',
+      header: 'Center',
+      align: 'center' as const,
+    };
+    const rightColumn = {
+      id: 'right',
+      header: 'Right',
+      align: 'right' as const,
+    };
 
     expect(component.getColumnAlignClass(leftColumn)).toBe('align-left');
     expect(component.getColumnAlignClass(centerColumn)).toBe('align-center');
@@ -405,4 +428,3 @@ describe('GenericTableComponent', () => {
     expect(style['max-width']).toBe('300px');
   });
 });
-
