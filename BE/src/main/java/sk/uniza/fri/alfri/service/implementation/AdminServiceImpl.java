@@ -32,11 +32,12 @@ public class AdminServiceImpl implements AdminService {
     private final SubjectRepository subjectRepository;
     private final TeacherRepository teacherRepository;
     private final ModelMapper modelMapper;
+    private final KeycloakAuthClient keycloakAuthClient;
 
     public AdminServiceImpl(RoleRepository roleRepository, UserService userService,
                             UserRepository userRepository, TeacherService teacherService,
                             SubjectRepository subjectRepository, TeacherRepository teacherRepository,
-                            ModelMapper modelMapper) {
+                            ModelMapper modelMapper, KeycloakAuthClient keycloakAuthClient) {
         this.roleRepository = roleRepository;
         this.userService = userService;
         this.userRepository = userRepository;
@@ -44,6 +45,7 @@ public class AdminServiceImpl implements AdminService {
         this.subjectRepository = subjectRepository;
         this.teacherRepository = teacherRepository;
         this.modelMapper = modelMapper;
+        this.keycloakAuthClient = keycloakAuthClient;
     }
 
     @Override
@@ -92,5 +94,11 @@ public class AdminServiceImpl implements AdminService {
         teacher.setSubjects(subjects);
 
         return teacherRepository.save(teacher);
+    }
+
+    @Override
+    public void resetUserPassword(Integer userId, String newPassword) {
+        User user = userService.getUser(userId);
+        keycloakAuthClient.resetUserPassword(user.getEmail(), newPassword);
     }
 }

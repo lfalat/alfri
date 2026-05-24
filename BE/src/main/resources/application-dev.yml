@@ -66,8 +66,14 @@ resilience4j:
         ignoreExceptions:
           - org.springframework.web.client.HttpClientErrorException
 
-frontend-url: ${FRONTEND_DEV_URL:*}
 keycloak:
+  issuer-uri: ${KEYCLOAK_ISSUER_URI:http://localhost:8180/realms/alfri}
+  realm: ${KEYCLOAK_REALM:alfri}
+  client-id: ${KEYCLOAK_CLIENT_ID:alfri-app}
+  admin-realm: ${KEYCLOAK_ADMIN_REALM:master}
+  admin-client-id: ${KEYCLOAK_ADMIN_CLIENT_ID:admin-cli}
+  admin-username: ${KEYCLOAK_ADMIN_USERNAME:admin}
+  admin-password: ${KEYCLOAK_ADMIN_PASSWORD:admin}
   events:
     webhook-secret: ${KEYCLOAK_EVENT_WEBHOOK_SECRET:changeme}
 # email of user that you want to act as

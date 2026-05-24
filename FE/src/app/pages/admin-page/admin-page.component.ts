@@ -1,9 +1,18 @@
-import { Component, inject, OnInit } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  computed,
+  inject,
+  OnInit,
+  signal,
+  TemplateRef,
+  ViewChild,
+} from '@angular/core';
 import { AdminService } from '@services/admin.service';
 import { UserStore } from '../../stores/user.store';
 
 import { FormsModule } from '@angular/forms';
-import { ChangePasswordDto, PasswordPair, Role, UserDto } from '../../types';
+import { PasswordPair, RegisterUserDto, Role, UserDto } from '../../types';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
@@ -12,20 +21,17 @@ import { PasswordChangeModalComponent } from '@components/password-change-modal/
 import { ChangeSubjectsModalComponent } from '@components/change-subjects-modal/change-subjects-modal.component';
 import { AuthRole } from '@enums/auth-role';
 import { NotificationService } from '@services/notification.service';
-import { AuthService } from '@services/auth.service';
-import {
-  MatCell,
-  MatCellDef,
-  MatColumnDef,
-  MatHeaderCell,
-  MatHeaderCellDef,
-  MatHeaderRow,
-  MatHeaderRowDef,
-  MatRow,
-  MatRowDef,
-  MatTable,
-} from '@angular/material/table';
 import { CreateUserModalComponent } from '@components/create-user-modal/create-user-modal.component';
+import {
+  GenericTableComponent,
+  TableCellContext,
+  TableConfig,
+  TextCellRendererComponent,
+} from '@components/generic-table';
+import { GenericTableUtils } from '@components/generic-table/generic-table.utils';
+import { AuthService } from '@services/auth.service';
+
+type UserTableRow = UserDto & { id: number };
 
 @Component({
   selector: 'app-admin',
@@ -38,38 +44,93 @@ import { CreateUserModalComponent } from '@components/create-user-modal/create-u
     MatIconButton,
     MatMenuTrigger,
     MatIcon,
-    MatColumnDef,
-    MatHeaderCell,
-    MatCell,
-    MatCellDef,
-    MatHeaderCellDef,
-    MatHeaderRow,
-    MatRow,
-    MatRowDef,
-    MatHeaderRowDef,
-    MatTable,
     MatButton,
+    GenericTableComponent,
   ],
   standalone: true,
 })
-export class AdminPageComponent implements OnInit {
-  users: UserDto[] = [];
+export class AdminPageComponent implements OnInit, AfterViewInit {
+  @ViewChild('rolesCell') rolesCellTemplate!: TemplateRef<TableCellContext<UserTableRow>>;
+  @ViewChild('optionsCell') optionsCellTemplate!: TemplateRef<TableCellContext<UserTableRow>>;
+
+  users = signal<UserDto[]>([]);
   availableRoles: Role[] = [];
-  displayedColumns: string[] = ['firstName', 'lastName', 'email', 'roles', 'options'];
+  tableConfig = signal<TableConfig<UserTableRow> | null>(null);
+
   protected readonly AuthRole = AuthRole;
-  private readonly as = inject(AdminService);
+  private readonly adminService = inject(AdminService);
   private readonly userStore = inject(UserStore);
   private readonly dialog = inject(MatDialog);
   private readonly notificationService = inject(NotificationService);
   private readonly authService = inject(AuthService);
 
+  usersPage = computed(() => {
+    const mapped = this.users().map((u) => ({ ...u, id: u.userId }));
+    return GenericTableUtils.pageOf(mapped);
+  });
+
   ngOnInit(): void {
     this.fetchData();
   }
 
+  ngAfterViewInit(): void {
+    this.tableConfig.set({
+      columns: [
+        {
+          id: 'firstName',
+          header: 'Meno',
+          field: 'firstName',
+          cellRenderer: TextCellRendererComponent,
+        },
+        {
+          id: 'lastName',
+          header: 'Priezvisko',
+          field: 'lastName',
+          cellRenderer: TextCellRendererComponent,
+        },
+        {
+          id: 'email',
+          header: 'Email',
+          field: 'email',
+          cellRenderer: TextCellRendererComponent,
+        },
+        {
+          id: 'roles',
+          header: 'Rola',
+          cellRenderer: TextCellRendererComponent,
+          cellTemplate: this.rolesCellTemplate,
+        },
+        {
+          id: 'options',
+          header: 'Možnosti',
+          cellRenderer: TextCellRendererComponent,
+          cellTemplate: this.optionsCellTemplate,
+          align: 'right',
+        },
+      ],
+      serverSide: false,
+      enablePagination: false,
+      showEmptyState: true,
+      emptyMessage: 'Žiadni používatelia',
+      minHeight: '200px',
+    });
+  }
+
   fetchData(): void {
-    this.as.getAllUsers().subscribe((data) => {
-      this.users = data;
+    this.adminService.getAllUsers().subscribe((data) => {
+      this.users.set(data);
+      if (data.length > 0) {
+        this.tableConfig.update((config) => {
+          if (!config) {
+            return config;
+          }
+
+          return {
+            ...config,
+            showEmptyState: false,
+          };
+        });
+      }
     });
     this.userStore.getRoles().subscribe((roles) => {
       this.availableRoles = roles;
@@ -82,7 +143,7 @@ export class AdminPageComponent implements OnInit {
 
   onRoleToggle(user: UserDto, role: Role, event: Event): void {
     const isAdd = (event.target as HTMLInputElement).checked;
-    this.as.updateUserRole(user.userId, role, isAdd).subscribe({
+    this.adminService.updateUserRole(user.userId, role, isAdd).subscribe({
       next: () => {
         if (isAdd) {
           user.roles.push(role);
@@ -99,9 +160,9 @@ export class AdminPageComponent implements OnInit {
 
   deleteUser(userId: number): void {
     if (confirm('Are you sure you want to delete this user?')) {
-      this.as.deleteUser(userId).subscribe({
+      this.adminService.deleteUser(userId).subscribe({
         next: () => {
-          this.users = this.users.filter((user) => user.userId !== userId);
+          this.users.update((users) => users.filter((user) => user.userId !== userId));
           this.notificationService.showSuccess('Údaje úspešne zmenené.');
         },
         error: () => {
@@ -112,7 +173,7 @@ export class AdminPageComponent implements OnInit {
   }
 
   openSubjectModal(userId: number): void {
-    const selectedUser = this.users.find(
+    const selectedUser = this.users().find(
       (user) => user.userId === userId && this.userHasRole(user, { id: 2, name: 'teacher' }),
     );
 
@@ -136,18 +197,12 @@ export class AdminPageComponent implements OnInit {
     const dialogRef = this.dialog.open(PasswordChangeModalComponent, {
       width: '400px',
       disableClose: false,
-      data: { user: user },
+      data: { user },
     });
 
     dialogRef.afterClosed().subscribe((result: PasswordPair) => {
       if (result) {
-        const passwordChange: ChangePasswordDto = {
-          email: user.email,
-          oldPassword: result.oldPassword,
-          newPassword: result.newPassword,
-        };
-
-        this.authService.changePassword(passwordChange).subscribe({
+        this.adminService.resetUserPassword(user.userId, result.newPassword).subscribe({
           next: () => {
             this.notificationService.showSuccess('Údaje úspešne zmenené.');
           },
@@ -165,7 +220,7 @@ export class AdminPageComponent implements OnInit {
       disableClose: false,
     });
 
-    dialogRef.afterClosed().subscribe((result) => {
+    dialogRef.afterClosed().subscribe((result: RegisterUserDto) => {
       if (result) {
         this.authService.postUser(result).subscribe({
           next: () => {
@@ -180,7 +235,6 @@ export class AdminPageComponent implements OnInit {
   }
 
   isUserTeacher(user: UserDto): boolean {
-    // TODO BE is returning wrong format of roles, change it
     return user.roles.some((userRole) => userRole.name === 'teacher');
   }
 }

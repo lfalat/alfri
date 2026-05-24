@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { MatTableModule } from '@angular/material/table';
 import { MatChipsModule } from '@angular/material/chips';
 import { Router } from '@angular/router';
@@ -42,19 +42,17 @@ import { MatIcon } from '@angular/material/icon';
   ],
 })
 export class KeywordsComponent implements OnInit {
-  filteredKeywords: string[] = [];
+  filteredKeywords = signal<string[]>([]);
   keywords: string[] = [];
-  selectedKeywords: string[] = [];
-  keywordSubjects: { [key: string]: SubjectExtendedDto[] } = {};
+  selectedKeywords = signal<string[]>([]);
+  keywordSubjects = signal<{ [key: string]: SubjectExtendedDto[] }>({});
 
   readonly columnsToDisplay: string[] = ['name', 'code', 'abbreviation'];
   searchSubject = new Subject<string>();
   isError = false;
 
-  constructor(
-    private readonly router: Router,
-    private readonly keywordService: KeywordService,
-  ) {}
+  private readonly router = inject(Router);
+  private readonly keywordService = inject(KeywordService);
 
   ngOnInit(): void {
     this.handleRedirect();
@@ -75,39 +73,45 @@ export class KeywordsComponent implements OnInit {
 
   fetchKeywords(searchText: string): void {
     if (!searchText.trim()) {
-      this.filteredKeywords = [];
+      this.filteredKeywords.set([]);
       return;
     }
 
     this.keywordService.searchKeywords(searchText).subscribe({
       next: (results) => {
-        this.filteredKeywords = results;
+        this.filteredKeywords.set(results);
         if (!results.length) {
-          this.filteredKeywords = [];
+          this.filteredKeywords.set([]);
         }
         this.isError = false;
       },
       error: () => {
-        this.filteredKeywords = [];
+        this.filteredKeywords.set([]);
         this.isError = true;
       },
     });
   }
 
   onKeywordSelect(keyword: string, inputElement: HTMLInputElement): void {
-    if (!this.selectedKeywords.includes(keyword)) {
-      this.selectedKeywords.push(keyword); // Add keyword if not already selected
+    if (!this.selectedKeywords().includes(keyword)) {
+      this.selectedKeywords.update(value => [...value, keyword]); // Add keyword if not already selected
       this.keywordService.showSubjects(keyword).subscribe((subjects) => {
-        this.keywordSubjects[keyword] = subjects;
+        this.keywordSubjects.update((value) => ({
+          ...value,
+          [keyword]: subjects,
+        }));
       });
     }
     inputElement.value = ''; // Clear the input field
-    this.filteredKeywords = []; // Clear the filtered keywords
+    this.filteredKeywords.set([]); // Clear the filtered keywords
   }
 
   onKeywordRemove(keyword: string): void {
-    this.selectedKeywords = this.selectedKeywords.filter((item) => item !== keyword);
-    delete this.keywordSubjects[keyword];
+    this.selectedKeywords.update((value) => value.filter((item) => item !== keyword));
+    this.keywordSubjects.update((value) => {
+      const { [keyword]: _, ...rest } = value;
+      return rest;
+    });
   }
 
   public navigateToSubjectDetail(code: string): void {
@@ -127,9 +131,12 @@ export class KeywordsComponent implements OnInit {
       return;
     }
 
-    this.selectedKeywords.push(keyword);
+    this.selectedKeywords.update((value) => [...value, keyword]);
     this.keywordService.showSubjects(keyword).subscribe((subjects) => {
-      this.keywordSubjects[keyword] = subjects;
+      this.keywordSubjects.update((value) => ({
+        ...value,
+        [keyword]: subjects,
+      }));
     });
   }
 }

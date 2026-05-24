@@ -65,9 +65,7 @@ export class HeaderComponent {
   readonly currentRoute = signal<string>('');
 
   // Computed signals
-  readonly canAccessSubjects = computed(
-    () => !!this.formData() || this.authService.hasRole([AuthRole.STUDENT]),
-  );
+  readonly canAccessSubjects = computed(() => !!this.formData());
 
   readonly canAccessReports = computed(() => {
     const output = this.authService.hasRole([AuthRole.VEDENIE, AuthRole.ADMIN, AuthRole.TEACHER]);

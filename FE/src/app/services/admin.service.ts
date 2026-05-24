@@ -27,6 +27,10 @@ export class AdminService {
     return this.http.delete<void>(`${this.BE_URL}/admin/user/${userId}`);
   }
 
+  resetUserPassword(userId: number, newPassword: string): Observable<void> {
+    return this.http.put<void>(`${this.BE_URL}/admin/user/${userId}/reset-password`, { newPassword });
+  }
+
   getAllSubjects(): Observable<SubjectDto[]> {
     return this.http.get<SubjectDto[]>(`${this.BE_URL}/subject/all`);
   }

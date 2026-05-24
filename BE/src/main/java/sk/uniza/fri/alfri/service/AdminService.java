@@ -9,4 +9,6 @@ public interface AdminService {
     User changeUserRole(List<Integer> rolesIds, boolean addRole, Integer userId);
 
     Teacher setSubjectsToTeacherByUserId(Integer userId, List<String> subjectCodes);
+
+    void resetUserPassword(Integer userId, String newPassword);
 }

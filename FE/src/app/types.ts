@@ -45,7 +45,6 @@ export interface ChangePasswordDto {
 }
 
 export interface PasswordPair {
-  oldPassword: string;
   newPassword: string;
 }
 

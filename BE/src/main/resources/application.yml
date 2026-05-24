@@ -56,8 +56,15 @@ resilience4j:
         retryExceptions:
           - sk.uniza.fri.alfri.infrastructure.exception.PythonServiceServerException
 
-frontend-url: ${FRONTEND_PROD_URL}
 keycloak:
+  issuer-uri: ${KEYCLOAK_ISSUER_URI}
+  internal-issuer-uri: ${KEYCLOAK_INTERNAL_ISSUER_URI}
+  realm: ${KEYCLOAK_REALM}
+  client-id: ${KEYCLOAK_CLIENT_ID}
+  admin-realm: ${KEYCLOAK_ADMIN_REALM}
+  admin-client-id: ${KEYCLOAK_ADMIN_CLIENT_ID}
+  admin-username: ${KEYCLOAK_ADMIN_USERNAME}
+  admin-password: ${KEYCLOAK_ADMIN_PASSWORD}
   events:
     webhook-secret: ${KEYCLOAK_EVENT_WEBHOOK_SECRET}
 # no default user in production

@@ -1,6 +1,5 @@
 package sk.uniza.fri.alfri.configuration;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -21,9 +20,6 @@ import java.util.List;
 @EnableMethodSecurity(securedEnabled = true, jsr250Enabled = true)
 public class SecurityConfiguration {
     private final KeycloakJwtAuthenticationConverter keycloakJwtAuthenticationConverter;
-
-    @Value("${frontend-url}")
-    private String frontEndUrl;
 
     public SecurityConfiguration(KeycloakJwtAuthenticationConverter keycloakJwtAuthenticationConverter) {
         this.keycloakJwtAuthenticationConverter = keycloakJwtAuthenticationConverter;
@@ -53,7 +49,7 @@ public class SecurityConfiguration {
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        configuration.setAllowedOrigins(List.of(frontEndUrl));
+        configuration.setAllowedOriginPatterns(List.of("*"));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "OPTIONS", "DELETE"));
         configuration.setAllowedHeaders(List.of("Authorization", "Content-Type", "X-Keycloak-Event-Secret"));
 

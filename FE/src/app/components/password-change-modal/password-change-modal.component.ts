@@ -35,7 +35,6 @@ export class PasswordChangeModalComponent {
     @Inject(MAT_DIALOG_DATA) public data: { user: UserDto },
   ) {
     this.passwordForm = this.fb.group({
-      oldPassword: ['', Validators.required],
       newPassword: ['', [Validators.required, Validators.minLength(6)]],
       confirmPassword: ['', Validators.required],
     });
@@ -43,18 +42,13 @@ export class PasswordChangeModalComponent {
 
   submit() {
     if (this.passwordForm.valid) {
-      const { oldPassword, newPassword, confirmPassword } = this.passwordForm.value;
+      const { newPassword, confirmPassword } = this.passwordForm.value;
       if (newPassword !== confirmPassword) {
         alert('New password and confirmation do not match!');
         return;
       }
 
-      const passwordChangeData = {
-        oldPassword: oldPassword,
-        newPassword: newPassword,
-      };
-
-      this.dialogRef.close(passwordChangeData);
+      this.dialogRef.close({ newPassword });
     }
   }
 

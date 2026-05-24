@@ -24,8 +24,6 @@ services:
       KEYCLOAK_ISSUER_URI: http://localhost:8180/realms/alfri
       KEYCLOAK_JWK_SET_URI: http://keycloak:8080/realms/alfri/protocol/openid-connect/certs
       KEYCLOAK_EVENT_WEBHOOK_SECRET: ${KEYCLOAK_EVENT_WEBHOOK_SECRET:-changeme}
-      # CORS: allow frontend origin during local dev
-      FRONTEND_ALLOWED_ORIGIN: http://localhost:4200
       # Shared X-API-KEY for local testing (value from .env)
       X_API_KEY: ${X_API_KEY:-changeme}
       # Dapr app id for local runs (optional; see README/prompts)
@@ -34,9 +32,12 @@ services:
     ports:
       - "8080:8080"
     depends_on:
-      - python-ml-client
-      - db
-      - keycloak
+      python-ml-client:
+        condition: service_started
+      db:
+        condition: service_started
+      keycloak:
+        condition: service_healthy
     networks:
       - alfri-network
 
@@ -126,6 +127,12 @@ services:
     command:
       - start-dev
       - --import-realm
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:8080/realms/alfri/.well-known/openid-configuration"]
+      interval: 10s
+      timeout: 5s
+      retries: 15
+      start_period: 90s
     ports:
       - "8180:8080"
     volumes:

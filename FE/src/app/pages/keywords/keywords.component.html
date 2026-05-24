@@ -13,7 +13,7 @@
 
       <p>Vybrané kľučové slová</p>
       <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayKeyword">
-        @for (keyword of filteredKeywords; track keyword) {
+        @for (keyword of filteredKeywords(); track keyword) {
           <mat-option
             [value]="keyword"
             (onSelectionChange)="onKeywordSelect(keyword, keywordInput)"
@@ -21,7 +21,7 @@
             {{ keyword }}
           </mat-option>
         }
-        @if (filteredKeywords.length === 0 && isError) {
+        @if (filteredKeywords().length === 0 && isError) {
           <mat-option disabled>
             <div class="no-options-found">Žiadne slová neboli nájdené</div>
           </mat-option>
@@ -31,7 +31,7 @@
 
     <div class="px-3">
       <mat-chip-listbox multiple>
-        @for (keyword of selectedKeywords; track keyword) {
+        @for (keyword of selectedKeywords(); track keyword) {
           <mat-chip-option (removed)="onKeywordRemove(keyword)" [selectable]="false">
             {{ keyword }}
             <mat-icon matChipRemove>cancel</mat-icon>
@@ -41,14 +41,14 @@
     </div>
   </mat-card>
 
-  @for (keyword of selectedKeywords; track keyword) {
+  @for (keyword of selectedKeywords(); track keyword) {
     <div class="table-container">
       <h3>{{ keyword }}</h3>
-      @if (keywordSubjects[keyword] && keywordSubjects[keyword].length > 0) {
+      @if (keywordSubjects()[keyword] && keywordSubjects()[keyword].length > 0) {
         <div>
           <table
             mat-table
-            [dataSource]="keywordSubjects[keyword]"
+            [dataSource]="keywordSubjects()[keyword]"
             class="mat-elevation-z8 custom-table"
           >
             <ng-container matColumnDef="name">
