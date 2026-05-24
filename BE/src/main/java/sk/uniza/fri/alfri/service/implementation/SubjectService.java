@@ -401,8 +401,11 @@ public class SubjectService implements ISubjectService {
     }
 
     @Override
-    public Page<SubjectGrade> getSubjectsWithGrades(PageDefinition pageDefinition) {
+    public Page<SubjectGrade> getSubjectsWithGrades(PageDefinition pageDefinition, String search) {
         Pageable pageable = PageableAssembler.from(pageDefinition);
+        if (search != null && !search.isBlank()) {
+            return subjectGradeRepository.findBySubjectNameOrCode(search, pageable);
+        }
         return subjectGradeRepository.findAll(pageable);
     }
 

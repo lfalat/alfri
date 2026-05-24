@@ -193,7 +193,7 @@ public class SubjectController {
         PageDefinition pageDefinition = new PageDefinition(pagitationRequestQuery.page,
                 pagitationRequestQuery.size, sortDefinition);
 
-        Page<SubjectGrade> subjects = subjectService.getSubjectsWithGrades(pageDefinition);
+        Page<SubjectGrade> subjects = subjectService.getSubjectsWithGrades(pageDefinition, pagitationRequestQuery.search);
 
         Page<SubjectGradeDto> subjectGradeDtos =
                 subjects.map(SubjectGradeMapper.INSTANCE::toDto);

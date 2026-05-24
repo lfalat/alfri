@@ -1,6 +1,6 @@
-import { Component, inject, OnDestroy, OnInit, signal } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { Subject, takeUntil } from 'rxjs';
+import { debounceTime } from 'rxjs';
 import { Page, SubjectGradesDto } from '../../types';
 import { MatCard, MatCardContent, MatCardHeader, MatCardTitle } from '@angular/material/card';
 import { SubjectService } from '@services/subject.service';
@@ -14,6 +14,7 @@ import {
 import { GenericTableUtils } from '@components/generic-table/generic-table.utils';
 import { PageEvent } from '@angular/material/paginator';
 import { SortDirection } from '@angular/material/sort';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-subject-reports',
@@ -22,10 +23,10 @@ import { SortDirection } from '@angular/material/sort';
   styleUrls: ['./subject-reports.component.scss'],
   imports: [MatCard, MatCardHeader, MatCardTitle, MatCardContent, GenericTableComponent],
 })
-export class SubjectReportsComponent implements OnInit, OnDestroy {
-  private readonly _destroy$: Subject<void> = new Subject();
+export class SubjectReportsComponent implements OnInit {
   private readonly subjectsService = inject(SubjectService);
   private readonly router = inject(Router);
+  private readonly destroyRef = inject(DestroyRef);
 
   // Signals for reactive state management
   subjectsData = signal<Page<SubjectGradesDto & { id: number }>>(GenericTableUtils.EMPTY_PAGE);
@@ -34,6 +35,7 @@ export class SubjectReportsComponent implements OnInit, OnDestroy {
   pageSize = signal<number>(10);
   sortActive = signal<string>('');
   sortDirection = signal<SortDirection>('asc');
+  filterText = signal<string>('');
 
   // Generic table configuration
   tableConfig: TableConfig<SubjectGradesDto & { id: number }> = {
@@ -136,20 +138,10 @@ export class SubjectReportsComponent implements OnInit, OnDestroy {
       enableSearch: true,
       searchPlaceholder: 'Vyhľadať predmet...',
     },
-    filterPredicate: (data: SubjectGradesDto & { id: number }, filter: string): boolean => {
-      const normalizedFilter = filter.toLowerCase();
-      const subjectName = data.subject.name?.toLowerCase() || '';
-      return subjectName.includes(normalizedFilter);
-    },
   };
 
   ngOnInit(): void {
     this.fetchFilteredSubjects();
-  }
-
-  ngOnDestroy(): void {
-    this._destroy$.next();
-    this._destroy$.complete();
   }
 
   private buildSortParam(): string | undefined {
@@ -159,17 +151,18 @@ export class SubjectReportsComponent implements OnInit, OnDestroy {
     return `${this.sortActive()},${this.sortDirection()}`;
   }
 
-  fetchFilteredSubjects(pageNumber?: number, pageSize?: number, sort?: string): void {
+  fetchFilteredSubjects(pageNumber?: number, pageSize?: number, sort?: string, filter?: string): void {
     this.isLoading.set(true);
 
     const page = pageNumber ?? this.currentPage();
     const size = pageSize ?? this.pageSize();
     const sortParam = sort ?? this.buildSortParam();
+    const searchParam = filter ?? this.filterText();
 
     // Fetch subjects with server-side pagination
     this.subjectsService
-      .getSubjectsWithGrades(page, size, sortParam)
-      .pipe(takeUntil(this._destroy$))
+      .getSubjectsWithGrades(page, size, sortParam, searchParam || undefined)
+      .pipe(takeUntilDestroyed(this.destroyRef), debounceTime(300))
       .subscribe({
         next: (data) => {
           // Add id property to each item
@@ -211,6 +204,12 @@ export class SubjectReportsComponent implements OnInit, OnDestroy {
 
     // Reload data with new sort
     this.fetchFilteredSubjects(0, this.pageSize());
+  }
+
+  onFilterChange(filter: string): void {
+    this.filterText.set(filter);
+    this.currentPage.set(0);
+    this.fetchFilteredSubjects(0, this.pageSize(), undefined, filter);
   }
 
   onRowClick(event: { row: SubjectGradesDto & { id: number }; event: MouseEvent }): void {

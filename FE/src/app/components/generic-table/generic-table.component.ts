@@ -10,6 +10,9 @@ import {
   AfterViewInit,
   Type,
   untracked,
+  OnInit,
+  inject,
+  DestroyRef,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
@@ -35,7 +38,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { MatChipSet, MatChip, MatChipRemove } from '@angular/material/chips';
 import { SelectionModel } from '@angular/cdk/collections';
-import { Subject } from 'rxjs';
+import { debounce, Subject, timer } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
 import {
@@ -49,6 +52,7 @@ import {
 import { TextCellRendererComponent } from '@components/generic-table/cell-renderers';
 import { DynamicCellRendererDirective } from '@components/generic-table/dynamic-cell-renderer.directive';
 import { Page } from '../../types';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-generic-table',
@@ -84,7 +88,7 @@ import { Page } from '../../types';
   templateUrl: './generic-table.component.html',
   styleUrl: './generic-table.component.scss',
 })
-export class GenericTableComponent<T extends TableRow> implements AfterViewInit {
+export class GenericTableComponent<T extends TableRow> implements AfterViewInit, OnInit {
   // ============ INPUTS (Signal-based) ============
 
   /**
@@ -159,6 +163,7 @@ export class GenericTableComponent<T extends TableRow> implements AfterViewInit 
   private readonly filterSubject = new Subject<string>();
   private readonly selectedIds = signal<unknown[]>([]); // Track selected IDs across data changes
   private readonly selectedItemsMap = signal<Map<unknown, T>>(new Map()); // Track full selected items
+  private readonly destroyRef = inject(DestroyRef);
 
   // ============ COMPUTED SIGNALS ============
 
@@ -382,14 +387,18 @@ export class GenericTableComponent<T extends TableRow> implements AfterViewInit 
         }
       }
     });
+  }
 
-    // Setup filter debounce
-    effect(() => {
-      const debounce = this.config().filterDebounce ?? 300;
-      this.filterSubject.pipe(debounceTime(debounce), distinctUntilChanged()).subscribe((value) => {
+  ngOnInit() {
+    this.filterSubject
+      .pipe(
+        debounce(() => timer(this.config().filterDebounce ?? 500)),
+        distinctUntilChanged(),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe((value) => {
         this.applyFilter(value);
       });
-    });
   }
 
   ngAfterViewInit(): void {

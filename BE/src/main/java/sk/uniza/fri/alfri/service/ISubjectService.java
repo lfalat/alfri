@@ -26,7 +26,7 @@ public interface ISubjectService {
 
     List<StudyProgramSubject> findSubjectByIds(List<Integer> ids);
 
-    Page<SubjectGrade> getSubjectsWithGrades(PageDefinition pageDefinition);
+    Page<SubjectGrade> getSubjectsWithGrades(PageDefinition pageDefinition, String search);
 
     Page<Subject> makeSubjectsFocusPrediction(User user, PageDefinition pageDefinition);
 

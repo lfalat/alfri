@@ -105,12 +105,17 @@ export class SubjectService {
     pageNumber: number,
     pageSize: number,
     sort?: string,
+    search?: string,
   ): Observable<Page<SubjectGradesDto>> {
     let urlParameters: HttpParams = new HttpParams();
     urlParameters = urlParameters.append('page', pageNumber).append('size', pageSize);
 
     if (sort) {
       urlParameters = urlParameters.append('sort', sort);
+    }
+
+    if (search) {
+      urlParameters = urlParameters.append('search', search);
     }
 
     return this.http.get<Page<SubjectGradesDto>>(`${this.URL}/with-grades`, {
