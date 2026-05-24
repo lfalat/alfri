@@ -6,12 +6,12 @@ import {
   withMethods,
   withState,
 } from '@ngrx/signals';
-import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { HttpClient } from '@angular/common/http';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { pipe, switchMap, tap } from 'rxjs';
 import { Role, UserDto, UserState } from '../types';
 import { ConfigService } from '@services/config.service';
+import {rxMethod} from "@ngrx/signals/rxjs-interop";
 
 const initialState: UserState = {
   userData: undefined,

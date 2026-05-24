@@ -1,4 +1,10 @@
-import { ApplicationConfig, importProvidersFrom, provideAppInitializer, inject } from '@angular/core';
+import {
+  ApplicationConfig,
+  importProvidersFrom,
+  provideAppInitializer,
+  inject,
+  provideZoneChangeDetection
+} from '@angular/core';
 import { provideRouter } from '@angular/router';
 
 import { routes } from './app.routes';
@@ -44,5 +50,6 @@ export const appConfig: ApplicationConfig = {
       withInterceptorsFromDi(),
       withInterceptors([httpErrorInterceptor]),
     ),
+    provideZoneChangeDetection()
   ],
 };
