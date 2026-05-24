@@ -4,9 +4,9 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { UserStore } from '../../stores/user.store';
 
 import { AuthService } from '@services/auth.service';
-import { MatFormField, MatLabel } from '@angular/material/form-field';
+import { MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
-import { MatButton } from '@angular/material/button';
+import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatIcon } from '@angular/material/icon';
 import { NotificationService } from '@services/notification.service';
@@ -18,6 +18,7 @@ import { HasRoleDirective } from '@directives/auth.directive';
 import { AnsweredForm, ChangePasswordDto, UserDto } from '../../types';
 import { AuthRole } from '@enums/auth-role';
 import { filter, Subject, takeUntil } from 'rxjs';
+import { UserService } from '@services/user.service';
 
 @Component({
   selector: 'app-profile',
@@ -28,8 +29,10 @@ import { filter, Subject, takeUntil } from 'rxjs';
     ReactiveFormsModule,
     MatLabel,
     MatFormField,
+    MatSuffix,
     MatInput,
     MatButton,
+    MatIconButton,
     MatCard,
     MatCardContent,
     MatIcon,
@@ -44,10 +47,14 @@ export class ProfileComponent implements OnInit {
   formData: AnsweredForm | undefined;
   _userData: UserDto | undefined;
   isLoading = signal<boolean>(true);
+  showCurrentPassword = signal<boolean>(false);
+  showNewPassword = signal<boolean>(false);
+  showConfirmPassword = signal<boolean>(false);
   profileForm: FormGroup;
 
   private readonly formBuilder = inject(FormBuilder);
   readonly userStore = inject(UserStore);
+  private readonly userService = inject(UserService);
   private readonly authService = inject(AuthService);
   private readonly notificationService = inject(NotificationService);
   private readonly router = inject(Router);
@@ -104,22 +111,29 @@ export class ProfileComponent implements OnInit {
   }
 
   changePassword() {
-    if (this.profileForm.valid) {
-      const userData = this.userStore.userData();
-      if (!userData) {
-        throw new Error('No user data available.');
-      }
-
-      const passwordData: ChangePasswordDto = {
-        email: userData.email,
-        oldPassword: this.profileForm.value.currentPassword,
-        newPassword: this.profileForm.value.newPassword,
-      };
-      this.authService.changePassword(passwordData).subscribe();
-      this.profileForm.reset();
-      this.notificationService.showError('Heslo bolo úspešne zmenené!', '', 3000);
-      this.router.navigate(['/home']);
+    if (!this.profileForm.valid) {
+      return;
     }
+
+    const userData = this.userService.userData();
+    if (!userData) {
+      throw new Error('No user data available.');
+    }
+
+    const passwordData: ChangePasswordDto = {
+      email: userData.email,
+      oldPassword: this.profileForm.value.currentPassword,
+      newPassword: this.profileForm.value.newPassword,
+    };
+    this.authService.changePassword(passwordData).subscribe({
+      next: () => {
+        this.profileForm.reset();
+        this.notificationService.showSuccess('Heslo bolo úspešne zmenené!', '', 3000);
+      },
+      error: () => {
+        this.notificationService.showError('Zmena hesla zlyhala. Skontrolujte pôvodné heslo.', '', 3000);
+      },
+    });
   }
 
   redirectToUserForm() {

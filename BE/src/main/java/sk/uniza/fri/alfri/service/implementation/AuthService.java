@@ -1,5 +1,6 @@
 package sk.uniza.fri.alfri.service.implementation;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -17,9 +18,11 @@ import java.util.Optional;
 public class AuthService implements IAuthService {
 
     private final UserRepository userRepository;
+    private final KeycloakAuthClient keycloakAuthClient;
 
-    public AuthService(UserRepository userRepository) {
+    public AuthService(UserRepository userRepository, KeycloakAuthClient keycloakAuthClient) {
         this.userRepository = userRepository;
+        this.keycloakAuthClient = keycloakAuthClient;
     }
 
     @Override
@@ -49,6 +52,18 @@ public class AuthService implements IAuthService {
         }
 
         return Optional.empty();
+    }
+
+    @Override
+    public void changePassword(String oldPassword, String newPassword) {
+        String email = getCurrentUserEmail()
+                .orElseThrow(() -> new EntityNotFoundException("Current user was not found"));
+
+        // Validates old password — throws InvalidCredentialsException if incorrect
+        keycloakAuthClient.verifyUserCredentials(email, oldPassword);
+
+        keycloakAuthClient.resetUserPassword(email, newPassword);
+        log.info("Password changed for user {}", email);
     }
 
     private Optional<String> extractEmail(Jwt jwt) {

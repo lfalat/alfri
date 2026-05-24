@@ -63,6 +63,30 @@ public class KeycloakAuthClient {
         }
     }
 
+    /**
+     * Verifies user credentials via the realm's admin-cli client, which has Direct Access Grants
+     * enabled by default. The main app client (alfri-app) uses the browser PKCE flow and does not
+     * support password grant, so it cannot be used for credential verification.
+     */
+    public void verifyUserCredentials(String email, String password) {
+        MultiValueMap<String, String> form = new LinkedMultiValueMap<>();
+        form.add("grant_type", "password");
+        form.add("client_id", keycloakProperties.adminClientId());
+        form.add("username", email);
+        form.add("password", password);
+
+        try {
+            restClient.post()
+                    .uri(keycloakProperties.tokenUri())
+                    .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                    .body(form)
+                    .retrieve()
+                    .toBodilessEntity();
+        } catch (HttpClientErrorException.Unauthorized | HttpClientErrorException.BadRequest e) {
+            throw new InvalidCredentialsException("Incorrect old password!");
+        }
+    }
+
     public void registerUser(User user, String rawPassword) {
         String adminToken = getAdminToken();
 

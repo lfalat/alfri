@@ -8,4 +8,6 @@ public interface IAuthService {
     Optional<String> getCurrentUserEmail();
 
     Optional<User> getCurrentUser();
+
+    void changePassword(String oldPassword, String newPassword);
 }

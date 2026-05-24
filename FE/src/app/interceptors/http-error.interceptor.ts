@@ -12,7 +12,7 @@ export const httpErrorInterceptor: HttpInterceptorFn = (req, next) => {
 
   return next(req).pipe(
     catchError((error: HttpErrorResponse) => {
-      if (error.status === 401) {
+      if (error.status === 401 && !req.headers.has('Authorization')) {
         keycloakService.login(router.url);
       }
 

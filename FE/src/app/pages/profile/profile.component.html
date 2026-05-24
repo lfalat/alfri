@@ -65,11 +65,20 @@
                     <mat-label>Pôvodné heslo</mat-label>
                     <input
                       matInput
-                      type="password"
+                      [type]="showCurrentPassword() ? 'text' : 'password'"
                       id="currentPassword"
                       formControlName="currentPassword"
                       required
                     />
+                    <button
+                      mat-icon-button
+                      matSuffix
+                      type="button"
+                      (click)="showCurrentPassword.set(!showCurrentPassword())"
+                      [attr.aria-label]="showCurrentPassword() ? 'Skryť heslo' : 'Zobraziť heslo'"
+                    >
+                      <mat-icon>{{ showCurrentPassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
+                    </button>
                   </mat-form-field>
                 </div>
                 <div class="row g-3">
@@ -78,11 +87,20 @@
                       <mat-label>Nové heslo</mat-label>
                       <input
                         matInput
-                        type="password"
+                        [type]="showNewPassword() ? 'text' : 'password'"
                         id="newPassword"
                         formControlName="newPassword"
                         required
                       />
+                      <button
+                        mat-icon-button
+                        matSuffix
+                        type="button"
+                        (click)="showNewPassword.set(!showNewPassword())"
+                        [attr.aria-label]="showNewPassword() ? 'Skryť heslo' : 'Zobraziť heslo'"
+                      >
+                        <mat-icon>{{ showNewPassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
+                      </button>
                     </mat-form-field>
                   </div>
                   <div class="col-12 col-sm-6">
@@ -90,11 +108,20 @@
                       <mat-label>Potvrdiť nové heslo</mat-label>
                       <input
                         matInput
-                        type="password"
+                        [type]="showConfirmPassword() ? 'text' : 'password'"
                         id="confirmNewPassword"
                         formControlName="confirmNewPassword"
                         required
                       />
+                      <button
+                        mat-icon-button
+                        matSuffix
+                        type="button"
+                        (click)="showConfirmPassword.set(!showConfirmPassword())"
+                        [attr.aria-label]="showConfirmPassword() ? 'Skryť heslo' : 'Zobraziť heslo'"
+                      >
+                        <mat-icon>{{ showConfirmPassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
+                      </button>
                     </mat-form-field>
                   </div>
                 </div>
