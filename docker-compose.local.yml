@@ -1,6 +1,6 @@
 # docker-compose.local.yml
-# Purpose: Local development compose that builds the three services locally (backend, frontend, python-service)
-version: '3.8'
+# Purpose: Local development compose that builds the app services locally and
+# runs supporting infrastructure (Postgres, Keycloak).
 
 services:
   backend:
@@ -11,6 +11,9 @@ services:
     environment:
       # Spring properties / env expected by the app
       SPRING_PROFILES_ACTIVE: dev
+      DATABASE_DEV_URL: ${DATABASE_DEV_URL:-db:5432/alfri}
+      DATABASE_DEV_USER: ${DATABASE_DEV_USER:-alfri}
+      DATABASE_DEV_PASSWORD: ${DATABASE_DEV_PASSWORD:-changeme}
       # If DATABASE_PROD_URL is not provided in .env, default to the local postgres service
       DATABASE_PROD_URL: ${DATABASE_PROD_URL:-jdbc:postgresql://db:5432/alfri}
       DATABASE_PROD_USER: ${DATABASE_PROD_USER:-alfri}
@@ -20,7 +23,7 @@ services:
       # CORS: allow frontend origin during local dev
       FRONTEND_ALLOWED_ORIGIN: http://localhost:4200
       # Shared X-API-KEY for local testing (value from .env)
-      X_API_KEY: ${X_API_KEY}
+      X_API_KEY: ${X_API_KEY:-changeme}
       # Dapr app id for local runs (optional; see README/prompts)
       DAPR_APP_ID: alfri-backend
       DAPR_HTTP_BASE_URL: http://backend-dapr:3500
@@ -29,6 +32,7 @@ services:
     depends_on:
       - python-ml-client
       - db
+      - keycloak
     networks:
       - alfri-network
 
@@ -42,7 +46,7 @@ services:
       # Build-time Angular envs often baked into files; for dev use runtime-config or use the dev server.
       VITE_API_BASE_URL: http://alfri_be:8080
       # If using X-API-KEY header from client for testing
-      X_API_KEY: ${X_API_KEY}
+      X_API_KEY: ${X_API_KEY:-changeme}
     ports:
       - "4200:80"
     depends_on:
@@ -57,8 +61,66 @@ services:
     container_name: alfri_py
     environment:
       MODEL_PATH: /app/models
+      DATABASE_DEV_URL: ${DATABASE_DEV_URL:-db:5432/alfri}
+      DATABASE_DEV_USER: ${DATABASE_DEV_USER:-alfri}
+      DATABASE_DEV_PASSWORD: ${DATABASE_DEV_PASSWORD:-changeme}
     ports:
       - "5000:5000"
+    networks:
+      - alfri-network
+
+  keycloak-db-init:
+    image: postgres:15-alpine
+    container_name: alfri_keycloak_db_init
+    restart: "no"
+    environment:
+      PGHOST: db
+      PGPORT: 5432
+      PGDATABASE: postgres
+      PGUSER: ${DATABASE_DEV_USER:-alfri}
+      PGPASSWORD: ${DATABASE_DEV_PASSWORD:-changeme}
+      KEYCLOAK_DB_NAME: ${KEYCLOAK_DB_NAME:-keycloak}
+    command:
+      - sh
+      - -c
+      - |
+        until pg_isready -h db -p 5432 -U "${DATABASE_DEV_USER:-alfri}"; do
+          sleep 1
+        done
+        if psql -tAc "SELECT 1 FROM pg_database WHERE datname='${KEYCLOAK_DB_NAME:-keycloak}'" | grep -q 1; then
+          echo "Database ${KEYCLOAK_DB_NAME:-keycloak} already exists"
+        else
+          psql -c "CREATE DATABASE \"${KEYCLOAK_DB_NAME:-keycloak}\""
+        fi
+    depends_on:
+      - db
+    networks:
+      - alfri-network
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.6.2
+    container_name: alfri_keycloak
+    restart: unless-stopped
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: ${KEYCLOAK_ADMIN_USERNAME:-admin}
+      KC_BOOTSTRAP_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD:-admin}
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://db:5432/${KEYCLOAK_DB_NAME:-keycloak}
+      KC_DB_USERNAME: ${DATABASE_DEV_USER:-alfri}
+      KC_DB_PASSWORD: ${DATABASE_DEV_PASSWORD:-changeme}
+      KC_HTTP_ENABLED: "true"
+      KC_HOSTNAME_STRICT: "false"
+      KC_HEALTH_ENABLED: "true"
+    command:
+      - start-dev
+      - --import-realm
+    ports:
+      - "8180:8080"
+    volumes:
+      - ./docker/keycloak/import:/opt/keycloak/data/import:ro
+    depends_on:
+      keycloak-db-init:
+        condition: service_completed_successfully
     networks:
       - alfri-network
 
@@ -69,8 +131,8 @@ services:
     restart: unless-stopped
     environment:
       POSTGRES_DB: alfri
-      POSTGRES_USER: alfri
-      POSTGRES_PASSWORD: changeme
+      POSTGRES_USER: ${DATABASE_DEV_USER:-alfri}
+      POSTGRES_PASSWORD: ${DATABASE_DEV_PASSWORD:-changeme}
     volumes:
       - db_data:/var/lib/postgresql/data
     ports:

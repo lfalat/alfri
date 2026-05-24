@@ -45,7 +45,7 @@ export class GradeFormComponent implements OnInit {
   form!: Form;
   formGroups: FormGroup[] = [];
   existingAnswers: AnsweredForm | null = null;
-  loading = true;
+  loading = signal<boolean>(true);
   stepperOrientation: Observable<StepperOrientation>;
   activeStep = signal(0);
 
@@ -80,10 +80,10 @@ export class GradeFormComponent implements OnInit {
         next: (answers) => {
           this.existingAnswers = answers;
           this.createFormGroups();
-          this.loading = false;
+          this.loading.set(false);
         },
         error: (error) => {
-          this.loading = false;
+          this.loading.set(false);
           console.error(error);
         },
       });

@@ -32,6 +32,15 @@ docker compose -f docker-compose.local.yml up --build
 - Frontend (if using containerized dev server): http://localhost:4200/
 - Python ML service: http://localhost:5000/
 - Postgres: host `localhost:5432` (DB: alfri, user: alfri, password: changeme)
+- Keycloak: http://localhost:8180/ (admin: `admin` / `admin` by default)
+
+Local Keycloak
+- The local compose file runs Keycloak on port `8180` because the backend already uses port `8080`.
+- Keycloak uses the same local Postgres container as the app, but with a separate logical database named `keycloak`.
+- A one-shot `keycloak-db-init` service creates the `keycloak` database if it does not exist. This works with both new and existing local Postgres volumes.
+- The realm import lives in `docker/keycloak/import/alfri-realm.json` and creates realm `alfri`, public client `alfri-frontend`, ALFRI roles, and two local test users:
+  - `admin@example.com` / `changeme`
+  - `szathmary@stud.uniza.sk` / `changeme`
 
 Notes and tips
 - If you prefer live Angular development (hot reload), run `npm ci && ng serve` in `FE/` and set `VITE_API_BASE_URL` to `http://localhost:8080` in the dev environment.
@@ -58,4 +67,3 @@ Troubleshooting
 
 Contact
 - For more help, tell me which step failed and paste logs from the failing container (e.g., `docker compose -f docker-compose.local.yml logs backend`).
-

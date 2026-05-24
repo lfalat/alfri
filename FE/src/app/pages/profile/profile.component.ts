@@ -7,7 +7,7 @@ import { AuthService } from '@services/auth.service';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent, MatCardHeader, MatCardTitle } from '@angular/material/card';
+import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatIcon } from '@angular/material/icon';
 import { NotificationService } from '@services/notification.service';
 import { Router } from '@angular/router';
@@ -31,8 +31,6 @@ import { filter, Subject, takeUntil } from 'rxjs';
     MatInput,
     MatButton,
     MatCard,
-    MatCardHeader,
-    MatCardTitle,
     MatCardContent,
     MatIcon,
     UserFormResultsComponent,

@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { NgOptimizedImage } from '@angular/common';
 import { UserFormResultsComponent } from '@components/user-form-results/user-form-results.component';
@@ -24,9 +24,10 @@ import { MatCard, MatCardContent, MatCardHeader } from '@angular/material/card';
   ],
   templateUrl: './user-home.component.html',
   styleUrl: './user-home.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UserHomeComponent implements OnInit {
-  loading = true;
+  loading = signal<boolean>(true);
   formData: AnsweredForm | undefined;
   private readonly router = inject(Router);
   private readonly formService = inject(FormService);
@@ -37,10 +38,10 @@ export class UserHomeComponent implements OnInit {
       next: (data: AnsweredForm) => {
         this.formDataService.setFormData(data);
         this.formData = data;
-        this.loading = false;
+        this.loading.set(false);
       },
       error: () => {
-        this.loading = false;
+        this.loading.set(false);
       },
     });
   }
