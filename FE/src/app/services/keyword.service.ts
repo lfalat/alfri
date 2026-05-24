@@ -29,9 +29,6 @@ export class KeywordService {
       }),
     };
 
-    return this.http.get<SubjectExtendedDto[]>(
-      `${this.URL}/${keyword}/subjects`,
-      httpOptions,
-    );
+    return this.http.get<SubjectExtendedDto[]>(`${this.URL}/${keyword}/subjects`, httpOptions);
   }
 }

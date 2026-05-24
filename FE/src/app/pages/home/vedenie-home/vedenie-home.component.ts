@@ -32,10 +32,7 @@ import { DataReportService } from '@services/data-report.service';
 import { StudyProgramService } from '@services/study-program.service';
 import { LineChartComponent, PieChartComponent } from '@components/charts';
 import { ApexAxisChartSeries, ApexOptions } from 'ng-apexcharts';
-import {
-  INFORMATICS_STUDY_PROGRAM_ID,
-  MANAGEMENT_STUDY_PROGRAM_ID,
-} from '../../../const';
+import { INFORMATICS_STUDY_PROGRAM_ID, MANAGEMENT_STUDY_PROGRAM_ID } from '../../../const';
 import {
   getStudentTrendChartOptions,
   getGradeChartOptions,
@@ -68,9 +65,7 @@ type ChartPayload = {
   studentCounts: StudentYearCountDTO[];
 };
 
-const buildWordCloudOptions = (
-  keywords: KeywordDTO[],
-): echarts.EChartsOption => ({
+const buildWordCloudOptions = (keywords: KeywordDTO[]): echarts.EChartsOption => ({
   series: [
     {
       type: 'wordCloud',
@@ -100,9 +95,7 @@ const buildFocusPieConfig = (
   const labels = categories.map(
     (item) => FOCUS_LABEL_MAPPING[item.focusCategory] ?? item.focusCategory,
   );
-  const percentages = categories.map((item) =>
-    Number(((item.totalSum / total) * 100).toFixed(2)),
-  );
+  const percentages = categories.map((item) => Number(((item.totalSum / total) * 100).toFixed(2)));
 
   return {
     type: 'pie',
@@ -403,17 +396,15 @@ export class VedenieHomeComponent implements OnInit, AfterViewInit, OnDestroy {
   private fetchDataReport(studyProgramId: StudyProgramId | null): void {
     this.isLoadingReport.set(true);
     this.reportSubscription?.unsubscribe();
-    this.reportSubscription = this.dataReportService
-      .getDataReport(studyProgramId)
-      .subscribe({
-        next: (dataReport) => {
-          this.dataReport.set(dataReport);
-          this.isLoadingReport.set(false);
-        },
-        error: () => {
-          this.isLoadingReport.set(false);
-        },
-      });
+    this.reportSubscription = this.dataReportService.getDataReport(studyProgramId).subscribe({
+      next: (dataReport) => {
+        this.dataReport.set(dataReport);
+        this.isLoadingReport.set(false);
+      },
+      error: () => {
+        this.isLoadingReport.set(false);
+      },
+    });
   }
 
   onStudyProgramChange(studyProgramId: StudyProgramId | null): void {
@@ -426,17 +417,12 @@ export class VedenieHomeComponent implements OnInit, AfterViewInit, OnDestroy {
 
     const selectedId = this.selectedStudyProgramId();
     if (selectedId) {
-      const selectedProgram = this.studyPrograms().find(
-        (p) => p.id === selectedId,
-      );
+      const selectedProgram = this.studyPrograms().find((p) => p.id === selectedId);
       if (selectedProgram) {
         series = [
           {
             name: selectedProgram.name,
-            data: trendData.map(
-              (d: StudentTrendDataPoint) =>
-                d.programCounts[selectedId],
-            ),
+            data: trendData.map((d: StudentTrendDataPoint) => d.programCounts[selectedId]),
           },
         ];
       }
@@ -444,15 +430,11 @@ export class VedenieHomeComponent implements OnInit, AfterViewInit, OnDestroy {
       series = [
         {
           name: 'Informatika',
-          data: trendData.map(
-            (d) => d.programCounts[INFORMATICS_STUDY_PROGRAM_ID],
-          ),
+          data: trendData.map((d) => d.programCounts[INFORMATICS_STUDY_PROGRAM_ID]),
         },
         {
           name: 'Manažment',
-          data: trendData.map(
-            (d) => d.programCounts[MANAGEMENT_STUDY_PROGRAM_ID],
-          ),
+          data: trendData.map((d) => d.programCounts[MANAGEMENT_STUDY_PROGRAM_ID]),
         },
       ];
     }

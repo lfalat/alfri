@@ -1,10 +1,5 @@
 import { Component, inject } from '@angular/core';
-import {
-  FormBuilder,
-  FormGroup,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '@services/auth.service';
 import { JwtService } from '@services/jwt.service';
 import { Router } from '@angular/router';
@@ -12,11 +7,12 @@ import { LoginUserDto } from '../../types';
 import { NotificationService } from '@services/notification.service';
 import { MatButton } from '@angular/material/button';
 import { UserService } from '@services/user.service';
+import { NgOptimizedImage } from '@angular/common';
 
 @Component({
   selector: 'app-login-form',
   standalone: true,
-  imports: [ReactiveFormsModule, MatButton],
+  imports: [ReactiveFormsModule, MatButton, NgOptimizedImage],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss',
 })
@@ -69,9 +65,7 @@ export class LoginComponent {
             this.notificationService.showError('Boli zadané nesprávne údaje.');
             break;
           default:
-            this.notificationService.showError(
-              'Neznáma chyba. Kontaktujte prosím administrátora.',
-            );
+            this.notificationService.showError('Neznáma chyba. Kontaktujte prosím administrátora.');
             break;
         }
       },

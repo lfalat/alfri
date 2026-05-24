@@ -25,11 +25,7 @@
     <ng-container matColumnDef="assigned">
       <th mat-header-cell *matHeaderCellDef>Priradenie</th>
       <td mat-cell *matCellDef="let subject">
-        <mat-checkbox
-          [checked]="true"
-          (change)="onSubjectToggle(subject, $event)"
-        >
-        </mat-checkbox>
+        <mat-checkbox [checked]="true" (change)="onSubjectToggle(subject, $event)"> </mat-checkbox>
       </td>
     </ng-container>
 
@@ -62,7 +58,5 @@
 
 <div mat-dialog-actions class="d-flex justify-content-end">
   <button mat-button type="button" (click)="closeSubjectModal()">Zrušiť</button>
-  <button mat-button color="primary" (click)="saveTeacherSubjects()">
-    Zmeniť predmety
-  </button>
+  <button mat-button color="primary" (click)="saveTeacherSubjects()">Zmeniť predmety</button>
 </div>

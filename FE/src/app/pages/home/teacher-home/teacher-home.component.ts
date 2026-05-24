@@ -1,4 +1,14 @@
-import { Component, computed, effect, ElementRef, inject, OnDestroy, OnInit, signal, ViewChild } from '@angular/core';
+import {
+  Component,
+  computed,
+  effect,
+  ElementRef,
+  inject,
+  OnDestroy,
+  OnInit,
+  signal,
+  ViewChild,
+} from '@angular/core';
 
 import { MatCardModule } from '@angular/material/card';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
@@ -19,10 +29,7 @@ import {
 } from '../../../types';
 import { LineChartComponent, PieChartComponent } from '@components/charts';
 import { ApexAxisChartSeries, ApexOptions } from 'ng-apexcharts';
-import {
-  INFORMATICS_STUDY_PROGRAM_ID,
-  MANAGEMENT_STUDY_PROGRAM_ID,
-} from '../../../const';
+import { INFORMATICS_STUDY_PROGRAM_ID, MANAGEMENT_STUDY_PROGRAM_ID } from '../../../const';
 import {
   getStudentTrendChartOptions,
   getGradeChartOptions,
@@ -116,7 +123,8 @@ export class TeacherHomeComponent implements OnInit, OnDestroy {
   loadData(): void {
     this.isLoading.set(true);
     // First load study programs, then fetch data report
-    this.studyProgramService.getAll()
+    this.studyProgramService
+      .getAll()
       .pipe(takeUntil(this._destroy$))
       .subscribe({
         next: (studyPrograms) => {
@@ -145,26 +153,19 @@ export class TeacherHomeComponent implements OnInit, OnDestroy {
       });
   }
 
-
   getSeriesData(trendData: StudentTrendDataPoint[]): ApexAxisChartSeries {
     let series: ApexAxisChartSeries = [];
 
     // If a specific study program is selected, show only that program's data
     const selectedId = this.selectedStudyProgramId();
     if (selectedId) {
-
       console.log(selectedId, this.studyPrograms());
-      const selectedProgram = this.studyPrograms().find(
-        (p) => p.id === selectedId,
-      );
+      const selectedProgram = this.studyPrograms().find((p) => p.id === selectedId);
       if (selectedProgram) {
         series = [
           {
             name: selectedProgram.name,
-            data: trendData.map(
-              (d: StudentTrendDataPoint) =>
-                d.programCounts[selectedId],
-            ),
+            data: trendData.map((d: StudentTrendDataPoint) => d.programCounts[selectedId]),
           },
         ];
       }
@@ -174,15 +175,11 @@ export class TeacherHomeComponent implements OnInit, OnDestroy {
       series = [
         {
           name: 'Informatika',
-          data: trendData.map(
-            (d) => d.programCounts[INFORMATICS_STUDY_PROGRAM_ID],
-          ),
+          data: trendData.map((d) => d.programCounts[INFORMATICS_STUDY_PROGRAM_ID]),
         },
         {
           name: 'Manažment',
-          data: trendData.map(
-            (d) => d.programCounts[MANAGEMENT_STUDY_PROGRAM_ID],
-          ),
+          data: trendData.map((d) => d.programCounts[MANAGEMENT_STUDY_PROGRAM_ID]),
         },
       ];
     }
@@ -198,7 +195,7 @@ export class TeacherHomeComponent implements OnInit, OnDestroy {
     this.isExporting.set(true);
 
     // Add a small delay to allow the UI to update and show the spinner
-    await new Promise(resolve => setTimeout(resolve, 100));
+    await new Promise((resolve) => setTimeout(resolve, 100));
 
     try {
       const element = this.reportContent.nativeElement;
@@ -239,7 +236,7 @@ export class TeacherHomeComponent implements OnInit, OnDestroy {
       let filename = 'report-udajov';
 
       if (selectedId) {
-        const selectedProgram = this.studyPrograms().find(p => p.id === selectedId);
+        const selectedProgram = this.studyPrograms().find((p) => p.id === selectedId);
         if (selectedProgram) {
           filename = `report-udajov-${selectedProgram.name.toLowerCase().replace(/\s+/g, '-')}`;
         }

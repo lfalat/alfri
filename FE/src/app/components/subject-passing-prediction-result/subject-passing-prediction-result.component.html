@@ -10,13 +10,13 @@
 
       <div class="probability-section">
         <p class="probability-label">Pravdepodobnosť absolvovania predmetu:</p>
-        <p class="probability-value">{{ data.passingProbability | number:'1.2-2' }}%</p>
+        <p class="probability-value">{{ data.passingProbability | number: '1.2-2' }}%</p>
         <div class="progress-bar-container">
           <div
             class="progress-bar-fill"
             [ngClass]="getProgressBarClass(data.passingProbability)"
-            [style.width.%]="data.passingProbability">
-          </div>
+            [style.width.%]="data.passingProbability"
+          ></div>
         </div>
       </div>
 

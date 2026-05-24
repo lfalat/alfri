@@ -1,10 +1,5 @@
 import { Component, inject, Input } from '@angular/core';
-import {
-  MatCard,
-  MatCardContent,
-  MatCardHeader,
-  MatCardTitle,
-} from '@angular/material/card';
+import { MatCard, MatCardContent, MatCardHeader, MatCardTitle } from '@angular/material/card';
 import { SubjectGradeCorrelation } from '../../types';
 import { DecimalPipe } from '@angular/common';
 import { Router } from '@angular/router';

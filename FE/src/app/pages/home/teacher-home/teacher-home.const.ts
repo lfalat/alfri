@@ -1,13 +1,9 @@
 import { ApexOptions, ApexAxisChartSeries } from 'ng-apexcharts';
-import {
-  StudentTrendDataPoint,
-  AverageGradeDataPoint,
-  GradeDistribution,
-} from '../../../types';
+import { StudentTrendDataPoint, AverageGradeDataPoint, GradeDistribution } from '../../../types';
 
 export function getStudentTrendChartOptions(
   trendData: StudentTrendDataPoint[],
-  series: ApexAxisChartSeries
+  series: ApexAxisChartSeries,
 ): ApexOptions {
   return {
     series: series,
@@ -63,9 +59,7 @@ export function getStudentTrendChartOptions(
   };
 }
 
-export function getGradeChartOptions(
-  gradeData: AverageGradeDataPoint[]
-): ApexOptions {
+export function getGradeChartOptions(gradeData: AverageGradeDataPoint[]): ApexOptions {
   return {
     series: [
       {
@@ -146,7 +140,7 @@ export function getGradeChartOptions(
 }
 
 export function getGradeDistributionChartOptions(
-  gradeDistribution: GradeDistribution[]
+  gradeDistribution: GradeDistribution[],
 ): ApexOptions {
   return {
     series: gradeDistribution.map((d) => d.count),
@@ -188,4 +182,3 @@ export function getGradeDistributionChartOptions(
     ],
   };
 }
-

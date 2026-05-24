@@ -51,9 +51,7 @@
   <!-- Study Program Column -->
   <ng-container matColumnDef="studyProgram">
     <th mat-header-cell *matHeaderCellDef>
-      <button mat-button [matMenuTriggerFor]="studyProgramMenu">
-        Študijny odbor
-      </button>
+      <button mat-button [matMenuTriggerFor]="studyProgramMenu">Študijny odbor</button>
       <mat-menu #studyProgramMenu="matMenu">
         @for (option of filterOptionsStudyProgram; track option) {
           <button mat-menu-item (click)="applyStudyProgramFilter(option)">
@@ -88,16 +86,11 @@
 
   <!-- Average Mark Column -->
   <ng-container matColumnDef="avgMark">
-    <th
-      mat-header-cell
-      *matHeaderCellDef
-      (click)="sortByAvgMark()"
-      onKeyDown="sortByAvgMark()"
-    >
+    <th mat-header-cell *matHeaderCellDef (click)="sortByAvgMark()" onKeyDown="sortByAvgMark()">
       Priemer
-      @if (filter.sortBy === "avgMark") {
+      @if (filter.sortBy === 'avgMark') {
         <mat-icon>
-          {{ filter.direction === "ASC" ? "arrow_upward" : "arrow_downward" }}
+          {{ filter.direction === 'ASC' ? 'arrow_upward' : 'arrow_downward' }}
         </mat-icon>
       }
     </th>

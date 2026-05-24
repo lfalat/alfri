@@ -30,7 +30,6 @@
   z-index: 300 !important;
 }
 
-
 // Logo styling
 .logo-container {
   display: flex;
@@ -38,7 +37,7 @@
   justify-content: center;
   width: 48px;
   height: 48px;
-  background-color: #2196F3; // Azure blue (Material Design)
+  background-color: #2196f3; // Azure blue (Material Design)
   border-radius: 4px;
   padding: 8px;
   margin-right: 12px;
@@ -79,10 +78,10 @@
 // Selected menu item styling
 .selected {
   background-color: rgba(33, 150, 243, 0.12) !important; // Light azure blue background
-  border-left: 4px solid #2196F3; // Azure blue border
+  border-left: 4px solid #2196f3; // Azure blue border
 
   mat-icon {
-    color: #2196F3; // Azure blue icon
+    color: #2196f3; // Azure blue icon
   }
 }
 
@@ -92,7 +91,7 @@
     background-color: rgba(33, 150, 243, 0.12) !important;
 
     mat-icon {
-      color: #2196F3;
+      color: #2196f3;
     }
   }
 }
@@ -147,7 +146,7 @@
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background-color: #2196F3; // Azure blue
+  background-color: #2196f3; // Azure blue
   color: white;
   font-weight: 600;
   font-size: 16px;

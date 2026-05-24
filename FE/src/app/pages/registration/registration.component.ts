@@ -19,11 +19,12 @@ import { JwtService } from '@services/jwt.service';
 import { ReplaySubject } from 'rxjs';
 import { RegisterUserDto, Role } from '../../types';
 import { MatButton } from '@angular/material/button';
+import { NgOptimizedImage } from '@angular/common';
 
 @Component({
   selector: 'app-registration-form',
   standalone: true,
-  imports: [ReactiveFormsModule, MatButton],
+  imports: [ReactiveFormsModule, MatButton, NgOptimizedImage],
   templateUrl: './registration.component.html',
   styleUrl: './registration.component.scss',
 })
@@ -53,10 +54,7 @@ export class RegistrationComponent implements OnDestroy {
         email: ['', [Validators.required, Validators.email]],
         password: [
           '',
-          [
-            Validators.required,
-            Validators.pattern(/^(?=.*[A-Z])(?=.*\d)(?=.*[a-z]).{8,}$/),
-          ],
+          [Validators.required, Validators.pattern(/^(?=.*[A-Z])(?=.*\d)(?=.*[a-z]).{8,}$/)],
         ],
         confirmPassword: ['', [Validators.required]],
       },
@@ -98,7 +96,6 @@ export class RegistrationComponent implements OnDestroy {
 
       matchingControl.setErrors({ mustMatch: true });
       return { mustMatch: true };
-
     };
   }
 
@@ -146,9 +143,7 @@ export class RegistrationComponent implements OnDestroy {
             this.notificationService.showError(error.error);
             break;
           default:
-            this.notificationService.showError(
-              'Neznáma chyba. Kontaktujte prosím administrátora.',
-            );
+            this.notificationService.showError('Neznáma chyba. Kontaktujte prosím administrátora.');
             break;
         }
       },

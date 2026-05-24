@@ -1,10 +1,5 @@
 import { Component, Inject } from '@angular/core';
-import {
-  FormBuilder,
-  FormGroup,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import {
   MAT_DIALOG_DATA,
   MatDialogActions,
@@ -48,8 +43,7 @@ export class PasswordChangeModalComponent {
 
   submit() {
     if (this.passwordForm.valid) {
-      const { oldPassword, newPassword, confirmPassword } =
-        this.passwordForm.value;
+      const { oldPassword, newPassword, confirmPassword } = this.passwordForm.value;
       if (newPassword !== confirmPassword) {
         alert('New password and confirmation do not match!');
         return;

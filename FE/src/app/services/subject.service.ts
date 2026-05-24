@@ -79,14 +79,9 @@ export class SubjectService {
     return this.http.get<SubjectExtendedDto>(`${this.URL}/${subjectCode}`);
   }
 
-  public getSimilarSubjects(
-    subjects: SubjectExtendedDto[],
-  ): Observable<SubjectDto[]> {
+  public getSimilarSubjects(subjects: SubjectExtendedDto[]): Observable<SubjectDto[]> {
     console.log(subjects);
-    return this.http.post<SubjectDto[]>(
-      `${this.URL}/similarSubjects`,
-      subjects,
-    );
+    return this.http.post<SubjectDto[]>(`${this.URL}/similarSubjects`, subjects);
   }
 
   public getSubjectFocusPrediction(
@@ -95,18 +90,15 @@ export class SubjectService {
     sort?: string,
   ): Observable<Page<SubjectExtendedDto>> {
     let urlParameters: HttpParams = new HttpParams();
-    urlParameters = urlParameters
-      .append('page', pageNumber)
-      .append('size', pageSize);
+    urlParameters = urlParameters.append('page', pageNumber).append('size', pageSize);
 
     if (sort) {
       urlParameters = urlParameters.append('sort', sort);
     }
 
-    return this.http.get<Page<SubjectExtendedDto>>(
-      `${this.URL}/focus-prediction`,
-      { params: urlParameters },
-    );
+    return this.http.get<Page<SubjectExtendedDto>>(`${this.URL}/focus-prediction`, {
+      params: urlParameters,
+    });
   }
 
   public getSubjectsWithGrades(
@@ -115,31 +107,22 @@ export class SubjectService {
     sort?: string,
   ): Observable<Page<SubjectGradesDto>> {
     let urlParameters: HttpParams = new HttpParams();
-    urlParameters = urlParameters
-      .append('page', pageNumber)
-      .append('size', pageSize);
+    urlParameters = urlParameters.append('page', pageNumber).append('size', pageSize);
 
     if (sort) {
       urlParameters = urlParameters.append('sort', sort);
     }
 
-    return this.http.get<Page<SubjectGradesDto>>(
-      `${this.URL}/with-grades`,
-      { params: urlParameters },
-    );
+    return this.http.get<Page<SubjectGradesDto>>(`${this.URL}/with-grades`, {
+      params: urlParameters,
+    });
   }
 
-  public makeSubjectsPassingAndMarkPredictions(): Observable<
-    SubjectPassingPrediction[]
-  > {
-    return this.http.get<SubjectPassingPrediction[]>(
-      `${this.URL}/makePredictions`,
-    );
+  public makeSubjectsPassingAndMarkPredictions(): Observable<SubjectPassingPrediction[]> {
+    return this.http.get<SubjectPassingPrediction[]>(`${this.URL}/makePredictions`);
   }
 
-  public getGradeAveragesByYear(
-    subjectId: number,
-  ): Observable<GradeAverageByYearDto[]> {
+  public getGradeAveragesByYear(subjectId: number): Observable<GradeAverageByYearDto[]> {
     return this.http.get<GradeAverageByYearDto[]>(
       `${this.URL}/${subjectId}/grade-averages-by-year`,
     );

@@ -10,11 +10,11 @@ import { TableCellRenderer, TableColumnDef, TableRow } from '../generic-table.ty
   selector: 'app-number-cell-renderer',
   standalone: true,
   imports: [DecimalPipe],
-  template: `
-    <span>{{ value | number: numberFormat }}</span>
-  `
+  template: ` <span>{{ value | number: numberFormat }}</span> `,
 })
-export class NumberCellRendererComponent<T extends TableRow = TableRow> implements TableCellRenderer<T, number> {
+export class NumberCellRendererComponent<
+  T extends TableRow = TableRow,
+> implements TableCellRenderer<T, number> {
   @Input() rowData!: T;
   @Input() value!: number;
   @Input() column!: TableColumnDef<T>;
@@ -26,4 +26,3 @@ export class NumberCellRendererComponent<T extends TableRow = TableRow> implemen
    */
   @Input() numberFormat: string = '1.0-2';
 }
-

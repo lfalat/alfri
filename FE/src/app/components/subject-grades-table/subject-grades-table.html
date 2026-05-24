@@ -13,9 +13,7 @@
       <!-- Subject Name Column -->
       <ng-container matColumnDef="nazovPredmetu">
         <th mat-header-cell *matHeaderCellDef>Názov predmetu</th>
-        <td mat-cell *matCellDef="let element" class="subject-name">
-          {{ element.subjectName }}
-        </td>
+        <td mat-cell *matCellDef="let element" class="subject-name">{{ element.subjectName }}</td>
       </ng-container>
 
       <!-- Grade Column -->
@@ -41,4 +39,3 @@
     ></mat-paginator>
   </div>
 </section>
-

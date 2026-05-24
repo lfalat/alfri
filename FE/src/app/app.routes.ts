@@ -2,12 +2,7 @@ import type { Routes } from '@angular/router';
 import { HomeComponent } from '@pages/home/home.component';
 import { LoginComponent } from '@pages/login/login.component';
 import { RegistrationComponent } from '@pages/registration/registration.component';
-import {
-  AuthGuards,
-  loggedOutOnlyGuard,
-  roleAppGuard,
-  tokenAppGuard,
-} from './auth-guards';
+import { AuthGuards, loggedOutOnlyGuard, roleAppGuard, tokenAppGuard } from './auth-guards';
 import { ErrorPageComponent } from '@pages/error-page/error-page.component';
 import { ProfileComponent } from '@pages/profile/profile.component';
 import { inject } from '@angular/core';

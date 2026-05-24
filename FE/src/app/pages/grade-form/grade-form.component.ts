@@ -1,16 +1,6 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
-import {
-  FormBuilder,
-  FormGroup,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
-import {
-  MatStep,
-  MatStepContent,
-  MatStepper,
-  StepperOrientation,
-} from '@angular/material/stepper';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { MatStep, MatStepContent, MatStepper, StepperOrientation } from '@angular/material/stepper';
 import { AsyncPipe } from '@angular/common';
 import { FormService } from '@services/form.service';
 import { Router } from '@angular/router';
@@ -110,8 +100,7 @@ export class GradeFormComponent implements OnInit {
 
       section.questions.forEach((question) => {
         // Default values
-        let defaultValue =
-          question.answerType === QuestionTypes.NUMERIC ? 0 : '';
+        let defaultValue = question.answerType === QuestionTypes.NUMERIC ? 0 : '';
 
         // If existing answers exist, find the corresponding answer
         if (this.existingAnswers) {
@@ -120,32 +109,21 @@ export class GradeFormComponent implements OnInit {
           );
 
           if (existingSection) {
-            const existingQuestion = existingSection.questions.find(
-              (q) => q.id === question.id,
-            );
+            const existingQuestion = existingSection.questions.find((q) => q.id === question.id);
 
             if (existingQuestion) {
-              if (
-                question.answerType === QuestionTypes.CHECKBOX &&
-                question.options
-              ) {
+              if (question.answerType === QuestionTypes.CHECKBOX && question.options) {
                 // Handle checkbox answers
                 question.options.forEach((option, index) => {
                   const isChecked = existingQuestion.answers.some((answer) =>
-                    answer.texts.some(
-                      (answer) => answer.textOfAnswer === option.questionOption,
-                    ),
+                    answer.texts.some((answer) => answer.textOfAnswer === option.questionOption),
                   );
-                  group[question.questionIdentifier + index.toString()] = [
-                    isChecked,
-                  ];
+                  group[question.questionIdentifier + index.toString()] = [isChecked];
                 });
                 return; // Skip setting default value for checkbox
               } else {
                 // For other answer types, use the first text answer
-                defaultValue =
-                  existingQuestion.answers[0]?.texts[0].textOfAnswer ||
-                  defaultValue;
+                defaultValue = existingQuestion.answers[0]?.texts[0].textOfAnswer || defaultValue;
               }
             }
           }
@@ -220,9 +198,7 @@ export class GradeFormComponent implements OnInit {
     this.formService.submitFormAnswer(result).subscribe({
       next: () => {
         this.router.navigate(['/home']).then(() => {
-          this.errorService.showSuccess(
-            'Vyplnenie dotazníka prebehlo úspešne.',
-          );
+          this.errorService.showSuccess('Vyplnenie dotazníka prebehlo úspešne.');
         });
       },
       error: () => {

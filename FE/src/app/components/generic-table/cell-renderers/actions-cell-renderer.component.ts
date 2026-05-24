@@ -2,11 +2,7 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
-import {
-  TableCellRenderer,
-  TableColumnDef,
-  TableRow,
-} from '../generic-table.types';
+import { TableCellRenderer, TableColumnDef, TableRow } from '../generic-table.types';
 
 export interface TableAction<T = unknown> {
   id: string;
@@ -50,15 +46,20 @@ export interface TableAction<T = unknown> {
       }
     </div>
   `,
-  styles: [`
-    .actions-container {
-      display: flex;
-      gap: 4px;
-      align-items: center;
-    }
-  `]
+  styles: [
+    `
+      .actions-container {
+        display: flex;
+        gap: 4px;
+        align-items: center;
+      }
+    `,
+  ],
 })
-export class ActionsCellRendererComponent<T extends TableRow> implements TableCellRenderer<T, never> {
+export class ActionsCellRendererComponent<T extends TableRow> implements TableCellRenderer<
+  T,
+  never
+> {
   @Input() rowData!: T;
   @Input() value!: never;
   @Input() column!: TableColumnDef<T>;
@@ -72,7 +73,7 @@ export class ActionsCellRendererComponent<T extends TableRow> implements TableCe
   @Output() actionClick = new EventEmitter<{ action: TableAction<T>; row: T; event: MouseEvent }>();
 
   get visibleActions(): TableAction<T>[] {
-    return this.actions.filter(action => {
+    return this.actions.filter((action) => {
       if (typeof action.hidden === 'function') {
         return !action.hidden(this.rowData);
       }
@@ -97,4 +98,3 @@ export class ActionsCellRendererComponent<T extends TableRow> implements TableCe
     this.actionClick.emit({ action, row: this.rowData, event });
   }
 }
-

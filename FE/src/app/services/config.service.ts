@@ -1,9 +1,9 @@
-import {computed, inject, Injectable, signal} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
-import {Observable, tap} from "rxjs";
+import { computed, inject, Injectable, signal } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable, tap } from 'rxjs';
 import { AppConfig } from '../types';
 
-@Injectable({providedIn: 'root'})
+@Injectable({ providedIn: 'root' })
 export class ConfigService {
   private readonly config = signal<AppConfig | undefined>(undefined);
 
@@ -12,12 +12,10 @@ export class ConfigService {
   readonly environment = computed(() => this.config()?.ENVIRONMENT);
 
   loadConfig(): Observable<AppConfig> {
-    return this.http.get<AppConfig>('/assets/config/config.json')
-      .pipe(
-        tap(config => {
-          this.config.set(config);
-        })
-      );
+    return this.http.get<AppConfig>('/assets/config/config.json').pipe(
+      tap((config) => {
+        this.config.set(config);
+      }),
+    );
   }
 }
-

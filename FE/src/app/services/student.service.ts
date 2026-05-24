@@ -19,9 +19,6 @@ export class StudentService {
       }),
     };
 
-    return this.http.get<StudyProgramDto>(
-      `${this.URL}/current/studyProgram`,
-      httpOptions,
-    );
+    return this.http.get<StudyProgramDto>(`${this.URL}/current/studyProgram`, httpOptions);
   }
 }

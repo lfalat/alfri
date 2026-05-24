@@ -168,10 +168,7 @@ describe('GenericTableComponent', () => {
 
   it('should handle selection', () => {
     fixture.componentRef.setInput('data', signal(mockData));
-    fixture.componentRef.setInput(
-      'config',
-      signal({ ...basicConfig, enableSelection: true }),
-    );
+    fixture.componentRef.setInput('config', signal({ ...basicConfig, enableSelection: true }));
     fixture.detectChanges();
 
     component.toggleRow(mockData[0]);
@@ -183,10 +180,7 @@ describe('GenericTableComponent', () => {
 
   it('should select all rows with masterToggle', () => {
     fixture.componentRef.setInput('data', signal(mockData));
-    fixture.componentRef.setInput(
-      'config',
-      signal({ ...basicConfig, enableSelection: true }),
-    );
+    fixture.componentRef.setInput('config', signal({ ...basicConfig, enableSelection: true }));
     fixture.detectChanges();
 
     component.masterToggle();
@@ -219,10 +213,7 @@ describe('GenericTableComponent', () => {
 
   it('should emit selectionChange event', () => {
     fixture.componentRef.setInput('data', signal(mockData));
-    fixture.componentRef.setInput(
-      'config',
-      signal({ ...basicConfig, enableSelection: true }),
-    );
+    fixture.componentRef.setInput('config', signal({ ...basicConfig, enableSelection: true }));
     fixture.detectChanges();
 
     let selectedRows: TestData[] = [];
@@ -303,10 +294,7 @@ describe('GenericTableComponent', () => {
     const action = configWithActions.columns[3].actionsConfig![0];
     component.onActionClick(action, mockData[0], new MouseEvent('click'));
 
-    expect(actionClicked).toHaveBeenCalledWith(
-      mockData[0],
-      expect.any(MouseEvent),
-    );
+    expect(actionClicked).toHaveBeenCalledWith(mockData[0], expect.any(MouseEvent));
   });
 
   it('should check if action is disabled', () => {

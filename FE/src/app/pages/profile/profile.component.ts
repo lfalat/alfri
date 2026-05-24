@@ -1,11 +1,6 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import {
-  FormBuilder,
-  FormGroup,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { UserStore } from '../../stores/user.store';
 
 import { AuthService } from '@services/auth.service';
@@ -124,11 +119,7 @@ export class ProfileComponent implements OnInit {
       };
       this.authService.changePassword(passwordData).subscribe();
       this.profileForm.reset();
-      this.notificationService.showError(
-        'Heslo bolo úspešne zmenené!',
-        '',
-        3000,
-      );
+      this.notificationService.showError('Heslo bolo úspešne zmenené!', '', 3000);
       this.router.navigate(['/home']);
     }
   }

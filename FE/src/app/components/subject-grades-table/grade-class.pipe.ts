@@ -3,7 +3,7 @@ import { Pipe, PipeTransform } from '@angular/core';
 @Pipe({
   name: 'gradeClass',
   standalone: true,
-  pure: true
+  pure: true,
 })
 export class GradeClassPipe implements PipeTransform {
   transform(grade: string): string {
@@ -17,4 +17,3 @@ export class GradeClassPipe implements PipeTransform {
     return 'grade-default';
   }
 }
-

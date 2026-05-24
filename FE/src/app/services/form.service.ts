@@ -24,11 +24,7 @@ export class FormService {
       }),
     };
 
-    return this.http.post(
-      `${this.URL}/submit-form`,
-      userFormAnswers,
-      httpOptions,
-    );
+    return this.http.post(`${this.URL}/submit-form`, userFormAnswers, httpOptions);
   }
 
   changeFormAnswer(userFormAnswers: UserFormAnswers) {
@@ -38,11 +34,7 @@ export class FormService {
       }),
     };
 
-    return this.http.post(
-      `${this.URL}/replace-form`,
-      userFormAnswers,
-      httpOptions,
-    );
+    return this.http.post(`${this.URL}/replace-form`, userFormAnswers, httpOptions);
   }
 
   hasUserFilledForm(formId: number): Observable<void> {
@@ -50,15 +42,10 @@ export class FormService {
   }
 
   getExistingFormAnswers(formId: number): Observable<AnsweredForm> {
-    return this.http.get<AnsweredForm>(
-      `${this.URL}/get-user-answers/${formId}`,
-    );
+    return this.http.get<AnsweredForm>(`${this.URL}/get-user-answers/${formId}`);
   }
 
-  getMandatorySubjectsByStudyProgramIdAndYear(
-    studyProgram: number,
-    year: number,
-  ) {
+  getMandatorySubjectsByStudyProgramIdAndYear(studyProgram: number, year: number) {
     const httpOptions = {
       headers: new HttpHeaders({
         'Content-Type': 'application/json',

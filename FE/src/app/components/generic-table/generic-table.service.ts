@@ -21,14 +21,10 @@ export class GenericTableService {
       return;
     }
 
-    const visibleColumns = columns.filter(
-      (col) => col.visible !== false && col.field,
-    );
+    const visibleColumns = columns.filter((col) => col.visible !== false && col.field);
 
     // Create CSV headers
-    const headers = visibleColumns.map((col) =>
-      this.escapeCsvValue(col.header),
-    );
+    const headers = visibleColumns.map((col) => this.escapeCsvValue(col.header));
     const csvContent = [headers.join(',')];
 
     // Create CSV rows
@@ -41,11 +37,7 @@ export class GenericTableService {
     });
 
     // Download file
-    this.downloadFile(
-      csvContent.join('\n'),
-      filename,
-      'text/csv;charset=utf-8;',
-    );
+    this.downloadFile(csvContent.join('\n'), filename, 'text/csv;charset=utf-8;');
   }
 
   /**
@@ -87,11 +79,7 @@ export class GenericTableService {
 
     const stringValue = String(value);
     // If value contains comma, quote, or newline, wrap in quotes and escape existing quotes
-    if (
-      stringValue.includes(',') ||
-      stringValue.includes('"') ||
-      stringValue.includes('\n')
-    ) {
+    if (stringValue.includes(',') || stringValue.includes('"') || stringValue.includes('\n')) {
       return `"${stringValue.replace(/"/g, '""')}"`;
     }
 
@@ -111,11 +99,7 @@ export class GenericTableService {
   /**
    * Download file to browser
    */
-  private downloadFile(
-    content: string,
-    filename: string,
-    mimeType: string,
-  ): void {
+  private downloadFile(content: string, filename: string, mimeType: string): void {
     const blob = new Blob([content], { type: mimeType });
     const link = document.createElement('a');
 

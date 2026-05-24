@@ -47,9 +47,7 @@ import { RadarChartComponent, RadarChartOptions } from '@components/charts/radar
   templateUrl: './subject-detail.component.html',
   styleUrl: './subject-detail.component.scss',
 })
-export class SubjectDetailComponent
-  implements OnInit, AfterViewInit, OnDestroy
-{
+export class SubjectDetailComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('barChart') public barChartRef!: ElementRef<HTMLCanvasElement>;
   @ViewChild('lineChart') public lineChartRef?: ElementRef<HTMLCanvasElement>;
   public subjectData!: SubjectExtendedDto;
@@ -241,40 +239,36 @@ export class SubjectDetailComponent
 
   ngOnInit() {
     this.activateRoute.params.subscribe((paramsData) => {
-      this.subjectService
-        .getExtendedSubjectByCode(paramsData['subjectCode'])
-        .subscribe((data) => {
-          this.subjectData = data;
-          this.loading = false;
+      this.subjectService.getExtendedSubjectByCode(paramsData['subjectCode']).subscribe((data) => {
+        this.subjectData = data;
+        this.loading = false;
 
-          // Initialize radar chart with empty data first for animation
-          this.initializeRadarChartWithEmptyData();
+        // Initialize radar chart with empty data first for animation
+        this.initializeRadarChartWithEmptyData();
 
-          // Then update with real data after a short delay for animation
-          setTimeout(() => {
-            this.updateRadarChartOptions();
-          }, 100);
+        // Then update with real data after a short delay for animation
+        setTimeout(() => {
+          this.updateRadarChartOptions();
+        }, 100);
 
-          this.updateCharts();
+        this.updateCharts();
 
-          // Fetch grade averages by year
-          this.subjectService
-            .getGradeAveragesByYear(data.id)
-            .subscribe((gradeData) => {
-              console.log('Grade averages by year:', gradeData);
-              this.gradeAveragesData.set(gradeData);
-              this.hasGradeAveragesData.set(gradeData.length > 0);
+        // Fetch grade averages by year
+        this.subjectService.getGradeAveragesByYear(data.id).subscribe((gradeData) => {
+          console.log('Grade averages by year:', gradeData);
+          this.gradeAveragesData.set(gradeData);
+          this.hasGradeAveragesData.set(gradeData.length > 0);
 
-              // Trigger change detection and initialize line chart after view updates
-              if (gradeData.length > 0) {
-                this.cdr.detectChanges();
-                // Use setTimeout to ensure the canvas is in the DOM after @if renders
-                setTimeout(() => {
-                  this.initLineChart();
-                }, 0);
-              }
-            });
+          // Trigger change detection and initialize line chart after view updates
+          if (gradeData.length > 0) {
+            this.cdr.detectChanges();
+            // Use setTimeout to ensure the canvas is in the DOM after @if renders
+            setTimeout(() => {
+              this.initLineChart();
+            }, 0);
+          }
         });
+      });
     });
   }
 
@@ -292,7 +286,6 @@ export class SubjectDetailComponent
   }
 
   private updateCharts() {
-
     if (this.barChart) {
       this.barChart.data.datasets[0].data = this.generateRandomValues(
         100,
@@ -321,8 +314,8 @@ export class SubjectDetailComponent
   private updateLineChart(data: GradeAverageByYearDto[]) {
     if (!this.lineChart) return;
 
-    this.lineChart.data.labels = data.map(d => `Rok ${d.year}`);
-    this.lineChart.data.datasets[0].data = data.map(d => d.averageGrade);
+    this.lineChart.data.labels = data.map((d) => `Rok ${d.year}`);
+    this.lineChart.data.datasets[0].data = data.map((d) => d.averageGrade);
     this.lineChart.update();
   }
 
@@ -414,12 +407,9 @@ export class SubjectDetailComponent
     };
 
     return this.subjectData && this.subjectData.focusDTO
-      ? Object.keys(this.subjectData.focusDTO).map(
-          (key) => focusLabelMapping[key],
-        )
+      ? Object.keys(this.subjectData.focusDTO).map((key) => focusLabelMapping[key])
       : [];
   }
-
 
   private generateRandomValues(sum: number, count: number): number[] {
     const values = Array.from({ length: count }, () => Math.random());

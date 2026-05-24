@@ -157,12 +157,11 @@ export class SubjectsComponent implements OnInit, OnDestroy {
   }
 
   private init(): void {
-    this._studyPrograms$ = this.studyProgramService
-      .getAll()
-      .pipe(takeUntil(this._destroy$));
+    this._studyPrograms$ = this.studyProgramService.getAll().pipe(takeUntil(this._destroy$));
 
-    const formData = this.formDataService.getFormData()
-    const studyProgramId = formData?.sections[0].questions.find(question => question.id === 109)?.answers[0].texts[0].textOfAnswer;
+    const formData = this.formDataService.getFormData();
+    const studyProgramId = formData?.sections[0].questions.find((question) => question.id === 109)
+      ?.answers[0].texts[0].textOfAnswer;
     if (!studyProgramId) {
       throw new Error('Study program ID not found in form data');
     }
@@ -221,20 +220,11 @@ export class SubjectsComponent implements OnInit, OnDestroy {
     this.isLoading.set(false);
   }
 
-  private getSubjects(
-    pageNumber: number,
-    pageSize: number,
-    studyProgramId: number,
-  ): void {
+  private getSubjects(pageNumber: number, pageSize: number, studyProgramId: number): void {
     this.isLoading.set(true);
     const sort = this.buildSortParam();
     this.subjectService
-      .getSubjectsWithFocusByStudyProgramId(
-        studyProgramId,
-        pageNumber,
-        pageSize,
-        sort,
-      )
+      .getSubjectsWithFocusByStudyProgramId(studyProgramId, pageNumber, pageSize, sort)
       .pipe(
         tap((page: Page<SubjectDto>) => {
           this.updateTableData(page);
@@ -255,12 +245,7 @@ export class SubjectsComponent implements OnInit, OnDestroy {
   ): Observable<Page<SubjectDto>> {
     const sort = this.buildSortParam();
     return this.subjectService
-      .getSubjectsWithFocusByStudyProgramIdAndSearch(
-        pageNumber,
-        pageSize,
-        searchParam,
-        sort,
-      )
+      .getSubjectsWithFocusByStudyProgramIdAndSearch(pageNumber, pageSize, searchParam, sort)
       .pipe(
         takeUntil(this._destroy$),
         catchError(() => {
@@ -286,11 +271,7 @@ export class SubjectsComponent implements OnInit, OnDestroy {
         )
         .subscribe();
     } else {
-      this.getSubjects(
-        event.pageIndex,
-        event.pageSize,
-        this._selectedStudyProgramId,
-      );
+      this.getSubjects(event.pageIndex, event.pageSize, this._selectedStudyProgramId);
     }
   }
 

@@ -184,7 +184,8 @@
   position: relative;
 }
 
-.login-form, .registration-form {
+.login-form,
+.registration-form {
   display: flex;
   flex-direction: column;
   row-gap: 1.25rem;
@@ -279,5 +280,3 @@
     text-decoration: none;
   }
 }
-
-

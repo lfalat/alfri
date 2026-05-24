@@ -1,10 +1,4 @@
-import {
-  Component,
-  computed,
-  inject,
-  signal,
-  ViewChild,
-} from '@angular/core';
+import { Component, computed, inject, signal, ViewChild } from '@angular/core';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSidenav, MatSidenavModule } from '@angular/material/sidenav';
@@ -33,7 +27,6 @@ interface MenuItem {
   route: string;
   action?: () => void;
 }
-
 
 @Component({
   selector: 'app-header',
@@ -73,24 +66,15 @@ export class HeaderComponent {
 
   // Computed signals
   readonly canAccessSubjects = computed(
-    () =>
-      !!this.formData() ||
-      this.authService.hasRole([AuthRole.STUDENT]),
+    () => !!this.formData() || this.authService.hasRole([AuthRole.STUDENT]),
   );
 
-  readonly canAccessReports = computed(
-    () => {
-      const output =
-        this.authService.hasRole([
-          AuthRole.VEDENIE,
-          AuthRole.ADMIN,
-          AuthRole.TEACHER,
-        ]);
+  readonly canAccessReports = computed(() => {
+    const output = this.authService.hasRole([AuthRole.VEDENIE, AuthRole.ADMIN, AuthRole.TEACHER]);
 
-      console.log(output);
-      return output;
-    }
-  );
+    console.log(output);
+    return output;
+  });
 
   readonly userInitials = computed(() => {
     const userData = this.userService.userData();

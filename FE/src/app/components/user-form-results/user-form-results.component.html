@@ -24,10 +24,7 @@
         </div>
 
         <!-- Other Information Cards -->
-        @for (
-          information of getFilteredQuestions();
-          track information
-        ) {
+        @for (information of getFilteredQuestions(); track information) {
           <div class="col-12 col-sm-6 col-lg-3">
             <mat-card class="info-card">
               <mat-card-content class="d-flex align-items-center gap-3 p-3">
@@ -36,15 +33,11 @@
                 </div>
                 <div class="flex-grow-1">
                   <p class="info-label mb-1">{{ getDisplayLabel(information.questionTitle) }}</p>
-                  @if (information.questionTitle === "Odbor") {
+                  @if (information.questionTitle === 'Odbor') {
                     <p class="info-value mb-0">
-                      {{
-                        StudyPrograms[
-                          Number(information.answers[0].texts[0].textOfAnswer)
-                        ]
-                      }}
+                      {{ StudyPrograms[Number(information.answers[0].texts[0].textOfAnswer)] }}
                     </p>
-                  } @else if (information.questionTitle === "Ročník v škole") {
+                  } @else if (information.questionTitle === 'Ročník v škole') {
                     <p class="info-value mb-0">
                       {{ information.answers[0].texts[0].textOfAnswer }}. Ročník
                     </p>
@@ -100,14 +93,10 @@
               <div class="activities-chips-wrapper">
                 <mat-chip-set aria-label="Voľnočasové aktivity">
                   @for (
-                    activity of existingAnswers()!.sections[3].questions[0]
-                      .answers;
+                    activity of existingAnswers()!.sections[3].questions[0].answers;
                     track activity
                   ) {
-                    @for (
-                      activityOption of activity.texts;
-                      track activityOption
-                    ) {
+                    @for (activityOption of activity.texts; track activityOption) {
                       <mat-chip class="activity-chip">
                         {{ activityOption.textOfAnswer }}
                       </mat-chip>

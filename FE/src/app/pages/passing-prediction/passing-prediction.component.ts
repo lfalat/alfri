@@ -10,12 +10,7 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 @Component({
   selector: 'app-passing-prediction',
   standalone: true,
-  imports: [
-    SubjectPassingPredictionResultComponent,
-    MatProgressSpinner,
-    MatCard,
-    MatCardContent,
-  ],
+  imports: [SubjectPassingPredictionResultComponent, MatProgressSpinner, MatCard, MatCardContent],
   templateUrl: './passing-prediction.component.html',
   styleUrls: ['./passing-prediction.component.scss'],
 })
@@ -35,9 +30,7 @@ export class PassingPredictionComponent implements OnInit {
         this.subjects = predictionResult;
 
         this.subjects.forEach((subject) => {
-          subject.recommendations = this.generateRecommendations(
-            subject.passingProbability,
-          );
+          subject.recommendations = this.generateRecommendations(subject.passingProbability);
         });
       });
   }

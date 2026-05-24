@@ -1,15 +1,10 @@
-<section
-  class="generic-table-wrapper"
-  [ngClass]="[densityClass(), config().tableClass || '']"
->
+<section class="generic-table-wrapper" [ngClass]="[densityClass(), config().tableClass || '']">
   <!-- Header Section -->
   @if (config().header?.show) {
     <div class="table-header">
       <!-- Custom header template -->
       @if (config().header?.template) {
-        <ng-container
-          *ngTemplateOutlet="config().header!.template!"
-        ></ng-container>
+        <ng-container *ngTemplateOutlet="config().header!.template!"></ng-container>
       } @else {
         <div class="header-title">
           @if (config().header?.icon) {
@@ -26,9 +21,7 @@
           <div class="search-container">
             <mat-form-field class="search-field" appearance="fill">
               <mat-icon matPrefix>search</mat-icon>
-              <mat-label>{{
-                config().header?.searchPlaceholder || "Search..."
-              }}</mat-label>
+              <mat-label>{{ config().header?.searchPlaceholder || 'Search...' }}</mat-label>
               <input
                 matInput
                 [value]="filterValue()"
@@ -47,9 +40,7 @@
   @if (isLoading()) {
     <div class="loading-overlay">
       @if (config().loadingTemplate) {
-        <ng-container
-          *ngTemplateOutlet="config().loadingTemplate!"
-        ></ng-container>
+        <ng-container *ngTemplateOutlet="config().loadingTemplate!"></ng-container>
       } @else {
         <mat-spinner diameter="48"></mat-spinner>
       }
@@ -60,7 +51,13 @@
   @if (config().enableSelection && allSelectedItems().length > 0) {
     <div class="selected-items-section">
       <div class="selected-items-label">
-        <strong>Selected ({{ allSelectedItems().length }}@if (config().maxSelection) { / {{ config().maxSelection }} }):</strong>
+        <strong
+          >Selected ({{ allSelectedItems().length }}
+          @if (config().maxSelection) {
+            / {{ config().maxSelection }}
+          }
+          ):</strong
+        >
       </div>
       <mat-chip-set aria-label="Selected items">
         @for (item of allSelectedItems(); track item.id) {
@@ -77,7 +74,7 @@
 
   <!-- Table Container -->
   <div class="table-container" [style.min-height]="getTableContainerMinHeight()">
-      @if (config().enableSorting) {
+    @if (config().enableSorting) {
       <table
         mat-table
         [dataSource]="dataSource"
@@ -90,7 +87,7 @@
         @if (config().enableSelection) {
           <ng-container matColumnDef="select">
             <th mat-header-cell *matHeaderCellDef class="select-column">
-              @if (config().selectionMode === "multiple") {
+              @if (config().selectionMode === 'multiple') {
                 <mat-checkbox
                   [checked]="isAllSelected()"
                   [indeterminate]="selection.hasValue() && !isAllSelected()"
@@ -118,19 +115,13 @@
               *matHeaderCellDef
               [mat-sort-header]="column.sortable ? column.id : ''"
               [disabled]="!column.sortable"
-              [ngClass]="[
-                getHeaderClass(column),
-                getColumnAlignClass(column, true),
-              ]"
+              [ngClass]="[getHeaderClass(column), getColumnAlignClass(column, true)]"
               [ngStyle]="getColumnWidthStyle(column)"
               [matTooltip]="column.headerTooltip || ''"
             >
               @if (column.headerTemplate) {
                 <ng-container
-                  *ngTemplateOutlet="
-                    column.headerTemplate;
-                    context: getHeaderContext(column)
-                  "
+                  *ngTemplateOutlet="column.headerTemplate; context: getHeaderContext(column)"
                 ></ng-container>
               } @else {
                 {{ column.header }}
@@ -143,17 +134,12 @@
               [ngClass]="[getCellClass(row, column), getColumnAlignClass(column)]"
               [ngStyle]="getColumnWidthStyle(column)"
               [matTooltip]="
-                column.cellTooltip
-                  ? column.cellTooltip(row, getValue(row, column))
-                  : ''
+                column.cellTooltip ? column.cellTooltip(row, getValue(row, column)) : ''
               "
             >
               @if (column.cellTemplate) {
                 <ng-container
-                  *ngTemplateOutlet="
-                    column.cellTemplate;
-                    context: getCellContext(row, column, i)
-                  "
+                  *ngTemplateOutlet="column.cellTemplate; context: getCellContext(row, column, i)"
                 ></ng-container>
               } @else {
                 <ng-container
@@ -181,17 +167,12 @@
         ></tr>
       </table>
     } @else {
-      <table
-        mat-table
-        [dataSource]="dataSource"
-        [trackBy]="trackByRow"
-        class="generic-table"
-      >
+      <table mat-table [dataSource]="dataSource" [trackBy]="trackByRow" class="generic-table">
         <!-- Selection Column -->
         @if (config().enableSelection) {
           <ng-container matColumnDef="select">
             <th mat-header-cell *matHeaderCellDef class="select-column">
-              @if (config().selectionMode === "multiple") {
+              @if (config().selectionMode === 'multiple') {
                 <mat-checkbox
                   [checked]="isAllSelected()"
                   [indeterminate]="selection.hasValue() && !isAllSelected()"
@@ -217,19 +198,13 @@
             <th
               mat-header-cell
               *matHeaderCellDef
-              [ngClass]="[
-                getHeaderClass(column),
-                getColumnAlignClass(column, true),
-              ]"
+              [ngClass]="[getHeaderClass(column), getColumnAlignClass(column, true)]"
               [ngStyle]="getColumnWidthStyle(column)"
               [matTooltip]="column.headerTooltip || ''"
             >
               @if (column.headerTemplate) {
                 <ng-container
-                  *ngTemplateOutlet="
-                    column.headerTemplate;
-                    context: getHeaderContext(column)
-                  "
+                  *ngTemplateOutlet="column.headerTemplate; context: getHeaderContext(column)"
                 ></ng-container>
               } @else {
                 {{ column.header }}
@@ -242,17 +217,12 @@
               [ngClass]="[getCellClass(row, column), getColumnAlignClass(column)]"
               [ngStyle]="getColumnWidthStyle(column)"
               [matTooltip]="
-                column.cellTooltip
-                  ? column.cellTooltip(row, getValue(row, column))
-                  : ''
+                column.cellTooltip ? column.cellTooltip(row, getValue(row, column)) : ''
               "
             >
               @if (column.cellTemplate) {
                 <ng-container
-                  *ngTemplateOutlet="
-                    column.cellTemplate;
-                    context: getCellContext(row, column, i)
-                  "
+                  *ngTemplateOutlet="column.cellTemplate; context: getCellContext(row, column, i)"
                 ></ng-container>
               } @else {
                 <ng-container
@@ -286,14 +256,12 @@
       <div class="empty-state">
         <!-- Custom empty template -->
         @if (config().emptyTemplate) {
-          <ng-container
-            *ngTemplateOutlet="config().emptyTemplate!"
-          ></ng-container>
+          <ng-container *ngTemplateOutlet="config().emptyTemplate!"></ng-container>
         } @else {
           <div class="empty-content">
             <mat-icon class="empty-icon">inbox</mat-icon>
             <p class="empty-message">
-              {{ config().emptyMessage || "No data available" }}
+              {{ config().emptyMessage || 'No data available' }}
             </p>
           </div>
         }

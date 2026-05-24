@@ -9,11 +9,7 @@ import {
   createComponent,
   input,
 } from '@angular/core';
-import {
-  TableCellRenderer,
-  TableColumnDef,
-  TableRow,
-} from './generic-table.types';
+import { TableCellRenderer, TableColumnDef, TableRow } from './generic-table.types';
 
 /**
  * Directive to dynamically render cell components

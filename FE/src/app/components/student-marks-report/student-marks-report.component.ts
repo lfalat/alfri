@@ -16,21 +16,11 @@ import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 
 import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import {
-  MatChip,
-  MatChipListbox,
-  MatChipRemove,
-} from '@angular/material/chips';
+import { MatChip, MatChipListbox, MatChipRemove } from '@angular/material/chips';
 import { LeadService } from '@services/lead.service';
 import { StudentAverageGradeDTO, StudentFilterDTO } from '../../types';
 import { MatProgressBar } from '@angular/material/progress-bar';
-import {
-  animate,
-  state,
-  style,
-  transition,
-  trigger,
-} from '@angular/animations';
+import { animate, state, style, transition, trigger } from '@angular/animations';
 import { NotificationService } from '@services/notification.service';
 import * as Papa from 'papaparse';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
@@ -190,10 +180,7 @@ export class StudentMarksReportComponent implements OnInit {
   // Method to export data to CSV
   exportToCsv() {
     if (this.dataSource.data.length === 0) {
-      this.notificationService.showError(
-        'Žiadne dáta na exportovanie.',
-        'Zavrieť',
-      );
+      this.notificationService.showError('Žiadne dáta na exportovanie.', 'Zavrieť');
       return;
     }
 

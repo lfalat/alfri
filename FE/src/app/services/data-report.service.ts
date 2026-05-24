@@ -12,9 +12,7 @@ export class DataReportService {
   private readonly config = inject(ConfigService);
   private readonly URL = `${this.config.apiUrl()}/data-report`;
 
-  public getDataReport(
-    studyProgramId: StudyProgramId | null,
-  ): Observable<DataReportDto> {
+  public getDataReport(studyProgramId: StudyProgramId | null): Observable<DataReportDto> {
     let params = new HttpParams();
 
     if (studyProgramId) {

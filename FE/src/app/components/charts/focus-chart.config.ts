@@ -38,4 +38,3 @@ export function getFocusChartKeys(): string[] {
 export function extractFocusData(formData: Record<string, unknown>): number[] {
   return getFocusChartKeys().map((key) => Number(formData[key]) || 0);
 }
-

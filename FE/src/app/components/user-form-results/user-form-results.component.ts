@@ -1,18 +1,8 @@
-import {
-  AfterViewInit,
-  Component,
-  input,
-  computed,
-} from '@angular/core';
+import { AfterViewInit, Component, input, computed } from '@angular/core';
 
 import { MatChip, MatChipSet } from '@angular/material/chips';
 import { AnsweredForm, Page, StudyPrograms } from '../../types';
-import {
-  MatCard,
-  MatCardContent,
-  MatCardHeader,
-  MatCardTitle,
-} from '@angular/material/card';
+import { MatCard, MatCardContent, MatCardHeader, MatCardTitle } from '@angular/material/card';
 import { MatIcon } from '@angular/material/icon';
 import { NgClass } from '@angular/common';
 import {
@@ -28,7 +18,7 @@ import {
   RadarChartComponent,
   RadarChartOptions,
   getFocusChartLabels,
-  getFocusChartKeys
+  getFocusChartKeys,
 } from '@components/charts';
 
 // Updated SubjectGrade to extend TableRow (requires id)
@@ -114,7 +104,7 @@ export class UserFormResultsComponent implements AfterViewInit {
         cellRenderer: GradeCellRendererComponent,
         sortable: true,
         align: 'center',
-      }
+      },
     ],
     enableSorting: true,
     enablePagination: true,
@@ -124,10 +114,9 @@ export class UserFormResultsComponent implements AfterViewInit {
     header: {
       show: true,
       title: 'Známky z povinných predmetov',
-      icon: 'table_chart'
-    }
+      icon: 'table_chart',
+    },
   };
-
 
   ngAfterViewInit(): void {
     this.initializeRadarChart();
@@ -137,8 +126,7 @@ export class UserFormResultsComponent implements AfterViewInit {
     const focusesFormData: Record<string, string>[] | undefined =
       this.existingAnswers()?.sections[2].questions.map((question) => {
         const focuses: Record<string, string> = {};
-        focuses[question.questionIdentifier] =
-          question.answers[0].texts[0].textOfAnswer;
+        focuses[question.questionIdentifier] = question.answers[0].texts[0].textOfAnswer;
         return focuses;
       });
 
@@ -146,9 +134,7 @@ export class UserFormResultsComponent implements AfterViewInit {
       // Merge all objects in the array into one
       const mergedFocusesFormData = Object.assign({}, ...focusesFormData);
 
-      const chartData = getFocusChartKeys().map(
-        key => Number(mergedFocusesFormData[key]) || 0
-      );
+      const chartData = getFocusChartKeys().map((key) => Number(mergedFocusesFormData[key]) || 0);
 
       this.radarChartOptions = {
         data: {
@@ -165,45 +151,44 @@ export class UserFormResultsComponent implements AfterViewInit {
     }
   }
 
-
   getFilteredQuestions() {
     const answers = this.existingAnswers();
     if (!answers) return [];
 
     return answers.sections[0].questions.filter(
-      q => q.questionTitle !== 'Meno' && q.questionTitle !== 'Priezvisko'
+      (q) => q.questionTitle !== 'Meno' && q.questionTitle !== 'Priezvisko',
     );
   }
 
   getIcon(questionTitle: string): string {
     const iconMap: Record<string, string> = {
-      'Meno': 'badge',
-      'Priezvisko': 'badge',
+      Meno: 'badge',
+      Priezvisko: 'badge',
       'Ročník v škole': 'school',
-      'Fakulta': 'domain',
-      'Odbor': 'workspace_premium',
+      Fakulta: 'domain',
+      Odbor: 'workspace_premium',
     };
     return iconMap[questionTitle] || 'info';
   }
 
   getDisplayLabel(questionTitle: string): string {
     const labelMap: Record<string, string> = {
-      'Meno': 'Meno',
-      'Priezvisko': 'Priezvisko',
+      Meno: 'Meno',
+      Priezvisko: 'Priezvisko',
       'Ročník v škole': 'Ročník',
-      'Fakulta': 'Fakulta',
-      'Odbor': 'Odbor',
+      Fakulta: 'Fakulta',
+      Odbor: 'Odbor',
     };
     return labelMap[questionTitle] || questionTitle;
   }
 
   getIconClass(questionTitle: string): string {
     const classMap: Record<string, string> = {
-      'Meno': 'icon-cyan',
-      'Priezvisko': 'icon-cyan',
+      Meno: 'icon-cyan',
+      Priezvisko: 'icon-cyan',
       'Ročník v škole': 'icon-blue',
-      'Fakulta': 'icon-emerald',
-      'Odbor': 'icon-orange',
+      Fakulta: 'icon-emerald',
+      Odbor: 'icon-orange',
     };
     return classMap[questionTitle] || 'icon-default';
   }

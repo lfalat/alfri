@@ -65,13 +65,15 @@ export interface RadarChartOptions {
       <canvas #radarChart></canvas>
     </div>
   `,
-  styles: [`
-    .radar-chart-wrapper {
-      position: relative;
-      width: 100%;
-      height: 100%;
-    }
-  `]
+  styles: [
+    `
+      .radar-chart-wrapper {
+        position: relative;
+        width: 100%;
+        height: 100%;
+      }
+    `,
+  ],
 })
 export class RadarChartComponent implements AfterViewInit, OnChanges, OnDestroy {
   @ViewChild('radarChart', { static: false }) chartCanvas!: ElementRef<HTMLCanvasElement>;
@@ -271,4 +273,3 @@ export class RadarChartComponent implements AfterViewInit, OnChanges, OnDestroy 
     };
   }
 }
-

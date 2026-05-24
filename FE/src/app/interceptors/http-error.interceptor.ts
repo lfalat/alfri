@@ -19,18 +19,10 @@ export const httpErrorInterceptor: HttpInterceptorFn = (req, next) => {
 
         // Redirect to login page
         router.navigate(['/login']);
-
-        notificationService.showError(
-          'Relácia vypršala. Prihláste sa znova.',
-          '',
-        );
       }
 
       if (error.status === 403) {
-        notificationService.showError(
-          'Na vykonanie akcie nemáte oprávnenie',
-          '',
-        );
+        notificationService.showError('Na vykonanie akcie nemáte oprávnenie', '');
       }
 
       if (error.status === 418) {
@@ -40,4 +32,3 @@ export const httpErrorInterceptor: HttpInterceptorFn = (req, next) => {
     }),
   );
 };
-

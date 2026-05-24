@@ -15,50 +15,55 @@ import { TableCellRenderer, TableColumnDef, TableRow } from '../generic-table';
       {{ value }}
     </span>
   `,
-  styles: [`
-    .grade-badge {
-      display: inline-block;
-      padding: 6px 16px;
-      border-radius: 16px;
-      font-weight: 600;
-      font-size: 0.875rem;
-      text-align: center;
-      min-width: 40px;
-    }
+  styles: [
+    `
+      .grade-badge {
+        display: inline-block;
+        padding: 6px 16px;
+        border-radius: 16px;
+        font-weight: 600;
+        font-size: 0.875rem;
+        text-align: center;
+        min-width: 40px;
+      }
 
-    .grade-excellent {
-      background-color: #e8f5e9;
-      color: #2e7d32;
-    }
+      .grade-excellent {
+        background-color: #e8f5e9;
+        color: #2e7d32;
+      }
 
-    .grade-very-good {
-      background-color: #e3f2fd;
-      color: #1565c0;
-    }
+      .grade-very-good {
+        background-color: #e3f2fd;
+        color: #1565c0;
+      }
 
-    .grade-good {
-      background-color: #fff3e0;
-      color: #e65100;
-    }
+      .grade-good {
+        background-color: #fff3e0;
+        color: #e65100;
+      }
 
-    .grade-satisfactory {
-      background-color: #fff9c4;
-      color: #f57f17;
-    }
+      .grade-satisfactory {
+        background-color: #fff9c4;
+        color: #f57f17;
+      }
 
-    .grade-sufficient {
-      background-color: #ffebee;
-      color: #c62828;
-    }
+      .grade-sufficient {
+        background-color: #ffebee;
+        color: #c62828;
+      }
 
-    .grade-fail {
-      background-color: #ffcdd2;
-      color: #b71c1c;
-      font-weight: 700;
-    }
-  `]
+      .grade-fail {
+        background-color: #ffcdd2;
+        color: #b71c1c;
+        font-weight: 700;
+      }
+    `,
+  ],
 })
-export class GradeCellRendererComponent<T extends TableRow = TableRow> implements TableCellRenderer<T, string> {
+export class GradeCellRendererComponent<T extends TableRow = TableRow> implements TableCellRenderer<
+  T,
+  string
+> {
   @Input() rowData!: T;
   @Input() value!: string;
   @Input() column!: TableColumnDef<T>;
@@ -66,15 +71,14 @@ export class GradeCellRendererComponent<T extends TableRow = TableRow> implement
 
   get gradeClass(): string {
     const gradeMap: Record<string, string> = {
-      'A': 'grade-excellent',
-      'B': 'grade-very-good',
-      'C': 'grade-good',
-      'D': 'grade-satisfactory',
-      'E': 'grade-sufficient',
-      'F': 'grade-fail',
-      'Fx': 'grade-fail'
+      A: 'grade-excellent',
+      B: 'grade-very-good',
+      C: 'grade-good',
+      D: 'grade-satisfactory',
+      E: 'grade-sufficient',
+      F: 'grade-fail',
+      Fx: 'grade-fail',
     };
     return gradeMap[this.value] || '';
   }
 }
-

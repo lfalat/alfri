@@ -15,21 +15,12 @@ import { SubjectGradeCorrelationService } from '@services/subject-grade-correlat
 import { NgApexchartsModule } from 'ng-apexcharts';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { FormsModule } from '@angular/forms';
-import {
-  MatTab,
-  MatTabChangeEvent,
-  MatTabGroup,
-  MatTabLabel,
-} from '@angular/material/tabs';
+import { MatTab, MatTabChangeEvent, MatTabGroup, MatTabLabel } from '@angular/material/tabs';
 import { Operator } from '@enums/operator';
 import { AsyncPipe } from '@angular/common';
 import { SubjectGradeCorrelationDetailComponent } from '@components/subject-grade-correlation-detail/subject-grade-correlation-detail.component';
 import { MatIcon } from '@angular/material/icon';
-import {
-  ApexChartOptions,
-  StudyProgramDto,
-  SubjectGradeCorrelation,
-} from '../../types';
+import { ApexChartOptions, StudyProgramDto, SubjectGradeCorrelation } from '../../types';
 import { UserService } from '@services/user.service';
 import { StudyProgramService } from '@services/study-program.service';
 import { AuthRole } from '@enums/auth-role';
@@ -70,14 +61,11 @@ export class SubjectGradeCorrelationComponent implements OnInit, OnDestroy {
 
   studyPrograms$!: Observable<StudyProgramDto[]>;
 
-  private readonly _heatmapDataLoaded$: BehaviorSubject<boolean> =
-    new BehaviorSubject(false);
+  private readonly _heatmapDataLoaded$: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
   private readonly _chartOptions: ApexChartOptions;
   private readonly _destroy$: ReplaySubject<void> = new ReplaySubject(1);
-  private readonly subjectGradeCorrelationService = inject(
-    SubjectGradeCorrelationService,
-  );
+  private readonly subjectGradeCorrelationService = inject(SubjectGradeCorrelationService);
 
   private readonly userService = inject(UserService);
   private readonly studyProgramService = inject(StudyProgramService);
@@ -87,10 +75,7 @@ export class SubjectGradeCorrelationComponent implements OnInit, OnDestroy {
 
   // whether current user is a student
   isStudent = computed(
-    () =>
-      this.userService
-        .userData()
-        ?.roles?.some((r) => r.name === AuthRole.STUDENT) ?? false,
+    () => this.userService.userData()?.roles?.some((r) => r.name === AuthRole.STUDENT) ?? false,
   );
 
   // selected study program for fetching correlations (null until chosen for non-students)
@@ -373,25 +358,17 @@ export class SubjectGradeCorrelationComponent implements OnInit, OnDestroy {
       .pipe(
         takeUntil(this._studyProgramChange$),
         takeUntil(this._destroy$),
-        switchMap(
-          (negativeNeutralCorrelationData: SubjectGradeCorrelation[]) => {
-            const positiveNeutralCorrelation$ =
-              this.subjectGradeCorrelationService.getSubjectGradeCorrelation(
-                spId,
-                0.05,
-                Operator.LESS_OR_EQUAL,
-              );
-            return forkJoin([
-              positiveNeutralCorrelation$,
-              of(negativeNeutralCorrelationData),
-            ]);
-          },
-        ),
+        switchMap((negativeNeutralCorrelationData: SubjectGradeCorrelation[]) => {
+          const positiveNeutralCorrelation$ =
+            this.subjectGradeCorrelationService.getSubjectGradeCorrelation(
+              spId,
+              0.05,
+              Operator.LESS_OR_EQUAL,
+            );
+          return forkJoin([positiveNeutralCorrelation$, of(negativeNeutralCorrelationData)]);
+        }),
         map(([positiveNeutralCorrelation, negativeNeutralCorrelationData]) => {
-          return [
-            ...positiveNeutralCorrelation,
-            ...negativeNeutralCorrelationData,
-          ];
+          return [...positiveNeutralCorrelation, ...negativeNeutralCorrelationData];
         }),
       );
   }

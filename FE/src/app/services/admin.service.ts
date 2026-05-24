@@ -16,18 +16,11 @@ export class AdminService {
     return this.http.get<UserDto[]>(`${this.BE_URL}/admin/users`);
   }
 
-  updateUserRole(
-    userId: number,
-    role: Role,
-    isAdd: boolean,
-  ): Observable<UserDto> {
-    return this.http.post<UserDto>(
-      `${this.BE_URL}/admin/user/${userId}/roles`,
-      {
-        roleIds: [role.id],
-        add: isAdd,
-      },
-    );
+  updateUserRole(userId: number, role: Role, isAdd: boolean): Observable<UserDto> {
+    return this.http.post<UserDto>(`${this.BE_URL}/admin/user/${userId}/roles`, {
+      roleIds: [role.id],
+      add: isAdd,
+    });
   }
 
   deleteUser(userId: number): Observable<void> {

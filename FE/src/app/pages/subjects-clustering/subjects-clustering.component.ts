@@ -1,12 +1,4 @@
-import {
-  Component,
-  inject,
-  OnDestroy,
-  OnInit,
-  ViewChild,
-  signal,
-  computed,
-} from '@angular/core';
+import { Component, inject, OnDestroy, OnInit, ViewChild, signal, computed } from '@angular/core';
 import {
   catchError,
   debounceTime,
@@ -29,26 +21,12 @@ import { NotificationService } from '@services//notification.service';
 import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatProgressBar } from '@angular/material/progress-bar';
-import {
-  Page,
-  StudyProgramDto,
-  SubjectDto,
-  SubjectExtendedDto,
-} from '../../types';
-import {
-  MatCard,
-  MatCardContent,
-  MatCardHeader,
-  MatCardTitle,
-} from '@angular/material/card';
+import { Page, StudyProgramDto, SubjectDto, SubjectExtendedDto } from '../../types';
+import { MatCard, MatCardContent, MatCardHeader, MatCardTitle } from '@angular/material/card';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { SubjectService } from '@services/subject.service';
 import { MatStepper, MatStepperModule } from '@angular/material/stepper';
-import {
-  MatFormField,
-  MatLabel,
-  MatSuffix,
-} from '@angular/material/form-field';
+import { MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
 import {
@@ -216,31 +194,29 @@ export class SubjectsClusteringComponent implements OnInit, OnDestroy {
     };
   });
 
-  readonly recommendedSubjectsPageDataComputed = computed<Page<SubjectDto>>(
-    () => {
-      const subjects = this._recommendedSubjects();
-      return {
-        content: subjects,
-        totalElements: subjects.length,
-        size: subjects.length,
-        number: 0,
-        pageable: {
-          sort: { sorted: false, unsorted: true, empty: true },
-          offset: 0,
-          pageNumber: 0,
-          pageSize: subjects.length,
-          paged: false,
-          unpaged: true,
-        },
-        last: true,
-        totalPages: 1,
+  readonly recommendedSubjectsPageDataComputed = computed<Page<SubjectDto>>(() => {
+    const subjects = this._recommendedSubjects();
+    return {
+      content: subjects,
+      totalElements: subjects.length,
+      size: subjects.length,
+      number: 0,
+      pageable: {
         sort: { sorted: false, unsorted: true, empty: true },
-        first: true,
-        numberOfElements: subjects.length,
-        empty: subjects.length === 0,
-      };
-    },
-  );
+        offset: 0,
+        pageNumber: 0,
+        pageSize: subjects.length,
+        paged: false,
+        unpaged: true,
+      },
+      last: true,
+      totalPages: 1,
+      sort: { sorted: false, unsorted: true, empty: true },
+      first: true,
+      numberOfElements: subjects.length,
+      empty: subjects.length === 0,
+    };
+  });
 
   private readonly subjectService = inject(SubjectService);
   private readonly studentService = inject(StudentService);
@@ -272,7 +248,7 @@ export class SubjectsClusteringComponent implements OnInit, OnDestroy {
               this.errorService.showError(error.error);
               return of(GenericTableUtils.EMPTY_PAGE as Page<SubjectExtendedDto>);
             }),
-            finalize(() => this.isLoadingAllSubjects.set(false))
+            finalize(() => this.isLoadingAllSubjects.set(false)),
           );
         }),
         takeUntil(this._destroy$),
@@ -320,12 +296,7 @@ export class SubjectsClusteringComponent implements OnInit, OnDestroy {
   ): Observable<Page<SubjectExtendedDto>> {
     const sort = this.buildSortParam();
     return this.subjectService
-      .getSubjectsWithFocusByStudyProgramId(
-        studyProgramId,
-        pageNumber,
-        pageSize,
-        sort,
-      )
+      .getSubjectsWithFocusByStudyProgramId(studyProgramId, pageNumber, pageSize, sort)
       .pipe(
         takeUntil(this._destroy$),
         catchError(() => {
@@ -342,12 +313,7 @@ export class SubjectsClusteringComponent implements OnInit, OnDestroy {
   ): Observable<Page<SubjectExtendedDto>> {
     const sort = this.buildSortParam();
     return this.subjectService
-      .getSubjectsWithFocusByStudyProgramIdAndSearch(
-        pageNumber,
-        pageSize,
-        searchParam,
-        sort,
-      )
+      .getSubjectsWithFocusByStudyProgramIdAndSearch(pageNumber, pageSize, searchParam, sort)
       .pipe(
         takeUntil(this._destroy$),
         catchError(() => {
@@ -410,8 +376,16 @@ export class SubjectsClusteringComponent implements OnInit, OnDestroy {
       : `studyProgramId:${this._userStudyProgramId}`;
 
     const subjects$ = this.searchTerm().trim()
-      ? this.getAllSubjectsWithSearch(this.allSubjectsData().number, this.allSubjectsData().size, searchParam)
-      : this.getAllSubjects(this.allSubjectsData().number, this.allSubjectsData().size, this._userStudyProgramId);
+      ? this.getAllSubjectsWithSearch(
+          this.allSubjectsData().number,
+          this.allSubjectsData().size,
+          searchParam,
+        )
+      : this.getAllSubjects(
+          this.allSubjectsData().number,
+          this.allSubjectsData().size,
+          this._userStudyProgramId,
+        );
 
     subjects$
       .pipe(

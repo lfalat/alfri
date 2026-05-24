@@ -10,26 +10,28 @@ import { TableCellRenderer, TableColumnDef, TableRow } from '../generic-table.ty
   selector: 'app-boolean-cell-renderer',
   standalone: true,
   imports: [MatIcon],
-  template: `
-    <mat-icon [class]="iconClass">{{ iconName }}</mat-icon>
-  `,
-  styles: [`
-    mat-icon {
-      font-size: 20px;
-      width: 20px;
-      height: 20px;
+  template: ` <mat-icon [class]="iconClass">{{ iconName }}</mat-icon> `,
+  styles: [
+    `
+      mat-icon {
+        font-size: 20px;
+        width: 20px;
+        height: 20px;
 
-      &.true-icon {
-        color: var(--color-success, #4caf50);
-      }
+        &.true-icon {
+          color: var(--color-success, #4caf50);
+        }
 
-      &.false-icon {
-        color: var(--color-error, #f44336);
+        &.false-icon {
+          color: var(--color-error, #f44336);
+        }
       }
-    }
-  `]
+    `,
+  ],
 })
-export class BooleanCellRendererComponent<T extends TableRow = TableRow> implements TableCellRenderer<T, boolean> {
+export class BooleanCellRendererComponent<
+  T extends TableRow = TableRow,
+> implements TableCellRenderer<T, boolean> {
   @Input() rowData!: T;
   @Input() value!: boolean;
   @Input() column!: TableColumnDef<T>;
@@ -46,4 +48,3 @@ export class BooleanCellRendererComponent<T extends TableRow = TableRow> impleme
     return this.value ? 'true-icon' : 'false-icon';
   }
 }
-

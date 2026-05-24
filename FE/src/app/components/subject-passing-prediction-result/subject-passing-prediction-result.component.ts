@@ -20,8 +20,9 @@ export class SubjectPassingPredictionResultComponent implements OnChanges {
     recommendations: [],
   };
 
-  private readonly passingPredictionSubject =
-    new BehaviorSubject<SubjectPassingPrediction>(this.passingPrediction);
+  private readonly passingPredictionSubject = new BehaviorSubject<SubjectPassingPrediction>(
+    this.passingPrediction,
+  );
   public passingPrediction$: Observable<SubjectPassingPrediction> =
     this.passingPredictionSubject.asObservable();
 

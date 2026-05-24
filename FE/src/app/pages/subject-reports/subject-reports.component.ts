@@ -2,12 +2,7 @@ import { Component, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
 import { Page, SubjectGradesDto } from '../../types';
-import {
-  MatCard,
-  MatCardContent,
-  MatCardHeader,
-  MatCardTitle,
-} from '@angular/material/card';
+import { MatCard, MatCardContent, MatCardHeader, MatCardTitle } from '@angular/material/card';
 import { SubjectService } from '@services/subject.service';
 import {
   GenericTableComponent,
@@ -25,13 +20,7 @@ import { SortDirection } from '@angular/material/sort';
   templateUrl: './subject-reports.component.html',
   standalone: true,
   styleUrls: ['./subject-reports.component.scss'],
-  imports: [
-    MatCard,
-    MatCardHeader,
-    MatCardTitle,
-    MatCardContent,
-    GenericTableComponent,
-  ],
+  imports: [MatCard, MatCardHeader, MatCardTitle, MatCardContent, GenericTableComponent],
 })
 export class SubjectReportsComponent implements OnInit, OnDestroy {
   private readonly _destroy$: Subject<void> = new Subject();
@@ -223,7 +212,6 @@ export class SubjectReportsComponent implements OnInit, OnDestroy {
     // Reload data with new sort
     this.fetchFilteredSubjects(0, this.pageSize());
   }
-
 
   onRowClick(event: { row: SubjectGradesDto & { id: number }; event: MouseEvent }): void {
     this.router.navigate(['/subjects', event.row.subject.code]);

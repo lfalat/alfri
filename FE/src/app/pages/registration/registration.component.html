@@ -9,14 +9,15 @@
         <div class="info-content">
           <div class="brain-image-wrapper">
             <img
-              src="assets/images/brain_lb.png"
+              ngSrc="assets/images/brain_lb.png"
               alt="ALFRI Brain"
               class="brain-image img-fluid"
+              height="1012"
+              width="1408"
+              priority
             />
           </div>
-          <h2 class="info-title">
-            Prvý inteligentný asistent pre študentov a učiteľov FRI UNIZA.
-          </h2>
+          <h2 class="info-title">Prvý inteligentný asistent pre študentov a učiteľov FRI UNIZA.</h2>
         </div>
       </div>
 
@@ -28,11 +29,7 @@
             <p class="form-subtitle">Vytvorte si účet pre prístup k systému.</p>
           </div>
 
-          <form
-            [formGroup]="registerForm"
-            (ngSubmit)="onSubmit()"
-            class="registration-form"
-          >
+          <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="registration-form">
             <div class="form-group">
               <label class="form-label" for="name">Meno*</label>
               <div class="input-wrapper">
@@ -46,10 +43,7 @@
                   required
                 />
               </div>
-              @if (
-                registerForm.controls["name"].invalid &&
-                registerForm.controls["name"].touched
-              ) {
+              @if (registerForm.controls['name'].invalid && registerForm.controls['name'].touched) {
                 <span class="error-message">Neplatné meno.</span>
               }
             </div>
@@ -68,8 +62,7 @@
                 />
               </div>
               @if (
-                registerForm.controls["surname"].invalid &&
-                registerForm.controls["surname"].touched
+                registerForm.controls['surname'].invalid && registerForm.controls['surname'].touched
               ) {
                 <span class="error-message">Neplatné priezvisko.</span>
               }
@@ -89,8 +82,7 @@
                 />
               </div>
               @if (
-                registerForm.controls["email"].invalid &&
-                registerForm.controls["email"].touched
+                registerForm.controls['email'].invalid && registerForm.controls['email'].touched
               ) {
                 <span class="error-message">Neplatná emailová adresa.</span>
               }
@@ -116,24 +108,20 @@
                   aria-label="Toggle password visibility"
                 >
                   <span class="material-icons">
-                    {{ showPassword ? "visibility_off" : "visibility" }}
+                    {{ showPassword ? 'visibility_off' : 'visibility' }}
                   </span>
                 </button>
               </div>
               @if (
-                registerForm.controls["password"].invalid &&
-                registerForm.controls["password"].touched
+                registerForm.controls['password'].invalid &&
+                registerForm.controls['password'].touched
               ) {
-                <span class="error-message"
-                  >Heslo nie je príliš komplexné.</span
-                >
+                <span class="error-message">Heslo nie je príliš komplexné.</span>
               }
             </div>
 
             <div class="form-group">
-              <label class="form-label" for="confirmPassword"
-                >Potvrď heslo*</label
-              >
+              <label class="form-label" for="confirmPassword">Potvrď heslo*</label>
               <div class="input-wrapper">
                 <span class="material-icons input-icon">lock</span>
                 <input
@@ -151,21 +139,19 @@
                   aria-label="Toggle confirm password visibility"
                 >
                   <span class="material-icons">
-                    {{ showConfirmPassword ? "visibility_off" : "visibility" }}
+                    {{ showConfirmPassword ? 'visibility_off' : 'visibility' }}
                   </span>
                 </button>
               </div>
               @if (
-                registerForm.controls["confirmPassword"].invalid &&
-                registerForm.controls["confirmPassword"].touched
+                registerForm.controls['confirmPassword'].invalid &&
+                registerForm.controls['confirmPassword'].touched
               ) {
                 <span class="error-message">Heslá sa nezhodujú.</span>
               }
             </div>
 
-            <button mat-raised-button color="primary" type="submit">
-              Registrovať
-            </button>
+            <button mat-raised-button color="primary" type="submit">Registrovať</button>
           </form>
 
           <div class="divider">
@@ -175,11 +161,7 @@
           <div class="auth-prompt">
             <p>
               Už máte účet?
-              <a
-                class="auth-link"
-                href="javascript:void(0)"
-                (click)="redirectToLogin()"
-              >
+              <a class="auth-link" href="javascript:void(0)" (click)="redirectToLogin()">
                 Prihláste sa
               </a>
             </p>

@@ -3,17 +3,12 @@ import {
   importProvidersFrom,
   provideAppInitializer,
   inject,
-  provideZoneChangeDetection
 } from '@angular/core';
 import { provideRouter } from '@angular/router';
 
 import { routes } from './app.routes';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
-import {
-  provideHttpClient,
-  withInterceptors,
-  withInterceptorsFromDi,
-} from '@angular/common/http';
+import { provideHttpClient, withInterceptors, withInterceptorsFromDi } from '@angular/common/http';
 import { JwtModule } from '@auth0/angular-jwt';
 import { tokenGetter } from '@interceptors/auth.interceptor';
 import { httpErrorInterceptor } from '@interceptors/http-error.interceptor';
@@ -26,7 +21,11 @@ export const appConfig: ApplicationConfig = {
     provideAnimationsAsync(),
     provideAppInitializer(() => {
       const configService = inject(ConfigService);
-      return firstValueFrom(configService.loadConfig());
+
+      return firstValueFrom(configService.loadConfig()).catch((error) => {
+        console.error('Config loading failed:', error);
+        return null;
+      });
     }),
     importProvidersFrom(
       JwtModule.forRoot({
@@ -34,7 +33,7 @@ export const appConfig: ApplicationConfig = {
           tokenGetter: tokenGetter,
           allowedDomains: [
             'localhost:8080',
-            'alfri-backend.happystone-577431b5.norwayeast.azurecontainerapps.io'
+            'alfri-backend.happystone-577431b5.norwayeast.azurecontainerapps.io',
           ],
           disallowedRoutes: [
             'http://localhost:8080/register',
@@ -46,10 +45,6 @@ export const appConfig: ApplicationConfig = {
         },
       }),
     ),
-    provideHttpClient(
-      withInterceptorsFromDi(),
-      withInterceptors([httpErrorInterceptor]),
-    ),
-    provideZoneChangeDetection()
+    provideHttpClient(withInterceptorsFromDi(), withInterceptors([httpErrorInterceptor])),
   ],
 };

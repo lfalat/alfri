@@ -9,7 +9,7 @@
           [theme]="{
             'height.px': 36,
             'width.%': 30,
-            'margin-bottom.px': 8
+            'margin-bottom.px': 8,
           }"
         ></ngx-skeleton-loader>
         <ngx-skeleton-loader
@@ -17,7 +17,7 @@
           appearance="line"
           [theme]="{
             'height.px': 20,
-            'width.%': 50
+            'width.%': 50,
           }"
         ></ngx-skeleton-loader>
       </div>
@@ -33,7 +33,7 @@
                   appearance="line"
                   [theme]="{
                     'height.px': 20,
-                    'margin-bottom.px': 8
+                    'margin-bottom.px': 8,
                   }"
                 ></ngx-skeleton-loader>
               </mat-card-content>
@@ -51,7 +51,7 @@
             [theme]="{
               'height.px': 24,
               'width.%': 40,
-              'margin-bottom.px': 16
+              'margin-bottom.px': 16,
             }"
           ></ngx-skeleton-loader>
           <ngx-skeleton-loader
@@ -59,7 +59,7 @@
             appearance="line"
             [theme]="{
               'height.px': 48,
-              'margin-bottom.px': 4
+              'margin-bottom.px': 4,
             }"
           ></ngx-skeleton-loader>
         </mat-card-content>
@@ -75,7 +75,7 @@
                 appearance="line"
                 [theme]="{
                   'height.px': 24,
-                  'width.%': 50
+                  'width.%': 50,
                 }"
               ></ngx-skeleton-loader>
             </mat-card-header>
@@ -86,7 +86,7 @@
                 [theme]="{
                   'width.%': 100,
                   'height.px': 300,
-                  'border-radius': '8px'
+                  'border-radius': '8px',
                 }"
               ></ngx-skeleton-loader>
             </mat-card-content>
@@ -100,7 +100,7 @@
                 appearance="line"
                 [theme]="{
                   'height.px': 24,
-                  'width.%': 50
+                  'width.%': 50,
                 }"
               ></ngx-skeleton-loader>
             </mat-card-header>
@@ -111,7 +111,7 @@
                 [theme]="{
                   'height.px': 20,
                   'width.%': 80,
-                  'margin-bottom.px': 16
+                  'margin-bottom.px': 16,
                 }"
               ></ngx-skeleton-loader>
               <ngx-skeleton-loader
@@ -120,7 +120,7 @@
                 [theme]="{
                   'height.px': 32,
                   'margin-bottom.px': 8,
-                  'border-radius': '16px'
+                  'border-radius': '16px',
                 }"
               ></ngx-skeleton-loader>
             </mat-card-content>
@@ -132,8 +132,8 @@
     @if (!formData) {
       <mat-card class="p-3">
         <div class="alert alert-primary" role="alert">
-          Ešte nemáš vyplnený dotazník! Povedz nám niečo o sebe, aby sme ti
-          mohli zobraziť relevantnejšie dáta.
+          Ešte nemáš vyplnený dotazník! Povedz nám niečo o sebe, aby sme ti mohli zobraziť
+          relevantnejšie dáta.
         </div>
         <div class="d-flex justify-content-center">
           <img
@@ -146,11 +146,7 @@
           />
         </div>
         <div class="d-flex justify-content-end">
-          <button
-            mat-raised-button
-            color="primary"
-            (click)="redirectToUserForm()"
-          >
+          <button mat-raised-button color="primary" (click)="redirectToUserForm()">
             Vyplnit dotaznik
           </button>
         </div>

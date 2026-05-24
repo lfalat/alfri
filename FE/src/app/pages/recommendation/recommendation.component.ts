@@ -6,12 +6,7 @@ import { StudentService } from '@services/student.service';
 import { Observable, of, Subject } from 'rxjs';
 import { catchError, switchMap, takeUntil, tap } from 'rxjs/operators';
 import { Page, SubjectDto } from '../../types';
-import {
-  MatCard,
-  MatCardHeader,
-  MatCardSubtitle,
-  MatCardTitle,
-} from '@angular/material/card';
+import { MatCard, MatCardHeader, MatCardSubtitle, MatCardTitle } from '@angular/material/card';
 import { SubjectService } from '@services/subject.service';
 import { PageEvent } from '@angular/material/paginator';
 import {
@@ -25,13 +20,7 @@ import { GenericTableUtils } from '@components/generic-table/generic-table.utils
   selector: 'app-recommendation',
   templateUrl: './recommendation.component.html',
   standalone: true,
-  imports: [
-    GenericTableComponent,
-    MatCard,
-    MatCardHeader,
-    MatCardSubtitle,
-    MatCardTitle,
-  ],
+  imports: [GenericTableComponent, MatCard, MatCardHeader, MatCardSubtitle, MatCardTitle],
   styleUrls: ['./recommendation.component.scss'],
 })
 export class RecommendationComponent implements OnInit, OnDestroy {
@@ -147,20 +136,18 @@ export class RecommendationComponent implements OnInit, OnDestroy {
 
   private getSubjects(): Observable<Page<SubjectDto> | never[]> {
     this.isLoading.set(true);
-    return this.subjectService
-      .getSubjectFocusPrediction(this.currentPage(), this.pageSize())
-      .pipe(
-        tap((page: Page<SubjectDto>) => {
-          this.isLoading.set(false);
-          return page;
-        }),
-        takeUntil(this._destroy$),
-        catchError((error: HttpErrorResponse) => {
-          this.isLoading.set(false);
-          this.errorService.showError(error.error.detail);
-          return of([]);
-        }),
-      );
+    return this.subjectService.getSubjectFocusPrediction(this.currentPage(), this.pageSize()).pipe(
+      tap((page: Page<SubjectDto>) => {
+        this.isLoading.set(false);
+        return page;
+      }),
+      takeUntil(this._destroy$),
+      catchError((error: HttpErrorResponse) => {
+        this.isLoading.set(false);
+        this.errorService.showError(error.error.detail);
+        return of([]);
+      }),
+    );
   }
 
   ngOnDestroy() {

@@ -20,19 +20,22 @@ import { TableCellRenderer, TableRow, TableColumnDef } from '../generic-table.ty
       {{ value }}
     </a>
   `,
-  styles: [`
-    a {
-      cursor: pointer;
-      color: #1976d2;
-    }
-    a:hover {
-      text-decoration: underline !important;
-    }
-  `],
+  styles: [
+    `
+      a {
+        cursor: pointer;
+        color: #1976d2;
+      }
+      a:hover {
+        text-decoration: underline !important;
+      }
+    `,
+  ],
 })
-export class LinkCellRendererComponent<T extends TableRow = TableRow>
-  implements TableCellRenderer<T, string>
-{
+export class LinkCellRendererComponent<T extends TableRow = TableRow> implements TableCellRenderer<
+  T,
+  string
+> {
   private readonly router = inject(Router);
 
   rowData!: T;
@@ -50,4 +53,3 @@ export class LinkCellRendererComponent<T extends TableRow = TableRow>
     }
   }
 }
-

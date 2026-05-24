@@ -1,17 +1,11 @@
 import { computed, inject } from '@angular/core';
-import {
-  patchState,
-  signalStore,
-  withComputed,
-  withMethods,
-  withState,
-} from '@ngrx/signals';
+import { patchState, signalStore, withComputed, withMethods, withState } from '@ngrx/signals';
 import { HttpClient } from '@angular/common/http';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { pipe, switchMap, tap } from 'rxjs';
 import { Role, UserDto, UserState } from '../types';
 import { ConfigService } from '@services/config.service';
-import {rxMethod} from "@ngrx/signals/rxjs-interop";
+import { rxMethod } from '@ngrx/signals/rxjs-interop';
 
 const initialState: UserState = {
   userData: undefined,
@@ -41,10 +35,8 @@ export const UserStore = signalStore(
           switchMap(() =>
             http.get<UserDto>(`${BE_URL}/profile`).pipe(
               tap({
-                next: (userData: UserDto) =>
-                  patchState(store, { userData, isLoading: false }),
-                error: () =>
-                  patchState(store, { userData: undefined, isLoading: false }),
+                next: (userData: UserDto) => patchState(store, { userData, isLoading: false }),
+                error: () => patchState(store, { userData: undefined, isLoading: false }),
               }),
             ),
           ),

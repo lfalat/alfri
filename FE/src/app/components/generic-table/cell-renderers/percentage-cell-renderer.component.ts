@@ -10,48 +10,46 @@ import { TableCellRenderer, TableRow, TableColumnDef } from '../generic-table.ty
   selector: 'app-percentage-cell-renderer',
   standalone: true,
   imports: [CommonModule],
-  template: `
-    <span [ngClass]="getColorClass()" class="percentage-value">
-      {{ value }} %
-    </span>
-  `,
-  styles: [`
-    .percentage-value {
-      font-weight: 500;
-      padding: 4px 8px;
-      border-radius: 4px;
-      display: inline-block;
-    }
+  template: ` <span [ngClass]="getColorClass()" class="percentage-value"> {{ value }} % </span> `,
+  styles: [
+    `
+      .percentage-value {
+        font-weight: 500;
+        padding: 4px 8px;
+        border-radius: 4px;
+        display: inline-block;
+      }
 
-    .excellent {
-      color: #2e7d32;
-      background-color: #e8f5e9;
-    }
+      .excellent {
+        color: #2e7d32;
+        background-color: #e8f5e9;
+      }
 
-    .good {
-      color: #558b2f;
-      background-color: #f1f8e9;
-    }
+      .good {
+        color: #558b2f;
+        background-color: #f1f8e9;
+      }
 
-    .average {
-      color: #f57c00;
-      background-color: #fff3e0;
-    }
+      .average {
+        color: #f57c00;
+        background-color: #fff3e0;
+      }
 
-    .below-average {
-      color: #e64a19;
-      background-color: #fbe9e7;
-    }
+      .below-average {
+        color: #e64a19;
+        background-color: #fbe9e7;
+      }
 
-    .poor {
-      color: #c62828;
-      background-color: #ffebee;
-    }
-  `],
+      .poor {
+        color: #c62828;
+        background-color: #ffebee;
+      }
+    `,
+  ],
 })
-export class PercentageCellRendererComponent<T extends TableRow = TableRow>
-  implements TableCellRenderer<T, number>
-{
+export class PercentageCellRendererComponent<
+  T extends TableRow = TableRow,
+> implements TableCellRenderer<T, number> {
   @Input() rowData!: T;
   @Input() value!: number;
   @Input() column!: TableColumnDef<T>;
@@ -77,4 +75,3 @@ export class PercentageCellRendererComponent<T extends TableRow = TableRow>
     }
   }
 }
-

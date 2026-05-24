@@ -124,4 +124,3 @@ export class PieChartComponent {
     return options.responsive || [];
   });
 }
-

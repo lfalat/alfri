@@ -8,17 +8,20 @@ import { TableCellRenderer, TableColumnDef, TableRow } from '../generic-table.ty
 @Component({
   selector: 'app-text-cell-renderer',
   standalone: true,
-  template: `
-    <span [class]="getCellClass()">{{ displayValue }}</span>
-  `,
-  styles: [`
-    :host {
-      display: block;
-      width: 100%;
-    }
-  `]
+  template: ` <span [class]="getCellClass()">{{ displayValue }}</span> `,
+  styles: [
+    `
+      :host {
+        display: block;
+        width: 100%;
+      }
+    `,
+  ],
 })
-export class TextCellRendererComponent<T extends TableRow = TableRow> implements TableCellRenderer<T, string> {
+export class TextCellRendererComponent<T extends TableRow = TableRow> implements TableCellRenderer<
+  T,
+  string
+> {
   @Input() rowData!: T;
   @Input() value!: string;
   @Input() column!: TableColumnDef<T>;
@@ -43,4 +46,3 @@ export class TextCellRendererComponent<T extends TableRow = TableRow> implements
       : this.column.cellClass;
   }
 }
-

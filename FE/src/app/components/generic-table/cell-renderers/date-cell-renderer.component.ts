@@ -10,11 +10,12 @@ import { TableCellRenderer, TableColumnDef, TableRow } from '../generic-table.ty
   selector: 'app-date-cell-renderer',
   standalone: true,
   imports: [DatePipe],
-  template: `
-    <span>{{ value | date: dateFormat }}</span>
-  `
+  template: ` <span>{{ value | date: dateFormat }}</span> `,
 })
-export class DateCellRendererComponent<T extends TableRow = TableRow> implements TableCellRenderer<T, Date | string> {
+export class DateCellRendererComponent<T extends TableRow = TableRow> implements TableCellRenderer<
+  T,
+  Date | string
+> {
   @Input() rowData!: T;
   @Input() value!: Date | string;
   @Input() column!: TableColumnDef<T>;
@@ -26,4 +27,3 @@ export class DateCellRendererComponent<T extends TableRow = TableRow> implements
    */
   @Input() dateFormat: string = 'short';
 }
-

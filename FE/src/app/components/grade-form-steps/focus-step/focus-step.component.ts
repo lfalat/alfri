@@ -1,23 +1,14 @@
-import {
-  Component,
-  effect,
-  Input,
-  Signal,
-} from '@angular/core';
+import { Component, effect, Input, Signal } from '@angular/core';
 import { FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Section } from '../../../types';
-import {
-  MatStepLabel,
-  MatStepperNext,
-  MatStepperPrevious,
-} from '@angular/material/stepper';
+import { MatStepLabel, MatStepperNext, MatStepperPrevious } from '@angular/material/stepper';
 import { MatButton } from '@angular/material/button';
 import { FormQuestionComponent } from '@components/form-question/form-question.component';
 import {
   RadarChartComponent,
   RadarChartOptions,
   getFocusChartLabels,
-  extractFocusData
+  extractFocusData,
 } from '@components/charts';
 
 @Component({

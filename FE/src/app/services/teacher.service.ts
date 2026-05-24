@@ -25,31 +25,24 @@ export class TeacherService {
   }
 
   getTeacherSubjects(userId: number): Observable<SubjectDto[]> {
-    return this.http
-      .get<SubjectDto[]>(`${this.BE_URL}/teacher/${userId}/subjects`)
-      .pipe(
-        catchError((error: HttpErrorResponse) => {
-          this.notificationService.showError(error.error.message);
-          return EMPTY;
-        }),
-      );
+    return this.http.get<SubjectDto[]>(`${this.BE_URL}/teacher/${userId}/subjects`).pipe(
+      catchError((error: HttpErrorResponse) => {
+        this.notificationService.showError(error.error.message);
+        return EMPTY;
+      }),
+    );
   }
 
   getTeacherDepartment(userId: number): Observable<DepartmentDto> {
-    return this.http
-      .get<DepartmentDto>(`${this.BE_URL}/admin/teacher/${userId}/department`)
-      .pipe(
-        catchError((error: HttpErrorResponse) => {
-          this.notificationService.showError(error.error.message);
-          return EMPTY;
-        }),
-      );
+    return this.http.get<DepartmentDto>(`${this.BE_URL}/admin/teacher/${userId}/department`).pipe(
+      catchError((error: HttpErrorResponse) => {
+        this.notificationService.showError(error.error.message);
+        return EMPTY;
+      }),
+    );
   }
 
-  updateTeacherSubjects(
-    userId: number,
-    subjectCodes: string[],
-  ): Observable<TeacherDto> {
+  updateTeacherSubjects(userId: number, subjectCodes: string[]): Observable<TeacherDto> {
     return this.http.post<TeacherDto>(
       `${this.BE_URL}/admin/teacher/${userId}/subjects`,
       subjectCodes,
@@ -60,9 +53,8 @@ export class TeacherService {
     userId: number,
     departmentId: number | null | undefined,
   ): Observable<void> {
-    return this.http.post<void>(
-      `${this.BE_URL}/admin/teacher/${userId}/department`,
-      { departmentId: departmentId },
-    );
+    return this.http.post<void>(`${this.BE_URL}/admin/teacher/${userId}/department`, {
+      departmentId: departmentId,
+    });
   }
 }

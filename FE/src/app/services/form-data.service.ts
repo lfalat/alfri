@@ -8,9 +8,7 @@ import { USER_FORM_ID } from '@pages/home/home.component';
   providedIn: 'root',
 })
 export class FormDataService {
-  private readonly formDataSubject = new BehaviorSubject<AnsweredForm | undefined>(
-    undefined,
-  );
+  private readonly formDataSubject = new BehaviorSubject<AnsweredForm | undefined>(undefined);
   formData$ = this.formDataSubject.asObservable();
   private readonly formService = inject(FormService);
 

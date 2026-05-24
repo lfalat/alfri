@@ -9,14 +9,15 @@
         <div class="info-content">
           <div class="brain-image-wrapper">
             <img
-              src="assets/images/brain_lb.png"
+              ngSrc="assets/images/brain_lb.png"
               alt="ALFRI Brain"
               class="brain-image"
+              height="1012"
+              width="1408"
+              priority
             />
           </div>
-          <h2 class="info-title">
-            Prvý inteligentný asistent pre študentov a učiteľov FRI UNIZA.
-          </h2>
+          <h2 class="info-title">Prvý inteligentný asistent pre študentov a učiteľov FRI UNIZA.</h2>
         </div>
       </div>
 
@@ -25,16 +26,10 @@
         <div class="form-content">
           <div class="form-header">
             <h1 class="form-title">Prihlásenie</h1>
-            <p class="form-subtitle">
-              Zadajte svoje prihlasovacie údaje pre prístup.
-            </p>
+            <p class="form-subtitle">Zadajte svoje prihlasovacie údaje pre prístup.</p>
           </div>
 
-          <form
-            [formGroup]="loginForm"
-            (ngSubmit)="onSubmit()"
-            class="login-form"
-          >
+          <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
             <div class="form-group">
               <label class="form-label" for="email">Email*</label>
               <div class="input-wrapper">
@@ -48,10 +43,7 @@
                   required
                 />
               </div>
-              @if (
-                loginForm.controls["email"].invalid &&
-                loginForm.controls["email"].touched
-              ) {
+              @if (loginForm.controls['email'].invalid && loginForm.controls['email'].touched) {
                 <span class="error-message">Neplatná emailová adresa.</span>
               }
             </div>
@@ -77,24 +69,18 @@
                   aria-label="Toggle password visibility"
                 >
                   <span class="material-icons">
-                    {{ showPassword ? "visibility_off" : "visibility" }}
+                    {{ showPassword ? 'visibility_off' : 'visibility' }}
                   </span>
                 </button>
               </div>
               @if (
-                loginForm.controls["password"].invalid &&
-                loginForm.controls["password"].touched
+                loginForm.controls['password'].invalid && loginForm.controls['password'].touched
               ) {
                 <span class="error-message">Heslo je povinné.</span>
               }
             </div>
 
-            <button
-              mat-raised-button
-              color="primary"
-              class="submit-button"
-              type="submit"
-            >
+            <button mat-raised-button color="primary" class="submit-button" type="submit">
               Prihlásiť sa
             </button>
           </form>
@@ -106,11 +92,7 @@
           <div class="auth-prompt">
             <p>
               Nemáte účet?
-              <a
-                class="auth-link"
-                href="javascript:void(0)"
-                (click)="redirectToRegistration()"
-              >
+              <a class="auth-link" href="javascript:void(0)" (click)="redirectToRegistration()">
                 Registrujte sa
               </a>
             </p>

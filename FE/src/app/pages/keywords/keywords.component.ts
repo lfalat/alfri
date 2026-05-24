@@ -16,10 +16,7 @@ import {
   MatCardTitle,
 } from '@angular/material/card';
 import { MatOption } from '@angular/material/select';
-import {
-  MatAutocomplete,
-  MatAutocompleteTrigger,
-} from '@angular/material/autocomplete';
+import { MatAutocomplete, MatAutocompleteTrigger } from '@angular/material/autocomplete';
 import { MatIcon } from '@angular/material/icon';
 
 @Component({
@@ -62,11 +59,9 @@ export class KeywordsComponent implements OnInit {
   ngOnInit(): void {
     this.handleRedirect();
 
-    this.searchSubject
-      .pipe(debounceTime(300), distinctUntilChanged())
-      .subscribe((searchText) => {
-        this.fetchKeywords(searchText);
-      });
+    this.searchSubject.pipe(debounceTime(300), distinctUntilChanged()).subscribe((searchText) => {
+      this.fetchKeywords(searchText);
+    });
   }
 
   onSearch(event: Event): void {
@@ -111,9 +106,7 @@ export class KeywordsComponent implements OnInit {
   }
 
   onKeywordRemove(keyword: string): void {
-    this.selectedKeywords = this.selectedKeywords.filter(
-      (item) => item !== keyword,
-    );
+    this.selectedKeywords = this.selectedKeywords.filter((item) => item !== keyword);
     delete this.keywordSubjects[keyword];
   }
 

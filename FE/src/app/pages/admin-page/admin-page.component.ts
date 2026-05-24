@@ -55,13 +55,7 @@ import { CreateUserModalComponent } from '@components/create-user-modal/create-u
 export class AdminPageComponent implements OnInit {
   users: UserDto[] = [];
   availableRoles: Role[] = [];
-  displayedColumns: string[] = [
-    'firstName',
-    'lastName',
-    'email',
-    'roles',
-    'options',
-  ];
+  displayedColumns: string[] = ['firstName', 'lastName', 'email', 'roles', 'options'];
   protected readonly AuthRole = AuthRole;
   private readonly as = inject(AdminService);
   private readonly userStore = inject(UserStore);
@@ -93,9 +87,7 @@ export class AdminPageComponent implements OnInit {
         if (isAdd) {
           user.roles.push(role);
         } else {
-          user.roles = user.roles.filter(
-            (userRole: Role) => userRole.id !== role.id,
-          );
+          user.roles = user.roles.filter((userRole: Role) => userRole.id !== role.id);
         }
         this.notificationService.showSuccess('Údaje úspešne zmenené.');
       },
@@ -121,9 +113,7 @@ export class AdminPageComponent implements OnInit {
 
   openSubjectModal(userId: number): void {
     const selectedUser = this.users.find(
-      (user) =>
-        user.userId === userId &&
-        this.userHasRole(user, { id: 2, name: 'teacher' }),
+      (user) => user.userId === userId && this.userHasRole(user, { id: 2, name: 'teacher' }),
     );
 
     if (!selectedUser) {
@@ -179,9 +169,7 @@ export class AdminPageComponent implements OnInit {
       if (result) {
         this.authService.postUser(result).subscribe({
           next: () => {
-            this.notificationService.showSuccess(
-              'Používateľ bol úspešne vytvorený',
-            );
+            this.notificationService.showSuccess('Používateľ bol úspešne vytvorený');
           },
           error: () => {
             this.notificationService.showError('Neočakávaná chyba systému.');

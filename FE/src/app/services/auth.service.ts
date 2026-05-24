@@ -33,11 +33,7 @@ export class AuthService {
       }),
     };
 
-    return this.http.post<UserDto>(
-      `${this.URL}/register`,
-      userData,
-      httpOptions,
-    );
+    return this.http.post<UserDto>(`${this.URL}/register`, userData, httpOptions);
   }
 
   authenticate(userData: LoginUserDto): Observable<AuthResponseDto> {
@@ -47,11 +43,7 @@ export class AuthService {
       }),
     };
 
-    return this.http.post<AuthResponseDto>(
-      `${this.URL}/authenticate`,
-      userData,
-      httpOptions,
-    );
+    return this.http.post<AuthResponseDto>(`${this.URL}/authenticate`, userData, httpOptions);
   }
 
   logOut(): Promise<void> {
@@ -61,9 +53,7 @@ export class AuthService {
     });
   }
 
-  changePassword(
-    passwordData: ChangePasswordDto,
-  ): Observable<ChangePasswordDto> {
+  changePassword(passwordData: ChangePasswordDto): Observable<ChangePasswordDto> {
     const httpOptions = {
       headers: new HttpHeaders({
         'Content-Type': 'application/json',

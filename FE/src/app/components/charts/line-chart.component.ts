@@ -142,4 +142,3 @@ export class LineChartComponent {
     return options.colors || ['#2E93fA', '#FF9800', '#66DA26', '#546E7A'];
   });
 }
-

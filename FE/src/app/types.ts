@@ -339,8 +339,7 @@ export interface PageResponseDTO<T> {
   empty: boolean;
 }
 
-export type StudentAverageGradePageResponse =
-  PageResponseDTO<StudentAverageGradeDTO>;
+export type StudentAverageGradePageResponse = PageResponseDTO<StudentAverageGradeDTO>;
 
 export interface DataReportDto {
   studentCount: number;

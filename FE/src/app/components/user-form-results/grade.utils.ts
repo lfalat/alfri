@@ -9,12 +9,12 @@ export class GradeUtils {
    */
   static letterGradeToNumber(letterGrade: string): number {
     const gradeMap: Record<string, number> = {
-      'A': 1.0,
-      'B': 1.5,
-      'C': 2.0,
-      'D': 2.5,
-      'E': 3.0,
-      'Fx': 4.0,
+      A: 1.0,
+      B: 1.5,
+      C: 2.0,
+      D: 2.5,
+      E: 3.0,
+      Fx: 4.0,
     };
 
     const normalizedGrade = letterGrade.trim().toUpperCase();
@@ -27,7 +27,7 @@ export class GradeUtils {
    * @returns Average grade formatted to 2 decimal places, or '0.00' if no valid grades
    */
   static calculateAverage(grades: number[]): string {
-    const validGrades = grades.filter(grade => grade > 0);
+    const validGrades = grades.filter((grade) => grade > 0);
 
     if (validGrades.length === 0) {
       return '0.00';
@@ -37,4 +37,3 @@ export class GradeUtils {
     return average.toFixed(2);
   }
 }
-

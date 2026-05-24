@@ -45,10 +45,10 @@ export interface TableCellRenderer<T extends TableRow = TableRow, V = unknown> {
  * Context passed to cell templates
  */
 export interface TableCellContext<T extends TableRow = TableRow> {
-  $implicit: T;           // Row data
+  $implicit: T; // Row data
   column: TableColumnDef<T>;
   rowIndex: number;
-  value: unknown;             // Resolved field value
+  value: unknown; // Resolved field value
 }
 
 /**
@@ -446,4 +446,3 @@ export interface TableConfig<T extends TableRow = TableRow> {
    */
   emptyMessage?: string;
 }
-

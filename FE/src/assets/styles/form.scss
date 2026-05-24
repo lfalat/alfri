@@ -78,12 +78,12 @@
 
     &.cdk-keyboard-focused,
     &.cdk-program-focused,
-    &:hover:not([aria-disabled="true"]) {
+    &:hover:not([aria-disabled='true']) {
       background-color: rgba(236, 254, 255, 0.5) !important;
     }
 
     // Active step
-    &[aria-selected="true"] {
+    &[aria-selected='true'] {
       .mat-step-icon {
         background-color: #2563eb !important;
         color: white !important;
@@ -109,7 +109,7 @@
     }
 
     // Inactive/future steps
-    &[aria-selected="false"]:not(.mat-step-header-completed) {
+    &[aria-selected='false']:not(.mat-step-header-completed) {
       opacity: 0.6;
 
       .mat-step-icon {

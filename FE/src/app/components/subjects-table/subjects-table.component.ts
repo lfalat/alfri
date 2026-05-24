@@ -1,10 +1,6 @@
 import { Observable } from 'rxjs';
 import { Page, SubjectDto } from '../../types';
-import {
-  MatPaginator,
-  PageEvent,
-  MatPaginatorModule,
-} from '@angular/material/paginator';
+import { MatPaginator, PageEvent, MatPaginatorModule } from '@angular/material/paginator';
 import {
   MatCell,
   MatCellDef,
@@ -20,14 +16,7 @@ import {
   MatTableModule,
 } from '@angular/material/table';
 import { MatProgressBar } from '@angular/material/progress-bar';
-import {
-  Component,
-  computed,
-  effect,
-  input,
-  output,
-  signal,
-} from '@angular/core';
+import { Component, computed, effect, input, output, signal } from '@angular/core';
 import { MatCheckbox } from '@angular/material/checkbox';
 
 @Component({
@@ -75,9 +64,7 @@ export class SubjectsTableComponent {
   readonly internalDataSource = signal<MatTableDataSource<SubjectDto>>(
     new MatTableDataSource<SubjectDto>([]),
   );
-  private readonly selectedSubjectsMap = signal<Map<string, SubjectDto>>(
-    new Map(),
-  );
+  private readonly selectedSubjectsMap = signal<Map<string, SubjectDto>>(new Map());
   readonly showLoader = signal<boolean>(false);
   private loadingTimeout: ReturnType<typeof setTimeout> | null = null;
 
@@ -87,23 +74,14 @@ export class SubjectsTableComponent {
     const selectable = this.isSelectable();
 
     const baseColumns = full
-      ? [
-          'name',
-          'code',
-          'abbreviation',
-          'obligation',
-          'recommendedYear',
-          'semester',
-        ]
+      ? ['name', 'code', 'abbreviation', 'obligation', 'recommendedYear', 'semester']
       : ['name', 'abbreviation', 'obligation'];
 
     return selectable ? ['select', ...baseColumns] : baseColumns;
   });
 
   // Computed: selected subjects array & count
-  selectedSubjectsList = computed(() =>
-    Array.from(this.selectedSubjectsMap().values()),
-  );
+  selectedSubjectsList = computed(() => Array.from(this.selectedSubjectsMap().values()));
   selectedSubjectsCount = computed(() => this.selectedSubjectsMap().size);
 
   constructor() {

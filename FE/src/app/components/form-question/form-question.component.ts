@@ -1,18 +1,7 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  Input,
-  signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, Input, signal } from '@angular/core';
 import { QuestionTypes } from '@pages/grade-form/grade-form-types';
 import { GradeFormUtil } from '@pages/grade-form/grade-form-util';
-import {
-  FormControl,
-  FormGroup,
-  FormsModule,
-  ReactiveFormsModule,
-} from '@angular/forms';
+import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { MatError, MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
@@ -53,9 +42,7 @@ export class FormQuestionComponent {
   protected readonly GradeFormUtil = GradeFormUtil;
 
   @Input() formGroup!: FormGroup;
-  @Input({ required: true, transform: (q: Question) => q }) set question(
-    value: Question,
-  ) {
+  @Input({ required: true, transform: (q: Question) => q }) set question(value: Question) {
     this._question.set(value);
   }
 
@@ -82,10 +69,7 @@ export class FormQuestionComponent {
     const question = this.questionComputed();
     if (question.answerType === QuestionTypes.CHECKBOX) {
       return question.options.map(
-        (_, index) =>
-          this.formGroup.get(
-            `${question.questionIdentifier}${index}`,
-          ) as FormControl,
+        (_, index) => this.formGroup.get(`${question.questionIdentifier}${index}`) as FormControl,
       );
     }
     return [];

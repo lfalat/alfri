@@ -17,19 +17,24 @@ import { TableCellRenderer, TableColumnDef, TableRow } from '../generic-table.ty
       {{ displayValue }}
     </span>
   `,
-  styles: [`
-    .badge {
-      display: inline-block;
-      padding: 4px 12px;
-      border-radius: 12px;
-      font-size: 0.875rem;
-      font-weight: 500;
-      text-align: center;
-      white-space: nowrap;
-    }
-  `]
+  styles: [
+    `
+      .badge {
+        display: inline-block;
+        padding: 4px 12px;
+        border-radius: 12px;
+        font-size: 0.875rem;
+        font-weight: 500;
+        text-align: center;
+        white-space: nowrap;
+      }
+    `,
+  ],
 })
-export class BadgeCellRendererComponent<T extends TableRow = TableRow> implements TableCellRenderer<T, string> {
+export class BadgeCellRendererComponent<T extends TableRow = TableRow> implements TableCellRenderer<
+  T,
+  string
+> {
   @Input() rowData!: T;
   @Input() value!: string;
   @Input() column!: TableColumnDef<T>;
@@ -46,4 +51,3 @@ export class BadgeCellRendererComponent<T extends TableRow = TableRow> implement
     return this.column.cellClass || '';
   }
 }
-

@@ -2,9 +2,7 @@
   <ng-template matStepLabel>{{ section.sectionTitle }}</ng-template>
   <div class="row">
     <p>{{ section.sectionDescription }}</p>
-    <div
-      class="col-12 col-md-auto d-flex align-items-center justify-content-center"
-    >
+    <div class="col-12 col-md-auto d-flex align-items-center justify-content-center">
       @if (radarChartOptions) {
         <app-radar-chart [options]="radarChartOptions" />
       }
