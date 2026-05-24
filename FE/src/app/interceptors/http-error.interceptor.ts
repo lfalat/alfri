@@ -2,23 +2,18 @@ import { HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
 import { catchError } from 'rxjs';
 import { inject } from '@angular/core';
 import { NotificationService } from '@services/notification.service';
-import { JwtService } from '@services/jwt.service';
 import { Router } from '@angular/router';
+import { KeycloakService } from '@services/keycloak.service';
 
 export const httpErrorInterceptor: HttpInterceptorFn = (req, next) => {
   const notificationService = inject(NotificationService);
-  const jwtService = inject(JwtService);
   const router = inject(Router);
+  const keycloakService = inject(KeycloakService);
 
   return next(req).pipe(
     catchError((error: HttpErrorResponse) => {
-      // Handle 401 Unauthorized - token is invalid or expired
       if (error.status === 401) {
-        // Clear the invalid token
-        jwtService.removeToken();
-
-        // Redirect to login page
-        router.navigate(['/login']);
+        keycloakService.login(router.url);
       }
 
       if (error.status === 403) {

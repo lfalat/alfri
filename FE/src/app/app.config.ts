@@ -1,6 +1,5 @@
 import {
   ApplicationConfig,
-  importProvidersFrom,
   provideAppInitializer,
   inject,
 } from '@angular/core';
@@ -8,43 +7,30 @@ import { provideRouter } from '@angular/router';
 
 import { routes } from './app.routes';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
-import { provideHttpClient, withInterceptors, withInterceptorsFromDi } from '@angular/common/http';
-import { JwtModule } from '@auth0/angular-jwt';
-import { tokenGetter } from '@interceptors/auth.interceptor';
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
+import { authInterceptor } from '@interceptors/auth.interceptor';
 import { httpErrorInterceptor } from '@interceptors/http-error.interceptor';
 import { ConfigService } from '@services/config.service';
 import { firstValueFrom } from 'rxjs';
+import { KeycloakService } from '@services/keycloak.service';
+import { KeycloakService as AngularKeycloakService } from 'keycloak-angular';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(routes),
     provideAnimationsAsync(),
+    AngularKeycloakService,
     provideAppInitializer(() => {
       const configService = inject(ConfigService);
+      const keycloakService = inject(KeycloakService);
 
-      return firstValueFrom(configService.loadConfig()).catch((error) => {
-        console.error('Config loading failed:', error);
-        return null;
-      });
+      return firstValueFrom(configService.loadConfig())
+        .then(() => keycloakService.initialize())
+        .catch((error) => {
+          console.error('Config or Keycloak initialization failed:', error);
+          return null;
+        });
     }),
-    importProvidersFrom(
-      JwtModule.forRoot({
-        config: {
-          tokenGetter: tokenGetter,
-          allowedDomains: [
-            'localhost:8080',
-            'alfri-backend.happystone-577431b5.norwayeast.azurecontainerapps.io',
-          ],
-          disallowedRoutes: [
-            'http://localhost:8080/register',
-            'http://localhost:8080/authenticate',
-            'https://alfri-backend.happystone-577431b5.norwayeast.azurecontainerapps.io/api/auth/register',
-            'https://alfri-backend.happystone-577431b5.norwayeast.azurecontainerapps.io/api/auth/authenticate',
-          ],
-          skipWhenExpired: false,
-        },
-      }),
-    ),
-    provideHttpClient(withInterceptorsFromDi(), withInterceptors([httpErrorInterceptor])),
+    provideHttpClient(withInterceptors([authInterceptor, httpErrorInterceptor])),
   ],
 };

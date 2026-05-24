@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -40,9 +39,7 @@ import sk.uniza.fri.alfri.mapper.StudyProgramSubjectMapper;
 import sk.uniza.fri.alfri.mapper.SubjectGradeMapper;
 import sk.uniza.fri.alfri.mapper.SubjectMapper;
 import sk.uniza.fri.alfri.service.ISubjectService;
-import sk.uniza.fri.alfri.service.UserService;
 import sk.uniza.fri.alfri.service.implementation.AuthService;
-import sk.uniza.fri.alfri.service.implementation.JwtService;
 
 import java.io.IOException;
 import java.time.Duration;
@@ -58,15 +55,11 @@ import java.util.stream.Collectors;
 public class SubjectController {
     private final ModelMapper modelMapper;
     private final ISubjectService subjectService;
-    private final JwtService jwtService;
-    private final UserService userService;
     private final AuthService authService;
 
-    public SubjectController(ISubjectService subjectService, JwtService jwtService,
-                             UserService userService, ModelMapper modelMapper, AuthService authService) {
+    public SubjectController(ISubjectService subjectService, ModelMapper modelMapper,
+                             AuthService authService) {
         this.subjectService = subjectService;
-        this.jwtService = jwtService;
-        this.userService = userService;
         this.modelMapper = modelMapper;
         this.authService = authService;
     }
@@ -109,14 +102,12 @@ public class SubjectController {
 
     @GetMapping(path = "/focus-prediction", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Page<SubjectExtendedDto>> getAllSubjectsFromFocusPrediction(
-            @RequestHeader(value = "Authorization") String token,
             PagitationRequestQuery pagitationRequestQuery) {
         log.info("Getting focus prediction subjects on page {} with page size {}",
                 pagitationRequestQuery.page, pagitationRequestQuery.size);
 
-        String parsedToken = token.replace("Bearer ", "");
-        String username = jwtService.extractUsername(parsedToken);
-        User user = userService.getUser(username);
+        User user = authService.getCurrentUser()
+                .orElseThrow(() -> new EntityNotFoundException("Cannot extract current user"));
 
         SortDefinition sortDefinition = SortRequestQuery.from(pagitationRequestQuery.sort);
         PageDefinition pageDefinition = new PageDefinition(pagitationRequestQuery.page,

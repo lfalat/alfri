@@ -1,9 +1,9 @@
 import { inject, Injectable, signal } from '@angular/core';
-import { JwtHelperService } from '@auth0/angular-jwt';
 import { HttpClient } from '@angular/common/http';
 import { Observable, take } from 'rxjs';
 import { Role, UserDtoExtended } from '../types';
 import { ConfigService } from '@services/config.service';
+import { KeycloakService } from '@services/keycloak.service';
 
 @Injectable({
   providedIn: 'root',
@@ -16,7 +16,7 @@ export class UserService {
   private readonly BE_URL = `${this.configService.apiUrl()}/user`;
 
   private readonly http = inject(HttpClient);
-  public readonly jwtHelper = inject(JwtHelperService);
+  private readonly keycloakService = inject(KeycloakService);
 
   public loadUserData() {
     // Check if data already exists
@@ -47,32 +47,7 @@ export class UserService {
    * the server will return 401 and the token should be cleared via error handling.
    */
   loggedIn = () => {
-    try {
-      const token = this.jwtHelper.tokenGetter();
-
-      // Handle promise-based token getter
-      if (token instanceof Promise) {
-        // Can't reliably check async tokens synchronously
-        // Fall back to checking localStorage directly
-        const syncToken = localStorage.getItem('access_token');
-        if (!syncToken) {
-          return false;
-        }
-        return !this.jwtHelper.isTokenExpired(syncToken);
-      }
-
-      // No token means not logged in
-      if (!token) {
-        return false;
-      }
-
-      // Check if token is expired
-      return !this.jwtHelper.isTokenExpired(token);
-    } catch (error) {
-      // If token is malformed or invalid, consider not logged in
-      console.error('Invalid token format:', error);
-      return false;
-    }
+    return this.keycloakService.isAuthenticated();
   };
 
   loadUserInfo(): Observable<UserDtoExtended> {

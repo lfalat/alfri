@@ -1,28 +1,15 @@
 package sk.uniza.fri.alfri.service.implementation;
 
-import jakarta.persistence.EntityNotFoundException;
-import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
-import sk.uniza.fri.alfri.dto.UserRoles;
-import sk.uniza.fri.alfri.dto.user.ChangePasswordDto;
-import sk.uniza.fri.alfri.entity.Role;
 import sk.uniza.fri.alfri.entity.User;
-import sk.uniza.fri.alfri.entity.UserRole;
-import sk.uniza.fri.alfri.exception.InvalidCredentialsException;
-import sk.uniza.fri.alfri.exception.UserAlreadyRegisteredException;
-import sk.uniza.fri.alfri.repository.RoleRepository;
 import sk.uniza.fri.alfri.repository.UserRepository;
 import sk.uniza.fri.alfri.service.IAuthService;
 
-import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -30,67 +17,9 @@ import java.util.Optional;
 public class AuthService implements IAuthService {
 
     private final UserRepository userRepository;
-    private final RoleRepository roleRepository;
 
-    private final PasswordEncoder passwordEncoder;
-
-    private final AuthenticationManager authenticationManager;
-
-    public AuthService(UserRepository userRepository, RoleRepository roleRepository,
-                       PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager) {
+    public AuthService(UserRepository userRepository) {
         this.userRepository = userRepository;
-        this.roleRepository = roleRepository;
-        this.passwordEncoder = passwordEncoder;
-        this.authenticationManager = authenticationManager;
-    }
-
-    @Override
-    @Transactional
-    public User registerUser(User userToRegister)
-            throws UserAlreadyRegisteredException {
-        log.info("Trying to register user with email {}", userToRegister.getEmail());
-
-        // Check if a user with the same email is already registered
-        if (userRepository.findByEmail(userToRegister.getEmail()).isPresent()) {
-            throw new UserAlreadyRegisteredException(
-                    String.format("User with email %s is already registered!", userToRegister.getEmail()));
-        }
-
-        Role studentRole = this.roleRepository.findById(UserRoles.STUDENT.getRoleId()).orElseThrow(
-            () -> new EntityNotFoundException(String.format("Role with id %d was not found", UserRoles.STUDENT.getRoleId())));
-
-        User user = User.builder()
-        .firstName(userToRegister.getFirstName())
-                .lastName(userToRegister.getLastName())
-        .email(userToRegister.getEmail())
-                .password(passwordEncoder.encode(userToRegister.getPassword()))
-        .build();
-
-        UserRole userRole = UserRole.builder()
-        .user(user)
-        .role(studentRole)
-        .build();
-
-    user.setUserRoles(List.of(userRole));
-
-        log.info("User with email {} was registered!", user.getEmail());
-
-        return userRepository.save(user);
-    }
-
-    @Override
-    public User verifyUser(User userToAutentificate) throws InvalidCredentialsException {
-        try {
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
-                    userToAutentificate.getUsername(), userToAutentificate.getPassword()));
-        } catch (AuthenticationException e) {
-            log.info("User with email {} was not authenticated!", userToAutentificate.getEmail());
-            throw new InvalidCredentialsException("Invalid credentials!");
-        }
-
-        return userRepository.findByEmail(userToAutentificate.getEmail())
-                .orElseThrow(() -> new EntityNotFoundException(String
-                        .format("Cannot authenticate user with email %s", userToAutentificate.getUsername())));
     }
 
     @Override
@@ -99,6 +28,11 @@ public class AuthService implements IAuthService {
         if (authentication != null && authentication.getPrincipal() instanceof UserDetails userDetails) {
             return Optional.ofNullable(userDetails.getUsername()); // Handle null username
         }
+
+        if (authentication != null && authentication.getPrincipal() instanceof Jwt jwt) {
+            return extractEmail(jwt);
+        }
+
         return Optional.empty();
     }
 
@@ -109,27 +43,26 @@ public class AuthService implements IAuthService {
             String email = userDetails.getUsername();
             return userRepository.findByEmail(email);
         }
+
+        if (authentication != null && authentication.getPrincipal() instanceof Jwt jwt) {
+            return extractEmail(jwt).flatMap(userRepository::findByEmail);
+        }
+
         return Optional.empty();
     }
 
-    @Override
-    @Transactional
-    public void changePassword(ChangePasswordDto changePasswordDto) {
-        if (changePasswordDto.getNewPassword().equals(changePasswordDto.getOldPassword())) {
-            throw new InvalidCredentialsException(
-                    "New password cannot be the same as the old password!");
+    private Optional<String> extractEmail(Jwt jwt) {
+        String email = jwt.getClaimAsString("email");
+        if (email != null && !email.isBlank()) {
+            return Optional.of(email);
         }
 
-        User foundUser = this.userRepository.findByEmail(changePasswordDto.getEmail())
-                .orElseThrow(() -> new EntityNotFoundException(
-                        String.format("User with email %s was not found!", changePasswordDto.getEmail())));
-
-        // Verify the old password matches the current password
-        if (!passwordEncoder.matches(changePasswordDto.getOldPassword(), foundUser.getPassword())) {
-            throw new InvalidCredentialsException("Old password is incorrect!");
+        String preferredUsername = jwt.getClaimAsString("preferred_username");
+        if (preferredUsername != null && !preferredUsername.isBlank()) {
+            return Optional.of(preferredUsername);
         }
 
-        foundUser.setPassword(passwordEncoder.encode(changePasswordDto.getNewPassword()));
-        this.userRepository.save(foundUser);
+        return Optional.empty();
     }
+
 }

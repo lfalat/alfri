@@ -38,9 +38,8 @@ public class UserController {
     @GetMapping(value = "/profile", produces = APPLICATION_JSON_VALUE)
     public UserDtoExtended getUser() {
         log.info("Loading user profile");
-        String userEmail = authService.getCurrentUserEmail()
-                .orElseThrow(() -> new EntityNotFoundException("Cannot extract user email"));
-        User user = this.userService.getUser(userEmail);
+        User user = authService.getCurrentUser()
+                .orElseThrow(() -> new EntityNotFoundException("Cannot extract current user"));
 
         return UserAssembler.toUserDtoExtended(user);
     }
@@ -59,9 +58,9 @@ public class UserController {
     public List<RoleDto> getAllCurrentUserRoles() {
         log.info("Getting all users roles");
 
-        String currentUserEmail = authService.getCurrentUserEmail().orElseThrow(
-                () -> new AuthenticationCredentialsNotFoundException("Email of current user not foudn!"));
-        List<Role> roles = userService.getCurrentUserRoles(currentUserEmail);
+        User currentUser = authService.getCurrentUser().orElseThrow(
+                () -> new AuthenticationCredentialsNotFoundException("Current user was not found"));
+        List<Role> roles = currentUser.getUserRoles().stream().map(userRole -> userRole.getRole()).toList();
 
         return roles.stream().map(RoleMapper.INSTANCE::mapRoleToRoleDto).toList();
     }

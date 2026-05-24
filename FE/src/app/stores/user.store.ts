@@ -1,11 +1,11 @@
 import { computed, inject } from '@angular/core';
 import { patchState, signalStore, withComputed, withMethods, withState } from '@ngrx/signals';
 import { HttpClient } from '@angular/common/http';
-import { JwtHelperService } from '@auth0/angular-jwt';
 import { pipe, switchMap, tap } from 'rxjs';
 import { Role, UserDto, UserState } from '../types';
 import { ConfigService } from '@services/config.service';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
+import { KeycloakService } from '@services/keycloak.service';
 
 const initialState: UserState = {
   userData: undefined,
@@ -17,10 +17,10 @@ export const UserStore = signalStore(
   { providedIn: 'root' },
   withState(initialState),
   withComputed(() => {
-    const jwtHelper = inject(JwtHelperService);
+    const keycloakService = inject(KeycloakService);
 
     return {
-      loggedIn: computed(() => !jwtHelper.isTokenExpired()),
+      loggedIn: computed(() => keycloakService.authenticated()),
     };
   }),
   withMethods((store) => {

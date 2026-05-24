@@ -8,16 +8,17 @@ import {
 import { UserService } from '@services/user.service';
 import { AuthService } from '@services/auth.service';
 import { AuthRole } from '@enums/auth-role';
+import { KeycloakService } from '@services/keycloak.service';
 
-/**
- * Basic JWT token auth guard
- */
-export const tokenAppGuard: CanActivateFn = (): boolean => {
-  const router = inject(Router);
+export const tokenAppGuard: CanActivateFn = (
+  _route: ActivatedRouteSnapshot,
+  state: RouterStateSnapshot,
+): boolean => {
   const userService = inject(UserService);
+  const keycloakService = inject(KeycloakService);
 
   if (!userService.loggedIn()) {
-    router.navigate(['/login']);
+    keycloakService.login(state.url);
     return false;
   }
 
@@ -65,11 +66,11 @@ export const roleAppGuard: CanActivateFn = (route: ActivatedRouteSnapshot) => {
 })
 export class AuthGuards {
   private readonly userService = inject(UserService);
-  private readonly router = inject(Router);
+  private readonly keycloakService = inject(KeycloakService);
 
-  canActivate(): boolean {
+  canActivate(redirectPath = '/home'): boolean {
     if (!this.userService.loggedIn()) {
-      this.router.navigate(['login']);
+      void this.keycloakService.login(redirectPath);
       return false;
     }
 

@@ -22,6 +22,11 @@ spring:
     jwt:
       secret-key: ${JWT_PROD_SECRET_KEY}
       expiration-time: ${JWT_PROD_EXPIRATION_TIME}
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${KEYCLOAK_ISSUER_URI}
+          jwk-set-uri: ${KEYCLOAK_JWK_SET_URI}
 
 python:
   executable_path: ${PYTHON_PROD_EXECUTABLE_PATH}
@@ -52,6 +57,9 @@ resilience4j:
           - sk.uniza.fri.alfri.infrastructure.exception.PythonServiceServerException
 
 frontend-url: ${FRONTEND_PROD_URL}
+keycloak:
+  events:
+    webhook-secret: ${KEYCLOAK_EVENT_WEBHOOK_SECRET}
 # no default user in production
 default-user-email: "-"
 default-user-roles:

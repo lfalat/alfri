@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { SubjectPassingPredictionResultComponent } from '@components/subject-passing-prediction-result/subject-passing-prediction-result.component';
 
 import { SubjectService } from '@services/subject.service';
@@ -16,7 +16,7 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 })
 export class PassingPredictionComponent implements OnInit {
   subjects: SubjectPassingPrediction[] = [];
-  isLoading: boolean = true;
+  isLoading = signal<boolean>(true);
   private readonly subjectService = inject(SubjectService);
   constructor() {}
 
@@ -25,7 +25,7 @@ export class PassingPredictionComponent implements OnInit {
       .makeSubjectsPassingAndMarkPredictions()
       .pipe(take(1))
       .subscribe((predictionResult: SubjectPassingPrediction[]) => {
-        this.isLoading = false;
+        this.isLoading.set(false);
         console.log(predictionResult);
         this.subjects = predictionResult;
 

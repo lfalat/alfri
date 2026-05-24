@@ -397,6 +397,9 @@ export interface PopularSubjectRow {
 export interface AppConfig {
   API_URL: string;
   ENVIRONMENT: string;
+  KEYCLOAK_URL: string;
+  KEYCLOAK_REALM: string;
+  KEYCLOAK_CLIENT_ID: string;
 }
 
 export type UserState = {

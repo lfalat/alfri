@@ -20,6 +20,10 @@ services:
       DATABASE_PROD_PASSWORD: ${DATABASE_PROD_PASSWORD:-changeme}
       # Python service discovery via Docker DNS (service name)
       PYTHON_SERVICE_URL: http://python-ml-client:5000
+      # Keycloak issuer is public/browser-facing; JWK URI is container-network-facing.
+      KEYCLOAK_ISSUER_URI: http://localhost:8180/realms/alfri
+      KEYCLOAK_JWK_SET_URI: http://keycloak:8080/realms/alfri/protocol/openid-connect/certs
+      KEYCLOAK_EVENT_WEBHOOK_SECRET: ${KEYCLOAK_EVENT_WEBHOOK_SECRET:-changeme}
       # CORS: allow frontend origin during local dev
       FRONTEND_ALLOWED_ORIGIN: http://localhost:4200
       # Shared X-API-KEY for local testing (value from .env)
@@ -98,7 +102,9 @@ services:
       - alfri-network
 
   keycloak:
-    image: quay.io/keycloak/keycloak:26.6.2
+    build:
+      context: .
+      dockerfile: docker/keycloak/Dockerfile
     container_name: alfri_keycloak
     restart: unless-stopped
     environment:
@@ -109,8 +115,14 @@ services:
       KC_DB_USERNAME: ${DATABASE_DEV_USER:-alfri}
       KC_DB_PASSWORD: ${DATABASE_DEV_PASSWORD:-changeme}
       KC_HTTP_ENABLED: "true"
+      KC_HOSTNAME: http://localhost:8180
       KC_HOSTNAME_STRICT: "false"
       KC_HEALTH_ENABLED: "true"
+      KC_SPI_THEME_CACHE_THEMES: "false"
+      KC_SPI_THEME_CACHE_TEMPLATES: "false"
+      KC_SPI_THEME_STATIC_MAX_AGE: "-1"
+      ALFRI_KEYCLOAK_EVENT_WEBHOOK_URL: ${KEYCLOAK_EVENT_WEBHOOK_URL:-http://host.docker.internal:8080/api/internal/keycloak/users}
+      ALFRI_KEYCLOAK_EVENT_WEBHOOK_SECRET: ${KEYCLOAK_EVENT_WEBHOOK_SECRET:-changeme}
     command:
       - start-dev
       - --import-realm
@@ -118,6 +130,9 @@ services:
       - "8180:8080"
     volumes:
       - ./docker/keycloak/import:/opt/keycloak/data/import:ro
+      - ./docker/keycloak/themes:/opt/keycloak/themes:ro
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     depends_on:
       keycloak-db-init:
         condition: service_completed_successfully

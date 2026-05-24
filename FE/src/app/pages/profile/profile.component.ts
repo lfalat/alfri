@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { UserStore } from '../../stores/user.store';
@@ -43,7 +43,7 @@ export class ProfileComponent implements OnInit {
   protected readonly AuthRole = AuthRole;
   formData: AnsweredForm | undefined;
   _userData: UserDto | undefined;
-  isLoading = true;
+  isLoading = signal<boolean>(true);
   profileForm: FormGroup;
 
   private readonly formBuilder = inject(FormBuilder);
@@ -78,10 +78,10 @@ export class ProfileComponent implements OnInit {
       .subscribe({
         next: (data: AnsweredForm) => {
           this.formData = data;
-          this.isLoading = false;
+          this.isLoading.set(false);
         },
         error: () => {
-          this.isLoading = false;
+          this.isLoading.set(false);
         },
       });
   }
