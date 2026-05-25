@@ -12,6 +12,8 @@ FROM quay.io/keycloak/keycloak:26.6.2 AS builder
 ENV KC_DB=postgres
 ENV KC_HEALTH_ENABLED=true
 ENV KC_METRICS_ENABLED=true
+ENV KC_HTTP_ENABLED=true
+ENV KC_PROXY_HEADERS=xforwarded
 
 COPY --from=provider-build --chown=keycloak:keycloak /build/target/alfri-keycloak-event-listener-*.jar /opt/keycloak/providers/
 COPY --chown=keycloak:keycloak docker/keycloak/themes/ /opt/keycloak/themes/
