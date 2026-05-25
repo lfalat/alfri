@@ -1,0 +1,594 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "_generator": {
+      "name": "bicep",
+      "version": "0.43.8.12551",
+      "templateHash": "17722984661328127535"
+    }
+  },
+  "parameters": {
+    "location": {
+      "type": "string"
+    },
+    "containerAppsEnvironmentId": {
+      "type": "string"
+    },
+    "containerRegistryName": {
+      "type": "string"
+    },
+    "keyVaultUri": {
+      "type": "string"
+    },
+    "pgHost": {
+      "type": "string"
+    },
+    "pgDatabase": {
+      "type": "string"
+    },
+    "pgAdminUser": {
+      "type": "string"
+    },
+    "keycloakRealm": {
+      "type": "string"
+    },
+    "keycloakAdminUser": {
+      "type": "string"
+    },
+    "frontendFqdn": {
+      "type": "string"
+    },
+    "keycloakFqdn": {
+      "type": "string"
+    },
+    "frontendImageName": {
+      "type": "string"
+    },
+    "backendImageName": {
+      "type": "string"
+    },
+    "mlImageName": {
+      "type": "string"
+    },
+    "keycloakImageName": {
+      "type": "string"
+    }
+  },
+  "variables": {
+    "registryServer": "[format('{0}.azurecr.io', parameters('containerRegistryName'))]"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.App/containerApps",
+      "apiVersion": "2024-03-01",
+      "name": "alfri-frontend",
+      "location": "[parameters('location')]",
+      "identity": {
+        "type": "SystemAssigned"
+      },
+      "properties": {
+        "managedEnvironmentId": "[parameters('containerAppsEnvironmentId')]",
+        "configuration": {
+          "ingress": {
+            "external": true,
+            "targetPort": 80,
+            "transport": "auto"
+          },
+          "registries": [
+            {
+              "server": "[variables('registryServer')]",
+              "identity": "system"
+            }
+          ]
+        },
+        "template": {
+          "containers": [
+            {
+              "name": "alfri-frontend",
+              "image": "[parameters('frontendImageName')]",
+              "resources": {
+                "cpu": "[json('0.25')]",
+                "memory": "0.5Gi"
+              },
+              "env": [
+                {
+                  "name": "BACKEND_URL",
+                  "value": "http://alfri-backend"
+                },
+                {
+                  "name": "API_URL",
+                  "value": "/api"
+                },
+                {
+                  "name": "KEYCLOAK_URL",
+                  "value": "[format('https://{0}', parameters('keycloakFqdn'))]"
+                },
+                {
+                  "name": "KEYCLOAK_REALM",
+                  "value": "[parameters('keycloakRealm')]"
+                },
+                {
+                  "name": "KEYCLOAK_CLIENT_ID",
+                  "value": "alfri-frontend"
+                },
+                {
+                  "name": "ENVIRONMENT",
+                  "value": "azure-dev"
+                }
+              ],
+              "probes": [
+                {
+                  "type": "Readiness",
+                  "httpGet": {
+                    "path": "/health",
+                    "port": 80,
+                    "scheme": "HTTP"
+                  },
+                  "initialDelaySeconds": 5,
+                  "periodSeconds": 10,
+                  "failureThreshold": 3
+                },
+                {
+                  "type": "Liveness",
+                  "httpGet": {
+                    "path": "/health",
+                    "port": 80,
+                    "scheme": "HTTP"
+                  },
+                  "initialDelaySeconds": 10,
+                  "periodSeconds": 30,
+                  "failureThreshold": 3
+                }
+              ]
+            }
+          ],
+          "scale": {
+            "minReplicas": 0,
+            "maxReplicas": 1
+          }
+        }
+      }
+    },
+    {
+      "type": "Microsoft.App/containerApps",
+      "apiVersion": "2024-03-01",
+      "name": "alfri-backend",
+      "location": "[parameters('location')]",
+      "identity": {
+        "type": "SystemAssigned"
+      },
+      "properties": {
+        "managedEnvironmentId": "[parameters('containerAppsEnvironmentId')]",
+        "configuration": {
+          "ingress": {
+            "external": false,
+            "targetPort": 8080,
+            "transport": "auto"
+          },
+          "registries": [
+            {
+              "server": "[variables('registryServer')]",
+              "identity": "system"
+            }
+          ],
+          "secrets": [
+            {
+              "name": "pg-password",
+              "keyVaultUrl": "[format('{0}secrets/pg-password', parameters('keyVaultUri'))]",
+              "identity": "system"
+            },
+            {
+              "name": "keycloak-admin-password",
+              "keyVaultUrl": "[format('{0}secrets/keycloak-admin-password', parameters('keyVaultUri'))]",
+              "identity": "system"
+            },
+            {
+              "name": "keycloak-webhook-secret",
+              "keyVaultUrl": "[format('{0}secrets/keycloak-webhook-secret', parameters('keyVaultUri'))]",
+              "identity": "system"
+            },
+            {
+              "name": "ml-api-key",
+              "keyVaultUrl": "[format('{0}secrets/ml-api-key', parameters('keyVaultUri'))]",
+              "identity": "system"
+            }
+          ]
+        },
+        "template": {
+          "containers": [
+            {
+              "name": "alfri-backend",
+              "image": "[parameters('backendImageName')]",
+              "resources": {
+                "cpu": "[json('0.5')]",
+                "memory": "1Gi"
+              },
+              "env": [
+                {
+                  "name": "SPRING_PROFILES_ACTIVE",
+                  "value": "azure-dev"
+                },
+                {
+                  "name": "AZURE_PG_HOST",
+                  "value": "[parameters('pgHost')]"
+                },
+                {
+                  "name": "AZURE_PG_DATABASE",
+                  "value": "[parameters('pgDatabase')]"
+                },
+                {
+                  "name": "AZURE_PG_USER",
+                  "value": "[parameters('pgAdminUser')]"
+                },
+                {
+                  "name": "AZURE_PG_PASSWORD",
+                  "secretRef": "pg-password"
+                },
+                {
+                  "name": "KEYCLOAK_ISSUER_URI",
+                  "value": "[format('https://{0}/realms/{1}', parameters('keycloakFqdn'), parameters('keycloakRealm'))]"
+                },
+                {
+                  "name": "KEYCLOAK_JWK_SET_URI",
+                  "value": "[format('https://{0}/realms/{1}/protocol/openid-connect/certs', parameters('keycloakFqdn'), parameters('keycloakRealm'))]"
+                },
+                {
+                  "name": "KEYCLOAK_INTERNAL_ISSUER_URI",
+                  "value": "[format('http://alfri-keycloak/realms/{0}', parameters('keycloakRealm'))]"
+                },
+                {
+                  "name": "KEYCLOAK_REALM",
+                  "value": "[parameters('keycloakRealm')]"
+                },
+                {
+                  "name": "KEYCLOAK_CLIENT_ID",
+                  "value": "alfri-frontend"
+                },
+                {
+                  "name": "KEYCLOAK_ADMIN_REALM",
+                  "value": "master"
+                },
+                {
+                  "name": "KEYCLOAK_ADMIN_CLIENT_ID",
+                  "value": "admin-cli"
+                },
+                {
+                  "name": "KEYCLOAK_ADMIN_USERNAME",
+                  "value": "[parameters('keycloakAdminUser')]"
+                },
+                {
+                  "name": "KEYCLOAK_ADMIN_PASSWORD",
+                  "secretRef": "keycloak-admin-password"
+                },
+                {
+                  "name": "KEYCLOAK_EVENT_WEBHOOK_SECRET",
+                  "secretRef": "keycloak-webhook-secret"
+                },
+                {
+                  "name": "PYTHON_SERVICE_BASE_URL",
+                  "value": "http://alfri-ml-service"
+                },
+                {
+                  "name": "PYTHON_SERVICE_API_KEY",
+                  "secretRef": "ml-api-key"
+                },
+                {
+                  "name": "CORS_ALLOWED_ORIGINS",
+                  "value": "[format('https://{0}', parameters('frontendFqdn'))]"
+                }
+              ],
+              "probes": [
+                {
+                  "type": "Startup",
+                  "httpGet": {
+                    "path": "/actuator/health/readiness",
+                    "port": 8080,
+                    "scheme": "HTTP"
+                  },
+                  "initialDelaySeconds": 30,
+                  "periodSeconds": 10,
+                  "failureThreshold": 12
+                },
+                {
+                  "type": "Readiness",
+                  "httpGet": {
+                    "path": "/actuator/health/readiness",
+                    "port": 8080,
+                    "scheme": "HTTP"
+                  },
+                  "periodSeconds": 10,
+                  "failureThreshold": 3
+                },
+                {
+                  "type": "Liveness",
+                  "httpGet": {
+                    "path": "/actuator/health/liveness",
+                    "port": 8080,
+                    "scheme": "HTTP"
+                  },
+                  "periodSeconds": 30,
+                  "failureThreshold": 3
+                }
+              ]
+            }
+          ],
+          "scale": {
+            "minReplicas": 0,
+            "maxReplicas": 1
+          }
+        }
+      }
+    },
+    {
+      "type": "Microsoft.App/containerApps",
+      "apiVersion": "2024-03-01",
+      "name": "alfri-ml-service",
+      "location": "[parameters('location')]",
+      "identity": {
+        "type": "SystemAssigned"
+      },
+      "properties": {
+        "managedEnvironmentId": "[parameters('containerAppsEnvironmentId')]",
+        "configuration": {
+          "ingress": {
+            "external": false,
+            "targetPort": 5000,
+            "transport": "auto"
+          },
+          "registries": [
+            {
+              "server": "[variables('registryServer')]",
+              "identity": "system"
+            }
+          ],
+          "secrets": [
+            {
+              "name": "pg-password",
+              "keyVaultUrl": "[format('{0}secrets/pg-password', parameters('keyVaultUri'))]",
+              "identity": "system"
+            },
+            {
+              "name": "ml-api-key",
+              "keyVaultUrl": "[format('{0}secrets/ml-api-key', parameters('keyVaultUri'))]",
+              "identity": "system"
+            }
+          ]
+        },
+        "template": {
+          "containers": [
+            {
+              "name": "alfri-ml-service",
+              "image": "[parameters('mlImageName')]",
+              "resources": {
+                "cpu": "[json('1')]",
+                "memory": "2Gi"
+              },
+              "env": [
+                {
+                  "name": "MODE",
+                  "value": "prod"
+                },
+                {
+                  "name": "DATABASE_HOST",
+                  "value": "[format('{0}:5432/{1}', parameters('pgHost'), parameters('pgDatabase'))]"
+                },
+                {
+                  "name": "DATABASE_USER",
+                  "value": "[parameters('pgAdminUser')]"
+                },
+                {
+                  "name": "DATABASE_PASSWORD",
+                  "secretRef": "pg-password"
+                },
+                {
+                  "name": "DATABASE_SSLMODE",
+                  "value": "require"
+                },
+                {
+                  "name": "API_KEYS",
+                  "secretRef": "ml-api-key"
+                }
+              ],
+              "probes": [
+                {
+                  "type": "Startup",
+                  "httpGet": {
+                    "path": "/health/ready",
+                    "port": 5000,
+                    "scheme": "HTTP"
+                  },
+                  "initialDelaySeconds": 30,
+                  "periodSeconds": 10,
+                  "failureThreshold": 12
+                },
+                {
+                  "type": "Readiness",
+                  "httpGet": {
+                    "path": "/health/ready",
+                    "port": 5000,
+                    "scheme": "HTTP"
+                  },
+                  "periodSeconds": 15,
+                  "failureThreshold": 3
+                },
+                {
+                  "type": "Liveness",
+                  "httpGet": {
+                    "path": "/health/live",
+                    "port": 5000,
+                    "scheme": "HTTP"
+                  },
+                  "periodSeconds": 30,
+                  "failureThreshold": 3
+                }
+              ]
+            }
+          ],
+          "scale": {
+            "minReplicas": 0,
+            "maxReplicas": 1
+          }
+        }
+      }
+    },
+    {
+      "type": "Microsoft.App/containerApps",
+      "apiVersion": "2024-03-01",
+      "name": "alfri-keycloak",
+      "location": "[parameters('location')]",
+      "identity": {
+        "type": "SystemAssigned"
+      },
+      "properties": {
+        "managedEnvironmentId": "[parameters('containerAppsEnvironmentId')]",
+        "configuration": {
+          "ingress": {
+            "external": true,
+            "targetPort": 8080,
+            "transport": "auto"
+          },
+          "registries": [
+            {
+              "server": "[variables('registryServer')]",
+              "identity": "system"
+            }
+          ],
+          "secrets": [
+            {
+              "name": "kc-db-password",
+              "keyVaultUrl": "[format('{0}secrets/keycloak-db-password', parameters('keyVaultUri'))]",
+              "identity": "system"
+            },
+            {
+              "name": "keycloak-admin-password",
+              "keyVaultUrl": "[format('{0}secrets/keycloak-admin-password', parameters('keyVaultUri'))]",
+              "identity": "system"
+            }
+          ]
+        },
+        "template": {
+          "containers": [
+            {
+              "name": "alfri-keycloak",
+              "image": "[parameters('keycloakImageName')]",
+              "resources": {
+                "cpu": "[json('0.5')]",
+                "memory": "1Gi"
+              },
+              "args": [
+                "start",
+                "--import-realm"
+              ],
+              "env": [
+                {
+                  "name": "KC_DB",
+                  "value": "postgres"
+                },
+                {
+                  "name": "KC_DB_URL",
+                  "value": "[format('jdbc:postgresql://{0}:5432/keycloak?sslmode=require', parameters('pgHost'))]"
+                },
+                {
+                  "name": "KC_DB_USERNAME",
+                  "value": "keycloak"
+                },
+                {
+                  "name": "KC_DB_PASSWORD",
+                  "secretRef": "kc-db-password"
+                },
+                {
+                  "name": "KC_HOSTNAME",
+                  "value": "[parameters('keycloakFqdn')]"
+                },
+                {
+                  "name": "KC_HOSTNAME_STRICT",
+                  "value": "false"
+                },
+                {
+                  "name": "KC_PROXY",
+                  "value": "edge"
+                },
+                {
+                  "name": "KC_HTTP_ENABLED",
+                  "value": "true"
+                },
+                {
+                  "name": "KEYCLOAK_ADMIN",
+                  "value": "[parameters('keycloakAdminUser')]"
+                },
+                {
+                  "name": "KEYCLOAK_ADMIN_PASSWORD",
+                  "secretRef": "keycloak-admin-password"
+                },
+                {
+                  "name": "KC_HEALTH_ENABLED",
+                  "value": "true"
+                },
+                {
+                  "name": "KC_METRICS_ENABLED",
+                  "value": "true"
+                }
+              ],
+              "probes": [
+                {
+                  "type": "Startup",
+                  "httpGet": {
+                    "path": "/health/ready",
+                    "port": 8080,
+                    "scheme": "HTTP"
+                  },
+                  "initialDelaySeconds": 60,
+                  "periodSeconds": 10,
+                  "failureThreshold": 18
+                },
+                {
+                  "type": "Readiness",
+                  "httpGet": {
+                    "path": "/health/ready",
+                    "port": 8080,
+                    "scheme": "HTTP"
+                  },
+                  "periodSeconds": 15,
+                  "failureThreshold": 3
+                },
+                {
+                  "type": "Liveness",
+                  "httpGet": {
+                    "path": "/health/live",
+                    "port": 8080,
+                    "scheme": "HTTP"
+                  },
+                  "periodSeconds": 30,
+                  "failureThreshold": 3
+                }
+              ]
+            }
+          ],
+          "scale": {
+            "minReplicas": 0,
+            "maxReplicas": 1
+          }
+        }
+      }
+    }
+  ],
+  "outputs": {
+    "frontendPrincipalId": {
+      "type": "string",
+      "value": "[reference(resourceId('Microsoft.App/containerApps', 'alfri-frontend'), '2024-03-01', 'full').identity.principalId]"
+    },
+    "backendPrincipalId": {
+      "type": "string",
+      "value": "[reference(resourceId('Microsoft.App/containerApps', 'alfri-backend'), '2024-03-01', 'full').identity.principalId]"
+    },
+    "mlPrincipalId": {
+      "type": "string",
+      "value": "[reference(resourceId('Microsoft.App/containerApps', 'alfri-ml-service'), '2024-03-01', 'full').identity.principalId]"
+    },
+    "keycloakPrincipalId": {
+      "type": "string",
+      "value": "[reference(resourceId('Microsoft.App/containerApps', 'alfri-keycloak'), '2024-03-01', 'full').identity.principalId]"
+    }
+  }
+}

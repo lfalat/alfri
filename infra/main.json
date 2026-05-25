@@ -1,0 +1,1221 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "_generator": {
+      "name": "bicep",
+      "version": "0.43.8.12551",
+      "templateHash": "4794934453862538831"
+    }
+  },
+  "parameters": {
+    "location": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().location]",
+      "metadata": {
+        "description": "Azure location for new resources. Defaults to the resource group location."
+      }
+    },
+    "containerAppsEnvironmentName": {
+      "type": "string",
+      "defaultValue": "alfri-env",
+      "metadata": {
+        "description": "Existing Container Apps environment name."
+      }
+    },
+    "containerRegistryName": {
+      "type": "string",
+      "defaultValue": "alfriregistry",
+      "metadata": {
+        "description": "Existing Azure Container Registry name."
+      }
+    },
+    "postgresServerName": {
+      "type": "string",
+      "defaultValue": "alfri-postgres",
+      "metadata": {
+        "description": "Existing PostgreSQL Flexible Server name."
+      }
+    },
+    "keyVaultName": {
+      "type": "string",
+      "defaultValue": "alfri-kv",
+      "metadata": {
+        "description": "Name for the new Key Vault (must be globally unique, 3-24 chars)."
+      }
+    },
+    "pgAdminUser": {
+      "type": "string",
+      "defaultValue": "alfri",
+      "metadata": {
+        "description": "PostgreSQL admin username used by backend and ML service."
+      }
+    },
+    "pgDatabase": {
+      "type": "string",
+      "defaultValue": "alfri",
+      "metadata": {
+        "description": "PostgreSQL database name for the main application."
+      }
+    },
+    "keycloakRealm": {
+      "type": "string",
+      "defaultValue": "alfri",
+      "metadata": {
+        "description": "Keycloak realm name."
+      }
+    },
+    "keycloakAdminUser": {
+      "type": "string",
+      "defaultValue": "admin",
+      "metadata": {
+        "description": "Keycloak admin username (not a secret)."
+      }
+    },
+    "frontendImageName": {
+      "type": "string",
+      "defaultValue": "alfriregistry.azurecr.io/alfri-frontend:latest",
+      "metadata": {
+        "description": "Frontend container image. azd deploy overrides this with the commit-SHA-tagged image."
+      }
+    },
+    "backendImageName": {
+      "type": "string",
+      "defaultValue": "alfriregistry.azurecr.io/alfri-backend:latest",
+      "metadata": {
+        "description": "Backend container image. azd deploy overrides this."
+      }
+    },
+    "mlImageName": {
+      "type": "string",
+      "defaultValue": "alfriregistry.azurecr.io/alfri-ml-service:latest",
+      "metadata": {
+        "description": "ML service container image. azd deploy overrides this."
+      }
+    },
+    "keycloakImageName": {
+      "type": "string",
+      "defaultValue": "alfriregistry.azurecr.io/alfri-keycloak:latest",
+      "metadata": {
+        "description": "Keycloak container image. azd deploy overrides this."
+      }
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.DBforPostgreSQL/flexibleServers/databases",
+      "apiVersion": "2023-06-01-preview",
+      "name": "[format('{0}/{1}', parameters('postgresServerName'), 'keycloak')]",
+      "properties": {
+        "charset": "UTF8",
+        "collation": "en_US.utf8"
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2025-04-01",
+      "name": "deploy-identities",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "location": {
+            "value": "[parameters('location')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.43.8.12551",
+              "templateHash": "13218441030278252417"
+            }
+          },
+          "parameters": {
+            "location": {
+              "type": "string"
+            }
+          },
+          "resources": [
+            {
+              "type": "Microsoft.ManagedIdentity/userAssignedIdentities",
+              "apiVersion": "2023-01-31",
+              "name": "alfri-frontend-id",
+              "location": "[parameters('location')]"
+            },
+            {
+              "type": "Microsoft.ManagedIdentity/userAssignedIdentities",
+              "apiVersion": "2023-01-31",
+              "name": "alfri-backend-id",
+              "location": "[parameters('location')]"
+            },
+            {
+              "type": "Microsoft.ManagedIdentity/userAssignedIdentities",
+              "apiVersion": "2023-01-31",
+              "name": "alfri-ml-service-id",
+              "location": "[parameters('location')]"
+            },
+            {
+              "type": "Microsoft.ManagedIdentity/userAssignedIdentities",
+              "apiVersion": "2023-01-31",
+              "name": "alfri-keycloak-id",
+              "location": "[parameters('location')]"
+            }
+          ],
+          "outputs": {
+            "frontendIdentityId": {
+              "type": "string",
+              "value": "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', 'alfri-frontend-id')]"
+            },
+            "backendIdentityId": {
+              "type": "string",
+              "value": "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', 'alfri-backend-id')]"
+            },
+            "mlIdentityId": {
+              "type": "string",
+              "value": "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', 'alfri-ml-service-id')]"
+            },
+            "keycloakIdentityId": {
+              "type": "string",
+              "value": "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', 'alfri-keycloak-id')]"
+            },
+            "frontendPrincipalId": {
+              "type": "string",
+              "value": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', 'alfri-frontend-id'), '2023-01-31').principalId]"
+            },
+            "backendPrincipalId": {
+              "type": "string",
+              "value": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', 'alfri-backend-id'), '2023-01-31').principalId]"
+            },
+            "mlPrincipalId": {
+              "type": "string",
+              "value": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', 'alfri-ml-service-id'), '2023-01-31').principalId]"
+            },
+            "keycloakPrincipalId": {
+              "type": "string",
+              "value": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', 'alfri-keycloak-id'), '2023-01-31').principalId]"
+            }
+          }
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2025-04-01",
+      "name": "deploy-keyvault",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "location": {
+            "value": "[parameters('location')]"
+          },
+          "keyVaultName": {
+            "value": "[parameters('keyVaultName')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.43.8.12551",
+              "templateHash": "10071961668478202156"
+            }
+          },
+          "parameters": {
+            "location": {
+              "type": "string"
+            },
+            "keyVaultName": {
+              "type": "string"
+            }
+          },
+          "resources": [
+            {
+              "type": "Microsoft.KeyVault/vaults",
+              "apiVersion": "2023-07-01",
+              "name": "[parameters('keyVaultName')]",
+              "location": "[parameters('location')]",
+              "properties": {
+                "sku": {
+                  "family": "A",
+                  "name": "standard"
+                },
+                "tenantId": "[subscription().tenantId]",
+                "enableRbacAuthorization": true,
+                "enableSoftDelete": true,
+                "softDeleteRetentionInDays": 7,
+                "enabledForDeployment": false,
+                "enabledForDiskEncryption": false,
+                "enabledForTemplateDeployment": false,
+                "publicNetworkAccess": "Enabled",
+                "networkAcls": {
+                  "defaultAction": "Allow",
+                  "bypass": "AzureServices"
+                }
+              }
+            },
+            {
+              "type": "Microsoft.KeyVault/vaults/secrets",
+              "apiVersion": "2023-07-01",
+              "name": "[format('{0}/{1}', parameters('keyVaultName'), 'pg-password')]",
+              "properties": {
+                "value": "REPLACE_BEFORE_DEPLOY",
+                "attributes": {
+                  "enabled": true
+                }
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.KeyVault/vaults', parameters('keyVaultName'))]"
+              ]
+            },
+            {
+              "type": "Microsoft.KeyVault/vaults/secrets",
+              "apiVersion": "2023-07-01",
+              "name": "[format('{0}/{1}', parameters('keyVaultName'), 'keycloak-admin-password')]",
+              "properties": {
+                "value": "REPLACE_BEFORE_DEPLOY",
+                "attributes": {
+                  "enabled": true
+                }
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.KeyVault/vaults', parameters('keyVaultName'))]"
+              ]
+            },
+            {
+              "type": "Microsoft.KeyVault/vaults/secrets",
+              "apiVersion": "2023-07-01",
+              "name": "[format('{0}/{1}', parameters('keyVaultName'), 'keycloak-db-password')]",
+              "properties": {
+                "value": "REPLACE_BEFORE_DEPLOY",
+                "attributes": {
+                  "enabled": true
+                }
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.KeyVault/vaults', parameters('keyVaultName'))]"
+              ]
+            },
+            {
+              "type": "Microsoft.KeyVault/vaults/secrets",
+              "apiVersion": "2023-07-01",
+              "name": "[format('{0}/{1}', parameters('keyVaultName'), 'keycloak-webhook-secret')]",
+              "properties": {
+                "value": "REPLACE_BEFORE_DEPLOY",
+                "attributes": {
+                  "enabled": true
+                }
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.KeyVault/vaults', parameters('keyVaultName'))]"
+              ]
+            },
+            {
+              "type": "Microsoft.KeyVault/vaults/secrets",
+              "apiVersion": "2023-07-01",
+              "name": "[format('{0}/{1}', parameters('keyVaultName'), 'ml-api-key')]",
+              "properties": {
+                "value": "REPLACE_BEFORE_DEPLOY",
+                "attributes": {
+                  "enabled": true
+                }
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.KeyVault/vaults', parameters('keyVaultName'))]"
+              ]
+            }
+          ],
+          "outputs": {
+            "keyVaultId": {
+              "type": "string",
+              "value": "[resourceId('Microsoft.KeyVault/vaults', parameters('keyVaultName'))]"
+            },
+            "keyVaultUri": {
+              "type": "string",
+              "value": "[reference(resourceId('Microsoft.KeyVault/vaults', parameters('keyVaultName')), '2023-07-01').vaultUri]"
+            },
+            "keyVaultName": {
+              "type": "string",
+              "value": "[parameters('keyVaultName')]"
+            }
+          }
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2025-04-01",
+      "name": "deploy-roles",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "containerRegistryName": {
+            "value": "[parameters('containerRegistryName')]"
+          },
+          "keyVaultName": {
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', 'deploy-keyvault'), '2025-04-01').outputs.keyVaultName.value]"
+          },
+          "frontendPrincipalId": {
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', 'deploy-identities'), '2025-04-01').outputs.frontendPrincipalId.value]"
+          },
+          "backendPrincipalId": {
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', 'deploy-identities'), '2025-04-01').outputs.backendPrincipalId.value]"
+          },
+          "mlPrincipalId": {
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', 'deploy-identities'), '2025-04-01').outputs.mlPrincipalId.value]"
+          },
+          "keycloakPrincipalId": {
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', 'deploy-identities'), '2025-04-01').outputs.keycloakPrincipalId.value]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.43.8.12551",
+              "templateHash": "7275683956633038478"
+            }
+          },
+          "parameters": {
+            "containerRegistryName": {
+              "type": "string"
+            },
+            "keyVaultName": {
+              "type": "string"
+            },
+            "frontendPrincipalId": {
+              "type": "string"
+            },
+            "backendPrincipalId": {
+              "type": "string"
+            },
+            "mlPrincipalId": {
+              "type": "string"
+            },
+            "keycloakPrincipalId": {
+              "type": "string"
+            }
+          },
+          "variables": {
+            "acrPullRoleId": "7f951dda-4ed3-4680-a7ca-43fe172d538d",
+            "kvSecretsUserRoleId": "4633458b-17de-408a-b874-0445c86b69e6"
+          },
+          "resources": [
+            {
+              "type": "Microsoft.Authorization/roleAssignments",
+              "apiVersion": "2022-04-01",
+              "scope": "[resourceId('Microsoft.ContainerRegistry/registries', parameters('containerRegistryName'))]",
+              "name": "[guid(resourceId('Microsoft.ContainerRegistry/registries', parameters('containerRegistryName')), parameters('frontendPrincipalId'), variables('acrPullRoleId'))]",
+              "properties": {
+                "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', variables('acrPullRoleId'))]",
+                "principalId": "[parameters('frontendPrincipalId')]",
+                "principalType": "ServicePrincipal"
+              }
+            },
+            {
+              "type": "Microsoft.Authorization/roleAssignments",
+              "apiVersion": "2022-04-01",
+              "scope": "[resourceId('Microsoft.ContainerRegistry/registries', parameters('containerRegistryName'))]",
+              "name": "[guid(resourceId('Microsoft.ContainerRegistry/registries', parameters('containerRegistryName')), parameters('backendPrincipalId'), variables('acrPullRoleId'))]",
+              "properties": {
+                "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', variables('acrPullRoleId'))]",
+                "principalId": "[parameters('backendPrincipalId')]",
+                "principalType": "ServicePrincipal"
+              }
+            },
+            {
+              "type": "Microsoft.Authorization/roleAssignments",
+              "apiVersion": "2022-04-01",
+              "scope": "[resourceId('Microsoft.ContainerRegistry/registries', parameters('containerRegistryName'))]",
+              "name": "[guid(resourceId('Microsoft.ContainerRegistry/registries', parameters('containerRegistryName')), parameters('mlPrincipalId'), variables('acrPullRoleId'))]",
+              "properties": {
+                "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', variables('acrPullRoleId'))]",
+                "principalId": "[parameters('mlPrincipalId')]",
+                "principalType": "ServicePrincipal"
+              }
+            },
+            {
+              "type": "Microsoft.Authorization/roleAssignments",
+              "apiVersion": "2022-04-01",
+              "scope": "[resourceId('Microsoft.ContainerRegistry/registries', parameters('containerRegistryName'))]",
+              "name": "[guid(resourceId('Microsoft.ContainerRegistry/registries', parameters('containerRegistryName')), parameters('keycloakPrincipalId'), variables('acrPullRoleId'))]",
+              "properties": {
+                "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', variables('acrPullRoleId'))]",
+                "principalId": "[parameters('keycloakPrincipalId')]",
+                "principalType": "ServicePrincipal"
+              }
+            },
+            {
+              "type": "Microsoft.Authorization/roleAssignments",
+              "apiVersion": "2022-04-01",
+              "scope": "[resourceId('Microsoft.KeyVault/vaults', parameters('keyVaultName'))]",
+              "name": "[guid(resourceId('Microsoft.KeyVault/vaults', parameters('keyVaultName')), parameters('backendPrincipalId'), variables('kvSecretsUserRoleId'))]",
+              "properties": {
+                "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', variables('kvSecretsUserRoleId'))]",
+                "principalId": "[parameters('backendPrincipalId')]",
+                "principalType": "ServicePrincipal"
+              }
+            },
+            {
+              "type": "Microsoft.Authorization/roleAssignments",
+              "apiVersion": "2022-04-01",
+              "scope": "[resourceId('Microsoft.KeyVault/vaults', parameters('keyVaultName'))]",
+              "name": "[guid(resourceId('Microsoft.KeyVault/vaults', parameters('keyVaultName')), parameters('mlPrincipalId'), variables('kvSecretsUserRoleId'))]",
+              "properties": {
+                "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', variables('kvSecretsUserRoleId'))]",
+                "principalId": "[parameters('mlPrincipalId')]",
+                "principalType": "ServicePrincipal"
+              }
+            },
+            {
+              "type": "Microsoft.Authorization/roleAssignments",
+              "apiVersion": "2022-04-01",
+              "scope": "[resourceId('Microsoft.KeyVault/vaults', parameters('keyVaultName'))]",
+              "name": "[guid(resourceId('Microsoft.KeyVault/vaults', parameters('keyVaultName')), parameters('keycloakPrincipalId'), variables('kvSecretsUserRoleId'))]",
+              "properties": {
+                "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', variables('kvSecretsUserRoleId'))]",
+                "principalId": "[parameters('keycloakPrincipalId')]",
+                "principalType": "ServicePrincipal"
+              }
+            }
+          ]
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', 'deploy-identities')]",
+        "[resourceId('Microsoft.Resources/deployments', 'deploy-keyvault')]"
+      ]
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2025-04-01",
+      "name": "deploy-container-apps",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "location": {
+            "value": "[parameters('location')]"
+          },
+          "containerAppsEnvironmentId": {
+            "value": "[resourceId('Microsoft.App/managedEnvironments', parameters('containerAppsEnvironmentName'))]"
+          },
+          "containerRegistryName": {
+            "value": "[parameters('containerRegistryName')]"
+          },
+          "keyVaultUri": {
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', 'deploy-keyvault'), '2025-04-01').outputs.keyVaultUri.value]"
+          },
+          "pgHost": {
+            "value": "[reference(resourceId('Microsoft.DBforPostgreSQL/flexibleServers', parameters('postgresServerName')), '2023-06-01-preview').fullyQualifiedDomainName]"
+          },
+          "pgDatabase": {
+            "value": "[parameters('pgDatabase')]"
+          },
+          "pgAdminUser": {
+            "value": "[parameters('pgAdminUser')]"
+          },
+          "keycloakRealm": {
+            "value": "[parameters('keycloakRealm')]"
+          },
+          "keycloakAdminUser": {
+            "value": "[parameters('keycloakAdminUser')]"
+          },
+          "frontendFqdn": {
+            "value": "[format('alfri-frontend.{0}', reference(resourceId('Microsoft.App/managedEnvironments', parameters('containerAppsEnvironmentName')), '2024-03-01').defaultDomain)]"
+          },
+          "keycloakFqdn": {
+            "value": "[format('alfri-keycloak.{0}', reference(resourceId('Microsoft.App/managedEnvironments', parameters('containerAppsEnvironmentName')), '2024-03-01').defaultDomain)]"
+          },
+          "frontendImageName": {
+            "value": "[parameters('frontendImageName')]"
+          },
+          "backendImageName": {
+            "value": "[parameters('backendImageName')]"
+          },
+          "mlImageName": {
+            "value": "[parameters('mlImageName')]"
+          },
+          "keycloakImageName": {
+            "value": "[parameters('keycloakImageName')]"
+          },
+          "frontendIdentityId": {
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', 'deploy-identities'), '2025-04-01').outputs.frontendIdentityId.value]"
+          },
+          "backendIdentityId": {
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', 'deploy-identities'), '2025-04-01').outputs.backendIdentityId.value]"
+          },
+          "mlIdentityId": {
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', 'deploy-identities'), '2025-04-01').outputs.mlIdentityId.value]"
+          },
+          "keycloakIdentityId": {
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', 'deploy-identities'), '2025-04-01').outputs.keycloakIdentityId.value]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.43.8.12551",
+              "templateHash": "3078085461479535478"
+            }
+          },
+          "parameters": {
+            "location": {
+              "type": "string"
+            },
+            "containerAppsEnvironmentId": {
+              "type": "string"
+            },
+            "containerRegistryName": {
+              "type": "string"
+            },
+            "keyVaultUri": {
+              "type": "string"
+            },
+            "pgHost": {
+              "type": "string"
+            },
+            "pgDatabase": {
+              "type": "string"
+            },
+            "pgAdminUser": {
+              "type": "string"
+            },
+            "keycloakRealm": {
+              "type": "string"
+            },
+            "keycloakAdminUser": {
+              "type": "string"
+            },
+            "frontendFqdn": {
+              "type": "string"
+            },
+            "keycloakFqdn": {
+              "type": "string"
+            },
+            "frontendImageName": {
+              "type": "string"
+            },
+            "backendImageName": {
+              "type": "string"
+            },
+            "mlImageName": {
+              "type": "string"
+            },
+            "keycloakImageName": {
+              "type": "string"
+            },
+            "frontendIdentityId": {
+              "type": "string"
+            },
+            "backendIdentityId": {
+              "type": "string"
+            },
+            "mlIdentityId": {
+              "type": "string"
+            },
+            "keycloakIdentityId": {
+              "type": "string"
+            }
+          },
+          "variables": {
+            "registryServer": "[format('{0}.azurecr.io', parameters('containerRegistryName'))]"
+          },
+          "resources": [
+            {
+              "type": "Microsoft.App/containerApps",
+              "apiVersion": "2024-03-01",
+              "name": "alfri-frontend",
+              "location": "[parameters('location')]",
+              "identity": {
+                "type": "UserAssigned",
+                "userAssignedIdentities": {
+                  "[format('{0}', parameters('frontendIdentityId'))]": {}
+                }
+              },
+              "properties": {
+                "managedEnvironmentId": "[parameters('containerAppsEnvironmentId')]",
+                "configuration": {
+                  "ingress": {
+                    "external": true,
+                    "targetPort": 80,
+                    "transport": "auto"
+                  },
+                  "registries": [
+                    {
+                      "server": "[variables('registryServer')]",
+                      "identity": "[parameters('frontendIdentityId')]"
+                    }
+                  ]
+                },
+                "template": {
+                  "containers": [
+                    {
+                      "name": "alfri-frontend",
+                      "image": "[parameters('frontendImageName')]",
+                      "resources": {
+                        "cpu": "[json('0.25')]",
+                        "memory": "0.5Gi"
+                      },
+                      "env": [
+                        {
+                          "name": "BACKEND_URL",
+                          "value": "http://alfri-backend"
+                        },
+                        {
+                          "name": "API_URL",
+                          "value": "/api"
+                        },
+                        {
+                          "name": "KEYCLOAK_URL",
+                          "value": "[format('https://{0}', parameters('keycloakFqdn'))]"
+                        },
+                        {
+                          "name": "KEYCLOAK_REALM",
+                          "value": "[parameters('keycloakRealm')]"
+                        },
+                        {
+                          "name": "KEYCLOAK_CLIENT_ID",
+                          "value": "alfri-frontend"
+                        },
+                        {
+                          "name": "ENVIRONMENT",
+                          "value": "azure-dev"
+                        }
+                      ],
+                      "probes": [
+                        {
+                          "type": "Readiness",
+                          "httpGet": {
+                            "path": "/health",
+                            "port": 80,
+                            "scheme": "HTTP"
+                          },
+                          "initialDelaySeconds": 5,
+                          "periodSeconds": 10,
+                          "failureThreshold": 3
+                        },
+                        {
+                          "type": "Liveness",
+                          "httpGet": {
+                            "path": "/health",
+                            "port": 80,
+                            "scheme": "HTTP"
+                          },
+                          "initialDelaySeconds": 10,
+                          "periodSeconds": 30,
+                          "failureThreshold": 3
+                        }
+                      ]
+                    }
+                  ],
+                  "scale": {
+                    "minReplicas": 0,
+                    "maxReplicas": 1
+                  }
+                }
+              }
+            },
+            {
+              "type": "Microsoft.App/containerApps",
+              "apiVersion": "2024-03-01",
+              "name": "alfri-backend",
+              "location": "[parameters('location')]",
+              "identity": {
+                "type": "UserAssigned",
+                "userAssignedIdentities": {
+                  "[format('{0}', parameters('backendIdentityId'))]": {}
+                }
+              },
+              "properties": {
+                "managedEnvironmentId": "[parameters('containerAppsEnvironmentId')]",
+                "configuration": {
+                  "ingress": {
+                    "external": false,
+                    "targetPort": 8080,
+                    "transport": "auto"
+                  },
+                  "registries": [
+                    {
+                      "server": "[variables('registryServer')]",
+                      "identity": "[parameters('backendIdentityId')]"
+                    }
+                  ],
+                  "secrets": [
+                    {
+                      "name": "pg-password",
+                      "keyVaultUrl": "[format('{0}secrets/pg-password', parameters('keyVaultUri'))]",
+                      "identity": "[parameters('backendIdentityId')]"
+                    },
+                    {
+                      "name": "keycloak-admin-password",
+                      "keyVaultUrl": "[format('{0}secrets/keycloak-admin-password', parameters('keyVaultUri'))]",
+                      "identity": "[parameters('backendIdentityId')]"
+                    },
+                    {
+                      "name": "keycloak-webhook-secret",
+                      "keyVaultUrl": "[format('{0}secrets/keycloak-webhook-secret', parameters('keyVaultUri'))]",
+                      "identity": "[parameters('backendIdentityId')]"
+                    },
+                    {
+                      "name": "ml-api-key",
+                      "keyVaultUrl": "[format('{0}secrets/ml-api-key', parameters('keyVaultUri'))]",
+                      "identity": "[parameters('backendIdentityId')]"
+                    }
+                  ]
+                },
+                "template": {
+                  "containers": [
+                    {
+                      "name": "alfri-backend",
+                      "image": "[parameters('backendImageName')]",
+                      "resources": {
+                        "cpu": "[json('0.5')]",
+                        "memory": "1Gi"
+                      },
+                      "env": [
+                        {
+                          "name": "SPRING_PROFILES_ACTIVE",
+                          "value": "azure-dev"
+                        },
+                        {
+                          "name": "AZURE_PG_HOST",
+                          "value": "[parameters('pgHost')]"
+                        },
+                        {
+                          "name": "AZURE_PG_DATABASE",
+                          "value": "[parameters('pgDatabase')]"
+                        },
+                        {
+                          "name": "AZURE_PG_USER",
+                          "value": "[parameters('pgAdminUser')]"
+                        },
+                        {
+                          "name": "AZURE_PG_PASSWORD",
+                          "secretRef": "pg-password"
+                        },
+                        {
+                          "name": "KEYCLOAK_ISSUER_URI",
+                          "value": "[format('https://{0}/realms/{1}', parameters('keycloakFqdn'), parameters('keycloakRealm'))]"
+                        },
+                        {
+                          "name": "KEYCLOAK_JWK_SET_URI",
+                          "value": "[format('https://{0}/realms/{1}/protocol/openid-connect/certs', parameters('keycloakFqdn'), parameters('keycloakRealm'))]"
+                        },
+                        {
+                          "name": "KEYCLOAK_INTERNAL_ISSUER_URI",
+                          "value": "[format('http://alfri-keycloak/realms/{0}', parameters('keycloakRealm'))]"
+                        },
+                        {
+                          "name": "KEYCLOAK_REALM",
+                          "value": "[parameters('keycloakRealm')]"
+                        },
+                        {
+                          "name": "KEYCLOAK_CLIENT_ID",
+                          "value": "alfri-frontend"
+                        },
+                        {
+                          "name": "KEYCLOAK_ADMIN_REALM",
+                          "value": "master"
+                        },
+                        {
+                          "name": "KEYCLOAK_ADMIN_CLIENT_ID",
+                          "value": "admin-cli"
+                        },
+                        {
+                          "name": "KEYCLOAK_ADMIN_USERNAME",
+                          "value": "[parameters('keycloakAdminUser')]"
+                        },
+                        {
+                          "name": "KEYCLOAK_ADMIN_PASSWORD",
+                          "secretRef": "keycloak-admin-password"
+                        },
+                        {
+                          "name": "KEYCLOAK_EVENT_WEBHOOK_SECRET",
+                          "secretRef": "keycloak-webhook-secret"
+                        },
+                        {
+                          "name": "PYTHON_SERVICE_BASE_URL",
+                          "value": "http://alfri-ml-service"
+                        },
+                        {
+                          "name": "PYTHON_SERVICE_API_KEY",
+                          "secretRef": "ml-api-key"
+                        },
+                        {
+                          "name": "CORS_ALLOWED_ORIGINS",
+                          "value": "[format('https://{0}', parameters('frontendFqdn'))]"
+                        }
+                      ],
+                      "probes": [
+                        {
+                          "type": "Startup",
+                          "httpGet": {
+                            "path": "/actuator/health/readiness",
+                            "port": 8080,
+                            "scheme": "HTTP"
+                          },
+                          "initialDelaySeconds": 30,
+                          "periodSeconds": 10,
+                          "failureThreshold": 12
+                        },
+                        {
+                          "type": "Readiness",
+                          "httpGet": {
+                            "path": "/actuator/health/readiness",
+                            "port": 8080,
+                            "scheme": "HTTP"
+                          },
+                          "periodSeconds": 10,
+                          "failureThreshold": 3
+                        },
+                        {
+                          "type": "Liveness",
+                          "httpGet": {
+                            "path": "/actuator/health/liveness",
+                            "port": 8080,
+                            "scheme": "HTTP"
+                          },
+                          "periodSeconds": 30,
+                          "failureThreshold": 3
+                        }
+                      ]
+                    }
+                  ],
+                  "scale": {
+                    "minReplicas": 0,
+                    "maxReplicas": 1
+                  }
+                }
+              }
+            },
+            {
+              "type": "Microsoft.App/containerApps",
+              "apiVersion": "2024-03-01",
+              "name": "alfri-ml-service",
+              "location": "[parameters('location')]",
+              "identity": {
+                "type": "UserAssigned",
+                "userAssignedIdentities": {
+                  "[format('{0}', parameters('mlIdentityId'))]": {}
+                }
+              },
+              "properties": {
+                "managedEnvironmentId": "[parameters('containerAppsEnvironmentId')]",
+                "configuration": {
+                  "ingress": {
+                    "external": false,
+                    "targetPort": 5000,
+                    "transport": "auto"
+                  },
+                  "registries": [
+                    {
+                      "server": "[variables('registryServer')]",
+                      "identity": "[parameters('mlIdentityId')]"
+                    }
+                  ],
+                  "secrets": [
+                    {
+                      "name": "pg-password",
+                      "keyVaultUrl": "[format('{0}secrets/pg-password', parameters('keyVaultUri'))]",
+                      "identity": "[parameters('mlIdentityId')]"
+                    },
+                    {
+                      "name": "ml-api-key",
+                      "keyVaultUrl": "[format('{0}secrets/ml-api-key', parameters('keyVaultUri'))]",
+                      "identity": "[parameters('mlIdentityId')]"
+                    }
+                  ]
+                },
+                "template": {
+                  "containers": [
+                    {
+                      "name": "alfri-ml-service",
+                      "image": "[parameters('mlImageName')]",
+                      "resources": {
+                        "cpu": "[json('1')]",
+                        "memory": "2Gi"
+                      },
+                      "env": [
+                        {
+                          "name": "MODE",
+                          "value": "prod"
+                        },
+                        {
+                          "name": "DATABASE_HOST",
+                          "value": "[format('{0}:5432/{1}', parameters('pgHost'), parameters('pgDatabase'))]"
+                        },
+                        {
+                          "name": "DATABASE_USER",
+                          "value": "[parameters('pgAdminUser')]"
+                        },
+                        {
+                          "name": "DATABASE_PASSWORD",
+                          "secretRef": "pg-password"
+                        },
+                        {
+                          "name": "DATABASE_SSLMODE",
+                          "value": "require"
+                        },
+                        {
+                          "name": "API_KEYS",
+                          "secretRef": "ml-api-key"
+                        }
+                      ],
+                      "probes": [
+                        {
+                          "type": "Startup",
+                          "httpGet": {
+                            "path": "/health/ready",
+                            "port": 5000,
+                            "scheme": "HTTP"
+                          },
+                          "initialDelaySeconds": 30,
+                          "periodSeconds": 10,
+                          "failureThreshold": 12
+                        },
+                        {
+                          "type": "Readiness",
+                          "httpGet": {
+                            "path": "/health/ready",
+                            "port": 5000,
+                            "scheme": "HTTP"
+                          },
+                          "periodSeconds": 15,
+                          "failureThreshold": 3
+                        },
+                        {
+                          "type": "Liveness",
+                          "httpGet": {
+                            "path": "/health/live",
+                            "port": 5000,
+                            "scheme": "HTTP"
+                          },
+                          "periodSeconds": 30,
+                          "failureThreshold": 3
+                        }
+                      ]
+                    }
+                  ],
+                  "scale": {
+                    "minReplicas": 0,
+                    "maxReplicas": 1
+                  }
+                }
+              }
+            },
+            {
+              "type": "Microsoft.App/containerApps",
+              "apiVersion": "2024-03-01",
+              "name": "alfri-keycloak",
+              "location": "[parameters('location')]",
+              "identity": {
+                "type": "UserAssigned",
+                "userAssignedIdentities": {
+                  "[format('{0}', parameters('keycloakIdentityId'))]": {}
+                }
+              },
+              "properties": {
+                "managedEnvironmentId": "[parameters('containerAppsEnvironmentId')]",
+                "configuration": {
+                  "ingress": {
+                    "external": true,
+                    "targetPort": 8080,
+                    "transport": "auto"
+                  },
+                  "registries": [
+                    {
+                      "server": "[variables('registryServer')]",
+                      "identity": "[parameters('keycloakIdentityId')]"
+                    }
+                  ],
+                  "secrets": [
+                    {
+                      "name": "kc-db-password",
+                      "keyVaultUrl": "[format('{0}secrets/keycloak-db-password', parameters('keyVaultUri'))]",
+                      "identity": "[parameters('keycloakIdentityId')]"
+                    },
+                    {
+                      "name": "keycloak-admin-password",
+                      "keyVaultUrl": "[format('{0}secrets/keycloak-admin-password', parameters('keyVaultUri'))]",
+                      "identity": "[parameters('keycloakIdentityId')]"
+                    }
+                  ]
+                },
+                "template": {
+                  "containers": [
+                    {
+                      "name": "alfri-keycloak",
+                      "image": "[parameters('keycloakImageName')]",
+                      "resources": {
+                        "cpu": "[json('0.5')]",
+                        "memory": "1Gi"
+                      },
+                      "args": [
+                        "start",
+                        "--import-realm"
+                      ],
+                      "env": [
+                        {
+                          "name": "KC_DB",
+                          "value": "postgres"
+                        },
+                        {
+                          "name": "KC_DB_URL",
+                          "value": "[format('jdbc:postgresql://{0}:5432/keycloak?sslmode=require', parameters('pgHost'))]"
+                        },
+                        {
+                          "name": "KC_DB_USERNAME",
+                          "value": "keycloak"
+                        },
+                        {
+                          "name": "KC_DB_PASSWORD",
+                          "secretRef": "kc-db-password"
+                        },
+                        {
+                          "name": "KC_HOSTNAME",
+                          "value": "[parameters('keycloakFqdn')]"
+                        },
+                        {
+                          "name": "KC_HOSTNAME_STRICT",
+                          "value": "false"
+                        },
+                        {
+                          "name": "KC_PROXY",
+                          "value": "edge"
+                        },
+                        {
+                          "name": "KC_HTTP_ENABLED",
+                          "value": "true"
+                        },
+                        {
+                          "name": "KEYCLOAK_ADMIN",
+                          "value": "[parameters('keycloakAdminUser')]"
+                        },
+                        {
+                          "name": "KEYCLOAK_ADMIN_PASSWORD",
+                          "secretRef": "keycloak-admin-password"
+                        },
+                        {
+                          "name": "KC_HEALTH_ENABLED",
+                          "value": "true"
+                        },
+                        {
+                          "name": "KC_METRICS_ENABLED",
+                          "value": "true"
+                        }
+                      ],
+                      "probes": [
+                        {
+                          "type": "Startup",
+                          "httpGet": {
+                            "path": "/health/ready",
+                            "port": 8080,
+                            "scheme": "HTTP"
+                          },
+                          "initialDelaySeconds": 60,
+                          "periodSeconds": 10,
+                          "failureThreshold": 18
+                        },
+                        {
+                          "type": "Readiness",
+                          "httpGet": {
+                            "path": "/health/ready",
+                            "port": 8080,
+                            "scheme": "HTTP"
+                          },
+                          "periodSeconds": 15,
+                          "failureThreshold": 3
+                        },
+                        {
+                          "type": "Liveness",
+                          "httpGet": {
+                            "path": "/health/live",
+                            "port": 8080,
+                            "scheme": "HTTP"
+                          },
+                          "periodSeconds": 30,
+                          "failureThreshold": 3
+                        }
+                      ]
+                    }
+                  ],
+                  "scale": {
+                    "minReplicas": 0,
+                    "maxReplicas": 1
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', 'deploy-identities')]",
+        "[resourceId('Microsoft.Resources/deployments', 'deploy-keyvault')]",
+        "[resourceId('Microsoft.Resources/deployments', 'deploy-roles')]"
+      ]
+    }
+  ],
+  "outputs": {
+    "AZURE_CONTAINER_REGISTRY_ENDPOINT": {
+      "type": "string",
+      "value": "[reference(resourceId('Microsoft.ContainerRegistry/registries', parameters('containerRegistryName')), '2023-07-01').loginServer]"
+    },
+    "AZURE_KEY_VAULT_ENDPOINT": {
+      "type": "string",
+      "value": "[reference(resourceId('Microsoft.Resources/deployments', 'deploy-keyvault'), '2025-04-01').outputs.keyVaultUri.value]"
+    },
+    "AZURE_KEY_VAULT_NAME": {
+      "type": "string",
+      "value": "[reference(resourceId('Microsoft.Resources/deployments', 'deploy-keyvault'), '2025-04-01').outputs.keyVaultName.value]"
+    },
+    "SERVICE_FRONTEND_NAME": {
+      "type": "string",
+      "value": "alfri-frontend"
+    },
+    "SERVICE_BACKEND_NAME": {
+      "type": "string",
+      "value": "alfri-backend"
+    },
+    "SERVICE_ML_SERVICE_NAME": {
+      "type": "string",
+      "value": "alfri-ml-service"
+    },
+    "SERVICE_KEYCLOAK_NAME": {
+      "type": "string",
+      "value": "alfri-keycloak"
+    },
+    "FRONTEND_FQDN": {
+      "type": "string",
+      "value": "[format('alfri-frontend.{0}', reference(resourceId('Microsoft.App/managedEnvironments', parameters('containerAppsEnvironmentName')), '2024-03-01').defaultDomain)]"
+    },
+    "KEYCLOAK_FQDN": {
+      "type": "string",
+      "value": "[format('alfri-keycloak.{0}', reference(resourceId('Microsoft.App/managedEnvironments', parameters('containerAppsEnvironmentName')), '2024-03-01').defaultDomain)]"
+    },
+    "POSTGRES_HOST": {
+      "type": "string",
+      "value": "[reference(resourceId('Microsoft.DBforPostgreSQL/flexibleServers', parameters('postgresServerName')), '2023-06-01-preview').fullyQualifiedDomainName]"
+    }
+  }
+}

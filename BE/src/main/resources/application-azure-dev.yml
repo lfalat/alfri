@@ -1,0 +1,59 @@
+spring:
+  application:
+    name: ${APPLICATION_NAME:ALFRI}
+  datasource:
+    url: jdbc:postgresql://${AZURE_PG_HOST}:5432/${AZURE_PG_DATABASE:alfri}?sslmode=require
+    username: ${AZURE_PG_USER}
+    password: ${AZURE_PG_PASSWORD}
+  jpa:
+    show-sql: false
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${KEYCLOAK_ISSUER_URI}
+          jwk-set-uri: ${KEYCLOAK_JWK_SET_URI}
+
+python:
+  executable_path: ${PYTHON_PROD_EXECUTABLE_PATH:python3}
+  clustering_prediction_script_path: ${PROD_CLUSTERING_PREDICTION_SCRIPT_PATH:unused}
+  clustering_prediction_INF_model_path: ${PROD_CLUSTERING_PREDICTION_MODEL_INF_PATH:unused}
+  clustering_prediction_MAN_model_path: ${PROD_CLUSTERING_PREDICTION_MODEL_MAN_PATH:unused}
+  passing_change_prediction_script_path: ${PROD_PASSING_CHANGE_PREDICTION_SCRIPT_PATH:unused}
+  passing_mark_prediction_script_path: ${PROD_PASSING_MARK_PREDICTION_SCRIPT_PATH:unused}
+  service:
+    base-url: ${PYTHON_SERVICE_BASE_URL:http://alfri-ml-service}
+    api-key: ${PYTHON_SERVICE_API_KEY}
+    timeout-ms: ${PYTHON_SERVICE_TIMEOUT_MS:10000}
+    enabled: true
+
+keycloak:
+  issuer-uri: ${KEYCLOAK_ISSUER_URI}
+  internal-issuer-uri: ${KEYCLOAK_INTERNAL_ISSUER_URI}
+  realm: ${KEYCLOAK_REALM:alfri}
+  client-id: ${KEYCLOAK_CLIENT_ID:alfri-frontend}
+  admin-realm: ${KEYCLOAK_ADMIN_REALM:master}
+  admin-client-id: ${KEYCLOAK_ADMIN_CLIENT_ID:admin-cli}
+  admin-username: ${KEYCLOAK_ADMIN_USERNAME}
+  admin-password: ${KEYCLOAK_ADMIN_PASSWORD}
+  validate-connectivity-on-startup: true
+  events:
+    webhook-secret: ${KEYCLOAK_EVENT_WEBHOOK_SECRET}
+
+cors:
+  allowed-origins: ${CORS_ALLOWED_ORIGINS}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      probes:
+        enabled: true
+  health:
+    livenessstate:
+      enabled: true
+    readinessstate:
+      enabled: true

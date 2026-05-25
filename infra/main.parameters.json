@@ -1,0 +1,19 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "containerAppsEnvironmentName": { "value": "alfri-env" },
+    "containerRegistryName": { "value": "alfriregistry" },
+    "postgresServerName": { "value": "alfri-postgres" },
+    "keyVaultName": { "value": "alfri-kv" },
+    "pgAdminUser": { "value": "alfri_admin" },
+    "pgDatabase": { "value": "alfri" },
+    "keycloakRealm": { "value": "alfri" },
+    "keycloakAdminUser": { "value": "admin" },
+    "operatorObjectId": { "value": "14f50519-2ad5-48fc-822a-d706773c54a0" },
+    "frontendImageName": { "value": "alfriregistry.azurecr.io/alfri-frontend:latest" },
+    "backendImageName":  { "value": "alfriregistry.azurecr.io/alfri-backend:23f7662" },
+    "mlImageName":       { "value": "alfriregistry.azurecr.io/alfri-ml-service:latest" },
+    "keycloakImageName": { "value": "mcr.microsoft.com/azuredocs/containerapps-helloworld:latest" }
+  }
+}
