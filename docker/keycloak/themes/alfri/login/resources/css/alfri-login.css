@@ -17,8 +17,41 @@ body {
     sans-serif;
 }
 
+.alfri-toolbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 300;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 64px;
+  padding: 0 16px;
+  background: #ffffff;
+  box-shadow: 0 2px 4px rgba(15, 23, 42, 0.12);
+}
+
+.alfri-brand {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: #1f2937;
+  font-size: 20px;
+  font-weight: 500;
+  line-height: 1;
+}
+
+.alfri-logo {
+  display: block;
+  width: 38px;
+  height: 38px;
+  padding: 4px;
+  object-fit: contain;
+}
+
 .alfri-auth {
-  min-height: 100vh;
+  min-height: calc(100vh - 64px);
+  margin-top: 64px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -404,7 +437,7 @@ body {
   }
 
   .alfri-card {
-    min-height: 100vh;
+    min-height: calc(100vh - 64px);
     border: 0;
     border-radius: 0;
   }

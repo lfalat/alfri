@@ -47,11 +47,11 @@ services:
       dockerfile: Dockerfile
     container_name: alfri_fe
     environment:
-      # During local development the frontend can call the backend using Docker DNS name
-      # Build-time Angular envs often baked into files; for dev use runtime-config or use the dev server.
-      VITE_API_BASE_URL: http://alfri_be:8080
-      # If using X-API-KEY header from client for testing
-      X_API_KEY: ${X_API_KEY:-changeme}
+      API_URL: http://localhost:8080/api
+      ENVIRONMENT: dev
+      KEYCLOAK_URL: http://localhost:8180
+      KEYCLOAK_REALM: alfri
+      KEYCLOAK_CLIENT_ID: alfri-frontend
     ports:
       - "4200:80"
     depends_on:

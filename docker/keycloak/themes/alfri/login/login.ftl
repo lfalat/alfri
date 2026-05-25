@@ -4,9 +4,23 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Prihlásenie | ALFRI</title>
+  <link rel="icon" href="${url.resourcesPath}/img/favicon.ico" sizes="any">
+  <link rel="icon" href="${url.resourcesPath}/img/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="${url.resourcesPath}/css/alfri-login.css">
 </head>
 <body>
+  <header class="alfri-toolbar">
+    <div class="alfri-brand" aria-label="ALFRI">
+      <img
+        src="${url.resourcesPath}/img/logo.svg"
+        width="30"
+        height="30"
+        alt="Alfri logo"
+        class="alfri-logo"
+      >
+      <span>ALFRI</span>
+    </div>
+  </header>
   <main class="alfri-auth">
     <section class="alfri-card" aria-labelledby="alfri-login-title">
       <aside class="alfri-info">

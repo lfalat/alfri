@@ -1,7 +1,7 @@
 {
-  "API_URL": "http://localhost:8080/api",
-  "ENVIRONMENT": "production",
-  "KEYCLOAK_URL": "http://localhost:8180",
-  "KEYCLOAK_REALM": "alfri",
-  "KEYCLOAK_CLIENT_ID": "alfri-frontend"
+  "API_URL": "${API_URL}",
+  "ENVIRONMENT": "${ENVIRONMENT}",
+  "KEYCLOAK_URL": "${KEYCLOAK_URL}",
+  "KEYCLOAK_REALM": "${KEYCLOAK_REALM}",
+  "KEYCLOAK_CLIENT_ID": "${KEYCLOAK_CLIENT_ID}"
 }
