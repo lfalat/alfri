@@ -68,6 +68,15 @@ az role assignment create \
   --scope "$RG_ID" \
   --output none
 
+# User Access Administrator on resource group (required for Bicep role assignments)
+echo "Assigning User Access Administrator on resource group $RESOURCE_GROUP..."
+az role assignment create \
+  --assignee-object-id "$SP_OID" \
+  --assignee-principal-type ServicePrincipal \
+  --role "User Access Administrator" \
+  --scope "$RG_ID" \
+  --output none
+
 echo ""
 echo "Setup complete. Add these three secrets to the GitHub repository ($REPO):"
 echo ""

@@ -333,14 +333,15 @@ resource keycloakApp 'Microsoft.App/containerApps@2024-03-01' = {
             { name: 'KC_DB_URL', value: 'jdbc:postgresql://${pgHost}:5432/keycloak?sslmode=require' }
             { name: 'KC_DB_USERNAME', value: 'keycloak' }
             { name: 'KC_DB_PASSWORD', secretRef: 'kc-db-password' }
-            { name: 'KC_HOSTNAME', value: keycloakFqdn }
+            { name: 'KC_HOSTNAME', value: 'https://${keycloakFqdn}' }
             { name: 'KC_HOSTNAME_STRICT', value: 'false' }
-            { name: 'KC_PROXY', value: 'edge' }
+            { name: 'KC_PROXY_HEADERS', value: 'xforwarded' }
             { name: 'KC_HTTP_ENABLED', value: 'true' }
             { name: 'KEYCLOAK_ADMIN', value: keycloakAdminUser }
             { name: 'KEYCLOAK_ADMIN_PASSWORD', secretRef: 'keycloak-admin-password' }
             { name: 'KC_HEALTH_ENABLED', value: 'true' }
             { name: 'KC_METRICS_ENABLED', value: 'true' }
+            { name: 'KC_LOG_LEVEL', value: 'INFO,org.keycloak:DEBUG' }
           ]
           probes: [
             {
