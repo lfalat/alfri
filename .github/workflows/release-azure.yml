@@ -180,6 +180,12 @@ jobs:
             --image $REGISTRY/alfri-ml-service:${{ github.sha }} \
             --min-replicas 1 --output none
 
+          # Guard against app-level Stopped state (idempotent no-op if already running)
+          SUBSCRIPTION=$(az account show --query id -o tsv)
+          az rest --method POST \
+            --url "https://management.azure.com/subscriptions/${SUBSCRIPTION}/resourceGroups/${RESOURCE_GROUP}/providers/Microsoft.App/containerApps/alfri-ml-service/start?api-version=2024-03-01" \
+            --output none
+
           LATEST=$(az containerapp show -n alfri-ml-service -g $RESOURCE_GROUP \
             --query "properties.latestRevisionName" -o tsv)
           echo "Waiting for revision: $LATEST"
@@ -200,6 +206,11 @@ jobs:
             --name alfri-keycloak --resource-group $RESOURCE_GROUP \
             --image $REGISTRY/alfri-keycloak:${{ github.sha }} \
             --min-replicas 1 --output none
+
+          SUBSCRIPTION=$(az account show --query id -o tsv)
+          az rest --method POST \
+            --url "https://management.azure.com/subscriptions/${SUBSCRIPTION}/resourceGroups/${RESOURCE_GROUP}/providers/Microsoft.App/containerApps/alfri-keycloak/start?api-version=2024-03-01" \
+            --output none
 
           LATEST=$(az containerapp show -n alfri-keycloak -g $RESOURCE_GROUP \
             --query "properties.latestRevisionName" -o tsv)
@@ -230,6 +241,11 @@ jobs:
             --image $REGISTRY/alfri-backend:${{ github.sha }} \
             --min-replicas 1 --output none
 
+          SUBSCRIPTION=$(az account show --query id -o tsv)
+          az rest --method POST \
+            --url "https://management.azure.com/subscriptions/${SUBSCRIPTION}/resourceGroups/${RESOURCE_GROUP}/providers/Microsoft.App/containerApps/alfri-backend/start?api-version=2024-03-01" \
+            --output none
+
           LATEST=$(az containerapp show -n alfri-backend -g $RESOURCE_GROUP \
             --query "properties.latestRevisionName" -o tsv)
           echo "Waiting for revision: $LATEST"
@@ -250,6 +266,11 @@ jobs:
             --name alfri-frontend --resource-group $RESOURCE_GROUP \
             --image $REGISTRY/alfri-frontend:${{ github.sha }} \
             --min-replicas 1 --output none
+
+          SUBSCRIPTION=$(az account show --query id -o tsv)
+          az rest --method POST \
+            --url "https://management.azure.com/subscriptions/${SUBSCRIPTION}/resourceGroups/${RESOURCE_GROUP}/providers/Microsoft.App/containerApps/alfri-frontend/start?api-version=2024-03-01" \
+            --output none
 
           LATEST=$(az containerapp show -n alfri-frontend -g $RESOURCE_GROUP \
             --query "properties.latestRevisionName" -o tsv)
