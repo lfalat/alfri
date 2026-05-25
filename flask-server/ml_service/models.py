@@ -46,10 +46,6 @@ except Exception:
 logger = logging.getLogger(__name__)
 
 
-class ModelCompatibilityError(RuntimeError):
-    """Raised when strict model compatibility checking detects version drift."""
-
-
 class ModelRegistry:
     """Registry that loads and holds models declared in a MODEL_MAP.
 
@@ -60,9 +56,8 @@ class ModelRegistry:
         errors: dict of name -> exception string for failed loads
     """
 
-    def __init__(self, model_map: Dict[str, Dict[str, Any]], fail_on_version_mismatch: bool = False):
+    def __init__(self, model_map: Dict[str, Dict[str, Any]]):
         self.model_map = model_map or {}
-        self.fail_on_version_mismatch = fail_on_version_mismatch
         self.models: Dict[str, Any] = {}
         self.timings: Dict[str, float] = {}
         self.errors: Dict[str, str] = {}
@@ -188,23 +183,7 @@ class ModelRegistry:
             import joblib  # type: ignore
 
             logger.debug("Using joblib to load %s", path)
-            if self.fail_on_version_mismatch:
-                import warnings
-                from sklearn.exceptions import InconsistentVersionWarning
-
-                with warnings.catch_warnings(record=True) as caught:
-                    warnings.simplefilter("always", InconsistentVersionWarning)
-                    model = joblib.load(path)
-                mismatches = [
-                    warning for warning in caught
-                    if issubclass(warning.category, InconsistentVersionWarning)
-                ]
-                if mismatches:
-                    raise ModelCompatibilityError(str(mismatches[0].message))
-                return model
             return joblib.load(path)
-        except ModelCompatibilityError:
-            raise
         except Exception:
             logger.debug("joblib not available or failed; trying pickle for %s", path)
             import pickle
@@ -317,11 +296,6 @@ class ModelRegistry:
 def load_models(config: Any) -> ModelRegistry:
     """Create a registry from config's MODEL_MAP, load all models and return the registry."""
     model_map = config.get("MODEL_MAP", {}) if hasattr(config, "get") else getattr(config, "MODEL_MAP", {})
-    fail_on_version_mismatch = (
-        config.get("FAIL_ON_MODEL_VERSION_MISMATCH", False)
-        if hasattr(config, "get")
-        else getattr(config, "FAIL_ON_MODEL_VERSION_MISMATCH", False)
-    )
-    registry = ModelRegistry(model_map, fail_on_version_mismatch=bool(fail_on_version_mismatch))
+    registry = ModelRegistry(model_map)
     registry.load_all(config=config)
     return registry

@@ -1,6 +1,6 @@
 # Azure Deployment Plan: Alfri
 
-> **Status:** Phase 1 implemented - ML model artifact normalization blocks strict Azure readiness; Azure provisioning/deployment not approved
+> **Status:** Phase 3 implemented - CI/CD workflows in `.github/workflows/` automate build, test, and Azure release; provisioning/deployment not yet executed pending secret rotation approval and WIF setup
 >
 > Generated: 2026-05-25
 
@@ -169,40 +169,52 @@ Azure resource provisioning and deployment remain gated for later approval.
    and an Azure-development realm import without seeded fixed-password users.
    Configure HTTPS redirect origins for the frontend FQDN.
 
-### Phase 2: Capture Azure Configuration As Code
+### Phase 2: Capture Azure Configuration As Code ✓
 
-1. Add `azure.yaml` and Bicep modules under `infra/`, referencing the existing
-   ACR, PostgreSQL server, and Container Apps environment instead of replacing
-   them.
-2. Create one Key Vault and store only references in IaC. Provision secret
-   values outside source control for PostgreSQL credentials, JWT signing,
-   Keycloak admin/bootstrap data, Keycloak webhook authentication, and ML API
-   authentication.
-3. Enable system-assigned identities on the four Container Apps, assign
-   `AcrPull` at ACR scope, and grant only required Key Vault secret-read access.
-   After identity-based image pulls are verified, disable ACR admin auth.
-4. Create the `keycloak` logical database on the existing Flexible Server and,
-   through a controlled idempotent bootstrap SQL step, create a dedicated
-   Keycloak database role whose password is stored in Key Vault. Configure
-   Keycloak to connect over TLS. This reuses the existing managed PostgreSQL
-   server; database HA/private access are deliberately deferred.
-5. Configure ingress: frontend and Keycloak external; backend and ML internal.
-   Configure HTTP probes, single-replica maximums, and scale-to-zero behavior.
+1. `azure.yaml` and `infra/` created. `infra/main.bicep` uses `existing`
+   references for `alfri-env`, `alfriregistry`, and `alfri-postgres`; no
+   existing resources are recreated.
+2. `infra/modules/keyvault.bicep` creates `alfri-kv` with RBAC authorization
+   and five placeholder secrets (`pg-password`, `keycloak-admin-password`,
+   `keycloak-db-password`, `keycloak-webhook-secret`, `ml-api-key`).
+   `infra/scripts/provision-secrets.sh` populates real values interactively
+   after provisioning.
+3. `infra/modules/container-apps.bicep` enables system-assigned identity on all
+   four Container Apps. `infra/modules/roles.bicep` assigns `AcrPull` to all
+   four and `Key Vault Secrets User` to backend, ML, and Keycloak identities.
+4. `infra/main.bicep` creates the `keycloak` PostgreSQL database as a Bicep
+   resource. `infra/scripts/init-keycloak-db.sh` creates the dedicated
+   `keycloak` role and grants schema permissions (idempotent; run once after
+   provisioning).
+5. Ingress: frontend and Keycloak external; backend and ML internal. HTTP
+   startup/readiness/liveness probes configured for all four apps. All apps
+   set to `minReplicas=0, maxReplicas=1`.
 
-### Phase 3: Automate Build And Release
+### Phase 3: Automate Build And Release ✓
 
-1. Replace the Docker Hub publish workflow with GitHub Actions authenticated to
-   Azure by workload identity federation; do not store an Azure client secret.
-2. Run backend tests, frontend build/tests, ML tests, and local Docker health
-   checks before publishing.
-3. Build all four images using the same build contexts used locally and push
-   them to ACR with a single immutable commit-SHA tag.
-4. Run an infrastructure preview (`azd provision --preview` or Bicep
-   `what-if`) before provisioning changes.
-5. Release image revisions in dependency order: ML, Keycloak, backend,
-   frontend. Fail the deployment if probes or endpoint smoke tests fail.
-6. Retain prior revisions and image digests for rollback; never deploy from
-   `latest`.
+1. `docker-build-push.yml`, `angular-build.yml`, and `maven.yml` deleted.
+   Replaced by `ci.yml` (all-branch gate) and `release-azure.yml` (master
+   release). Azure login uses OIDC workload identity federation via
+   `azure/login@v2`; no client secret stored. Run
+   `infra/scripts/setup-wif.sh <org>/<repo>` once to create the service
+   principal and add the three required repository secrets.
+2. Both workflows run backend (Maven), frontend (npm build), and ML (pytest)
+   tests as a gate before any Docker build or push.
+3. `release-azure.yml` builds all four images with `${{ github.sha }}` as the
+   immutable tag; smoke-checks the frontend (`/health`) and ML service
+   (`/health/live`) locally before pushing to ACR. Backend and Keycloak are
+   built but not started locally (require external services).
+4. Bicep `what-if` preview runs before `az deployment group create`; both
+   target `infra/main.bicep` with `--mode Incremental` so no existing
+   resources are deleted.
+5. Images are deployed in dependency order via `az containerapp update`:
+   ML → Keycloak → Backend → Frontend. Each step forces `min-replicas=1`,
+   polls until `latestRevisionName == latestReadyRevisionName`, runs an
+   external smoke test for Keycloak (OIDC discovery) and frontend (`/health`),
+   then resets `min-replicas=0`.
+6. Prior revisions are never deleted. On a failed step the prior revision
+   remains active. Image tags are `${{ github.sha }}`; `latest` is never
+   pushed.
 
 ### Phase 4: Validate The Development Deployment
 
@@ -255,6 +267,11 @@ Azure resource provisioning and deployment remain gated for later approval.
 | Phase 1 ML strict Azure-target readiness | With `FAIL_ON_MODEL_VERSION_MISMATCH=true`, preload rejects 8 incompatible sklearn artifacts and `/health/ready` returns expected HTTP 503 |
 | Phase 1 Keycloak Azure-development image | Optimized Keycloak image with provider, theme, and seed-free realm builds successfully; existing custom internal SPI warning is recorded |
 | Docker build context cleanup | Frontend context is about 20 kB and final ML context about 25 kB, excluding local dependency artifacts |
+| Phase 2 Bicep compilation | `az bicep build` passes with zero errors on `main.bicep` and all three modules (`keyvault.bicep`, `container-apps.bicep`, `roles.bicep`) |
+| Phase 2 static structure | `azure.yaml` maps four services to Container Apps; `infra/main.bicep` produces required AZD outputs (`SERVICE_*_NAME`, `AZURE_CONTAINER_REGISTRY_ENDPOINT`, `AZURE_KEY_VAULT_ENDPOINT`) |
+| Phase 3 workflow structure | `ci.yml` (all branches) and `release-azure.yml` (master) created; three old workflows deleted; YAML is syntactically valid |
+| Phase 3 WIF setup script | `infra/scripts/setup-wif.sh` creates app registration, federated credential, AcrPush + Contributor role assignments |
+| sklearn model artifact normalization | `flask-server/requirements.txt` pinned to `scikit-learn==1.5.0`; 3 MODEL_MAP artifacts re-serialized (modelovanie_a_simulacia, principy_operacnych_systemov, vyvoj_aplikacii_internet_intranet); orphan MAS-pass-predict.pkl not in MODEL_MAP and left as-is; with `FAIL_ON_MODEL_VERSION_MISMATCH=true` container reports `models: ready` (HTTP 200 on /health/ready pending database) |
 
 ## 12. References
 

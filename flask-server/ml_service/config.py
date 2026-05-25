@@ -78,7 +78,6 @@ class Config:
     MODE = os.getenv("MODE", "dev")
     LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO")
     LOAD_MODELS_ON_STARTUP = os.getenv("LOAD_MODELS_ON_STARTUP", "true").lower() in ("1", "true", "yes")
-    FAIL_ON_MODEL_VERSION_MISMATCH = os.getenv("FAIL_ON_MODEL_VERSION_MISMATCH", "false").lower() in ("1", "true", "yes")
     REGISTER_DB_SHUTDOWN_HANDLER = os.getenv("REGISTER_DB_SHUTDOWN_HANDLER", "true").lower() in ("1", "true", "yes")
     # Use the DEFAULT_MODEL_MAP by default; allow override via env var MODEL_MAP (JSON)
     MODEL_MAP = _parse_json_env("MODEL_MAP", default=DEFAULT_MODEL_MAP) or DEFAULT_MODEL_MAP
