@@ -68,6 +68,7 @@ resilience4j:
 
 keycloak:
   issuer-uri: ${KEYCLOAK_ISSUER_URI:http://localhost:8180/realms/alfri}
+  internal-issuer-uri: ${KEYCLOAK_INTERNAL_ISSUER_URI:${KEYCLOAK_ISSUER_URI:http://localhost:8180/realms/alfri}}
   realm: ${KEYCLOAK_REALM:alfri}
   client-id: ${KEYCLOAK_CLIENT_ID:alfri-app}
   admin-realm: ${KEYCLOAK_ADMIN_REALM:master}

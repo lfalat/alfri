@@ -22,6 +22,7 @@ services:
       PYTHON_SERVICE_URL: http://python-ml-client:5000
       # Keycloak issuer is public/browser-facing; JWK URI is container-network-facing.
       KEYCLOAK_ISSUER_URI: http://localhost:8180/realms/alfri
+      KEYCLOAK_INTERNAL_ISSUER_URI: http://keycloak:8080/realms/alfri
       KEYCLOAK_JWK_SET_URI: http://keycloak:8080/realms/alfri/protocol/openid-connect/certs
       KEYCLOAK_EVENT_WEBHOOK_SECRET: ${KEYCLOAK_EVENT_WEBHOOK_SECRET:-changeme}
       # Shared X-API-KEY for local testing (value from .env)
@@ -128,7 +129,12 @@ services:
       - start-dev
       - --import-realm
     healthcheck:
-      test: ["CMD-SHELL", "curl -sf http://localhost:8080/realms/alfri/.well-known/openid-configuration"]
+      test:
+        - CMD-SHELL
+        - >-
+          bash -ec 'exec 3<>/dev/tcp/127.0.0.1/8080;
+          printf "GET /realms/alfri/.well-known/openid-configuration HTTP/1.0\r\nHost: localhost\r\n\r\n" >&3;
+          grep -q "HTTP/1.0 200 OK" <&3'
       interval: 10s
       timeout: 5s
       retries: 15

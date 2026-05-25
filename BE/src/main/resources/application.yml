@@ -58,7 +58,7 @@ resilience4j:
 
 keycloak:
   issuer-uri: ${KEYCLOAK_ISSUER_URI}
-  internal-issuer-uri: ${KEYCLOAK_INTERNAL_ISSUER_URI}
+  internal-issuer-uri: ${KEYCLOAK_INTERNAL_ISSUER_URI:${KEYCLOAK_ISSUER_URI}}
   realm: ${KEYCLOAK_REALM}
   client-id: ${KEYCLOAK_CLIENT_ID}
   admin-realm: ${KEYCLOAK_ADMIN_REALM}

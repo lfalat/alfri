@@ -5,6 +5,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "keycloak")
 public record KeycloakProperties(
         String issuerUri,
+        String internalIssuerUri,
         String realm,
         String clientId,
         String adminRealm,
@@ -13,20 +14,20 @@ public record KeycloakProperties(
         String adminPassword
 ) {
     public String tokenUri() {
-        return issuerUri + "/protocol/openid-connect/token";
+        return serverIssuerUri() + "/protocol/openid-connect/token";
     }
 
     public String adminTokenUri() {
-        return issuerUri.replace("/realms/" + realm, "/realms/" + adminRealm)
+        return serverIssuerUri().replace("/realms/" + realm, "/realms/" + adminRealm)
                 + "/protocol/openid-connect/token";
     }
 
     public String usersUri() {
-        return issuerUri.replace("/realms/" + realm, "/admin/realms/" + realm + "/users");
+        return serverIssuerUri().replace("/realms/" + realm, "/admin/realms/" + realm + "/users");
     }
 
     public String roleUri(String roleName) {
-        return issuerUri.replace("/realms/" + realm,
+        return serverIssuerUri().replace("/realms/" + realm,
                 "/admin/realms/" + realm + "/roles/" + roleName);
     }
 
@@ -39,6 +40,10 @@ public record KeycloakProperties(
     }
 
     public String healthReadyUri() {
-        return issuerUri + "/.well-known/openid-configuration";
+        return serverIssuerUri() + "/.well-known/openid-configuration";
+    }
+
+    private String serverIssuerUri() {
+        return internalIssuerUri == null || internalIssuerUri.isBlank() ? issuerUri : internalIssuerUri;
     }
 }
