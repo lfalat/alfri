@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-frontend
+  labels:
+    app: {{ .Release.Name }}-frontend
+spec:
+  replicas: {{ .Values.frontend.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}-frontend
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}-frontend
+    spec:
+      containers:
+        - name: frontend
+          image: "{{ .Values.frontend.image.repository }}:{{ .Values.frontend.image.tag }}"
+          imagePullPolicy: {{ .Values.frontend.image.pullPolicy }}
+          ports:
+            - containerPort: 80
+          env:
+            - name: API_URL
+              value: {{ .Values.frontend.config.apiUrl | quote }}
+            - name: ENVIRONMENT
+              value: {{ .Values.frontend.config.environment | quote }}
+            - name: KEYCLOAK_URL
+              value: {{ .Values.frontend.config.keycloakUrl | quote }}
+            - name: KEYCLOAK_REALM
+              value: {{ .Values.frontend.config.keycloakRealm | quote }}
+            - name: KEYCLOAK_CLIENT_ID
+              value: {{ .Values.frontend.config.keycloakClientId | quote }}

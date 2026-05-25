@@ -1,0 +1,15 @@
+frontend:
+  image:
+    repository: groben5558/alfri
+    tag: alfri-frontend
+    pullPolicy: IfNotPresent
+  replicaCount: 1
+  config:
+    apiUrl: "http://localhost:8080/api"
+    environment: "production"
+    keycloakUrl: "http://localhost:8180"
+    keycloakRealm: "alfri"
+    keycloakClientId: "alfri-frontend"
+  service:
+    type: ClusterIP
+    port: 80
