@@ -346,20 +346,21 @@ resource keycloakApp 'Microsoft.App/containerApps@2024-03-01' = {
           probes: [
             {
               type: 'Startup'
-              httpGet: { path: '/health/ready', port: 8080, scheme: 'HTTP' }
+              httpGet: { path: '/health/ready', port: 9000, scheme: 'HTTP' }
               initialDelaySeconds: 60
               periodSeconds: 10
               failureThreshold: 18
             }
             {
               type: 'Readiness'
-              httpGet: { path: '/health/ready', port: 8080, scheme: 'HTTP' }
+              httpGet: { path: '/health/ready', port: 9000, scheme: 'HTTP' }
               periodSeconds: 15
               failureThreshold: 3
             }
             {
               type: 'Liveness'
-              httpGet: { path: '/health/live', port: 8080, scheme: 'HTTP' }
+              httpGet: { path: '/health/live', port: 9000, scheme: 'HTTP' }
+              initialDelaySeconds: 60
               periodSeconds: 30
               failureThreshold: 3
             }
