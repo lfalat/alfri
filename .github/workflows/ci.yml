@@ -30,12 +30,12 @@ jobs:
           cache-dependency-path: FE/package-lock.json
       - name: Install dependencies
         run: npm --prefix FE ci
-      - name: Build frontend
-        run: npm --prefix FE run build
       - name: Lint
         run: npm --prefix FE run lint
         env:
           ESLINT_USE_FLAT_CONFIG: 'false'
+      - name: Build frontend
+        run: npm --prefix FE run build
 
   test-ml:
     runs-on: ubuntu-latest
