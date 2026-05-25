@@ -2,23 +2,24 @@
   <ng-template matStepLabel>{{ section.sectionTitle }}</ng-template>
   <div class="row">
     <p>{{ section.sectionDescription }}</p>
-    <div
-      class="col-12 col-md-auto d-flex align-items-center justify-content-center"
-    >
-      <canvas #radarChart id="chart"></canvas>
+    <div class="col-12 col-md-auto d-flex align-items-center justify-content-center">
+      @if (radarChartOptions) {
+        <app-radar-chart [options]="radarChartOptions" />
+      }
     </div>
     <div class="col-12 col-md-6 col-lg-8 row">
-      <app-form-question
-        class="col-12 col-md-6 col-lg-4 pe-0"
-        *ngFor="let question of section.questions"
-        [question]="question"
-        [formGroup]="formGroup"
-      ></app-form-question>
+      @for (question of section.questions; track question) {
+        <app-form-question
+          class="col-12 col-md-6 col-lg-4 pe-0"
+          [question]="question"
+          [formGroup]="formGroup"
+        ></app-form-question>
+      }
     </div>
   </div>
-  <div>
+  <div class="modern-button-container">
     <button mat-button matStepperPrevious>Späť</button>
-    <button mat-button matStepperNext [disabled]="formGroup.invalid">
+    <button mat-raised-button color="primary" matStepperNext [disabled]="formGroup.invalid">
       Pokračovať
     </button>
   </div>

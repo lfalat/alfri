@@ -11,26 +11,26 @@ import sk.uniza.fri.alfri.entity.Question;
 
 @Mapper(uses = QuestionOptionMapper.class)
 public interface QuestionMapper {
-  QuestionMapper INSTANCE = Mappers.getMapper(QuestionMapper.class);
+    QuestionMapper INSTANCE = Mappers.getMapper(QuestionMapper.class);
 
-  @Named("intToEnum")
-  default AnswerType intToEnum(int id) {
-    return AnswerType.fromId(id);
-  }
+    @Named("intToEnum")
+    default AnswerType intToEnum(int id) {
+        return AnswerType.fromId(id);
+    }
 
-  @Named("enumToInt")
-  default int enumToInt(AnswerType answerType) {
-    return answerType.getId();
-  }
+    @Named("enumToInt")
+    default int enumToInt(AnswerType answerType) {
+        return answerType.getId();
+    }
 
-  @Mapping(target = "answerType", source = "answerType", qualifiedByName = "enumToInt")
-  @Mapping(target = "id", ignore = true)
-  Question toEntity(QuestionDTO dto);
+    @Mapping(target = "answerType", source = "answerType", qualifiedByName = "enumToInt")
+    @Mapping(target = "id", ignore = true)
+    Question toEntity(QuestionDTO dto);
 
-  @Mapping(target = "answerType", source = "answerType", qualifiedByName = "intToEnum")
-  @Mapping(target = "id", source = "id")
-  QuestionDTO toDto(Question dto);
+    @Mapping(target = "answerType", source = "answerType", qualifiedByName = "intToEnum")
+    @Mapping(target = "id", source = "id")
+    QuestionDTO toDto(Question dto);
 
-  @Mapping(target = "answerType", source = "answerType", qualifiedByName = "intToEnum")
-  AnsweredQuestionDTO toAnsweredDto(Question dto);
+    @Mapping(target = "answerType", source = "answerType", qualifiedByName = "intToEnum")
+    AnsweredQuestionDTO toAnsweredDto(Question dto);
 }

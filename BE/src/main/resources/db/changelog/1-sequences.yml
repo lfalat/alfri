@@ -1,0 +1,137 @@
+databaseChangeLog:
+  - changeSet:
+      id: 01-seq-answer_answer_id
+      author: liquibase
+      changes:
+        - createSequence:
+            sequenceName: answer_answer_id_seq
+            schemaName: public
+            startValue: 1
+            incrementBy: 1
+  - changeSet:
+      id: 01-seq-answer_text_answer_text_id
+      author: liquibase
+      changes:
+        - createSequence:
+            sequenceName: answer_text_answer_text_id_seq
+            schemaName: public
+            startValue: 1
+            incrementBy: 1
+  - changeSet:
+      id: 01-seq-answer_type_answer_type_id
+      author: liquibase
+      changes:
+        - createSequence:
+            sequenceName: answer_type_answer_type_id_seq
+            schemaName: public
+            startValue: 1
+            incrementBy: 1
+  - changeSet:
+      id: 01-seq-options_answer
+      author: liquibase
+      changes:
+        - createSequence:
+            sequenceName: options_answer_seq
+            schemaName: public
+            startValue: 1
+            incrementBy: 1
+  - changeSet:
+      id: 01-seq-question_options_question_option_id
+      author: liquibase
+      changes:
+        - createSequence:
+            sequenceName: question_options_question_option_id_seq
+            schemaName: public
+            startValue: 1
+            incrementBy: 1
+  - changeSet:
+      id: 01-seq-question_question_id
+      author: liquibase
+      changes:
+        - createSequence:
+            sequenceName: question_question_id_seq
+            schemaName: public
+            startValue: 1
+            incrementBy: 1
+  - changeSet:
+      id: 01-seq-questionnaire_questionnaire_id
+      author: liquibase
+      changes:
+        - createSequence:
+            sequenceName: questionnaire_questionnaire_id_seq
+            schemaName: public
+            startValue: 1
+            incrementBy: 1
+  - changeSet:
+      id: 01-seq-questionnaire_section_id
+      author: liquibase
+      changes:
+        - createSequence:
+            sequenceName: questionnaire_section_id_seq
+            schemaName: public
+            startValue: 1
+            incrementBy: 1
+  - changeSet:
+      id: 01-seq-role_role_id
+      author: liquibase
+      changes:
+        - createSequence:
+            sequenceName: role_role_id_seq
+            schemaName: public
+            startValue: 1
+            incrementBy: 1
+  - changeSet:
+      id: 01-seq-student_id
+      author: liquibase
+      changes:
+        - createSequence:
+            sequenceName: student_id
+            schemaName: public
+            startValue: 1
+            incrementBy: 1
+  - changeSet:
+      id: 01-seq-study_program_id_sequence
+      author: liquibase
+      changes:
+        - createSequence:
+            sequenceName: study_program_id_sequence
+            schemaName: public
+            startValue: 1
+            incrementBy: 1
+  - changeSet:
+      id: 01-seq-subject_subject_id
+      author: liquibase
+      changes:
+        - createSequence:
+            sequenceName: subject_subject_id_seq
+            schemaName: public
+            startValue: 1
+            incrementBy: 1
+  - changeSet:
+      id: 01-seq-user_user_id
+      author: liquibase
+      changes:
+        - createSequence:
+            sequenceName: user_user_id_seq
+            schemaName: public
+            startValue: 1
+            incrementBy: 1
+  - changeSet:
+      id: 01-seq-subject_keyword_keyword_id
+      author: liquibase
+      changes:
+        - createSequence:
+            sequenceName: subject_keyword_keyword_id_seq
+            schemaName: public
+            startValue: 1
+            incrementBy: 1
+  - changeSet:
+      id: 01-seq-subject_study_program_id
+      author: liquibase
+      changes:
+        - createSequence:
+            sequenceName: subject_study_program_id_seq
+            schemaName: public
+            startValue: 1
+            incrementBy: 1
+

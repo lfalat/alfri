@@ -2,8 +2,7 @@ import { Component, Input } from '@angular/core';
 import { FormQuestionComponent } from '@components/form-question/form-question.component';
 import { FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
-import { MatStep, MatStepLabel, MatStepperNext, MatStepperPrevious } from '@angular/material/stepper';
-import { NgClass, NgForOf, NgIf } from '@angular/common';
+import { MatStepLabel, MatStepperNext } from '@angular/material/stepper';
 import { Section } from '../../../types';
 
 @Component({
@@ -13,13 +12,8 @@ import { Section } from '../../../types';
     FormQuestionComponent,
     FormsModule,
     MatButton,
-    MatStep,
     MatStepLabel,
-    NgForOf,
     ReactiveFormsModule,
-    NgIf,
-    NgClass,
-    MatStepperPrevious,
     MatStepperNext,
   ],
   templateUrl: './basic-information-step.component.html',

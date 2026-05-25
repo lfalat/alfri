@@ -1,77 +1,113 @@
-<ul class="list-group list-group-flush" *ngIf="existingAnswers">
-  <li class="list-group-item">
-    <h3>Zakladne informacie</h3>
-    <div class="row">
-      <div
-        class="col-12 col-md-6"
-        *ngFor="let information of existingAnswers.sections[0].questions"
-      >
-        <p class="m-0">{{ information.questionTitle }}</p>
+@if (existingAnswers()) {
+  <section class="user-form-results">
+    <header class="page-header">
+      <h1 class="page-title">Výsledky dotazníka</h1>
+      <p>Detailný prehľad tvojich študijných výsledkov a záujmov</p>
+    </header>
 
-        <p *ngIf="information.questionTitle === 'Odbor'; else others" class="fw-bolder">
-          {{ StudyPrograms[Number(information.answers[0].texts[0].textOfAnswer)] }}
-        </p>
+    <div class="cards-container">
+      <!-- Základné informácie -->
+      <section class="row g-3">
+        <!-- Grade Average Card -->
+        <div class="col-12 col-sm-6 col-lg-3">
+          <mat-card class="info-card">
+            <mat-card-content class="d-flex align-items-center gap-3 p-3">
+              <div class="icon-wrapper icon-orange">
+                <mat-icon>star</mat-icon>
+              </div>
+              <div class="flex-grow-1">
+                <p class="info-label mb-1">Priemer známok</p>
+                <p class="info-value mb-0">{{ gradeAverage() }}</p>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        </div>
 
-        <ng-template #others>
-          <p class="fw-bolder">
-            {{ information.answers[0].texts[0].textOfAnswer }}
-          </p>
-        </ng-template>
-      </div>
-    </div>
-  </li>
-  <li class="list-group-item">
-    <h3>Známky z povinných predmetov</h3>
-    <div class="row">
-      <table
-        mat-table
-        [dataSource]="dataSource"
+        <!-- Other Information Cards -->
+        @for (information of getFilteredQuestions(); track information) {
+          <div class="col-12 col-sm-6 col-lg-3">
+            <mat-card class="info-card">
+              <mat-card-content class="d-flex align-items-center gap-3 p-3">
+                <div class="icon-wrapper" [ngClass]="getIconClass(information.questionTitle)">
+                  <mat-icon>{{ getIcon(information.questionTitle) }}</mat-icon>
+                </div>
+                <div class="flex-grow-1">
+                  <p class="info-label mb-1">{{ getDisplayLabel(information.questionTitle) }}</p>
+                  @if (information.questionTitle === 'Odbor') {
+                    <p class="info-value mb-0">
+                      {{ StudyPrograms[Number(information.answers[0].texts[0].textOfAnswer)] }}
+                    </p>
+                  } @else if (information.questionTitle === 'Ročník v škole') {
+                    <p class="info-value mb-0">
+                      {{ information.answers[0].texts[0].textOfAnswer }}. Ročník
+                    </p>
+                  } @else {
+                    <p class="info-value mb-0">
+                      {{ information.answers[0].texts[0].textOfAnswer }}
+                    </p>
+                  }
+                </div>
+              </mat-card-content>
+            </mat-card>
+          </div>
+        }
+      </section>
 
-        class="mat-table striped-table"
-      >
-        <ng-container matColumnDef="nazovPredmetu">
-          <th mat-header-cell *matHeaderCellDef>Názov Predmetu</th>
-          <td mat-cell *matCellDef="let element">
-            {{ element.subjectName }}
-          </td>
-        </ng-container>
+      <!-- Známky z povinných predmetov -->
+      <app-generic-table
+        [data]="subjectGradesData()"
+        [config]="gradesTableConfig"
+      ></app-generic-table>
 
-        <ng-container matColumnDef="znamka">
-          <th mat-header-cell *matHeaderCellDef>Známka z Predmetu</th>
-          <td mat-cell *matCellDef="let element">
-            {{ element.grade }}
-          </td>
-        </ng-container>
+      <div class="row">
+        <div class="col-6">
+          <!-- Oblasti záujmov -->
+          <mat-card class="section-card">
+            <mat-card-header>
+              <mat-card-title class="d-flex align-items-center gap-2">
+                <mat-icon class="section-icon icon-radar">radar</mat-icon>
+                <span>Oblasti záujmov</span>
+              </mat-card-title>
+            </mat-card-header>
+            <mat-card-content class="chart-content">
+              <div class="chart-wrapper">
+                @if (radarChartOptions) {
+                  <app-radar-chart [options]="radarChartOptions" />
+                }
+              </div>
+            </mat-card-content>
+          </mat-card>
+        </div>
+        <div class="col-6">
+          <!-- Voľnočasové aktivity -->
+          <mat-card class="section-card activities-card">
+            <mat-card-header>
+              <mat-card-title class="d-flex align-items-center gap-2">
+                <mat-icon class="section-icon icon-interests">sports_esports</mat-icon>
+                <span>Voľnočasové aktivity</span>
+              </mat-card-title>
+            </mat-card-header>
+            <mat-card-content class="activities-content">
+              <p class="activities-description">Vybrané preferované aktivity študenta.</p>
 
-        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-      </table>
-      <mat-paginator
-        [pageSizeOptions]="[5, 10, 20]"
-        [pageSize]="5"
-        showFirstLastButtons
-      ></mat-paginator>
-    </div>
-  </li>
-  <li class="list-group-item">
-    <div class="row">
-      <div class="col-12 col-md-6">
-        <h3>Oblasti záujmov</h3>
-        <div class="col-12">
-          <canvas #radarChart id="chart"></canvas>
+              <div class="activities-chips-wrapper">
+                <mat-chip-set aria-label="Voľnočasové aktivity">
+                  @for (
+                    activity of existingAnswers()!.sections[3].questions[0].answers;
+                    track activity
+                  ) {
+                    @for (activityOption of activity.texts; track activityOption) {
+                      <mat-chip class="activity-chip">
+                        {{ activityOption.textOfAnswer }}
+                      </mat-chip>
+                    }
+                  }
+                </mat-chip-set>
+              </div>
+            </mat-card-content>
+          </mat-card>
         </div>
       </div>
-      <div class="col-12 col-md-6">
-        <h3>Voľnočasové aktivity</h3>
-        <div class="row">
-          <mat-chip-set aria-label="Fish selection">
-            <mat-chip
-              *ngFor="let activity of existingAnswers.sections[3].questions"
-              >{{ activity.answers[0].texts[0].textOfAnswer }}</mat-chip
-            >
-          </mat-chip-set>
-        </div>
-      </div>
     </div>
-  </li>
-</ul>
+  </section>
+}

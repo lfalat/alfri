@@ -1,0 +1,40 @@
+# Dockerfile.backend
+# Builds the Spring Boot app from the BE module and produces a runnable image.
+
+# Build stage
+FROM maven:3.9.6-sapmachine-21 AS build
+WORKDIR /build
+
+# Copy only the BE pom first (for better layer caching)
+COPY BE/pom.xml ./pom.xml
+RUN mvn -B -DskipTests dependency:go-offline
+
+# Copy the rest of the BE sources
+COPY BE /build
+RUN mvn -B -DskipTests clean package
+
+# Final runtime image
+FROM eclipse-temurin:21-jdk
+WORKDIR /app
+
+# Install minimal python runtime & build tooling required by some of the python model deps
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        python3 python3-pip python3-venv python3-dev python-is-python3 \
+        build-essential curl \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create a virtualenv and preinstall lightweight ML runtime deps used by the application
+RUN python3 -m venv /opt/venv \
+    && /opt/venv/bin/pip install --no-cache-dir --upgrade pip setuptools wheel \
+    && /opt/venv/bin/pip install --no-cache-dir joblib numpy scikit-learn==1.5.0
+
+ENV PATH="/opt/venv/bin:$PATH"
+
+# Copy the built jar from the build stage
+COPY --from=build /build/target/*.jar /app/app.jar
+
+
+EXPOSE 8080
+ENTRYPOINT ["java", "-jar", "/app/app.jar"]

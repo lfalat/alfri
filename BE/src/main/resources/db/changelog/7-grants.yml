@@ -1,0 +1,7 @@
+databaseChangeLog:
+  - changeSet:
+      id: 07-grants
+      author: liquibase
+      changes:
+        - tagDatabase:
+            tag: version-1.0

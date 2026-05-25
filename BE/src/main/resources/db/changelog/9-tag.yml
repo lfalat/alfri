@@ -1,0 +1,7 @@
+databaseChangeLog:
+  - changeSet:
+      id: 09-tag-placeholder
+      author: liquibase
+      changes:
+        - tagDatabase:
+            tag: version-1.0

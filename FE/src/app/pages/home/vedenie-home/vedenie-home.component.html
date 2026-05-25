@@ -1,5 +1,107 @@
 <ng-container>
   <div class="row m-0">
+    <!-- Study Program Selector and Loading Bar -->
+    <div class="col-12 mb-3">
+      @if (isLoadingReport()) {
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+      }
+      <div class="selector-wrapper mt-3">
+        <mat-form-field appearance="outline" class="study-program-select" subscriptSizing="dynamic">
+          <mat-label>Študijný program</mat-label>
+          <mat-select
+            [ngModel]="selectedStudyProgramId()"
+            (ngModelChange)="onStudyProgramChange($event)"
+          >
+            <mat-option [value]="null">Všetky</mat-option>
+            @for (program of studyPrograms(); track program.id) {
+              <mat-option [value]="program.id">{{ program.name }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </div>
+
+    <!-- Statistics Cards -->
+    @if (dataReport()) {
+      <div class="col-12 mb-4">
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon-wrapper stat-icon-blue">
+              <mat-icon class="stat-icon">school</mat-icon>
+            </div>
+            <div class="stat-info">
+              <p class="stat-label">Počet študentov</p>
+              <p class="stat-value">{{ dataReport()!.studentCount }}</p>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon-wrapper stat-icon-purple">
+              <mat-icon class="stat-icon">book_2</mat-icon>
+            </div>
+            <div class="stat-info">
+              <p class="stat-label">Počet predmetov</p>
+              <p class="stat-value">{{ dataReport()!.subjectCount }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- Teacher-Home Charts -->
+    @if (dataReport()) {
+      <div class="card col-12 col-md-6 p-0">
+        <div class="card-header">
+          <h2 class="card-title mb-0">Vývoj počtu študentov podľa parametra</h2>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-12">
+              <div class="chart-wrapper">
+                @if (chartOptions()) {
+                  <app-line-chart [chartOptions]="chartOptions()!" [height]="320" />
+                }
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card col-12 col-md-6 p-0">
+        <div class="card-header">
+          <h2 class="card-title mb-0">Vývoj priemerných známok podľa ročníka</h2>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-12">
+              <div class="chart-wrapper">
+                @if (gradeChartOptions()) {
+                  <app-line-chart [chartOptions]="gradeChartOptions()!" [height]="320" />
+                }
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card col-12 col-md-6 p-0">
+        <div class="card-header">
+          <h2 class="card-title mb-0">Rozdelenie známok</h2>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-12">
+              <div class="chart-wrapper">
+                @if (gradeDistributionChartOptions()) {
+                  <app-pie-chart [chartOptions]="gradeDistributionChartOptions()!" [height]="300" />
+                }
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- Original Vedenie Charts -->
     <div class="card col-12 col-md-6 p-0">
       <div class="card-header">
         <h2 class="card-title mb-0">Wordcloud slov</h2>
@@ -7,7 +109,16 @@
       <div class="card-body">
         <div class="row">
           <div class="col-12">
-            <div id="wordcloud-chart" style="width: 100%; height: 400px;"></div>
+            <div class="chart-wrapper">
+              <div
+                #wordCloudContainer
+                class="chart-container"
+                [class.chart-hidden]="wordCloudLoading"
+              ></div>
+              @if (wordCloudLoading) {
+                <div class="chart-skeleton"></div>
+              }
+            </div>
           </div>
         </div>
       </div>
@@ -20,23 +131,27 @@
       <div class="card-body">
         <div class="row">
           <div class="col-12">
-            <canvas style="max-height: 500px" id="pieChart"></canvas>
+            <div class="chart-wrapper">
+              <canvas
+                #pieChartCanvas
+                class="chart-canvas"
+                [class.chart-hidden]="pieChartLoading"
+              ></canvas>
+              @if (pieChartLoading) {
+                <div class="chart-skeleton"></div>
+              }
+            </div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- New Card for Bar Chart -->
     <div class="card col-12 col-md-6 p-0">
       <div class="card-header">
-        <h2 class="card-title mb-0">Počet študentov podľa roku</h2>
+        <h2 class="card-title mb-0">Najhorsi studentu</h2>
       </div>
       <div class="card-body">
-        <div class="row">
-          <div class="col-12">
-            <canvas style="max-height: 500px" id="barChart"></canvas>
-          </div>
-        </div>
+        <app-student-marks-report></app-student-marks-report>
       </div>
     </div>
   </div>

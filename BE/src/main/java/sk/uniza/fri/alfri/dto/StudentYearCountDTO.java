@@ -1,4 +1,4 @@
 package sk.uniza.fri.alfri.dto;
 
-public record StudentYearCountDTO (Integer year, Long studentsCount) {
+public record StudentYearCountDTO(Integer year, Long studentsCount) {
 }

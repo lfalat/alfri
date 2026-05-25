@@ -1,0 +1,47 @@
+databaseChangeLog:
+  - changeSet:
+      id: 15-add-questionnaire-section-columns
+      author: liquibase
+      changes:
+        - addColumn:
+            tableName: questionnaire_section
+            schemaName: public
+            columns:
+              - column:
+                  name: section_description
+                  type: TEXT
+                  constraints:
+                    nullable: true
+              - column:
+                  name: should_fetch_data
+                  type: BOOLEAN
+                  constraints:
+                    nullable: true
+      rollback:
+        - dropColumn:
+            tableName: questionnaire_section
+            schemaName: public
+            columnName: section_description
+        - dropColumn:
+            tableName: questionnaire_section
+            schemaName: public
+            columnName: should_fetch_data
+  - changeSet:
+      id: 15-add-question-option-value-column
+      author: liquibase
+      changes:
+        - addColumn:
+            tableName: question_option
+            schemaName: public
+            columns:
+              - column:
+                  name: question_value
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: true
+      rollback:
+        - dropColumn:
+            tableName: question_option
+            schemaName: public
+            columnName: question_value
+

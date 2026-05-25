@@ -4,3 +4,15 @@ target/
 *.tmp
 .git
 node_modules
+**/node_modules/
+**/.venv/
+**/.angular/
+**/.nx/
+**/dist/
+**/target/
+!target/alfri-3.2.4.jar
+**/.idea/
+.env
+**/.env
+**/__pycache__/
+**/*.py[cod]

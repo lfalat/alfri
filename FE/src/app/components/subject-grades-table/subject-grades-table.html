@@ -1,0 +1,41 @@
+<section class="subject-grades-table-wrapper">
+  <div class="table-header">
+    <div class="header-title">
+      <div class="icon-container">
+        <mat-icon>table_chart</mat-icon>
+      </div>
+      <h2>Známky z povinných predmetov</h2>
+    </div>
+  </div>
+
+  <div class="table-container">
+    <table mat-table [dataSource]="dataSource" class="grades-table">
+      <!-- Subject Name Column -->
+      <ng-container matColumnDef="nazovPredmetu">
+        <th mat-header-cell *matHeaderCellDef>Názov predmetu</th>
+        <td mat-cell *matCellDef="let element" class="subject-name">{{ element.subjectName }}</td>
+      </ng-container>
+
+      <!-- Grade Column -->
+      <ng-container matColumnDef="znamka">
+        <th mat-header-cell *matHeaderCellDef class="grade-header">Známka</th>
+        <td mat-cell *matCellDef="let element" class="grade-cell">
+          <span class="grade-badge" [ngClass]="element.grade | gradeClass">
+            {{ element.grade }}
+          </span>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns" class="table-row"></tr>
+    </table>
+  </div>
+
+  <div class="table-footer">
+    <mat-paginator
+      [pageSizeOptions]="pageSizeOptions()"
+      [pageSize]="pageSize()"
+      showFirstLastButtons
+    ></mat-paginator>
+  </div>
+</section>

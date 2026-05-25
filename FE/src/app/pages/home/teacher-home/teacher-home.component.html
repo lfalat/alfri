@@ -1,1 +1,109 @@
-<p>teacher-home works!</p>
+<div class="reports-container">
+  @if (isLoading()) {
+    <div class="loading-bar">
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    </div>
+  }
+
+  <mat-card class="main-card">
+    <mat-card-content class="main-card-content">
+      <!-- Header with Title and Study Program Selector -->
+      <div class="header-section">
+        <div class="title-row">
+          <h1 class="page-title">Reporty údajov</h1>
+          <button
+            mat-raised-button
+            color="primary"
+            class="export-button"
+            (click)="exportToPdf()"
+            [disabled]="isExporting() || !dataReport()"
+          >
+            @if (isExporting()) {
+              <mat-spinner diameter="20" class="button-spinner"></mat-spinner>
+              <span>Pripravujem PDF...</span>
+            } @else {
+              <mat-icon>picture_as_pdf</mat-icon>
+              <span>Exportovať do PDF</span>
+            }
+          </button>
+        </div>
+        <div class="selector-wrapper">
+          <mat-form-field
+            appearance="outline"
+            class="study-program-select"
+            subscriptSizing="dynamic"
+          >
+            <mat-label>Študijný program</mat-label>
+            <mat-select
+              [ngModel]="selectedStudyProgramId()"
+              (ngModelChange)="selectedStudyProgramId.set($event)"
+            >
+              <mat-option [value]="null">Všetky</mat-option>
+              @for (program of studyPrograms(); track program.id) {
+                <mat-option [value]="program.id">{{ program.name }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </div>
+
+      @if (dataReport()) {
+        <div #reportContent class="report-content">
+          <!-- Summary Statistics -->
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-icon-wrapper stat-icon-blue">
+                <mat-icon class="stat-icon">school</mat-icon>
+              </div>
+              <div class="stat-info">
+                <p class="stat-label">Počet študentov</p>
+                <p class="stat-value">{{ dataReport()!.studentCount }}</p>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon-wrapper stat-icon-purple">
+                <mat-icon class="stat-icon">book_2</mat-icon>
+              </div>
+              <div class="stat-info">
+                <p class="stat-label">Počet predmetov</p>
+                <p class="stat-value">{{ dataReport()!.subjectCount }}</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Chart Section -->
+          <div class="chart-section">
+            <h2 class="chart-title">Vývoj počtu študentov podľa parametra</h2>
+            <div class="chart-wrapper">
+              @if (chartOptions()) {
+                <app-line-chart [chartOptions]="chartOptions()!" [height]="320" />
+              }
+            </div>
+          </div>
+
+          <!-- Grade Chart Section -->
+          <div class="chart-section">
+            <h2 class="chart-title">Vývoj priemerných známok podľa ročníka</h2>
+            <div class="chart-wrapper">
+              @if (gradeChartOptions()) {
+                <app-line-chart [chartOptions]="gradeChartOptions()!" [height]="320" />
+              }
+            </div>
+          </div>
+
+          <!-- Pie Chart Section -->
+          <div class="chart-section">
+            <h2 class="chart-title">Rozdelenie známok</h2>
+            <div class="pie-chart-wrapper">
+              <div class="pie-chart-content">
+                @if (gradeDistributionChartOptions()) {
+                  <app-pie-chart [chartOptions]="gradeDistributionChartOptions()!" [height]="300" />
+                }
+              </div>
+            </div>
+          </div>
+        </div>
+      }
+    </mat-card-content>
+  </mat-card>
+</div>

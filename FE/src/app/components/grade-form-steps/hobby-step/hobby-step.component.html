@@ -3,22 +3,17 @@
   <div class="row">
     <p>{{ section.sectionDescription }}</p>
     <div class="row pe-0">
-      <app-form-question
-        class="col-12 col-md-6 col-lg-4 pe-0"
-        *ngFor="let question of section.questions"
-        [question]="question"
-        [formGroup]="currentFormGroup"
-      ></app-form-question>
+      @for (question of section.questions; track question) {
+        <app-form-question
+          class="col-12 col-md-6 col-lg-4 pe-0"
+          [question]="question"
+          [formGroup]="currentFormGroup"
+        ></app-form-question>
+      }
     </div>
   </div>
-  <div>
+  <div class="modern-button-container">
     <button mat-button matStepperPrevious>Späť</button>
-    <button
-      mat-button
-      type="submit"
-      (click)="submit()"
-    >
-      Uložiť
-    </button>
+    <button mat-raised-button color="primary" type="submit" (click)="submit()">Uložiť</button>
   </div>
 </form>

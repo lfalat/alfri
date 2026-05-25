@@ -1,0 +1,9 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20-management-subjects
+      author: auto-generated
+      changes:
+        - sqlFile:
+            path: db/data/management_subjects.sql
+            relativeToChangelogFile: false
+

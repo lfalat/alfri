@@ -1,0 +1,210 @@
+databaseChangeLog:
+  - changeSet:
+      id: 02-table-role
+      author: liquibase
+      changes:
+        - createTable:
+            tableName: role
+            schemaName: public
+            columns:
+              - column: { name: role_id, type: INT, constraints: { nullable: false } }
+              - column: { name: name, type: VARCHAR(50), constraints: { nullable: false } }
+  - changeSet:
+      id: 02-table-answer_type
+      author: liquibase
+      changes:
+        - createTable:
+            tableName: answer_type
+            schemaName: public
+            columns:
+              - column: { name: answer_type_id, type: INT, constraints: { nullable: false } }
+              - column: { name: name, type: VARCHAR(50), constraints: { nullable: false } }
+  - changeSet:
+      id: 02-table-study_program
+      author: liquibase
+      changes:
+        - createTable:
+            tableName: study_program
+            schemaName: public
+            columns:
+              - column: { name: study_program_id, type: INT, constraints: { nullable: false } }
+              - column: { name: name, type: VARCHAR(100), constraints: { nullable: false } }
+  - changeSet:
+      id: 02-table-subject
+      author: liquibase
+      changes:
+        - createTable:
+            tableName: subject
+            schemaName: public
+            columns:
+              - column: { name: subject_id, type: INT, constraints: { nullable: false } }
+              - column: { name: name, type: VARCHAR(100), constraints: { nullable: false } }
+              - column: { name: code, type: VARCHAR(50), constraints: { nullable: false } }
+              - column: { name: abbreviation, type: text, constraints: { nullable: false } }
+  - changeSet:
+      id: 02-table-questionnaire
+      author: liquibase
+      changes:
+        - createTable:
+            tableName: questionnaire
+            schemaName: public
+            columns:
+              - column: { name: questionnaire_id, type: INT, constraints: { nullable: false } }
+              - column: { name: title, type: VARCHAR(100), constraints: { nullable: false } }
+              - column: { name: description, type: text, constraints: { nullable: false } }
+              - column: { name: date_of_creation, type: TIMESTAMP, defaultValueComputed: "now()", constraints: { nullable: false } }
+  - changeSet:
+      id: 02-table-questionnaire_section
+      author: liquibase
+      changes:
+        - createTable:
+            tableName: questionnaire_section
+            schemaName: public
+            columns:
+              - column: { name: section_id, type: INT, constraints: { nullable: false } }
+              - column: { name: questionnaire_id, type: INT }
+              - column: { name: section_title, type: text }
+  - changeSet:
+      id: 02-table-user
+      author: liquibase
+      changes:
+        - createTable:
+            tableName: user
+            schemaName: public
+            remarks: logical name "user" originally quoted
+            columns:
+              - column: { name: user_id, type: INT, constraints: { nullable: false } }
+              - column: { name: role_id, type: INT, constraints: { nullable: false } }
+              - column: { name: email, type: VARCHAR(100), constraints: { nullable: false } }
+              - column: { name: first_name, type: VARCHAR(50), constraints: { nullable: false } }
+              - column: { name: last_name, type: VARCHAR(50), constraints: { nullable: false } }
+              - column: { name: password, type: VARCHAR(72), constraints: { nullable: false } }
+  - changeSet:
+      id: 02-table-question
+      author: liquibase
+      changes:
+        - createTable:
+            tableName: question
+            schemaName: public
+            columns:
+              - column: { name: question_id, type: INT, constraints: { nullable: false } }
+              - column: { name: section_id, type: INT, constraints: { nullable: false } }
+              - column: { name: answer_type_id, type: INT, constraints: { nullable: false } }
+              - column: { name: position_in_questionnaire, type: INT, constraints: { nullable: false } }
+              - column: { name: question_title, type: text, constraints: { nullable: false } }
+              - column: { name: optional, type: BOOLEAN, constraints: { nullable: false } }
+              - column: { name: question_identifier, type: text, constraints: { nullable: false } }
+  - changeSet:
+      id: 02-table-question_option
+      author: liquibase
+      changes:
+        - createTable:
+            tableName: question_option
+            schemaName: public
+            columns:
+              - column: { name: question_option_id, type: INT, constraints: { nullable: false } }
+              - column: { name: question_option, type: text, constraints: { nullable: false } }
+              - column: { name: question_id, type: INT, constraints: { nullable: false } }
+  - changeSet:
+      id: 02-table-focus
+      author: liquibase
+      changes:
+        - createTable:
+            tableName: focus
+            schemaName: public
+            remarks: public.subject's focuses
+            columns:
+              - column: { name: math_focus, type: INT, constraints: { nullable: false } }
+              - column: { name: logic_focus, type: INT, constraints: { nullable: false } }
+              - column: { name: programming_focus, type: INT, constraints: { nullable: false } }
+              - column: { name: design_focus, type: INT, constraints: { nullable: false } }
+              - column: { name: economics_focus, type: INT, constraints: { nullable: false } }
+              - column: { name: management_focus, type: INT, constraints: { nullable: false } }
+              - column: { name: hardware_focus, type: INT, constraints: { nullable: false } }
+              - column: { name: network_focus, type: INT, constraints: { nullable: false } }
+              - column: { name: data_focus, type: INT, constraints: { nullable: false } }
+              - column: { name: testing_focus, type: INT, constraints: { nullable: false } }
+              - column: { name: language_focus, type: INT, constraints: { nullable: false } }
+              - column: { name: physical_focus, type: INT, constraints: { nullable: false } }
+              - column: { name: subject_id, type: INT, constraints: { nullable: false } }
+  - changeSet:
+      id: 02-table-subject_grades
+      author: liquibase
+      changes:
+        - createTable:
+            tableName: subject_grades
+            schemaName: public
+            columns:
+              - column: { name: subject_id, type: INT, constraints: { nullable: false } }
+              - column: { name: grade_a, type: REAL, constraints: { nullable: false } }
+              - column: { name: grade_b, type: REAL, constraints: { nullable: false } }
+              - column: { name: grade_c, type: REAL, constraints: { nullable: false } }
+              - column: { name: grade_d, type: REAL, constraints: { nullable: false } }
+              - column: { name: grade_e, type: REAL }
+              - column: { name: grade_fx, type: REAL }
+              - column: { name: students_count, type: INT, constraints: { nullable: false } }
+              - column: { name: grade_average, type: REAL, constraints: { nullable: false } }
+  - changeSet:
+      id: 02-table-study_program_subject
+      author: liquibase
+      changes:
+        - createTable:
+            tableName: study_program_subject
+            schemaName: public
+            columns:
+              - column: { name: subject_study_program_id, type: INT, constraints: { nullable: false } }
+              - column: { name: study_program_id, type: INT, constraints: { nullable: false } }
+              - column: { name: subject_id, type: INT, constraints: { nullable: false } }
+              - column: { name: obligation, type: VARCHAR(4), constraints: { nullable: false } }
+              - column: { name: recommended_year, type: INT, constraints: { nullable: false } }
+              - column: { name: semester_winter, type: BOOLEAN, constraints: { nullable: false } }
+  - changeSet:
+      id: 02-table-student
+      author: liquibase
+      changes:
+        - createTable:
+            tableName: student
+            schemaName: public
+            columns:
+              - column: { name: student_id, type: INT, constraints: { nullable: false } }
+              - column: { name: user_id, type: INT }
+              - column: { name: study_program_id, type: INT, constraints: { nullable: false } }
+              - column: { name: year, type: INT, constraints: { nullable: false } }
+              - column: { name: enrollment_year, type: INT }
+  - changeSet:
+      id: 02-table-student_subject
+      author: liquibase
+      changes:
+        - createTable:
+            tableName: student_subject
+            schemaName: public
+            columns:
+              - column: { name: student_id, type: INT, constraints: { nullable: false } }
+              - column: { name: subject_id, type: INT, constraints: { nullable: false } }
+              - column: { name: mark, type: VARCHAR(2) }
+              - column: { name: year, type: INT, constraints: { nullable: false } }
+              - column: { name: calendar_year, type: INT, constraints: { nullable: false } }
+  - changeSet:
+      id: 02-table-answer
+      author: liquibase
+      changes:
+        - createTable:
+            tableName: answer
+            schemaName: public
+            columns:
+              - column: { name: question_id, type: INT, constraints: { nullable: false } }
+              - column: { name: user_id, type: INT, constraints: { nullable: false } }
+              - column: { name: answer_id, type: INT, constraints: { nullable: false } }
+              - column: { name: questionnaire_id, type: INT, constraints: { nullable: false } }
+  - changeSet:
+      id: 02-table-answer_text
+      author: liquibase
+      changes:
+        - createTable:
+            tableName: answer_text
+            schemaName: public
+            columns:
+              - column: { name: answer_text_id, type: INT, constraints: { nullable: false } }
+              - column: { name: answer_text, type: text, constraints: { nullable: false } }
+              - column: { name: answer_id, type: INT, constraints: { nullable: false } }
+

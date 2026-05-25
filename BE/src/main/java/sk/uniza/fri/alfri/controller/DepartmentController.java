@@ -18,24 +18,24 @@ import java.util.List;
 @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_TEACHER', 'ROLE_VEDENIE')")
 @RequestMapping("/api/department")
 public class DepartmentController {
-  private final ModelMapper modelMapper;
-  private final DepartmentService departmentService;
+    private final ModelMapper modelMapper;
+    private final DepartmentService departmentService;
 
-  public DepartmentController(DepartmentService departmentService, ModelMapper modelMapper) {
-    this.departmentService = departmentService;
-    this.modelMapper = modelMapper;
-  }
+    public DepartmentController(DepartmentService departmentService, ModelMapper modelMapper) {
+        this.departmentService = departmentService;
+        this.modelMapper = modelMapper;
+    }
 
-  @GetMapping
-  public ResponseEntity<List<DepartmentDto>> findAll() {
-    log.info("Getting all departments");
+    @GetMapping
+    public ResponseEntity<List<DepartmentDto>> findAll() {
+        log.info("Getting all departments");
 
-    List<Department> departments = departmentService.findAll();
+        List<Department> departments = departmentService.findAll();
 
-    List<DepartmentDto> departmentDtos = departments.stream()
-        .map(department -> modelMapper.map(department, DepartmentDto.class)).toList();
-    log.info("{} departments returned", departmentDtos.size());
+        List<DepartmentDto> departmentDtos = departments.stream()
+                .map(department -> modelMapper.map(department, DepartmentDto.class)).toList();
+        log.info("{} departments returned", departmentDtos.size());
 
-    return ResponseEntity.ok(departmentDtos);
-  }
+        return ResponseEntity.ok(departmentDtos);
+    }
 }

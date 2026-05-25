@@ -1,3 +1,7 @@
 .clustering-max-height-75vh {
   height: 75vh;
 }
+
+::ng-deep .mat-horizontal-content-container {
+  padding: 0 !important;
+}

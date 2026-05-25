@@ -1,5 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { AsyncPipe, NgClass, NgIf } from '@angular/common';
+import { Component, computed, inject, signal, ViewChild } from '@angular/core';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSidenav, MatSidenavModule } from '@angular/material/sidenav';
@@ -17,9 +16,17 @@ import {
 import { HasRoleDirective } from '@directives/auth.directive';
 import { AuthRole } from '@enums/auth-role';
 import { NotificationService } from '@services/notification.service';
-import { filter, Subscription } from 'rxjs';
+import { filter } from 'rxjs';
 import { FormDataService } from '@services/form-data.service';
-import { AnsweredForm } from '../../types';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { MatCard } from '@angular/material/card';
+
+interface MenuItem {
+  label: string;
+  icon: string;
+  route: string;
+  action?: () => void;
+}
 
 @Component({
   selector: 'app-header',
@@ -32,9 +39,6 @@ import { AnsweredForm } from '../../types';
     MatSidenavModule,
     MatListModule,
     MatIconModule,
-    AsyncPipe,
-    NgClass,
-    NgIf,
     MatMenu,
     MatMenuItem,
     MatMenuTrigger,
@@ -42,40 +46,124 @@ import { AnsweredForm } from '../../types';
     MatExpansionPanelTitle,
     MatExpansionPanelHeader,
     HasRoleDirective,
+    MatCard,
   ],
 })
-export class HeaderComponent implements OnInit {
+export class HeaderComponent {
   readonly AuthRole = AuthRole;
   @ViewChild('drawer') drawer!: MatSidenav;
-  routerSubscription!: Subscription;
-  formData: AnsweredForm | undefined;
 
-  constructor(
-    private readonly userService: UserService,
-    protected readonly authService: AuthService,
-    private readonly router: Router,
-    private notificationService: NotificationService,
-    private formDataService: FormDataService
-  ) {}
+  readonly userService = inject(UserService);
+  protected readonly authService = inject(AuthService);
+  private readonly router = inject(Router);
+  private readonly notificationService = inject(NotificationService);
+  private readonly formDataService = inject(FormDataService);
 
-  ngOnInit() {
-    // Subscribe to router events
-    this.routerSubscription = this.router.events
-      .pipe(filter((event) => event instanceof NavigationEnd)) // Listen only for NavigationEnd events
-      .subscribe(() => {
-        if (this.drawer.opened) {
-          this.drawer.close(); // Close the drawer if it's open
+  // Signals
+  readonly formData = toSignal(this.formDataService.formData$);
+  readonly loggedIn = this.userService.loggedIn;
+  readonly currentRoute = signal<string>('');
+
+  // Computed signals
+  readonly canAccessSubjects = computed(() => !!this.formData());
+
+  readonly canAccessReports = computed(() => {
+    const output = this.authService.hasRole([AuthRole.VEDENIE, AuthRole.ADMIN, AuthRole.TEACHER]);
+
+    console.log(output);
+    return output;
+  });
+
+  readonly userInitials = computed(() => {
+    const userData = this.userService.userData();
+    if (!userData) return '';
+    const firstInitial = userData.firstName.at(0)?.toUpperCase() ?? '';
+    const lastInitial = userData.lastName.at(0)?.toUpperCase() ?? '';
+    return firstInitial + lastInitial;
+  });
+
+  readonly userFullName = computed(() => {
+    const userData = this.userService.userData();
+    if (!userData) {
+      return '';
+    }
+
+    return `${userData.firstName} ${userData.lastName}`;
+  });
+
+  readonly userRole = computed(() => {
+    const userData = this.userService.userData();
+    if (!userData?.roles?.length) return '';
+    // Get the first role name or map to a display name
+    const role = userData.roles[0].name;
+    const roleMap: Record<string, string> = {
+      ADMIN: 'Administrátor',
+      TEACHER: 'Učiteľ',
+      VEDENIE: 'Vedenie',
+      STUDENT: 'Študent',
+    };
+    return roleMap[role] || role;
+  });
+
+  // Menu configuration
+  readonly subjectMenuItems: MenuItem[] = [
+    { label: 'Prehľad predmetov', icon: 'list_view', route: 'subjects' },
+    { label: 'Zaujímavé predmety', icon: 'interests', route: 'recommendation' },
+    { label: 'Podobné predmety', icon: 'bubble_chart', route: 'clustering' },
+    {
+      label: 'Predikcia absolvovania',
+      icon: 'check_circle',
+      route: 'passing-prediction',
+    },
+  ];
+
+  readonly reportMenuItems: MenuItem[] = [
+    {
+      label: 'Predmety podľa známok',
+      icon: 'summarize',
+      route: 'subject-reports',
+    },
+    {
+      label: 'Korelačná analýza známok',
+      icon: 'query_stats',
+      route: 'subjects-grades-correlation',
+    },
+    { label: 'Kľúčové slová', icon: 'vpn_key', route: 'keywords' },
+  ];
+
+  readonly userMenuItems: MenuItem[] = [
+    { label: 'Profil', icon: 'account_circle', route: 'profile' },
+    {
+      label: 'Odhlásiť sa',
+      icon: 'logout',
+      route: '',
+      action: () => this.logOut(),
+    },
+  ];
+
+  constructor() {
+    // Load user data if logged in
+    if (this.loggedIn()) {
+      this.userService.loadUserData();
+    }
+
+    // Fetch form data on init
+    this.formDataService.fetchFormData();
+
+    // Track current route
+    this.router.events
+      .pipe(filter((event) => event instanceof NavigationEnd))
+      .subscribe((event: NavigationEnd) => {
+        const route = event.urlAfterRedirects.split('/')[1] || '';
+        this.currentRoute.set(route);
+        if (this.drawer?.opened) {
+          this.drawer.close();
         }
       });
 
-    this.formDataService.fetchFormData();
-    this.formDataService.formData$.subscribe((data) => {
-      this.formData = data;
-    });
-  }
-
-  loggedIn() {
-    return this.userService.loggedIn();
+    // Set initial route
+    const initialRoute = this.router.url.split('/')[1] || '';
+    this.currentRoute.set(initialRoute);
   }
 
   logOut() {
@@ -84,52 +172,32 @@ export class HeaderComponent implements OnInit {
     });
   }
 
-  navigateToSubjects() {
-    this.router.navigate(['subjects']);
-  }
-
-  navigateToPrediction() {
-    this.router.navigate(['recommendation']);
-  }
-
-  navigateToProfile() {
-    this.router.navigate(['profile']);
+  navigate(route: string) {
+    this.router.navigate([route]);
   }
 
   navigateToHome() {
     this.router.navigate(['home']);
   }
 
-  navigateToSubjectChances() {
-    this.router.navigate(['subjects-chance']);
-  }
-
-  public navigateToSubjectsClustering() {
-    this.router.navigate(['clustering']);
-  }
-
-  navigateToPassingPrediction() {
-    this.router.navigate(['passing-prediction']);
-  }
-
-  navigateToSubjectsReports() {
-    this.router.navigate(['subject-reports']);
-  }
-
-  navigateToSubjectGradeCorrelation() {
-    this.router.navigate(['subjects-grades-correlation']);
-  }
-
   navigateToAdminPage() {
     this.router.navigate(['admin-page']);
-  }
-
-  navigateToKeywords() {
-    this.router.navigate(['keywords']);
   }
 
   openDrawer() {
     this.drawer.toggle();
     this.notificationService.hideSnackbar();
+  }
+
+  handleMenuItemClick(item: MenuItem) {
+    if (item.action) {
+      item.action();
+    } else {
+      this.navigate(item.route);
+    }
+  }
+
+  isMenuItemSelected(route: string): boolean {
+    return this.currentRoute() === route;
   }
 }

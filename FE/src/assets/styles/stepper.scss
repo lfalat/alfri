@@ -1,0 +1,89 @@
+.step {
+  min-height: 400px; /* Set a minimum height for each step */
+}
+
+@media (max-width: 768px) {
+  .step {
+    min-height: 300px; /* Adjust height for smaller screens */
+  }
+}
+
+// Modern form field styling to match scratch design
+::ng-deep {
+  // Button container styling
+  .mat-mdc-form-field {
+    &.mat-form-field-appearance-fill {
+      .mat-mdc-text-field-wrapper {
+        background-color: #f1f5f9 !important;
+        border-radius: 0.5rem 0.5rem 0 0 !important;
+        border-bottom: 2px solid #cbd5e1 !important;
+
+        &:hover {
+          background-color: #e2e8f0 !important;
+        }
+      }
+
+      &.mat-focused {
+        .mat-mdc-text-field-wrapper {
+          border-bottom-color: #2563eb !important;
+        }
+
+        .mat-mdc-floating-label {
+          color: #2563eb !important;
+        }
+      }
+    }
+  }
+
+  .mat-mdc-floating-label {
+    color: #64748b !important;
+  }
+
+  .mat-mdc-input-element {
+    color: #0f172a !important;
+  }
+
+  // Button styling
+  .mat-mdc-raised-button,
+  .mat-mdc-button {
+    border-radius: 0.75rem !important;
+    padding: 0.75rem 1.5rem !important;
+    font-weight: 600 !important;
+    transition: all 0.2s ease !important;
+    text-transform: none !important;
+
+    &:not([disabled]) {
+      &:hover {
+        transform: translateY(-1px);
+      }
+    }
+  }
+
+  .mat-mdc-raised-button {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05) !important;
+
+    &:hover:not([disabled]) {
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
+    }
+
+    &.mat-primary {
+      background-color: #2563eb !important;
+    }
+  }
+
+  .mat-mdc-button {
+    color: #64748b !important;
+
+    &:hover:not([disabled]) {
+      background-color: #f1f5f9 !important;
+    }
+  }
+}
+
+.modern-button-container {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 1rem;
+  margin-top: 1rem;
+  border-top: 1px solid #e0f2fe;
+}

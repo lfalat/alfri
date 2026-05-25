@@ -1,69 +1,54 @@
-<div class="h-100 d-flex justify-content-center align-items-center">
-  <div
-    class="registration-form col-12 col-md-10 col-lg-8 col-xl-8 col-xxl-6 container"
-  >
-    <mat-card class="d-flex registration-form-wrapper">
-      <div
-        class="d-flex col-12 col-md-6 justify-content-center flex-column align-items-center info-wrapper p-3"
-      >
-        <h2>Prihlásenie</h2>
-        <img
-          src="assets/images/brain_lb.png"
-          class="img-fluid w-75"
-          alt="logo"
-        />
-        <h5 class="p-4">
-          Prvý inteligentný asistent pre študentov a učiteľov FRI UNIZA.
-        </h5>
+<div class="login-container container">
+  <div class="login-wrapper">
+    <div class="row mat-elevation-z4">
+      <!-- Left Panel - Info Section -->
+      <div class="info-panel col-12 col-md-6">
+        <div class="pattern-grid"></div>
+        <div class="blob blob-top"></div>
+        <div class="blob blob-bottom"></div>
+        <div class="info-content">
+          <div class="brain-image-wrapper">
+            <img
+              ngSrc="assets/images/brain_lb.png"
+              alt="ALFRI Brain"
+              class="brain-image"
+              height="1012"
+              width="1408"
+              priority
+            />
+          </div>
+          <h2 class="info-title">Prvý inteligentný asistent pre študentov a učiteľov FRI UNIZA.</h2>
+        </div>
       </div>
 
-      <div
-        class="container-fluid p-3 form-wrapper d-flex col-12 col-md-6 m-0 align-items-center"
-      >
-        <form
-          [formGroup]="loginForm"
-          (ngSubmit)="onSubmit()"
-          class="d-flex flex-column row-gap-2 w-100 m-1"
-        >
-          <mat-form-field appearance="outline">
-            <mat-label>Email</mat-label>
-            <input matInput formControlName="email" required type="email" />
-            <mat-error *ngIf="loginForm.controls['email'].invalid">
-              Neplatná emailová adresa.
-            </mat-error>
-          </mat-form-field>
-
-          <mat-form-field appearance="outline">
-            <mat-label>Heslo</mat-label>
-            <input
-              matInput
-              formControlName="password"
-              type="password"
-              required
-              pattern="^(?=.*[A-Z])(?=.*[0-9])(?=.*[a-z]).{8,}$"
-            />
-            <mat-error *ngIf="loginForm.controls['password'].invalid">
-              Heslo nie je príliš komplexné.
-            </mat-error>
-          </mat-form-field>
-
-          <div class="text-center">
-            <p>
-              Nemáte účet ?
-              <a
-                class="text-primary"
-                href="javascript:void(0)"
-                (click)="redirectToRegistration()"
-                >Registrujte sa</a
-              >
-            </p>
+      <!-- Right Panel - Form Section -->
+      <div class="form-panel col-12 col-md-6">
+        <div class="form-content">
+          <div class="form-header">
+            <h1 class="form-title">Prihlásenie</h1>
+            <p class="form-subtitle">Zadajte svoje prihlasovacie údaje pre prístup.</p>
           </div>
 
-          <button mat-raised-button color="primary" type="submit">
-            Prihlásiť sa
-          </button>
-        </form>
+          <form (ngSubmit)="onSubmit()" class="login-form">
+            <button mat-raised-button color="primary" class="submit-button" type="submit">
+              Prihlásiť sa
+            </button>
+          </form>
+
+          <div class="divider">
+            <span>Alebo</span>
+          </div>
+
+          <div class="auth-prompt">
+            <p>
+              Nemáte účet?
+              <a class="auth-link" href="javascript:void(0)" (click)="redirectToRegistration()">
+                Registrujte sa
+              </a>
+            </p>
+          </div>
+        </div>
       </div>
-    </mat-card>
+    </div>
   </div>
 </div>

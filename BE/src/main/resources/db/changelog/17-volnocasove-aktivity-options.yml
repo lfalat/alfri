@@ -1,0 +1,126 @@
+databaseChangeLog:
+  - changeSet:
+      id: 17-insert-volnocasove-aktivity-options
+      author: auto-generated
+      changes:
+        - insert:
+            tableName: question_option
+            columns:
+              - column: { name: question_id, valueNumeric: 127 }
+              - column: { name: question_option, value: 'Šport (futbal, basketbal, volejbal)' }
+              - column: { name: question_value, value: 'sport_team' }
+        - insert:
+            tableName: question_option
+            columns:
+              - column: { name: question_id, valueNumeric: 127 }
+              - column: { name: question_option, value: 'Individuálny šport (beh, plávanie, cyklistika)' }
+              - column: { name: question_value, value: 'sport_individual' }
+        - insert:
+            tableName: question_option
+            columns:
+              - column: { name: question_id, valueNumeric: 127 }
+              - column: { name: question_option, value: 'Fitnes a cvičenie' }
+              - column: { name: question_value, value: 'fitness' }
+        - insert:
+            tableName: question_option
+            columns:
+              - column: { name: question_id, valueNumeric: 127 }
+              - column: { name: question_option, value: 'Čítanie kníh' }
+              - column: { name: question_value, value: 'reading' }
+        - insert:
+            tableName: question_option
+            columns:
+              - column: { name: question_id, valueNumeric: 127 }
+              - column: { name: question_option, value: 'Programovanie a kódovanie' }
+              - column: { name: question_value, value: 'programming' }
+        - insert:
+            tableName: question_option
+            columns:
+              - column: { name: question_id, valueNumeric: 127 }
+              - column: { name: question_option, value: 'Hry (videohry, stolné hry)' }
+              - column: { name: question_value, value: 'gaming' }
+        - insert:
+            tableName: question_option
+            columns:
+              - column: { name: question_id, valueNumeric: 127 }
+              - column: { name: question_option, value: 'Sledovanie filmov a seriálov' }
+              - column: { name: question_value, value: 'watching_movies' }
+        - insert:
+            tableName: question_option
+            columns:
+              - column: { name: question_id, valueNumeric: 127 }
+              - column: { name: question_option, value: 'Hudba (hranie na nástroj, spev)' }
+              - column: { name: question_value, value: 'music_playing' }
+        - insert:
+            tableName: question_option
+            columns:
+              - column: { name: question_id, valueNumeric: 127 }
+              - column: { name: question_option, value: 'Počúvanie hudby' }
+              - column: { name: question_value, value: 'music_listening' }
+        - insert:
+            tableName: question_option
+            columns:
+              - column: { name: question_id, valueNumeric: 127 }
+              - column: { name: question_option, value: 'Kreslenie a maľovanie' }
+              - column: { name: question_value, value: 'art_drawing' }
+        - insert:
+            tableName: question_option
+            columns:
+              - column: { name: question_id, valueNumeric: 127 }
+              - column: { name: question_option, value: 'Fotografovanie a video' }
+              - column: { name: question_value, value: 'photography' }
+        - insert:
+            tableName: question_option
+            columns:
+              - column: { name: question_id, valueNumeric: 127 }
+              - column: { name: question_option, value: 'Cestovanie' }
+              - column: { name: question_value, value: 'traveling' }
+        - insert:
+            tableName: question_option
+            columns:
+              - column: { name: question_id, valueNumeric: 127 }
+              - column: { name: question_option, value: 'Turistika a prechádzky v prírode' }
+              - column: { name: question_value, value: 'hiking' }
+        - insert:
+            tableName: question_option
+            columns:
+              - column: { name: question_id, valueNumeric: 127 }
+              - column: { name: question_option, value: 'Varenie a pečenie' }
+              - column: { name: question_value, value: 'cooking' }
+        - insert:
+            tableName: question_option
+            columns:
+              - column: { name: question_id, valueNumeric: 127 }
+              - column: { name: question_option, value: 'Dobrovoľníctvo' }
+              - column: { name: question_value, value: 'volunteering' }
+        - insert:
+            tableName: question_option
+            columns:
+              - column: { name: question_id, valueNumeric: 127 }
+              - column: { name: question_option, value: 'Stretávanie sa s priateľmi' }
+              - column: { name: question_value, value: 'socializing' }
+        - insert:
+            tableName: question_option
+            columns:
+              - column: { name: question_id, valueNumeric: 127 }
+              - column: { name: question_option, value: 'Online komunity a sociálne siete' }
+              - column: { name: question_value, value: 'social_media' }
+        - insert:
+            tableName: question_option
+            columns:
+              - column: { name: question_id, valueNumeric: 127 }
+              - column: { name: question_option, value: 'Študentské organizácie a kluby' }
+              - column: { name: question_value, value: 'student_clubs' }
+        - insert:
+            tableName: question_option
+            columns:
+              - column: { name: question_id, valueNumeric: 127 }
+              - column: { name: question_option, value: 'Práca na projektoch (osobné, open-source)' }
+              - column: { name: question_value, value: 'personal_projects' }
+        - insert:
+            tableName: question_option
+            columns:
+              - column: { name: question_id, valueNumeric: 127 }
+              - column: { name: question_option, value: 'Brigády a part-time práca' }
+              - column: { name: question_value, value: 'part_time_work' }
+

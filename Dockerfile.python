@@ -1,0 +1,31 @@
+# Dockerfile.python
+# Builds the Flask ML service from the flask-server directory
+FROM python:3.12-slim
+
+ENV PYTHONUNBUFFERED=1
+WORKDIR /app
+
+# Create non-root user
+RUN groupadd -r app && useradd -r -g app -d /home/app -m -s /usr/sbin/nologin app
+
+# Copy requirements and install
+COPY flask-server/requirements.txt /app/requirements.txt
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends build-essential gcc curl \
+    && pip install --no-cache-dir --timeout 300 -r /app/requirements.txt \
+    && apt-get purge -y --auto-remove build-essential gcc \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy application code
+COPY flask-server /app
+RUN chown -R app:app /app
+
+ENV MODEL_DIR=/app/ml_service/models
+ENV FLASK_ENV=production
+USER app
+
+EXPOSE 5000
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s CMD curl -f http://127.0.0.1:5000/health/live || exit 1
+
+CMD ["gunicorn", "-w", "2", "-b", "0.0.0.0:5000", "ml_service.wsgi:app"]
+

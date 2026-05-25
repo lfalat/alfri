@@ -10,13 +10,13 @@ import sk.uniza.fri.alfri.dto.SubjectGradeCorrelationDto;
 import sk.uniza.fri.alfri.entity.SubjectGradeCorrelation;
 
 @Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = ComponentModel.SPRING,
-    uses = {SubjectMapper.class})
+        uses = {SubjectMapper.class})
 public interface SubjectGradeCorrelationMapper {
-  SubjectGradeCorrelation toEntity(SubjectGradeCorrelationDto subjectGradeCorrelationDto);
+    SubjectGradeCorrelation toEntity(SubjectGradeCorrelationDto subjectGradeCorrelationDto);
 
-  SubjectGradeCorrelationDto toDto(SubjectGradeCorrelation subjectGradeCorrelation);
+    SubjectGradeCorrelationDto toDto(SubjectGradeCorrelation subjectGradeCorrelation);
 
-  @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-  SubjectGradeCorrelation partialUpdate(SubjectGradeCorrelationDto subjectGradeCorrelationDto,
-      @MappingTarget SubjectGradeCorrelation subjectGradeCorrelation);
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    SubjectGradeCorrelation partialUpdate(SubjectGradeCorrelationDto subjectGradeCorrelationDto,
+                                          @MappingTarget SubjectGradeCorrelation subjectGradeCorrelation);
 }

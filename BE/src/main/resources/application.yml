@@ -14,10 +14,19 @@ spring:
     hibernate:
       # Spring Boot won't modify the database based on @Entity classes - we must update the database ourselves
       ddl-auto: none
+  liquibase:
+    enabled: true
+    change-log: classpath:db/changelog/db.changelog-master.yml
+    contexts: ${LIQUIBASE_CONTEXTS:base}
   security:
     jwt:
       secret-key: ${JWT_PROD_SECRET_KEY}
       expiration-time: ${JWT_PROD_EXPIRATION_TIME}
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${KEYCLOAK_ISSUER_URI}
+          jwk-set-uri: ${KEYCLOAK_JWK_SET_URI}
 
 python:
   executable_path: ${PYTHON_PROD_EXECUTABLE_PATH}
@@ -26,7 +35,38 @@ python:
   clustering_prediction_MAN_model_path: ${PROD_CLUSTERING_PREDICTION_MODEL_MAN_PATH}
   passing_change_prediction_script_path: ${PROD_PASSING_CHANGE_PREDICTION_SCRIPT_PATH}
   passing_mark_prediction_script_path: ${PROD_PASSING_MARK_PREDICTION_SCRIPT_PATH}
+  service:
+    base-url: ${PYTHON_SERVICE_BASE_URL:http://python-service:8000}
 
-frontend-url: ${FRONTEND_PROD_URL}
-default-user-email: "-" # no default user in production
+resilience4j:
+  circuitbreaker:
+    instances:
+      pythonService:
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 5
+        waitDurationInOpenState: 30s
+        failureRateThreshold: 50
+        recordExceptions:
+          - sk.uniza.fri.alfri.infrastructure.exception.PythonServiceServerException
+  retry:
+    instances:
+      pythonServiceRetry:
+        maxAttempts: 2
+        waitDuration: 200ms
+        retryExceptions:
+          - sk.uniza.fri.alfri.infrastructure.exception.PythonServiceServerException
+
+keycloak:
+  issuer-uri: ${KEYCLOAK_ISSUER_URI}
+  internal-issuer-uri: ${KEYCLOAK_INTERNAL_ISSUER_URI:${KEYCLOAK_ISSUER_URI}}
+  realm: ${KEYCLOAK_REALM}
+  client-id: ${KEYCLOAK_CLIENT_ID}
+  admin-realm: ${KEYCLOAK_ADMIN_REALM}
+  admin-client-id: ${KEYCLOAK_ADMIN_CLIENT_ID}
+  admin-username: ${KEYCLOAK_ADMIN_USERNAME}
+  admin-password: ${KEYCLOAK_ADMIN_PASSWORD}
+  events:
+    webhook-secret: ${KEYCLOAK_EVENT_WEBHOOK_SECRET}
+# no default user in production
+default-user-email: "-"
 default-user-roles:

@@ -1,0 +1,453 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  min-height: 100vh;
+  margin: 0;
+  background: #f0f9ff;
+  color: #0f172a;
+  font-family:
+    "Plus Jakarta Sans",
+    Inter,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+}
+
+.alfri-toolbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 300;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 64px;
+  padding: 0 16px;
+  background: #ffffff;
+  box-shadow: 0 2px 4px rgba(15, 23, 42, 0.12);
+}
+
+.alfri-brand {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: #1f2937;
+  font-size: 20px;
+  font-weight: 500;
+  line-height: 1;
+}
+
+.alfri-logo {
+  display: block;
+  width: 38px;
+  height: 38px;
+  padding: 4px;
+  object-fit: contain;
+}
+
+.alfri-auth {
+  min-height: calc(100vh - 64px);
+  margin-top: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.alfri-card {
+  width: min(100%, 80rem);
+  min-height: 600px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  background: #ffffff;
+  border: 1px solid #e0f2fe;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.08);
+  overflow: hidden;
+}
+
+.alfri-info {
+  position: relative;
+  min-height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 48px;
+  overflow: hidden;
+  text-align: center;
+  background: linear-gradient(to bottom right, #ecfeff, #dbeafe);
+}
+
+.alfri-pattern {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(#0e7490 1px, transparent 1px);
+  background-size: 20px 20px;
+  opacity: 0.05;
+}
+
+.alfri-blob {
+  position: absolute;
+  width: 10rem;
+  height: 10rem;
+  border-radius: 999px;
+  filter: blur(3rem);
+}
+
+.alfri-blob-top {
+  top: -2.5rem;
+  right: -2.5rem;
+  background: rgba(249, 115, 22, 0.1);
+}
+
+.alfri-blob-bottom {
+  bottom: -2.5rem;
+  left: -2.5rem;
+  background: rgba(14, 116, 144, 0.1);
+}
+
+.alfri-info-content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.alfri-brain {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.alfri-info-title {
+  margin: 0;
+  font-size: 30px;
+  line-height: 1.3;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.alfri-panel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 48px;
+  background: #ffffff;
+}
+
+.alfri-form-content {
+  width: 100%;
+  max-width: 28rem;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.alfri-header {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.alfri-title {
+  margin: 0;
+  font-size: 30px;
+  line-height: 1.2;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.alfri-subtitle {
+  margin: 0;
+  color: #64748b;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.alfri-form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.alfri-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.alfri-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #334155;
+}
+
+.alfri-input {
+  display: block;
+  width: 100%;
+  min-height: 46px;
+  padding: 11px 14px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  background: #f8fafc;
+  color: #0f172a;
+  font: inherit;
+  font-size: 14px;
+  outline: none;
+  transition:
+    border-color 120ms ease,
+    box-shadow 120ms ease,
+    background 120ms ease;
+}
+
+.alfri-input:focus {
+  border-color: #0e7490;
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(14, 116, 144, 0.12);
+}
+
+.alfri-input[aria-invalid="true"] {
+  border-color: #dc2626;
+}
+
+.alfri-password-field {
+  position: relative;
+}
+
+.alfri-password-input {
+  padding-right: 48px;
+}
+
+.alfri-password-toggle {
+  position: absolute;
+  top: 50%;
+  right: 8px;
+  display: inline-flex;
+  width: 34px;
+  height: 34px;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: #64748b;
+  cursor: pointer;
+  transform: translateY(-50%);
+}
+
+.alfri-password-toggle:hover,
+.alfri-password-toggle:focus-visible {
+  background: #e0f2fe;
+  color: #0e7490;
+  outline: none;
+}
+
+.alfri-eye {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.8;
+}
+
+.alfri-eye-closed {
+  display: none;
+}
+
+.alfri-password-toggle[aria-pressed="true"] .alfri-eye-open {
+  display: none;
+}
+
+.alfri-password-toggle[aria-pressed="true"] .alfri-eye-closed {
+  display: block;
+}
+
+.alfri-error,
+.alfri-message-error {
+  color: #dc2626;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.alfri-message {
+  padding: 12px 14px;
+  border-radius: 8px;
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.alfri-message-error {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+}
+
+.alfri-message-success {
+  color: #166534;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+}
+
+.alfri-message-warning {
+  color: #92400e;
+  background: #fffbeb;
+  border: 1px solid #fde68a;
+}
+
+.alfri-message-info {
+  color: #075985;
+  background: #f0f9ff;
+  border: 1px solid #bae6fd;
+}
+
+.alfri-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.alfri-primary {
+  width: 100%;
+  min-height: 46px;
+  border: 0;
+  border-radius: 8px;
+  background: #0e7490;
+  color: #ffffff;
+  cursor: pointer;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  transition:
+    background 120ms ease,
+    transform 120ms ease;
+}
+
+.alfri-primary:hover {
+  background: #155e75;
+}
+
+.alfri-primary:active {
+  transform: translateY(1px);
+}
+
+.alfri-secondary-row {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.alfri-link {
+  color: #0e7490;
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.alfri-link:hover {
+  text-decoration: underline;
+}
+
+.alfri-divider {
+  position: relative;
+  text-align: center;
+}
+
+.alfri-divider::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: 0;
+  left: 0;
+  height: 1px;
+  background: #e2e8f0;
+}
+
+.alfri-divider span {
+  position: relative;
+  padding: 0 8px;
+  background: #ffffff;
+  color: #64748b;
+  font-size: 14px;
+}
+
+.alfri-prompt {
+  margin: 0;
+  color: #475569;
+  font-size: 14px;
+  text-align: center;
+}
+
+.alfri-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #334155;
+  font-size: 14px;
+}
+
+.alfri-social {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.alfri-social-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 42px;
+  padding: 8px 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  color: #334155;
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+@media (max-width: 900px) {
+  .alfri-card {
+    grid-template-columns: 1fr;
+  }
+
+  .alfri-info {
+    min-height: 360px;
+    padding: 32px;
+  }
+
+  .alfri-panel {
+    padding: 32px;
+  }
+
+  .alfri-info-title,
+  .alfri-title {
+    font-size: 24px;
+  }
+}
+
+@media (max-width: 520px) {
+  .alfri-auth {
+    padding: 0;
+  }
+
+  .alfri-card {
+    min-height: calc(100vh - 64px);
+    border: 0;
+    border-radius: 0;
+  }
+
+  .alfri-info {
+    min-height: 300px;
+    padding: 24px;
+  }
+
+  .alfri-panel {
+    padding: 28px 20px;
+  }
+}

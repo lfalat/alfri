@@ -1,0 +1,2 @@
+export const INFORMATICS_STUDY_PROGRAM_ID = 3;
+export const MANAGEMENT_STUDY_PROGRAM_ID = 4;

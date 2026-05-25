@@ -1,0 +1,25 @@
+databaseChangeLog:
+  - changeSet:
+      id: 21-department-data
+      author: auto-generated
+      changes:
+        - insert:
+            tableName: department
+            columns:
+              - column: { name: department_id, valueNumeric: 3 }
+              - column: { name: name, value: 'Manazment' }
+              - column: { name: abbreviation, value: 'MAN' }
+        - insert:
+            tableName: department
+            columns:
+              - column: { name: department_id, valueNumeric: 4 }
+              - column: { name: name, value: 'Informatika' }
+              - column: { name: abbreviation, value: 'INF' }
+  - changeSet:
+      id: 21-student-data
+      author: auto-generated
+      changes:
+        - sqlFile:
+            path: db/data/generated_student_data.sql
+            relativeToChangelogFile: false
+

@@ -1,80 +1,170 @@
-<div
-  class="d-flex justify-content-center align-items-center h-100"
->
-  <div class="row bg-white w-100">
-  <ng-container *ngIf="loading; else content">
-    <ngx-skeleton-loader count="10" appearance="line"></ngx-skeleton-loader>
-  </ng-container>
+<div class="d-flex justify-content-center align-items-center h-100">
+  <mat-card class="modern-form-card">
+    @if (loading()) {
+      <div class="modern-form-header">
+        <div class="mb-3">
+          <ngx-skeleton-loader
+            count="1"
+            appearance="line"
+            [theme]="{
+              'border-radius': '8px',
+              height: '36px',
+              width: '60%',
+              'margin-bottom': '12px',
+            }"
+          >
+          </ngx-skeleton-loader>
+        </div>
+        <ngx-skeleton-loader
+          count="1"
+          appearance="line"
+          [theme]="{
+            'border-radius': '6px',
+            height: '20px',
+            width: '80%',
+          }"
+        >
+        </ngx-skeleton-loader>
+      </div>
+      <div class="skeleton-stepper-container">
+        <div class="d-flex justify-content-between align-items-center px-4 py-3">
+          @for (step of [1, 2, 3, 4]; track step) {
+            <div class="d-flex align-items-center gap-2">
+              <ngx-skeleton-loader
+                count="1"
+                appearance="circle"
+                [theme]="{
+                  'border-radius': '50%',
+                  width: '32px',
+                  height: '32px',
+                }"
+              >
+              </ngx-skeleton-loader>
+              <ngx-skeleton-loader
+                count="1"
+                appearance="line"
+                [theme]="{
+                  'border-radius': '4px',
+                  height: '14px',
+                  width: '120px',
+                }"
+              >
+              </ngx-skeleton-loader>
+            </div>
+          }
+        </div>
+      </div>
+      <div class="p-4">
+        <div class="mb-3">
+          <ngx-skeleton-loader
+            count="1"
+            appearance="line"
+            [theme]="{
+              'border-radius': '6px',
+              height: '18px',
+              width: '90%',
+              'margin-bottom': '24px',
+            }"
+          >
+          </ngx-skeleton-loader>
+        </div>
+        <div class="row">
+          @for (field of [1, 2, 3]; track field) {
+            <div class="col-12 col-md-6 col-lg-4 mb-3">
+              <ngx-skeleton-loader
+                count="1"
+                appearance="line"
+                [theme]="{
+                  'border-radius': '8px 8px 0 0',
+                  height: '56px',
+                  'background-color': '#f1f5f9',
+                }"
+              >
+              </ngx-skeleton-loader>
+            </div>
+          }
+        </div>
+        <div class="d-flex justify-content-end mt-4 pt-3" style="border-top: 1px solid #e0f2fe">
+          <ngx-skeleton-loader
+            count="1"
+            appearance="line"
+            [theme]="{
+              'border-radius': '12px',
+              height: '40px',
+              width: '120px',
+            }"
+          >
+          </ngx-skeleton-loader>
+        </div>
+      </div>
+    } @else {
+      <mat-card-header class="modern-form-header">
+        <mat-card-title class="modern-form-title">
+          {{ form.title }}
+        </mat-card-title>
 
-  <ng-template #content>
-      <div class="px-4">
-      <h2>{{ form.title }}</h2>
-      <p>
-        {{ form.description }}
-      </p>
-    </div>
-    <mat-stepper
-      linear
-      (selectionChange)="onStepChange($event)"
-      class="w-100"
-      [orientation]="(stepperOrientation | async)!"
-    >
-      <mat-step
-        [stepControl]="formGroups[0]"
-        class="step"
-        [label]="form.sections[0].sectionTitle"
+        <mat-card-subtitle class="modern-form-subtitle">
+          {{ form.description }}
+        </mat-card-subtitle>
+      </mat-card-header>
+      <mat-stepper
+        linear
+        (selectionChange)="onStepChange($event)"
+        class="w-100 modern-stepper"
+        [orientation]="(stepperOrientation | async)!"
       >
-        <app-basic-information-step
-          [formGroup]="formGroups[0]"
-          [section]="form.sections[0]"
-        ></app-basic-information-step>
-      </mat-step>
-
-      <mat-step
-        [stepControl]="formGroups[1]"
-        class="step"
-        [label]="form.sections[1].sectionTitle"
-      >
-        <ng-template matStepContent>
-          <app-mandatory-subjects-step
-            [form]="form"
-            [formGroup]="formGroups[1]"
-            [section]="form.sections[1]"
-            [basicInformationFormGroup]="formGroups[0]"
+        <mat-step
+          [stepControl]="formGroups[0]"
+          class="step"
+          [label]="form.sections[0].sectionTitle"
+        >
+          <app-basic-information-step
+            [formGroup]="formGroups[0]"
+            [section]="form.sections[0]"
+          ></app-basic-information-step>
+        </mat-step>
+        <mat-step
+          [stepControl]="formGroups[1]"
+          class="step"
+          [label]="form.sections[1].sectionTitle"
+        >
+          <ng-template matStepContent>
+            <app-mandatory-subjects-step
+              [form]="form"
+              [formGroup]="formGroups[1]"
+              [section]="form.sections[1]"
+              [basicInformationFormGroup]="formGroups[0]"
+              [activeStep]="activeStep"
+              [shouldFetchData]="formGroups[1].invalid"
+              [formAnswers]="existingAnswers"
+            ></app-mandatory-subjects-step>
+          </ng-template>
+        </mat-step>
+        <mat-step
+          [stepControl]="formGroups[2]"
+          class="step"
+          [label]="form.sections[2].sectionTitle"
+        >
+          <app-focus-step
+            [formGroup]="formGroups[2]"
+            [section]="form.sections[2]"
             [activeStep]="activeStep"
-            [shouldFetchData]="formGroups[1].invalid"
-            [formAnswers]="existingAnswers"
-          ></app-mandatory-subjects-step>
-        </ng-template>
-      </mat-step>
-
-      <mat-step
-        [stepControl]="formGroups[2]"
-        class="step"
-        [label]="form.sections[2].sectionTitle"
-      >
-        <app-focus-step
-          [formGroup]="formGroups[2]"
-          [section]="form.sections[2]"
-          [activeStep]="activeStep"
+          >
+          </app-focus-step>
+        </mat-step>
+        <mat-step
+          [stepControl]="formGroups[3]"
+          class="step"
+          [label]="form.sections[3].sectionTitle"
         >
-        </app-focus-step>
-      </mat-step>
-
-      <mat-step
-        [stepControl]="formGroups[3]"
-        class="step"
-        [label]="form.sections[3].sectionTitle"
-      >
-        <app-hobby-step
-          [currentFormGroup]="formGroups[3]"
-          [section]="form.sections[3]"
-          (submitForm)="onSubmit()"
-        >
-        </app-hobby-step>
-      </mat-step>
-    </mat-stepper>
-
-  </ng-template>
-  </div>
+          <app-hobby-step
+            [currentFormGroup]="formGroups[3]"
+            [section]="form.sections[3]"
+            (submitForm)="onSubmit()"
+          >
+          </app-hobby-step>
+        </mat-step>
+      </mat-stepper>
+    }
+  </mat-card>
 </div>

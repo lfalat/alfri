@@ -1,0 +1,32 @@
+databaseChangeLog:
+  - changeSet:
+      id: 14-migrate-user-role-data
+      author: liquibase
+      changes:
+        - sql:
+            comment: "Migrate existing role_id data from user table to user_role table"
+            sql: |
+              INSERT INTO user_role (user_id, role_id)
+              SELECT user_id, role_id
+              FROM "user"
+              WHERE role_id IS NOT NULL
+              ON CONFLICT DO NOTHING;
+  - changeSet:
+      id: 14-drop-user-role-id-column
+      author: liquibase
+      changes:
+        - dropColumn:
+            tableName: user
+            columnName: role_id
+            schemaName: public
+      rollback:
+        - addColumn:
+            tableName: user
+            schemaName: public
+            columns:
+              - column:
+                  name: role_id
+                  type: INT
+                  constraints:
+                    nullable: true
+

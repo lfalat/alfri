@@ -10,7 +10,7 @@ import { MatOption } from '@angular/material/autocomplete';
 import { MatRadioButton, MatRadioGroup } from '@angular/material/radio';
 import { MatSelect } from '@angular/material/select';
 import { MatSlider, MatSliderThumb } from '@angular/material/slider';
-import { NgForOf, NgIf, NgSwitch, NgSwitchCase } from '@angular/common';
+
 import { Question } from '../../types';
 
 @Component({
@@ -32,10 +32,6 @@ import { Question } from '../../types';
     MatSelect,
     MatSlider,
     MatSliderThumb,
-    NgForOf,
-    NgIf,
-    NgSwitchCase,
-    NgSwitch,
     ReactiveFormsModule,
   ],
   templateUrl: './form-question.component.html',
@@ -72,8 +68,8 @@ export class FormQuestionComponent {
   checkboxControls = computed(() => {
     const question = this.questionComputed();
     if (question.answerType === QuestionTypes.CHECKBOX) {
-      return question.options.map((_, index) =>
-        this.formGroup.get(`${question.questionIdentifier}${index}`) as FormControl
+      return question.options.map(
+        (_, index) => this.formGroup.get(`${question.questionIdentifier}${index}`) as FormControl,
       );
     }
     return [];

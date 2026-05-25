@@ -28,30 +28,30 @@ import java.util.List;
 @Table(name = "questionnaire_section")
 @FilterDef(name = "answeredByUserFilter", parameters = @ParamDef(name = "userId", type = Integer.class))
 public class QuestionnaireSection {
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @ColumnDefault("nextval('questionnaire_section_id_seq')")
-  @Column(name = "section_id", nullable = false)
-  private Integer sectionId;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @ColumnDefault("nextval('questionnaire_section_id_seq')")
+    @Column(name = "section_id", nullable = false)
+    private Integer sectionId;
 
-  @ManyToOne(fetch = FetchType.LAZY, optional = false)
-  @JoinColumn(name = "questionnaire_id", nullable = false)
-  private Questionnaire questionnaire;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "questionnaire_id", nullable = false)
+    private Questionnaire questionnaire;
 
-  @Basic
-  @Column(name = "section_title")
-  private String sectionTitle;
+    @Basic
+    @Column(name = "section_title")
+    private String sectionTitle;
 
-  @Basic
-  @Column(name = "section_description")
-  private String sectionDescription;
+    @Basic
+    @Column(name = "section_description")
+    private String sectionDescription;
 
-  @Basic
-  @Column(name = "should_fetch_data")
-  private Boolean shouldFetchData;
+    @Basic
+    @Column(name = "should_fetch_data")
+    private Boolean shouldFetchData;
 
-  @OneToMany(mappedBy = "questionnaireSection", fetch = FetchType.LAZY, cascade = CascadeType.ALL,
-      orphanRemoval = true)
-  @Filter(name = "answeredByUserFilter", condition = "EXISTS (SELECT 1 FROM answer a WHERE a.question_id = question_id AND a.user_id = :userId)")
-  private List<Question> questions = new ArrayList<>();
+    @OneToMany(mappedBy = "questionnaireSection", fetch = FetchType.EAGER, cascade = CascadeType.ALL,
+            orphanRemoval = true)
+    @Filter(name = "answeredByUserFilter", condition = "EXISTS (SELECT 1 FROM answer a WHERE a.question_id = question_id AND a.user_id = :userId)")
+    private List<Question> questions = new ArrayList<>();
 }

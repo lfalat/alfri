@@ -1,76 +1,29 @@
+import { inject, Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-import { Injectable } from '@angular/core';
 import {
-  FocusCategorySumDTO,
-  KeywordDTO,
-  Page, StudentYearCountDTO,
+  Page,
   SubjectDto,
   SubjectExtendedDto,
   SubjectGradesDto,
   SubjectPassingPrediction,
+  GradeAverageByYearDto,
 } from '../types';
 import { Observable } from 'rxjs';
-import { environment } from '../../environments/environment';
+import { ConfigService } from '@services/config.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class SubjectService {
-  private readonly URL = `${environment.API_URL}/subject`;
-
-  constructor(private http: HttpClient) {}
-
-  public getSubjectsByStudyProgramId(
-    studyProgramId: number,
-    pageNumber: number,
-    pageSize: number,
-  ) {
-    const httpOptions = {
-      headers: new HttpHeaders({
-        'Content-Type': 'application/json',
-      }),
-    };
-
-    let urlParameters: HttpParams = new HttpParams();
-    urlParameters = urlParameters
-      .append('page', pageNumber)
-      .append('size', pageSize)
-      .append('search', `id.studyProgramId:${studyProgramId}`);
-
-    return this.http.get<Page<SubjectDto>>(`${this.URL}`, {
-      params: urlParameters,
-      headers: httpOptions.headers,
-    });
-  }
-
-  public getMandatorySubjectsByStudyProgramIdAndYear(
-    pageNumber: number,
-    pageSize: number,
-    studyProgramId: number,
-    studyYear: number,
-  ) {
-    const httpOptions = {
-      headers: new HttpHeaders({
-        'Content-Type': 'application/json',
-      }),
-    };
-
-    let urlParameters: HttpParams = new HttpParams();
-    urlParameters = urlParameters
-      .append('page', pageNumber)
-      .append('size', pageSize)
-      .append('search', `id.studyProgramId:${studyProgramId},recommendedYear<${studyYear - 1},obligation:Pov.`);
-
-    return this.http.get<Page<SubjectDto>>(`${this.URL}`, {
-      params: urlParameters,
-      headers: httpOptions.headers,
-    });
-  }
+  private readonly configService = inject(ConfigService);
+  private readonly URL = `${this.configService.apiUrl()}/subject`;
+  private readonly http = inject(HttpClient);
 
   public getSubjectsWithFocusByStudyProgramId(
     studyProgramId: number,
     pageNumber: number,
     pageSize: number,
+    sort?: string,
   ): Observable<Page<SubjectExtendedDto>> {
     const httpOptions = {
       headers: new HttpHeaders({
@@ -82,7 +35,11 @@ export class SubjectService {
     urlParameters = urlParameters
       .append('page', pageNumber)
       .append('size', pageSize)
-      .append('search', `id.studyProgramId:${studyProgramId}`);
+      .append('search', `studyProgram.id:${studyProgramId}`);
+
+    if (sort) {
+      urlParameters = urlParameters.append('sort', sort);
+    }
 
     return this.http.get<Page<SubjectExtendedDto>>(`${this.URL}/withFocus`, {
       params: urlParameters,
@@ -90,12 +47,12 @@ export class SubjectService {
     });
   }
 
-  public filterSubject(
-    mathFocus: string,
-    studyProgramId: number,
+  public getSubjectsWithFocusByStudyProgramIdAndSearch(
     pageNumber: number,
     pageSize: number,
-  ) {
+    searchParam: string,
+    sort?: string,
+  ): Observable<Page<SubjectExtendedDto>> {
     const httpOptions = {
       headers: new HttpHeaders({
         'Content-Type': 'application/json',
@@ -106,12 +63,13 @@ export class SubjectService {
     urlParameters = urlParameters
       .append('page', pageNumber)
       .append('size', pageSize)
-      .append(
-        'search',
-        `id.studyProgramId:${studyProgramId},id.subject.focus.mathFocus>${mathFocus}`,
-      );
+      .append('search', searchParam);
 
-    return this.http.get<Page<SubjectDto>>(`${this.URL}`, {
+    if (sort) {
+      urlParameters = urlParameters.append('sort', sort);
+    }
+
+    return this.http.get<Page<SubjectExtendedDto>>(`${this.URL}/withFocus`, {
       params: urlParameters,
       headers: httpOptions.headers,
     });
@@ -121,97 +79,57 @@ export class SubjectService {
     return this.http.get<SubjectExtendedDto>(`${this.URL}/${subjectCode}`);
   }
 
-  public getSimilarSubjects(
-    subjects: SubjectExtendedDto[],
-  ): Observable<SubjectDto[]> {
-    return this.http.post<SubjectDto[]>(
-      `${this.URL}/similarSubjects`,
-      subjects,
-    );
+  public getSimilarSubjects(subjects: SubjectExtendedDto[]): Observable<SubjectDto[]> {
+    console.log(subjects);
+    return this.http.post<SubjectDto[]>(`${this.URL}/similarSubjects`, subjects);
   }
 
-  public getSubjectFocusPrediction(): Observable<SubjectExtendedDto[]> {
-    return this.http.get<SubjectExtendedDto[]>(`${this.URL}/focus-prediction`);
-  }
+  public getSubjectFocusPrediction(
+    pageNumber: number,
+    pageSize: number,
+    sort?: string,
+  ): Observable<Page<SubjectExtendedDto>> {
+    let urlParameters: HttpParams = new HttpParams();
+    urlParameters = urlParameters.append('page', pageNumber).append('size', pageSize);
 
-  getFilteredSubjects(
-    sortCriteria: string,
-    subjectCount: number,
-  ): Observable<SubjectGradesDto[]> {
-    return this.http.get<SubjectGradesDto[]>(
-      `${this.URL}/subjectReport?sortCriteria=${sortCriteria}&count=${subjectCount}`,
-    );
-  }
+    if (sort) {
+      urlParameters = urlParameters.append('sort', sort);
+    }
 
-  public getLowestAverageSubjects(
-    numberOfSubjects: number,
-  ): Observable<SubjectGradesDto[]> {
-    return this.http.get<SubjectGradesDto[]>(
-      `${this.URL}/getHardestSubjects/${numberOfSubjects}`,
-    );
-  }
-
-  public makeSubjectsPassingAndMarkPredictions(): Observable<
-    SubjectPassingPrediction[]
-  > {
-    return this.http.get<SubjectPassingPrediction[]>(
-      `${this.URL}/makePredictions`,
-    );
-  }
-
-  public getSubjectsByKeywords(keywords: string[]): Observable<SubjectDto[]> {
-    const httpOptions = {
-      headers: new HttpHeaders({
-        'Content-Type': 'application/json',
-      }),
-    };
-
-    const keywordsParam = keywords.join(',');
-
-    const urlParameters: HttpParams = new HttpParams().set(
-      'keywords',
-      keywordsParam,
-    );
-
-    return this.http.get<SubjectDto[]>(`${this.URL}/subjects`, {
+    return this.http.get<Page<SubjectExtendedDto>>(`${this.URL}/focus-prediction`, {
       params: urlParameters,
-      headers: httpOptions.headers,
     });
   }
 
-  public getAllKeywords(): Observable<KeywordDTO[]> {
-    const httpOptions = {
-      headers: new HttpHeaders({
-        'Content-Type': 'application/json',
-      }),
-    };
+  public getSubjectsWithGrades(
+    pageNumber: number,
+    pageSize: number,
+    sort?: string,
+    search?: string,
+  ): Observable<Page<SubjectGradesDto>> {
+    let urlParameters: HttpParams = new HttpParams();
+    urlParameters = urlParameters.append('page', pageNumber).append('size', pageSize);
 
-    return this.http.get<KeywordDTO[]>(`${this.URL}/all-keywords`, {
-      headers: httpOptions.headers,
+    if (sort) {
+      urlParameters = urlParameters.append('sort', sort);
+    }
+
+    if (search) {
+      urlParameters = urlParameters.append('search', search);
+    }
+
+    return this.http.get<Page<SubjectGradesDto>>(`${this.URL}/with-grades`, {
+      params: urlParameters,
     });
   }
 
-  public getCategorySums(): Observable<FocusCategorySumDTO[]> {
-    const httpOptions = {
-      headers: new HttpHeaders({
-        'Content-Type': 'application/json',
-      }),
-    };
-
-    return this.http.get<FocusCategorySumDTO[]>(`${this.URL}/category-sums`, {
-      headers: httpOptions.headers,
-    });
+  public makeSubjectsPassingAndMarkPredictions(): Observable<SubjectPassingPrediction[]> {
+    return this.http.get<SubjectPassingPrediction[]>(`${this.URL}/makePredictions`);
   }
 
-  public getStudentCountsByYear(): Observable<StudentYearCountDTO[]> {
-    const httpOptions = {
-      headers: new HttpHeaders({
-        'Content-Type': 'application/json',
-      }),
-    };
-
-    return this.http.get<StudentYearCountDTO[]>(`${this.URL}/counts-by-year`, {
-      headers: httpOptions.headers,
-    });
+  public getGradeAveragesByYear(subjectId: number): Observable<GradeAverageByYearDto[]> {
+    return this.http.get<GradeAverageByYearDto[]>(
+      `${this.URL}/${subjectId}/grade-averages-by-year`,
+    );
   }
 }

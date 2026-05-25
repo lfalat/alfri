@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { FormService } from '@services/form.service';
 import { AnsweredForm } from '../types';
@@ -8,10 +8,9 @@ import { USER_FORM_ID } from '@pages/home/home.component';
   providedIn: 'root',
 })
 export class FormDataService {
-  private formDataSubject = new BehaviorSubject<AnsweredForm | undefined>(undefined);
+  private readonly formDataSubject = new BehaviorSubject<AnsweredForm | undefined>(undefined);
   formData$ = this.formDataSubject.asObservable();
-
-  constructor(private formService: FormService) {}
+  private readonly formService = inject(FormService);
 
   fetchFormData() {
     this.formService.getExistingFormAnswers(USER_FORM_ID).subscribe({
@@ -27,7 +26,7 @@ export class FormDataService {
   getFormData() {
     return this.formDataSubject.getValue();
   }
-  
+
   setFormData(data: AnsweredForm) {
     this.formDataSubject.next(data);
   }

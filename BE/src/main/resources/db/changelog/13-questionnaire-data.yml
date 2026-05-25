@@ -1,0 +1,31 @@
+databaseChangeLog:
+  - changeSet:
+      id: 13-questionnaire-data
+      author: auto-generated
+      changes:
+        - sql: |
+            INSERT INTO public.questionnaire (questionnaire_id, title, description, date_of_creation) VALUES (69, 'Úvodný dotazník', 'úvodný dotazník pre základnú predikciu študentov UNIZA', '2024-06-26 07:43:18.729131');
+            INSERT INTO public.questionnaire_section (section_id, questionnaire_id, section_title) VALUES (61, 69, 'Základné informácie');
+            INSERT INTO public.questionnaire_section (section_id, questionnaire_id, section_title) VALUES (62, 69, 'Známky z povinných predmetov');
+            INSERT INTO public.questionnaire_section (section_id, questionnaire_id, section_title) VALUES (63, 69, 'Oblasti záujmov');
+            INSERT INTO public.questionnaire_section (section_id, questionnaire_id, section_title) VALUES (64, 69, 'Voľnočasové aktivity');
+
+            INSERT INTO public.question (question_id, section_id, answer_type_id, position_in_questionnaire, question_title, optional, question_identifier) VALUES (105, 61, 1, 1, 'Meno', false, 'question_meno');
+            INSERT INTO public.question (question_id, section_id, answer_type_id, position_in_questionnaire, question_title, optional, question_identifier) VALUES (106, 61, 1, 2, 'Priezvisko', false, 'question_priezvisko');
+            INSERT INTO public.question (question_id, section_id, answer_type_id, position_in_questionnaire, question_title, optional, question_identifier) VALUES (107, 61, 5, 3, 'Ročník v škole', false, 'question_rocnik');
+            INSERT INTO public.question (question_id, section_id, answer_type_id, position_in_questionnaire, question_title, optional, question_identifier) VALUES (108, 61, 5, 4, 'Fakulta', false, 'question_fakulta');
+            INSERT INTO public.question (question_id, section_id, answer_type_id, position_in_questionnaire, question_title, optional, question_identifier) VALUES (109, 61, 5, 5, 'Odbor', false, 'question_odbor');
+            INSERT INTO public.question (question_id, section_id, answer_type_id, position_in_questionnaire, question_title, optional, question_identifier) VALUES (115, 63, 2, 1, 'Matematika', false, 'question_matematika_focus');
+            INSERT INTO public.question (question_id, section_id, answer_type_id, position_in_questionnaire, question_title, optional, question_identifier) VALUES (116, 63, 2, 2, 'Dizajn', false, 'question_dizajn_focus');
+            INSERT INTO public.question (question_id, section_id, answer_type_id, position_in_questionnaire, question_title, optional, question_identifier) VALUES (117, 63, 2, 3, 'Hárdver', false, 'question_hardver_focus');
+            INSERT INTO public.question (question_id, section_id, answer_type_id, position_in_questionnaire, question_title, optional, question_identifier) VALUES (118, 63, 2, 4, 'Testovanie', false, 'question_testovanie_focus');
+            INSERT INTO public.question (question_id, section_id, answer_type_id, position_in_questionnaire, question_title, optional, question_identifier) VALUES (119, 63, 2, 5, 'Logika', false, 'question_logika_focus');
+            INSERT INTO public.question (question_id, section_id, answer_type_id, position_in_questionnaire, question_title, optional, question_identifier) VALUES (120, 63, 2, 6, 'Ekonomika', false, 'question_ekonomika_focus');
+            INSERT INTO public.question (question_id, section_id, answer_type_id, position_in_questionnaire, question_title, optional, question_identifier) VALUES (121, 63, 2, 7, 'Siete', false, 'question_siete_focus');
+            INSERT INTO public.question (question_id, section_id, answer_type_id, position_in_questionnaire, question_title, optional, question_identifier) VALUES (122, 63, 2, 8, 'Jazyky', false, 'question_jazyky_focus');
+            INSERT INTO public.question (question_id, section_id, answer_type_id, position_in_questionnaire, question_title, optional, question_identifier) VALUES (123, 63, 2, 9, 'Programovanie', false, 'question_programovanie_focus');
+            INSERT INTO public.question (question_id, section_id, answer_type_id, position_in_questionnaire, question_title, optional, question_identifier) VALUES (124, 63, 2, 10, 'Manažment', false, 'question_manazment_focus');
+            INSERT INTO public.question (question_id, section_id, answer_type_id, position_in_questionnaire, question_title, optional, question_identifier) VALUES (125, 63, 2, 11, 'Dáta', false, 'question_data_focus');
+            INSERT INTO public.question (question_id, section_id, answer_type_id, position_in_questionnaire, question_title, optional, question_identifier) VALUES (126, 63, 2, 12, 'Fyzická aktivita', false, 'question_fyzicka_aktivita_focus');
+            INSERT INTO public.question (question_id, section_id, answer_type_id, position_in_questionnaire, question_title, optional, question_identifier) VALUES (127, 64, 4, 1, 'Voľnočasové aktivity', false, 'question_volnocasove_aktivity');
+

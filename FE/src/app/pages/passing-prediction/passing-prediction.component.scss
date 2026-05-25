@@ -1,1 +1,62 @@
+.prediction-container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 1.5rem;
 
+  @media (min-width: 768px) {
+    padding: 2rem;
+  }
+}
+
+.loading-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 3rem 0;
+
+  p {
+    color: var(--text-secondary);
+    font-size: 1rem;
+  }
+}
+
+.intro-section {
+  background: var(--surface-light);
+  padding: 1.5rem;
+  border-radius: 1rem;
+  border: 1px solid var(--border-light);
+  margin-bottom: 2rem;
+
+  @media (min-width: 768px) {
+    padding: 2rem;
+  }
+
+  .intro-content {
+    max-width: 56rem;
+  }
+
+  .intro-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+
+    @media (min-width: 768px) {
+      font-size: 1.875rem;
+    }
+  }
+
+  .intro-text {
+    color: var(--text-secondary);
+    line-height: 1.6;
+    font-size: 1rem;
+    margin: 0;
+
+    @media (min-width: 768px) {
+      font-size: 1.125rem;
+    }
+  }
+}

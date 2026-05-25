@@ -1,18 +1,16 @@
-import { Injectable } from '@angular/core';
-import { environment } from '../../environments/environment';
+import { inject, Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { AnsweredForm, Form, Question, UserFormAnswers } from '../types';
+import { ConfigService } from '@services/config.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class FormService {
-  private readonly URL = `${environment.API_URL}/form`;
-
-  constructor(
-    private http: HttpClient,
-  ) {}
+  private readonly http = inject(HttpClient);
+  private readonly config = inject(ConfigService);
+  private readonly URL = `${this.config.apiUrl()}/form`;
 
   getForm(formId: number): Observable<Form> {
     return this.http.get<Form>(`${this.URL}/get-form/${formId}`);
@@ -26,11 +24,7 @@ export class FormService {
       }),
     };
 
-    return this.http.post(
-      `${this.URL}/submit-form`,
-      userFormAnswers,
-      httpOptions,
-    );
+    return this.http.post(`${this.URL}/submit-form`, userFormAnswers, httpOptions);
   }
 
   changeFormAnswer(userFormAnswers: UserFormAnswers) {
@@ -40,11 +34,7 @@ export class FormService {
       }),
     };
 
-    return this.http.post(
-      `${this.URL}/replace-form`,
-      userFormAnswers,
-      httpOptions,
-    );
+    return this.http.post(`${this.URL}/replace-form`, userFormAnswers, httpOptions);
   }
 
   hasUserFilledForm(formId: number): Observable<void> {
@@ -52,9 +42,7 @@ export class FormService {
   }
 
   getExistingFormAnswers(formId: number): Observable<AnsweredForm> {
-    return this.http.get<AnsweredForm>(
-      `${this.URL}/get-user-answers/${formId}`,
-    );
+    return this.http.get<AnsweredForm>(`${this.URL}/get-user-answers/${formId}`);
   }
 
   getMandatorySubjectsByStudyProgramIdAndYear(studyProgram: number, year: number) {
@@ -68,6 +56,5 @@ export class FormService {
       `${this.URL}/get-mandatory-subjects/${studyProgram}/${year - 1}`,
       httpOptions,
     );
-
   }
 }

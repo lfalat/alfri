@@ -2,22 +2,24 @@
   <ng-template matStepLabel>{{ section.sectionTitle }}</ng-template>
   <div class="row">
     <p>{{ section.sectionDescription }}</p>
-    <ng-container *ngIf="!isLoading(); else loading">
-      <app-form-question
-        class="col-12 col-md-6 col-lg-4 pe-0"
-        *ngFor="let question of questions()"
-        [question]="question"
-        [formGroup]="formGroup"
-      ></app-form-question>
-    </ng-container>
-    <ng-template #loading>
+    @if (!isLoading()) {
+      @for (question of questions(); track question) {
+        <app-form-question
+          class="col-12 col-md-6 col-lg-4 pe-0"
+          [question]="question"
+          [formGroup]="formGroup"
+        ></app-form-question>
+      }
+    } @else {
       <div class="loading-spinner">
         <mat-spinner diameter="40"></mat-spinner>
       </div>
-    </ng-template>
+    }
   </div>
-  <div>
+  <div class="modern-button-container">
     <button mat-button matStepperPrevious>Späť</button>
-    <button mat-button matStepperNext [disabled]="formGroup.invalid">Pokračovať</button>
+    <button mat-raised-button color="primary" matStepperNext [disabled]="formGroup.invalid">
+      Pokračovať
+    </button>
   </div>
 </form>

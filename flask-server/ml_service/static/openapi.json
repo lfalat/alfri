@@ -1,0 +1,198 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "ML Service API",
+    "version": "1.0.0",
+    "description": "OpenAPI specification for the ml_service Flask API (auto-generated)."
+  },
+  "servers": [
+    {
+      "url": "http://localhost:5000",
+      "description": "Local server"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-API-Key",
+        "description": "Optional X-API-Key header enforced for /api/ routes when configured"
+      }
+    },
+    "schemas": {
+      "HealthStatus": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string"
+          }
+        },
+        "required": ["status"]
+      },
+      "PassingChanceRequest": {
+        "type": "object",
+        "properties": {
+          "subjects": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "number"
+              }
+            }
+          }
+        },
+        "required": ["subjects"]
+      },
+      "ProbabilityResult": {
+        "type": "object",
+        "properties": {
+          "probability": { "type": "number", "format": "float" },
+          "percentage": { "type": "string" }
+        },
+        "required": ["probability", "percentage"]
+      },
+      "ErrorResult": {
+        "type": "object",
+        "properties": {
+          "status": { "type": "integer" },
+          "error": { "type": "string" },
+          "message": { "type": "string" }
+        }
+      },
+      "PassingChanceResults": {
+        "type": "object",
+        "additionalProperties": {
+          "oneOf": [
+            {"$ref": "#/components/schemas/ProbabilityResult"},
+            {"$ref": "#/components/schemas/ErrorResult"}
+          ]
+        }
+      },
+      "PassingChanceResponse": {
+        "type": "object",
+        "properties": {
+          "results": { "$ref": "#/components/schemas/PassingChanceResults" }
+        },
+        "required": ["results"]
+      },
+      "PassingMarkRequest": {
+        "type": "object",
+        "properties": {
+          "subject": { "type": "string" },
+          "features": { "type": "array", "items": { "type": "number" } }
+        },
+        "required": ["subject", "features"]
+      },
+      "PassingMarkResponse": {
+        "type": "object",
+        "properties": {
+          "subject": { "type": "string" },
+          "distribution": { "type": "object", "additionalProperties": { "type": "number" } },
+          "chosen_grade": { "type": "string" }
+        },
+        "required": ["subject", "distribution", "chosen_grade"]
+      },
+      "ClusteringRequest": {
+        "type": "object",
+        "properties": {
+          "focusVectors": { "type": "array", "items": { "type": "array", "items": { "type": "number" } } },
+          "studyProgramId": { "type": "string" },
+          "n_clusters": { "type": "integer" }
+        },
+        "required": ["focusVectors", "studyProgramId"]
+      },
+      "ClusteringResponse": {
+        "type": "object",
+        "properties": {
+          "studyProgramId": { "type": "string" },
+          "offset_applied": { "type": "integer" },
+          "cluster_indices": { "type": "array", "items": { "type": "integer" } },
+          "centroid": { "type": "array", "items": { "type": "number" } }
+        },
+        "required": ["studyProgramId", "offset_applied", "cluster_indices", "centroid"]
+      }
+    }
+  },
+  "paths": {
+    "/health/live": {
+      "get": {
+        "summary": "Liveness probe",
+        "responses": {
+          "200": {
+            "description": "Service is alive",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HealthStatus" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/health/ready": {
+      "get": {
+        "summary": "Readiness probe",
+        "responses": {
+          "200": {
+            "description": "Models loaded",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/HealthStatus" } } }
+          },
+          "503": {
+            "description": "Models not ready",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/HealthStatus" } } }
+          }
+        }
+      }
+    },
+    "/api/v1/predictions/passing-chance": {
+      "post": {
+        "summary": "Batch passing chance predictions",
+        "security": [{ "ApiKeyAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": { "schema": { "$ref": "#/components/schemas/PassingChanceRequest" } }
+          }
+        },
+        "responses": {
+          "200": { "description": "Predictions", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/PassingChanceResponse" } } } },
+          "422": { "description": "Validation error" },
+          "500": { "description": "Internal error" }
+        }
+      }
+    },
+    "/api/v1/predictions/passing-mark": {
+      "post": {
+        "summary": "Predict passing mark distribution",
+        "security": [{ "ApiKeyAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/PassingMarkRequest" } } }
+        },
+        "responses": {
+          "200": { "description": "Mark distribution", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/PassingMarkResponse" } } } },
+          "422": { "description": "Validation error" },
+          "500": { "description": "Internal error" }
+        }
+      }
+    },
+    "/api/v1/clustering/similar-subjects": {
+      "post": {
+        "summary": "Find similar subject clusters",
+        "security": [{ "ApiKeyAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ClusteringRequest" } } }
+        },
+        "responses": {
+          "200": { "description": "Clusters", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ClusteringResponse" } } } },
+          "422": { "description": "Validation error" },
+          "500": { "description": "Server error" }
+        }
+      }
+    }
+  }
+}
+

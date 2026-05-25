@@ -5,6 +5,6 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import sk.uniza.fri.alfri.entity.SubjectGradeCorrelation;
 
 public interface SubjectGradeCorrelationRepository
-    extends JpaRepository<SubjectGradeCorrelation, Integer>,
-    JpaSpecificationExecutor<SubjectGradeCorrelation> {
+        extends JpaRepository<SubjectGradeCorrelation, Integer>,
+        JpaSpecificationExecutor<SubjectGradeCorrelation> {
 }

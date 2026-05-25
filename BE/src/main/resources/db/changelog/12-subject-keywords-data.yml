@@ -1,0 +1,8 @@
+databaseChangeLog:
+  - changeSet:
+      id: 12-subject-keywords-data
+      author: auto-generated
+      changes:
+        - sqlFile:
+            path: db/data/keywords.sql
+            relativeToChangelogFile: false

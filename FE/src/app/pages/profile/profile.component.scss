@@ -1,32 +1,248 @@
-/* Styling for the mat-card */
-.user-card {
-  padding: 20px; /* Adding padding to the card */
-  border-radius: 8px; /* Slight rounded corners */
-  background-color: #f9f9f9; /* Light grey background */
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
-  font-family: "Arial", sans-serif; /* Use a clean font for text */
+.profile-page {
+  max-width: 1280px;
+  margin: 0 auto;
+
+  // Page Header Section
+  .page-header {
+    margin-bottom: 2.5rem;
+
+    .page-title {
+      font-size: 2.25rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 0.5rem;
+      letter-spacing: -0.025em;
+      line-height: 1.2;
+
+      @media (max-width: 767px) {
+        font-size: 1.875rem;
+      }
+    }
+
+    .page-subtitle {
+      color: var(--text-secondary);
+      font-size: 1rem;
+      margin: 0;
+      line-height: 1.5;
+    }
+  }
+
+  // Profile Cards
+  .profile-card {
+    border-radius: 1rem;
+    box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05);
+    border: 1px solid var(--border-color);
+    overflow: hidden;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    transition: all 0.3s ease;
+
+    &:hover {
+      box-shadow: 0 8px 30px -4px rgba(0, 0, 0, 0.1);
+    }
+
+    // Custom Card Header (not using mat-card-header)
+    .profile-card-header {
+      padding: 1.25rem 1.5rem;
+      border-bottom: 1px solid var(--border-color);
+      background: var(--surface);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+
+      .header-icon-wrapper {
+        padding: 0.5rem;
+        border-radius: 0.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+
+        mat-icon {
+          font-size: 24px;
+          width: 24px;
+          height: 24px;
+        }
+
+        &.icon-cyan {
+          background: rgba(6, 182, 212, 0.1);
+          color: #06b6d4;
+        }
+
+        &.icon-orange {
+          background: rgba(249, 115, 22, 0.1);
+          color: #f97316;
+        }
+      }
+
+      .header-title {
+        font-size: 1.125rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin: 0;
+        line-height: 1.4;
+      }
+    }
+
+    // Card Content
+    .profile-card-content {
+      padding: 1.5rem !important;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+  }
+
+  // Info Items in Personal Information Card
+  .info-item {
+    .info-label {
+      display: block;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      margin-bottom: 0.25rem;
+    }
+
+    .info-value {
+      color: var(--text-primary);
+      font-weight: 500;
+      font-size: 1rem;
+      margin: 0;
+      line-height: 1.5;
+    }
+  }
+
+  // Password Form Styling
+  .password-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+
+    .form-field-wrapper {
+      width: 100%;
+    }
+
+    .custom-form-field {
+      width: 100%;
+    }
+
+    .form-actions {
+      padding-top: 0.5rem;
+    }
+
+    .submit-btn {
+      padding: 0.625rem 1.5rem;
+      font-weight: 600;
+      font-size: 0.875rem;
+      border-radius: 0.75rem;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      transition: all 0.2s ease;
+      text-transform: none;
+      letter-spacing: 0;
+
+      &:hover:not(:disabled) {
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.15);
+        transform: translateY(-1px);
+      }
+
+      &:active:not(:disabled) {
+        transform: translateY(0);
+      }
+    }
+  }
+
+  // Form Results Section
+  .form-results-section {
+    margin-top: 2.5rem;
+
+    .results-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 1rem;
+      margin-bottom: 1.5rem;
+
+      .results-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+
+        .title-icon {
+          color: var(--primary);
+          font-size: 28px;
+          width: 28px;
+          height: 28px;
+        }
+
+        span {
+          line-height: 1.2;
+        }
+      }
+
+      .edit-btn {
+        border-radius: 0.75rem;
+        font-weight: 600;
+        font-size: 0.875rem;
+        padding: 0.5rem 1rem;
+        transition: all 0.2s ease;
+        text-transform: none;
+        letter-spacing: 0;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+        mat-icon {
+          font-size: 18px;
+          width: 18px;
+          height: 18px;
+          margin-right: 0.375rem;
+        }
+
+        &:hover:not(:disabled) {
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+          transform: translateY(-1px);
+        }
+      }
+
+      @media (max-width: 767px) {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+
+        .edit-btn {
+          width: 100%;
+          justify-content: center;
+        }
+      }
+    }
+  }
 }
 
-/* Styling for the paragraph text inside the card */
-.user-card p {
-  margin-bottom: 12px; /* Spacing between paragraphs */
-  color: #333; /* Dark text color for better readability */
-  font-size: 1.1rem; /* Adjusted font size */
+// Dark mode adjustments
+@media (prefers-color-scheme: dark) {
+  .profile-page {
+    .profile-card {
+      box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.3);
+
+      &:hover {
+        box-shadow: 0 8px 30px -4px rgba(0, 0, 0, 0.5);
+      }
+    }
+  }
 }
 
-/* Making the strong tags inside the paragraphs more prominent */
-.user-card strong {
-  color: #2c6e99; /* Different color for strong text (blueish) */
-  font-weight: bold; /* Bold the strong text */
-}
-
-/* Optional: Hover effect on the card */
-.user-card:hover {
-  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15); /* Slightly increased shadow on hover */
-  background-color: #e7f3f7; /* Lighter background on hover */
-}
-
-/* Adjusting spacing for the Email field */
-.user-card p:last-of-type {
-  margin-bottom: 0; /* Remove bottom margin for the last paragraph */
+// Additional responsive adjustments
+@media (max-width: 575px) {
+  .profile-page {
+    .info-item {
+      .info-value {
+        font-size: 0.9375rem;
+      }
+    }
+  }
 }

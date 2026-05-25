@@ -1,25 +1,23 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { environment } from '../../environments/environment';
 import { Role, SubjectDto, UserDto } from '../types';
+import { ConfigService } from '@services/config.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AdminService {
-  private readonly BE_URL = `${environment.API_URL}`;
-
-  constructor(
-    private readonly http: HttpClient,
-  ) {}
+  private readonly http = inject(HttpClient);
+  private readonly config = inject(ConfigService);
+  private readonly BE_URL = `${this.config.apiUrl()}`;
 
   getAllUsers(): Observable<UserDto[]> {
     return this.http.get<UserDto[]>(`${this.BE_URL}/admin/users`);
   }
 
-  updateUserRole(userId: number, role: Role, isAdd: boolean): Observable<any> {
-    return this.http.post(`${this.BE_URL}/admin/user/${userId}/roles`, {
+  updateUserRole(userId: number, role: Role, isAdd: boolean): Observable<UserDto> {
+    return this.http.post<UserDto>(`${this.BE_URL}/admin/user/${userId}/roles`, {
       roleIds: [role.id],
       add: isAdd,
     });
@@ -27,6 +25,10 @@ export class AdminService {
 
   deleteUser(userId: number): Observable<void> {
     return this.http.delete<void>(`${this.BE_URL}/admin/user/${userId}`);
+  }
+
+  resetUserPassword(userId: number, newPassword: string): Observable<void> {
+    return this.http.put<void>(`${this.BE_URL}/admin/user/${userId}/reset-password`, { newPassword });
   }
 
   getAllSubjects(): Observable<SubjectDto[]> {

@@ -1,94 +1,106 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
-import { SubjectService } from '@services/subject.service';
 import { NotificationService } from '@services/notification.service';
 import { StudentService } from '@services/student.service';
 import { Observable, of, Subject } from 'rxjs';
 import { catchError, switchMap, takeUntil, tap } from 'rxjs/operators';
-import { SubjectsTableComponent } from '@components/subjects-table/subjects-table.component';
-import { MatButton } from '@angular/material/button';
-import { AsyncPipe } from '@angular/common';
-import { Page, StudyProgramDto, SubjectDto } from '../../types';
-import { MatTableDataSource } from '@angular/material/table';
+import { Page, SubjectDto } from '../../types';
 import { MatCard, MatCardHeader, MatCardSubtitle, MatCardTitle } from '@angular/material/card';
+import { SubjectService } from '@services/subject.service';
+import { PageEvent } from '@angular/material/paginator';
+import {
+  GenericTableComponent,
+  TableConfig,
+  TextCellRendererComponent,
+} from '@components/generic-table';
+import { GenericTableUtils } from '@components/generic-table/generic-table.utils';
 
 @Component({
   selector: 'app-recommendation',
   templateUrl: './recommendation.component.html',
   standalone: true,
-  imports: [
-    SubjectsTableComponent,
-    MatButton,
-    AsyncPipe,
-    MatCard,
-    MatCardHeader,
-    MatCardSubtitle,
-    MatCardTitle
-  ],
+  imports: [GenericTableComponent, MatCard, MatCardHeader, MatCardSubtitle, MatCardTitle],
   styleUrls: ['./recommendation.component.scss'],
 })
 export class RecommendationComponent implements OnInit, OnDestroy {
   private readonly _destroy$: Subject<void> = new Subject();
-  private _dataSource$ = new MatTableDataSource<SubjectDto>();
-  private _userStudyProgramId!: number;
-  public readonly columnsToDisplay: string[] = [
-    'name',
-    'code',
-    'abbreviation',
-    'obligation',
-    'recommendedYear',
-    'semester',
-  ];
 
-  get dataSource$() {
-    if (!this._dataSource$) {
-      return of([]);
-    }
+  // Signals for reactive state management
+  subjectsData = signal<Page<SubjectDto>>(GenericTableUtils.EMPTY_PAGE);
+  totalElements = signal<number>(0);
+  currentPage = signal<number>(0);
+  pageSize = signal<number>(10);
+  isLoading = signal<boolean>(false);
 
-    return this._dataSource$;
-  }
-
-  public pageData: Page<SubjectDto> = {
-    content: [],
-    totalElements: 0,
-    size: 10,
-    number: 0,
-    pageable: {
-      sort: {
-        sorted: false,
-        unsorted: false,
-        empty: false,
+  // Generic table configuration
+  tableConfig: TableConfig<SubjectDto> = {
+    columns: [
+      {
+        id: 'name',
+        header: 'Názov predmetu',
+        field: 'name',
+        sortable: true,
+        cellRenderer: TextCellRendererComponent,
+        width: 'auto',
       },
-      offset: 0,
-      pageNumber: 0,
-      pageSize: 0,
-      paged: true,
-      unpaged: false,
-    },
-    last: false,
-    totalPages: 0,
-    sort: {
-      sorted: false,
-      unsorted: false,
-      empty: false,
-    },
-    first: false,
-    numberOfElements: 0,
-    empty: true,
+      {
+        id: 'code',
+        header: 'Kód',
+        field: 'code',
+        sortable: true,
+        cellRenderer: TextCellRendererComponent,
+        width: '120px',
+      },
+      {
+        id: 'abbreviation',
+        header: 'Skratka',
+        field: 'abbreviation',
+        sortable: true,
+        cellRenderer: TextCellRendererComponent,
+        width: '120px',
+      },
+      {
+        id: 'obligation',
+        header: 'Povinnosť',
+        field: 'obligation',
+        sortable: true,
+        cellRenderer: TextCellRendererComponent,
+        width: '120px',
+        align: 'center',
+      },
+      {
+        id: 'recommendedYear',
+        header: 'Ročník',
+        field: 'recommendedYear',
+        sortable: true,
+        cellRenderer: TextCellRendererComponent,
+        width: '100px',
+        align: 'center',
+      },
+      {
+        id: 'semester',
+        header: 'Semester',
+        field: 'semester',
+        sortable: true,
+        cellRenderer: TextCellRendererComponent,
+        width: '100px',
+        align: 'center',
+      },
+    ],
+    serverSide: false,
+    enableSorting: true,
+    enablePagination: true,
+    pageSize: 10,
+    pageSizeOptions: [5, 10, 25, 50],
+    enableRowClick: true,
+    stickyHeader: false,
   };
 
-  public readonly pageSizeOptions: number[] = [5, 10, 20];
-  public pageSize = 10;
-
-  public isLoading = false;
-
-  constructor(
-    private subjectService: SubjectService,
-    private studentService: StudentService,
-    private errorService: NotificationService,
-    private router: Router,
-  ) {}
+  private readonly subjectService = inject(SubjectService);
+  private readonly studentService = inject(StudentService);
+  private readonly errorService = inject(NotificationService);
+  private readonly router = inject(Router);
 
   ngOnInit() {
     this.init();
@@ -98,8 +110,7 @@ export class RecommendationComponent implements OnInit, OnDestroy {
     this.studentService
       .getStudyProgramOfCurrentUser()
       .pipe(
-        switchMap((studyProgram: StudyProgramDto) => {
-          this._userStudyProgramId = studyProgram.id;
+        switchMap(() => {
           return this.getSubjects();
         }),
         catchError((error: HttpErrorResponse) => {
@@ -107,21 +118,32 @@ export class RecommendationComponent implements OnInit, OnDestroy {
           return of([]);
         }),
       )
-      .subscribe((subjects) => {
-        this._dataSource$.data = subjects;
+      .subscribe((page) => {
+        if (Array.isArray(page)) {
+          return;
+        }
+
+        this.updateTableData(page);
       });
   }
 
-  private getSubjects(): Observable<SubjectDto[]> {
-    this.isLoading = true;
-    return this.subjectService.getSubjectFocusPrediction().pipe(
-      tap((subjects: SubjectDto[]) => {
-        this.isLoading = false;
-        return subjects;
+  private updateTableData(page: Page<SubjectDto>): void {
+    this.subjectsData.set(page);
+    this.totalElements.set(page.totalElements);
+    this.currentPage.set(page.number);
+    this.pageSize.set(page.size);
+  }
+
+  private getSubjects(): Observable<Page<SubjectDto> | never[]> {
+    this.isLoading.set(true);
+    return this.subjectService.getSubjectFocusPrediction(this.currentPage(), this.pageSize()).pipe(
+      tap((page: Page<SubjectDto>) => {
+        this.isLoading.set(false);
+        return page;
       }),
       takeUntil(this._destroy$),
       catchError((error: HttpErrorResponse) => {
-        this.isLoading = false;
+        this.isLoading.set(false);
         this.errorService.showError(error.error.detail);
         return of([]);
       }),
@@ -133,7 +155,24 @@ export class RecommendationComponent implements OnInit, OnDestroy {
     this._destroy$.complete();
   }
 
+  public onRowClick(event: { row: SubjectDto; event: MouseEvent }): void {
+    this.navigateToSubjectDetail(event.row.code);
+  }
+
   public navigateToSubjectDetail(code: string) {
     this.router.navigate(['/subjects/' + code]);
+  }
+
+  public onPageChange(event: PageEvent): void {
+    this.currentPage.set(event.pageIndex);
+    this.pageSize.set(event.pageSize);
+
+    this.getSubjects().subscribe((page) => {
+      if (Array.isArray(page)) {
+        return;
+      }
+
+      this.updateTableData(page);
+    });
   }
 }

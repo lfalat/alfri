@@ -10,12 +10,13 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
-import java.io.Serializable;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.io.Serializable;
 
 @Getter
 @Setter
@@ -25,18 +26,18 @@ import lombok.Setter;
 @Builder
 @Table(name = "user_role")
 public class UserRole implements Serializable {
-  @Id
-  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_role_id_gen")
-  @SequenceGenerator(name = "user_role_id_gen", sequenceName = "user_role_id_seq",
-      allocationSize = 1)
-  @Column(name = "id", nullable = false)
-  private Integer id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_role_id_gen")
+    @SequenceGenerator(name = "user_role_id_gen", sequenceName = "user_role_id_seq",
+            allocationSize = 1)
+    @Column(name = "id", nullable = false)
+    private Integer id;
 
-  @ManyToOne(fetch = FetchType.EAGER)
-  @JoinColumn(name = "user_id")
-  private User user;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "user_id")
+    private User user;
 
-  @ManyToOne(fetch = FetchType.EAGER)
-  @JoinColumn(name = "role_id")
-  private Role role;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "role_id")
+    private Role role;
 }

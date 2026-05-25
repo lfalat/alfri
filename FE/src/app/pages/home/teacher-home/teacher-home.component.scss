@@ -1,0 +1,360 @@
+.reports-container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 1.5rem;
+
+  @media (min-width: 768px) {
+    padding: 2rem;
+  }
+}
+
+.loading-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+}
+
+.main-card {
+  border-radius: 1rem;
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(14, 116, 144, 0.1);
+
+  @media (min-width: 768px) {
+    border-radius: 1.5rem;
+  }
+}
+
+.main-card-content {
+  padding: 1.5rem !important;
+
+  @media (min-width: 768px) {
+    padding: 2rem !important;
+  }
+}
+
+// Header Section
+.header-section {
+  margin-bottom: 2rem;
+}
+
+.title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+
+  @media (max-width: 640px) {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+.page-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: rgba(0, 0, 0, 0.87);
+  margin: 0;
+  letter-spacing: -0.025em;
+  line-height: 1.2;
+
+  @media (min-width: 768px) {
+    font-size: 1.875rem;
+  }
+}
+
+.export-button {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.5rem;
+  border-radius: 0.75rem !important;
+  padding: 0.5rem 1.25rem !important;
+  height: 42px;
+  font-weight: 500;
+  font-size: 0.875rem;
+  text-transform: none;
+  box-shadow: 0 2px 8px rgba(14, 116, 144, 0.15) !important;
+  transition: all 0.2s ease-in-out;
+  white-space: nowrap;
+
+  &:hover:not([disabled]) {
+    box-shadow: 0 4px 12px rgba(14, 116, 144, 0.25) !important;
+    transform: translateY(-1px);
+  }
+
+  &[disabled] {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  ::ng-deep {
+    .mat-mdc-button-touch-target {
+      height: 42px;
+    }
+
+    .mdc-button__label {
+      display: inline-flex !important;
+      align-items: center !important;
+      gap: 0.5rem;
+      line-height: 1;
+    }
+
+    mat-icon {
+      font-size: 1.25rem !important;
+      width: 1.25rem !important;
+      height: 1.25rem !important;
+      line-height: 1 !important;
+      margin: 0 !important;
+    }
+
+    .button-spinner {
+      width: 20px !important;
+      height: 20px !important;
+      margin: 0 !important;
+
+      circle {
+        stroke: white;
+      }
+    }
+  }
+
+  span {
+    line-height: 1;
+    margin: 0;
+  }
+
+  @media (max-width: 640px) {
+    width: 100%;
+  }
+}
+
+.selector-wrapper {
+  max-width: 28rem;
+}
+
+.study-program-select {
+  width: 100%;
+
+  ::ng-deep {
+    .mat-mdc-form-field-subscript-wrapper {
+      display: none;
+    }
+
+    .mat-mdc-text-field-wrapper {
+      background-color: #f8fafc;
+      border-radius: 0.75rem;
+    }
+
+    .mdc-text-field--outlined {
+      .mdc-notched-outline__leading,
+      .mdc-notched-outline__trailing,
+      .mdc-notched-outline__notch {
+        border-color: #e0f2fe;
+      }
+    }
+
+    .mat-mdc-form-field.mat-focused {
+      .mdc-notched-outline__leading,
+      .mdc-notched-outline__trailing,
+      .mdc-notched-outline__notch {
+        border-color: #0e7490 !important;
+        border-width: 2px !important;
+      }
+    }
+
+    .mat-mdc-select {
+      font-size: 0.875rem;
+      color: #334155;
+    }
+  }
+}
+
+// Report Content Wrapper (for PDF export)
+.report-content {
+  background: white;
+  padding: 1rem;
+  border-radius: 0.5rem;
+}
+
+// Stats Grid
+.stats-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+
+  @media (min-width: 768px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.stat-card {
+  padding: 1.25rem;
+  border-radius: 1rem;
+  background: white;
+  border: 1px solid #f1f5f9;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  transition: all 0.2s ease-in-out;
+  cursor: default;
+
+  &:hover {
+    border-color: #bae6fd;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.08);
+
+    .stat-icon-wrapper {
+      transform: scale(1.1);
+    }
+  }
+
+  @media (min-width: 768px) {
+    border-radius: 1.5rem;
+  }
+}
+
+.stat-icon-wrapper {
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: transform 0.3s ease-in-out;
+
+  &.stat-icon-blue {
+    background: linear-gradient(135deg, #eef2ff 0%, #e0e7ff 100%);
+
+    .stat-icon {
+      color: #6366f1;
+    }
+  }
+
+  &.stat-icon-purple {
+    background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%);
+
+    .stat-icon {
+      color: #a855f7;
+    }
+  }
+}
+
+.stat-icon {
+  font-size: 1.75rem;
+  width: 1.75rem;
+  height: 1.75rem;
+}
+
+.stat-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.stat-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #94a3b8;
+  margin: 0;
+}
+
+.stat-value {
+  font-size: 2rem;
+  font-weight: 700;
+  color: rgba(0, 0, 0, 0.87);
+  margin: 0;
+  line-height: 1;
+}
+
+// Chart Sections
+.chart-section {
+  margin-bottom: 2rem;
+}
+
+.chart-title {
+  font-size: 1.25rem;
+  font-weight: 500;
+  color: rgba(0, 0, 0, 0.87);
+  margin: 0 0 1rem 0;
+}
+
+.chart-wrapper {
+  background: white;
+  padding: 1rem;
+  border-radius: 0.75rem;
+  border: 1px solid #f1f5f9;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+  min-height: 320px;
+
+  @media (min-width: 768px) {
+    border-radius: 1rem;
+  }
+}
+
+.pie-chart-wrapper {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 0.75rem;
+  border: 1px solid #f1f5f9;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-height: 400px;
+
+  @media (min-width: 768px) {
+    border-radius: 1rem;
+  }
+}
+
+.pie-chart-subtitle {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #94a3b8;
+  margin: 0 0 1.5rem 0;
+  width: 100%;
+}
+
+.pie-chart-content {
+  width: 100%;
+  max-width: 24rem;
+  height: 300px;
+  margin: 0 auto;
+}
+
+// Responsive adjustments
+@media (max-width: 640px) {
+  .stat-card {
+    padding: 1rem;
+  }
+
+  .stat-icon-wrapper {
+    width: 3rem;
+    height: 3rem;
+  }
+
+  .stat-icon {
+    font-size: 1.5rem;
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+
+  .stat-value {
+    font-size: 1.75rem;
+  }
+
+  .chart-title {
+    font-size: 1.125rem;
+  }
+}

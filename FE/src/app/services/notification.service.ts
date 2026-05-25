@@ -5,13 +5,9 @@ import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
   providedIn: 'root',
 })
 export class NotificationService {
-  constructor(private snackBar: MatSnackBar) {}
+  constructor(private readonly snackBar: MatSnackBar) {}
 
-  public showError(
-    message: string,
-    action: string = 'X',
-    duration: number = 6000,
-  ): void {
+  public showError(message: string, action: string = 'X', duration: number = 6000): void {
     const config: MatSnackBarConfig = {
       duration,
       panelClass: ['error-snackbar'],
@@ -22,11 +18,7 @@ export class NotificationService {
     this.snackBar.open(message, action, config);
   }
 
-  public showSuccess(
-    message: string,
-    action: string = 'X',
-    duration: number = 6000,
-  ): void {
+  public showSuccess(message: string, action: string = 'X', duration: number = 6000): void {
     const config: MatSnackBarConfig = {
       duration,
       panelClass: ['success-snackbar'],
@@ -37,11 +29,7 @@ export class NotificationService {
     this.snackBar.open(message, action, config);
   }
 
-  public showWarning(
-    message: string,
-    action: string = 'X',
-    duration: number = 6000000,
-  ): void {
+  public showWarning(message: string, action: string = 'X', duration: number = 6000000): void {
     const config: MatSnackBarConfig = {
       duration,
       panelClass: ['warning-snackbar'],

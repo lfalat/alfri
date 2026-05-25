@@ -7,9 +7,9 @@ import sk.uniza.fri.alfri.entity.Answer;
 
 @Mapper(uses = AnswerTextMapper.class)
 public interface AnswerMapper {
-  AnswerMapper INSTANCE = Mappers.getMapper(AnswerMapper.class);
+    AnswerMapper INSTANCE = Mappers.getMapper(AnswerMapper.class);
 
-  Answer toEntity(AnswerDTO dto);
+    Answer toEntity(AnswerDTO dto);
 
-  AnswerDTO toDto(Answer dto);
+    AnswerDTO toDto(Answer dto);
 }

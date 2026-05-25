@@ -1,70 +1,44 @@
-import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { inject, Injectable } from '@angular/core';
+import { Observable, throwError } from 'rxjs';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import {
-  AuthResponseDto,
   ChangePasswordDto,
-  LoginUserDto,
   RegisterUserDto,
   UserDto,
 } from '../types';
-import { JwtService } from './jwt.service';
-import { environment } from '../../environments/environment';
-import { UserService } from './user.service';
-import { JwtHelperService } from '@auth0/angular-jwt';
+import { ConfigService } from './config.service';
 import { AuthRole } from '@enums/auth-role';
+import { KeycloakService } from '@services/keycloak.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
-  private readonly URL = `${environment.API_URL}/auth`;
+  private readonly http = inject(HttpClient);
+  private readonly configService = inject(ConfigService);
+  private readonly keycloakService = inject(KeycloakService);
 
-  constructor(
-    private http: HttpClient,
-    private jwtService: JwtService,
-    private userService: UserService,
-    private jwtHelper: JwtHelperService,
-  ) {}
-
-  postUser(userData: RegisterUserDto): Observable<UserDto> {
-    const httpOptions = {
-      headers: new HttpHeaders({
-        'Content-Type': 'application/json',
-      }),
-    };
-
-    return this.http.post<UserDto>(
-      `${this.URL}/register`,
-      userData,
-      httpOptions,
-    );
+  private get URL() {
+    return `${this.configService.apiUrl()}/auth`;
   }
 
-  authenticate(userData: LoginUserDto): Observable<AuthResponseDto> {
-    const httpOptions = {
-      headers: new HttpHeaders({
-        'Content-Type': 'application/json',
-      }),
-    };
-
-    return this.http.post<AuthResponseDto>(
-      `${this.URL}/authenticate`,
-      userData,
-      httpOptions,
-    );
+  postUser(userData: RegisterUserDto): Observable<UserDto> {
+    return throwError(() => new Error('User registration is handled by Keycloak.'));
   }
 
   logOut(): Promise<void> {
-    return new Promise((resolve, _) => {
-      this.jwtService.removeToken();
-      resolve();
-    });
+    return this.keycloakService.logout();
   }
 
-  changePassword(
-    passwordData: ChangePasswordDto,
-  ): Observable<ChangePasswordDto> {
+  logIn(): Promise<void> {
+    return this.keycloakService.login();
+  }
+
+  registerWithKeycloak(): Promise<void> {
+    return this.keycloakService.register();
+  }
+
+  changePassword(passwordData: ChangePasswordDto): Observable<ChangePasswordDto> {
     const httpOptions = {
       headers: new HttpHeaders({
         'Content-Type': 'application/json',
@@ -77,17 +51,7 @@ export class AuthService {
     );
   }
 
-  hasRole(expectedRoles: AuthRole[] | undefined): boolean {
-    if (!expectedRoles) {
-      return false;
-    }
-
-    const userRoles = this.jwtHelper.decodeToken()?.roles;
-
-    if (!userRoles) {
-      return false;
-    }
-
-    return userRoles.some((role: AuthRole) => expectedRoles.includes(role));
+  hasRole(expectedRoles: AuthRole | AuthRole[] | undefined): boolean {
+    return this.keycloakService.hasRole(expectedRoles);
   }
 }

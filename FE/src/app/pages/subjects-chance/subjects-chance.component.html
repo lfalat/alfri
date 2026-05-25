@@ -19,7 +19,7 @@
             class="progress-bar-filled"
             [@animateProgressBar]="{
               value: element.subjectChance,
-              params: { progress: getProgressValue(element.subjectChance) }
+              params: { progress: getProgressValue(element.subjectChance) },
             }"
             [style.width.%]="element.subjectChance"
           ></div>

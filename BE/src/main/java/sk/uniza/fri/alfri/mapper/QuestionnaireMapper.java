@@ -8,12 +8,12 @@ import sk.uniza.fri.alfri.entity.Questionnaire;
 
 @Mapper(uses = {QuestionnaireSectionMapper.class})
 public interface QuestionnaireMapper {
-  QuestionnaireMapper INSTANCE = Mappers.getMapper(QuestionnaireMapper.class);
+    QuestionnaireMapper INSTANCE = Mappers.getMapper(QuestionnaireMapper.class);
 
-  Questionnaire toEntity(QuestionnaireDTO dto);
+    Questionnaire toEntity(QuestionnaireDTO dto);
 
-  QuestionnaireDTO toDto(Questionnaire dto);
+    QuestionnaireDTO toDto(Questionnaire dto);
 
-  AnsweredQuestionnaireDTO toAnsweredDto(Questionnaire dto);
+    AnsweredQuestionnaireDTO toAnsweredDto(Questionnaire dto);
 
 }

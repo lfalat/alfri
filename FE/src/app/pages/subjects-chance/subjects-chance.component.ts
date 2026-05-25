@@ -64,7 +64,6 @@ const SUBJECT_DATA: Subject[] = [
     MatHeaderCell,
     MatColumnDef,
     MatHeaderCellDef,
-    MatProgressBar,
     MatCell,
     MatHeaderRow,
     MatRow,

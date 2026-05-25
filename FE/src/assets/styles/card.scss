@@ -1,0 +1,68 @@
+.section-card {
+  padding: 0;
+  overflow: hidden; // make header and body share same radius
+
+  mat-card-header {
+    padding: 0.75rem 1.25rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    background-color: #fff;
+    // mimic Bootstrap card header look
+
+    .mat-mdc-card-header-text,
+    mat-card-title {
+      margin: 0;
+      font-size: 1rem;
+      font-weight: 600;
+    }
+
+    .section-icon {
+      font-size: 1.5rem;
+      width: 2.5rem;
+      height: 2.5rem;
+      padding: 0.5rem;
+      border-radius: 0.5rem;
+
+      // Grades section - Blue theme
+      &.icon-grades {
+        background-color: rgba(37, 99, 235, 0.1);
+        color: rgb(37, 99, 235);
+      }
+
+      // Radar/Interests chart section - Orange theme
+      &.icon-radar {
+        background-color: rgba(249, 115, 22, 0.1);
+        color: rgb(249, 115, 22);
+      }
+
+      // Leisure activities section - Emerald/Green theme
+      &.icon-interests {
+        background-color: rgba(16, 185, 129, 0.1);
+        color: rgb(16, 185, 129);
+      }
+    }
+  }
+
+  mat-card-content {
+    padding: 1.25rem;
+
+    // Special styling for chart content
+    &.chart-content {
+      padding: 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 420px;
+      .chart-wrapper {
+        position: relative;
+        width: 100%;
+        max-width: 28rem; // max-w-md (448px)
+        aspect-ratio: 1 / 1; // Make it square
+
+        canvas {
+          width: 100% !important;
+          height: 100% !important;
+        }
+      }
+    }
+  }
+}

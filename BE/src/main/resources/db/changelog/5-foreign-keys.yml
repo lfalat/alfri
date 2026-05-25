@@ -1,0 +1,31 @@
+databaseChangeLog:
+  - changeSet:
+      id: 05-fk-study_program_subject-study_program
+      author: liquibase
+      changes:
+        - addForeignKeyConstraint:
+            baseTableName: study_program_subject
+            baseColumnNames: study_program_id
+            constraintName: fk_study_program_subject_study_program
+            referencedTableName: study_program
+            referencedColumnNames: study_program_id
+            onDelete: CASCADE
+            onUpdate: CASCADE
+  - changeSet:
+      id: 05-fk-study_program_subject-subject
+      author: liquibase
+      changes:
+        - addForeignKeyConstraint:
+            baseTableName: study_program_subject
+            baseColumnNames: subject_id
+            constraintName: fk_study_program_subject_subject
+            referencedTableName: subject
+            referencedColumnNames: subject_id
+            onDelete: CASCADE
+            onUpdate: CASCADE
+  - changeSet:
+      id: 05-foreign-keys
+      author: liquibase
+      changes:
+        - tagDatabase:
+            tag: version-1.0

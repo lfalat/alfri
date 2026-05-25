@@ -17,18 +17,18 @@ import org.hibernate.annotations.OnDeleteAction;
 @Entity
 @Table(name = "teacher_subject")
 public class TeacherSubject {
-  @EmbeddedId
-  private TeacherSubjectId id;
+    @EmbeddedId
+    private TeacherSubjectId id;
 
-  @MapsId("teacherId")
-  @ManyToOne(fetch = FetchType.LAZY, optional = false)
-  @OnDelete(action = OnDeleteAction.CASCADE)
-  @JoinColumn(name = "teacher_id", nullable = false)
-  private Teacher teacher;
+    @MapsId("teacherId")
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JoinColumn(name = "teacher_id", nullable = false)
+    private Teacher teacher;
 
-  @MapsId("subjectId")
-  @ManyToOne(fetch = FetchType.LAZY, optional = false)
-  @OnDelete(action = OnDeleteAction.CASCADE)
-  @JoinColumn(name = "subject_id", nullable = false)
-  private Subject subject;
+    @MapsId("subjectId")
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JoinColumn(name = "subject_id", nullable = false)
+    private Subject subject;
 }

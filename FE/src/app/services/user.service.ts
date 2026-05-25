@@ -1,43 +1,38 @@
-import { Injectable } from '@angular/core';
-import { JwtHelperService } from '@auth0/angular-jwt';
+import { inject, Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable, take } from 'rxjs';
-import { Role, UserDto } from '../types';
-import { environment } from '../../environments/environment';
+import { Observable, take } from 'rxjs';
+import { Role, UserDtoExtended } from '../types';
+import { ConfigService } from '@services/config.service';
+import { KeycloakService } from '@services/keycloak.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class UserService {
-  get userData(): UserDto {
-    const value = this._userData.getValue();
-    if (!value) {
-      throw new Error('User data is not available');
-    }
-
-    return value;
-  }
+  readonly userData = signal<UserDtoExtended | null>(null);
 
   userId: number | undefined;
+  private readonly configService = inject(ConfigService);
+  private readonly BE_URL = `${this.configService.apiUrl()}/user`;
 
-  private readonly _userData: BehaviorSubject<UserDto | undefined> = new BehaviorSubject<UserDto | undefined>(undefined);
-  private readonly BE_URL = `${environment.API_URL}/user`;
-
-  constructor(
-    private readonly http: HttpClient,
-    public jwtHelper: JwtHelperService,
-  ) {
-    this.loadUserData();
-  }
+  private readonly http = inject(HttpClient);
+  private readonly keycloakService = inject(KeycloakService);
 
   public loadUserData() {
+    // Check if data already exists
+    if (this.userData()) {
+      return;
+    }
+
     this.loadUserInfo()
       .pipe(take(1))
       .subscribe({
-        next: (userData: UserDto) => {
-          this._userData.next(userData);
+        next: (userData) => {
+          this.userData.set(userData);
         },
-        error: () => {this._userData.next(undefined)}
+        error: () => {
+          this.userData.set(null);
+        },
       });
   }
 
@@ -45,12 +40,18 @@ export class UserService {
     this.userId = userId;
   }
 
-  loggedIn() {
-    return !this.jwtHelper.isTokenExpired();
-  }
+  /**
+   * Checks if user is logged in by verifying token existence and expiration.
+   * Note: This is a client-side check only. Token signature validity is verified
+   * server-side on each API request. If the token is invalid (e.g., signing key changed),
+   * the server will return 401 and the token should be cleared via error handling.
+   */
+  loggedIn = () => {
+    return this.keycloakService.isAuthenticated();
+  };
 
-  loadUserInfo(): Observable<UserDto> {
-    return this.http.get<UserDto>(`${this.BE_URL}/profile`);
+  loadUserInfo(): Observable<UserDtoExtended> {
+    return this.http.get<UserDtoExtended>(`${this.BE_URL}/profile`);
   }
 
   public getRoles(): Observable<Role[]> {

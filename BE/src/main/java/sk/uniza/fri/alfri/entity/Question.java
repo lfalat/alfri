@@ -1,19 +1,29 @@
 package sk.uniza.fri.alfri.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import jakarta.persistence.*;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
-import java.util.ArrayList;
-import java.util.List;
-
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.Filter;
 import org.hibernate.annotations.FilterDef;
 import org.hibernate.annotations.ParamDef;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -53,13 +63,12 @@ public class Question {
     @Column(name = "optional", nullable = false)
     private Boolean optional = false;
 
-    @OneToMany(mappedBy = "question", fetch = FetchType.LAZY, cascade = CascadeType.ALL,
-      orphanRemoval = true)
-    @JsonBackReference
+    @OneToMany(mappedBy = "question", fetch = FetchType.EAGER, cascade = CascadeType.ALL,
+            orphanRemoval = true)
     private List<QuestionOption> options = new ArrayList<>();
 
     @OneToMany(mappedBy = "answerQuestion", fetch = FetchType.LAZY, cascade = CascadeType.ALL,
-      orphanRemoval = true)
+            orphanRemoval = true)
     @JsonBackReference
     @Filter(name = "answeredQuestionByUserFilter", condition = "user_id = :userId")
     private List<Answer> answers = new ArrayList<>();

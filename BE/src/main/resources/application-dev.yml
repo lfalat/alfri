@@ -2,31 +2,87 @@ spring:
   application:
     name: ${APPLICATION_NAME:ALFRI_BE}
   datasource:
-    url: jdbc:postgresql://${DATABASE_DEV_URL:localhost:5432/alfri}
-    username: ${DATABASE_DEV_USER:alfri_be}
-    password: ${DATABASE_DEV_PASSWORD:password123}
+    # Use container network host 'db' by default instead of localhost when running inside Docker
+    url: jdbc:postgresql://${DATABASE_DEV_URL}
+    username: ${DATABASE_DEV_USER}
+    password: ${DATABASE_DEV_PASSWORD}
   jpa:
     show-sql: ${DEV_SHOW_SQL:false}
     hibernate:
       # Spring Boot won't modify the database based on @Entity classes - we must update the database ourselves
       ddl-auto: none
+  liquibase:
+    enabled: true
+    change-log: classpath:db/changelog/db.changelog-master.yml
+    contexts: ${LIQUIBASE_CONTEXTS:base,seed,dev}
+    # drop-first: true
   security:
     jwt:
       secret-key: ${JWT_DEV_SECRET_KEY:3cfa76ef14937c1c0ea519f8fc057a80fcd04a7420f8e8bcd0a7567c272e007b}
       expiration-time: ${JWT_DEV_EXPIRATION_TIME:3600000}
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${KEYCLOAK_ISSUER_URI:http://localhost:8180/realms/alfri}
+          jwk-set-uri: ${KEYCLOAK_JWK_SET_URI:http://localhost:8180/realms/alfri/protocol/openid-connect/certs}
 
 python:
   executable_path: ${PYTHON_DEV_EXECUTABLE_PATH:python3}
   clustering_prediction_script_path: ${DEV_CLUSTERING_PREDICTION_SCRIPT_PATH:./python_scripts/subject_clustering.py}
-  clustering_prediction_INF_model_path: ${PROD_CLUSTERING_PREDICTION_MODEL_INF_PATH}
-  clustering_prediction_MAN_model_path: ${PROD_CLUSTERING_PREDICTION_MODEL_MAN_PATH}
+  # Default model paths for dev (inside container image) with env override hooks
+  clustering_prediction_INF_model_path: ${DEV_CLUSTERING_PREDICTION_MODEL_INF_PATH:./python_scripts/models/kmeans_model.pkl}
+  clustering_prediction_MAN_model_path: ${DEV_CLUSTERING_PREDICTION_MODEL_MAN_PATH:./python_scripts/models/kmeans_model_manazment.pkl}
   passing_change_prediction_script_path: ${DEV_PASSING_CHANGE_PREDICTION_SCRIPT_PATH:./python_scripts/passing_chance_prediction.py}
   passing_mark_prediction_script_path: ${DEV_PASSING_MARK_PREDICTION_SCRIPT_PATH:./python_scripts/neural_network_marks_predictions.py}
+  service:
+    base-url: ${PYTHON_SERVICE_URL}
+    api-key: ${PYTHON_SERVICE_API_KEY:}
+    timeout-ms: ${PYTHON_SERVICE_TIMEOUT_MS:5000}
+    enabled: true
 
+resilience4j:
+  circuitbreaker:
+    instances:
+      pythonService:
+        registerHealthIndicator: true
+        slidingWindowType: COUNT_BASED
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 5
+        permittedNumberOfCallsInHalfOpenState: 3
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+        waitDurationInOpenState: 1s
+        failureRateThreshold: 50
+        eventConsumerBufferSize: 10
+        recordExceptions:
+          - feign.RetryableException
+          - java.io.IOException
+          - org.springframework.web.client.HttpServerErrorException
+  retry:
+    instances:
+      pythonServiceRetry:
+        maxAttempts: 2
+        waitDuration: 50ms
+        retryExceptions:
+          - feign.RetryableException
+          - org.springframework.web.client.HttpServerErrorException
+        ignoreExceptions:
+          - org.springframework.web.client.HttpClientErrorException
 
-
-frontend-url: ${FRONTEND_DEV_URL:*}
+keycloak:
+  issuer-uri: ${KEYCLOAK_ISSUER_URI:http://localhost:8180/realms/alfri}
+  internal-issuer-uri: ${KEYCLOAK_INTERNAL_ISSUER_URI:${KEYCLOAK_ISSUER_URI:http://localhost:8180/realms/alfri}}
+  realm: ${KEYCLOAK_REALM:alfri}
+  client-id: ${KEYCLOAK_CLIENT_ID:alfri-app}
+  admin-realm: ${KEYCLOAK_ADMIN_REALM:master}
+  admin-client-id: ${KEYCLOAK_ADMIN_CLIENT_ID:admin-cli}
+  admin-username: ${KEYCLOAK_ADMIN_USERNAME:admin}
+  admin-password: ${KEYCLOAK_ADMIN_PASSWORD:admin}
+  events:
+    webhook-secret: ${KEYCLOAK_EVENT_WEBHOOK_SECRET:changeme}
 # email of user that you want to act as
 default-user-email: szathmary@stud.uniza.sk
 # roles that you want to have - upper case with comma in between them
 default-user-roles: STUDENT, TEACHER, VISITOR, ADMIN
+
+cors:
+  allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:4200}

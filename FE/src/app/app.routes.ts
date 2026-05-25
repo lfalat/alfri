@@ -2,7 +2,7 @@ import type { Routes } from '@angular/router';
 import { HomeComponent } from '@pages/home/home.component';
 import { LoginComponent } from '@pages/login/login.component';
 import { RegistrationComponent } from '@pages/registration/registration.component';
-import { AuthGuards, roleAppGuard, tokenAppGuard } from './auth-guards';
+import { AuthGuards, loggedOutOnlyGuard, roleAppGuard, tokenAppGuard } from './auth-guards';
 import { ErrorPageComponent } from '@pages/error-page/error-page.component';
 import { ProfileComponent } from '@pages/profile/profile.component';
 import { inject } from '@angular/core';
@@ -24,54 +24,64 @@ export const routes: Routes = [
   {
     path: 'home',
     component: HomeComponent,
-    canActivate: [() => inject(AuthGuards).canActivate()],
+    canActivate: [(_route, state) => inject(AuthGuards).canActivate(state.url)],
   },
-  { path: 'login', component: LoginComponent },
-  { path: 'register', component: RegistrationComponent },
+  {
+    path: 'login',
+    component: LoginComponent,
+    canActivate: [loggedOutOnlyGuard],
+  },
+  {
+    path: 'register',
+    component: RegistrationComponent,
+    canActivate: [loggedOutOnlyGuard],
+  },
   {
     path: 'subjects',
     component: SubjectsComponent,
-    canActivate: [() => inject(AuthGuards).canActivate()],
+    canActivate: [(_route, state) => inject(AuthGuards).canActivate(state.url)],
   },
   {
     path: 'subjects',
     component: SubjectsComponent,
-    canActivate: [() => inject(AuthGuards).canActivate()],
+    canActivate: [(_route, state) => inject(AuthGuards).canActivate(state.url)],
   },
   {
     path: 'subjects/:subjectCode',
     component: SubjectDetailComponent,
-    canActivate: [() => inject(AuthGuards).canActivate()],
+    canActivate: [(_route, state) => inject(AuthGuards).canActivate(state.url)],
   },
   {
     path: 'subjects-chance',
     component: SubjectsChanceComponent,
-    canActivate: [() => inject(AuthGuards).canActivate()],
+    canActivate: [(_route, state) => inject(AuthGuards).canActivate(state.url)],
   },
   {
     path: 'passing-prediction',
     component: PassingPredictionComponent,
-    canActivate: [() => inject(AuthGuards).canActivate()],
+    canActivate: [(_route, state) => inject(AuthGuards).canActivate(state.url)],
   },
   {
     path: 'recommendation',
     component: RecommendationComponent,
-    canActivate: [() => inject(AuthGuards).canActivate()],
+    canActivate: [(_route, state) => inject(AuthGuards).canActivate(state.url)],
   },
   {
     path: 'clustering',
     component: SubjectsClusteringComponent,
-    canActivate: [() => inject(AuthGuards).canActivate()],
+    canActivate: [(_route, state) => inject(AuthGuards).canActivate(state.url)],
   },
   {
     path: 'subject-reports',
     component: SubjectReportsComponent,
-    canActivate: [() => inject(AuthGuards).canActivate()],
+    canActivate: [(_route, state) => inject(AuthGuards).canActivate(state.url), roleAppGuard],
+    data: { role: [AuthRole.ADMIN, AuthRole.TEACHER, AuthRole.VEDENIE] },
   },
   {
     path: 'subjects-grades-correlation',
     component: SubjectGradeCorrelationComponent,
-    canActivate: [() => inject(AuthGuards).canActivate()],
+    canActivate: [(_route, state) => inject(AuthGuards).canActivate(state.url), roleAppGuard],
+    data: { role: [AuthRole.ADMIN, AuthRole.TEACHER, AuthRole.VEDENIE] },
   },
   {
     path: 'admin-page',
@@ -82,13 +92,16 @@ export const routes: Routes = [
   {
     path: 'keywords',
     component: KeywordsComponent,
-    canActivate: [() => inject(AuthGuards).canActivate()],
+    canActivate: [(_route, state) => inject(AuthGuards).canActivate(state.url), roleAppGuard],
+    data: { role: [AuthRole.ADMIN, AuthRole.TEACHER, AuthRole.VEDENIE] },
   },
-  { path: 'profile',
+  {
+    path: 'profile',
     component: ProfileComponent,
     canActivate: [tokenAppGuard],
   },
-  { path: 'grade-form',
+  {
+    path: 'grade-form',
     component: GradeFormComponent,
     canActivate: [tokenAppGuard],
   },

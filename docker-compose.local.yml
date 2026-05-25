@@ -1,0 +1,178 @@
+# docker-compose.local.yml
+# Purpose: Local development compose that builds the app services locally and
+# runs supporting infrastructure (Postgres, Keycloak).
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    container_name: alfri_be
+    environment:
+      # Spring properties / env expected by the app
+      SPRING_PROFILES_ACTIVE: dev
+      DATABASE_DEV_URL: ${DATABASE_DEV_URL:-db:5432/alfri}
+      DATABASE_DEV_USER: ${DATABASE_DEV_USER:-alfri}
+      DATABASE_DEV_PASSWORD: ${DATABASE_DEV_PASSWORD:-changeme}
+      # If DATABASE_PROD_URL is not provided in .env, default to the local postgres service
+      DATABASE_PROD_URL: ${DATABASE_PROD_URL:-jdbc:postgresql://db:5432/alfri}
+      DATABASE_PROD_USER: ${DATABASE_PROD_USER:-alfri}
+      DATABASE_PROD_PASSWORD: ${DATABASE_PROD_PASSWORD:-changeme}
+      # Python service discovery via Docker DNS (service name)
+      PYTHON_SERVICE_URL: http://python-ml-client:5000
+      # Keycloak issuer is public/browser-facing; JWK URI is container-network-facing.
+      KEYCLOAK_ISSUER_URI: http://localhost:8180/realms/alfri
+      KEYCLOAK_INTERNAL_ISSUER_URI: http://keycloak:8080/realms/alfri
+      KEYCLOAK_JWK_SET_URI: http://keycloak:8080/realms/alfri/protocol/openid-connect/certs
+      KEYCLOAK_EVENT_WEBHOOK_SECRET: ${KEYCLOAK_EVENT_WEBHOOK_SECRET:-changeme}
+      # Shared API key for backend-to-ML calls.
+      PYTHON_SERVICE_API_KEY: ${ML_API_KEY:-changeme}
+      # Dapr app id for local runs (optional; see README/prompts)
+      DAPR_APP_ID: alfri-backend
+      DAPR_HTTP_BASE_URL: http://backend-dapr:3500
+    ports:
+      - "8080:8080"
+    depends_on:
+      python-ml-client:
+        condition: service_started
+      db:
+        condition: service_started
+      keycloak:
+        condition: service_healthy
+    networks:
+      - alfri-network
+
+  frontend:
+    build:
+      context: ./FE
+      dockerfile: Dockerfile
+    container_name: alfri_fe
+    environment:
+      BACKEND_URL: http://backend:8080
+      API_URL: /api
+      ENVIRONMENT: dev
+      KEYCLOAK_URL: http://localhost:8180
+      KEYCLOAK_REALM: alfri
+      KEYCLOAK_CLIENT_ID: alfri-frontend
+    ports:
+      - "4200:80"
+    depends_on:
+      - backend
+    networks:
+      - alfri-network
+
+  python-ml-client:
+    build:
+      context: .
+      dockerfile: Dockerfile.python
+    container_name: alfri_py
+    environment:
+      MODEL_PATH: /app/models
+      DATABASE_DEV_URL: ${DATABASE_DEV_URL:-db:5432/alfri}
+      DATABASE_DEV_USER: ${DATABASE_DEV_USER:-alfri}
+      DATABASE_DEV_PASSWORD: ${DATABASE_DEV_PASSWORD:-changeme}
+      API_KEY: ${ML_API_KEY:-changeme}
+    ports:
+      - "5000:5000"
+    networks:
+      - alfri-network
+
+  keycloak-db-init:
+    image: postgres:15-alpine
+    container_name: alfri_keycloak_db_init
+    restart: "no"
+    environment:
+      PGHOST: db
+      PGPORT: 5432
+      PGDATABASE: postgres
+      PGUSER: ${DATABASE_DEV_USER:-alfri}
+      PGPASSWORD: ${DATABASE_DEV_PASSWORD:-changeme}
+      KEYCLOAK_DB_NAME: ${KEYCLOAK_DB_NAME:-keycloak}
+    command:
+      - sh
+      - -c
+      - |
+        until pg_isready -h db -p 5432 -U "${DATABASE_DEV_USER:-alfri}"; do
+          sleep 1
+        done
+        if psql -tAc "SELECT 1 FROM pg_database WHERE datname='${KEYCLOAK_DB_NAME:-keycloak}'" | grep -q 1; then
+          echo "Database ${KEYCLOAK_DB_NAME:-keycloak} already exists"
+        else
+          psql -c "CREATE DATABASE \"${KEYCLOAK_DB_NAME:-keycloak}\""
+        fi
+    depends_on:
+      - db
+    networks:
+      - alfri-network
+
+  keycloak:
+    build:
+      context: .
+      dockerfile: docker/keycloak/Dockerfile
+    container_name: alfri_keycloak
+    restart: unless-stopped
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: ${KEYCLOAK_ADMIN_USERNAME:-admin}
+      KC_BOOTSTRAP_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD:-admin}
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://db:5432/${KEYCLOAK_DB_NAME:-keycloak}
+      KC_DB_USERNAME: ${DATABASE_DEV_USER:-alfri}
+      KC_DB_PASSWORD: ${DATABASE_DEV_PASSWORD:-changeme}
+      KC_HTTP_ENABLED: "true"
+      KC_HOSTNAME: http://localhost:8180
+      KC_HOSTNAME_STRICT: "false"
+      KC_HEALTH_ENABLED: "true"
+      KC_SPI_THEME_CACHE_THEMES: "false"
+      KC_SPI_THEME_CACHE_TEMPLATES: "false"
+      KC_SPI_THEME_STATIC_MAX_AGE: "-1"
+      ALFRI_KEYCLOAK_EVENT_WEBHOOK_URL: ${KEYCLOAK_EVENT_WEBHOOK_URL:-http://host.docker.internal:8080/api/internal/keycloak/users}
+      ALFRI_KEYCLOAK_EVENT_WEBHOOK_SECRET: ${KEYCLOAK_EVENT_WEBHOOK_SECRET:-changeme}
+    command:
+      - start-dev
+      - --import-realm
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - >-
+          bash -ec 'exec 3<>/dev/tcp/127.0.0.1/8080;
+          printf "GET /realms/alfri/.well-known/openid-configuration HTTP/1.0\r\nHost: localhost\r\n\r\n" >&3;
+          grep -q "HTTP/1.0 200 OK" <&3'
+      interval: 10s
+      timeout: 5s
+      retries: 15
+      start_period: 90s
+    ports:
+      - "8180:8080"
+    volumes:
+      - ./docker/keycloak/import:/opt/keycloak/data/import:ro
+      - ./docker/keycloak/themes:/opt/keycloak/themes:ro
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      keycloak-db-init:
+        condition: service_completed_successfully
+    networks:
+      - alfri-network
+
+  # Local Postgres database for development and testing
+  db:
+    image: postgres:15-alpine
+    container_name: alfri_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: alfri
+      POSTGRES_USER: ${DATABASE_DEV_USER:-alfri}
+      POSTGRES_PASSWORD: ${DATABASE_DEV_PASSWORD:-changeme}
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - alfri-network
+
+volumes:
+  db_data:
+
+networks:
+  alfri-network:
+    driver: bridge

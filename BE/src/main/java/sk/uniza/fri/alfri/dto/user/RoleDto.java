@@ -6,9 +6,9 @@ import lombok.Data;
 
 @Data
 public class RoleDto {
-  @NotNull(message = "Role id cannot be null!")
-  private Integer id;
+    @NotNull(message = "Role id cannot be null!")
+    private Integer id;
 
-  @NotBlank(message = "Role name cannot be null or blank!")
-  private String name;
+    @NotBlank(message = "Role name cannot be null or blank!")
+    private String name;
 }

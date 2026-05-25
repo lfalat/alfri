@@ -1,0 +1,48 @@
+databaseChangeLog:
+  - changeSet:
+      id: 18-mark-dynamic-section-for-mandatory-subjects
+      author: liquibase
+      changes:
+        - sql: |
+            -- Mark section 62 as dynamic data fetching section
+            UPDATE public.questionnaire_section 
+            SET should_fetch_data = true 
+            WHERE section_id = 62 AND questionnaire_id = 69;
+      rollback:
+        - sql: |
+            UPDATE public.questionnaire_section 
+            SET should_fetch_data = false 
+            WHERE section_id = 62 AND questionnaire_id = 69;
+
+  - changeSet:
+      id: 18-sync-question-sequence
+      author: liquibase
+      changes:
+        - sql: |
+            -- Synchronize the question sequence with existing data
+            SELECT setval('public.question_question_id_seq', COALESCE((SELECT MAX(question_id) FROM public.question), 0) + 1, false);
+
+  - changeSet:
+      id: 18-create-dynamic-subject-questions
+      author: liquibase
+      changes:
+        - sql: |
+            -- Create dynamic questions for all subjects
+            -- This generates question records for each subject in the system
+            -- Questions will be filtered by the API based on study program and year
+            INSERT INTO public.question (section_id, answer_type_id, position_in_questionnaire, question_title, optional, question_identifier)
+            SELECT 
+                62 as section_id,
+                6 as answer_type_id,  -- GRADE type
+                ROW_NUMBER() OVER (ORDER BY subject_id) as position_in_questionnaire,
+                name as question_title,
+                false as optional,
+                CONCAT('question_', code) as question_identifier
+            FROM public.subject
+            WHERE subject_id > 1  -- Skip the first subject if needed
+            ORDER BY subject_id;
+      rollback:
+        - sql: |
+            DELETE FROM public.question 
+            WHERE question_identifier LIKE 'question_%';
+

@@ -1,0 +1,72 @@
+@use '@angular/material' as mat;
+
+// Custom color variables
+$base-light: #f0f9ff;
+$surface-color: #fff;
+
+$my-theme: mat.define-theme(
+  (
+    color: (
+      theme-type: light,
+      primary: mat.$azure-palette,
+      tertiary: mat.$magenta-palette,
+    ),
+    typography: (
+      plain-family: 'Plus Jakarta Sans',
+      brand-family: 'Plus Jakarta Sans',
+    ),
+    density: (
+      scale: 0,
+    ),
+  )
+);
+
+// Apply the theme globally
+html {
+  @include mat.all-component-themes($my-theme);
+  @include mat.typography-hierarchy($my-theme);
+
+  --mat-card-elevated-container-color: #{$surface-color};
+  --mat-card-outlined-container-color: #{$surface-color};
+  --mat-toolbar-container-background-color: #{$surface-color};
+  --mdc-elevated-card-container-color: #{$surface-color};
+  --mdc-outlined-card-container-color: #{$surface-color};
+  --mat-menu-container-color: #{$surface-color};
+  --mat-stepper-container-color: #{$surface-color};
+  --mat-table-background-color: #{$surface-color};
+}
+
+:root {
+  --mdc-filled-button-container-shape: 10px;
+  --mdc-outlined-button-container-shape: 10px;
+  --mdc-text-button-container-shape: 10px;
+
+  // Design system colors
+  --primary: #0e7490; // Cyan-700
+  --primary-light: #06b6d4; // Cyan-500
+  --primary-soft: #ecfeff; // Cyan-50
+  --secondary: #475569; // Slate-600
+  --accent: #f97316; // Orange-500
+  --accent-light: #ffedd5; // Orange-100
+  --background-light: #f0f9ff; // Sky-50
+  --background-dark: #0f172a; // Slate-900
+  --surface-light: #ffffff;
+  --surface-dark: #1e293b; // Slate-800
+  --text-primary: #0f172a; // Slate-900
+  --text-primary-dark: #f1f5f9; // Slate-100
+  --text-secondary: #64748b; // Slate-500
+  --text-secondary-dark: #94a3b8; // Slate-400
+  --border-light: #e0f2fe; // Sky-100
+  --border-dark: #334155; // Slate-700
+}
+
+button,
+button.mat-mdc-button,
+button.mat-mdc-raised-button,
+button.mat-mdc-unelevated-button,
+button.mat-mdc-outlined-button,
+button.mat-mdc-icon-button,
+button.mdc-button {
+  padding: 20px;
+  border-radius: 10px;
+}

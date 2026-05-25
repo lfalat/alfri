@@ -1,58 +1,10 @@
-@import "../../../../node_modules/bootstrap/scss/bootstrap";  // TODO relative import
-
-$primary-color: #007bff;
-$secondary-color: #d5e9fd;
-
-.registration-form {
-  #heroText {
-    text-align: justify;
-  }
-
-  .divider {
-    color: $gray-600;
-    display: none;
-    @include media-breakpoint-up(md) {
-      display: block;
-    }
-  }
-
-  form {
-    display: flex;
-    flex-direction: column;
-  }
-
-  mat-form-field {
-    width: 100%;
-  }
-
-  .registration-form-wrapper {
-    flex-direction: column;
-
-    @include media-breakpoint-up(md) {
-      flex-direction: row;
-    }
-  }
-
-  .hero-wrapper {
-    min-height: 200px;
-    position: relative;
-
-    align-items: center;
-    flex-direction: column;
-
-    ::after {
-      content: "";
-      background: rgba(0, 0, 0, 0.3);
-      position: absolute;
-      top: 0;
-      right: 0;
-      bottom: 0;
-      left: 0;
-      pointer-events: none;
-    }
-  }
-
-  @include media-breakpoint-up(md) {
-    flex-direction: row;
-  }
+.registration-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100%;
+  padding: 20px 0;
+}
+.registration-wrapper {
+  display: flex;
 }

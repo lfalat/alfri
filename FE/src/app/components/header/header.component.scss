@@ -1,6 +1,5 @@
 .sidenav-container {
   height: 100%;
-  z-index: 2;
 }
 
 .sidenav {
@@ -14,9 +13,142 @@
 .mat-toolbar.mat-primary {
   position: sticky;
   top: 0;
-  z-index: 1;
 }
 
 .hidden {
   display: none;
+}
+
+// Fixed toolbar container
+.toolbar-container {
+  border-radius: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  height: 64px; // Fixed height for the toolbar
+  top: 0;
+  left: 0;
+  z-index: 300 !important;
+}
+
+// Logo styling
+.logo-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  background-color: #2196f3; // Azure blue (Material Design)
+  border-radius: 4px;
+  padding: 8px;
+  margin-right: 12px;
+}
+
+.logo-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+// Brand text styling
+.brand-text {
+  font-weight: 700;
+  font-size: 1.25rem;
+}
+
+.brand-button {
+  background: none;
+  border: none;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  padding: 0;
+
+  &:hover {
+    opacity: 0.8;
+  }
+}
+
+// Mobile header styling
+.mobile-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+// Selected menu item styling
+.selected {
+  background-color: rgba(33, 150, 243, 0.12) !important; // Light azure blue background
+  border-left: 4px solid #2196f3; // Azure blue border
+
+  mat-icon {
+    color: #2196f3; // Azure blue icon
+  }
+}
+
+// Desktop menu item selected state
+::ng-deep .mat-mdc-menu-panel {
+  .selected {
+    background-color: rgba(33, 150, 243, 0.12) !important;
+
+    mat-icon {
+      color: #2196f3;
+    }
+  }
+}
+
+// User profile button styling
+.user-profile-button {
+  display: flex;
+  align-items: center;
+  padding: 8px 16px;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+}
+
+.user-profile-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.user-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+  max-width: 200px;
+}
+
+.user-name {
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.user-role {
+  font-size: 12px;
+  font-weight: 400;
+  opacity: 0.8;
+  line-height: 1.2;
+}
+
+.avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #2196f3; // Azure blue
+  color: white;
+  font-weight: 600;
+  font-size: 16px;
+  flex-shrink: 0;
 }

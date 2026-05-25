@@ -1,0 +1,103 @@
+# k8s/alfri.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: alfri-backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: alfri-backend
+  template:
+    metadata:
+      labels:
+        app: alfri-backend
+    spec:
+      containers:
+        - name: backend
+          image: alfri-backend:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: alfri-backend
+spec:
+  type: NodePort
+  selector:
+    app: alfri-backend
+  ports:
+    - port: 8080
+      targetPort: 8080
+      nodePort: 30080
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: alfri-frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: alfri-frontend
+  template:
+    metadata:
+      labels:
+        app: alfri-frontend
+    spec:
+      containers:
+        - name: frontend
+          image: alfri-frontend:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: alfri-frontend
+spec:
+  type: NodePort
+  selector:
+    app: alfri-frontend
+  ports:
+    - port: 80
+      targetPort: 80
+      nodePort: 30042
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: alfri-python-ml-client
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: alfri-python-ml-client
+  template:
+    metadata:
+      labels:
+        app: alfri-python-ml-client
+    spec:
+      containers:
+        - name: python-ml-client
+          image: alfri-python-ml-client:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 5000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: alfri-python-ml-client
+spec:
+  type: ClusterIP
+  selector:
+    app: alfri-python-ml-client
+  ports:
+    - port: 5000
+      targetPort: 5000

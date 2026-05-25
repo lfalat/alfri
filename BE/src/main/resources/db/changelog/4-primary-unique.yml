@@ -1,0 +1,138 @@
+databaseChangeLog:
+  - changeSet:
+      id: 04-pk-answer
+      author: liquibase
+      changes:
+        - addPrimaryKey:
+            tableName: answer
+            columnNames: answer_id
+            constraintName: answer_id
+  - changeSet:
+      id: 04-pk-answer_text
+      author: liquibase
+      changes:
+        - addPrimaryKey:
+            tableName: answer_text
+            columnNames: answer_text_id
+            constraintName: answer_text_pk
+  - changeSet:
+      id: 04-pk-answer_type
+      author: liquibase
+      changes:
+        - addPrimaryKey:
+            tableName: answer_type
+            columnNames: answer_type_id
+            constraintName: answer_type_pk
+  - changeSet:
+      id: 04-pk-focus
+      author: liquibase
+      changes:
+        - addPrimaryKey:
+            tableName: focus
+            columnNames: subject_id
+            constraintName: focus_pk
+  - changeSet:
+      id: 04-pk-question_option
+      author: liquibase
+      changes:
+        - addPrimaryKey:
+            tableName: question_option
+            columnNames: question_option_id
+            constraintName: question_option_pk
+  - changeSet:
+      id: 04-pk-question
+      author: liquibase
+      changes:
+        - addPrimaryKey:
+            tableName: question
+            columnNames: question_id
+            constraintName: question_pk
+  - changeSet:
+      id: 04-pk-questionnaire
+      author: liquibase
+      changes:
+        - addPrimaryKey:
+            tableName: questionnaire
+            columnNames: questionnaire_id
+            constraintName: questionnaire_pk
+  - changeSet:
+      id: 04-pk-questionnaire_section
+      author: liquibase
+      changes:
+        - addPrimaryKey:
+            tableName: questionnaire_section
+            columnNames: section_id
+            constraintName: questionnaire_section_pkey
+  - changeSet:
+      id: 04-pk-role
+      author: liquibase
+      changes:
+        - addPrimaryKey:
+            tableName: role
+            columnNames: role_id
+            constraintName: role_pk
+  - changeSet:
+      id: 04-pk-student
+      author: liquibase
+      changes:
+        - addPrimaryKey:
+            tableName: student
+            columnNames: student_id
+            constraintName: student_pk
+  - changeSet:
+      id: 04-pk-student_subject
+      author: liquibase
+      changes:
+        - addPrimaryKey:
+            tableName: student_subject
+            columnNames: student_id, subject_id, year, calendar_year
+            constraintName: student_subject_pk
+  - changeSet:
+      id: 04-pk-study_program
+      author: liquibase
+      changes:
+        - addPrimaryKey:
+            tableName: study_program
+            columnNames: study_program_id
+            constraintName: study_program_pk
+  - changeSet:
+      id: 04-pk-study_program_subject
+      author: liquibase
+      changes:
+        - addPrimaryKey:
+            tableName: study_program_subject
+            columnNames: subject_study_program_id
+            constraintName: study_program_subject_pk
+  - changeSet:
+      id: 04-pk-subject_grades
+      author: liquibase
+      changes:
+        - addPrimaryKey:
+            tableName: subject_grades
+            columnNames: subject_id
+            constraintName: subject_grades_pk
+  - changeSet:
+      id: 04-pk-subject
+      author: liquibase
+      changes:
+        - addPrimaryKey:
+            tableName: subject
+            columnNames: subject_id
+            constraintName: subject_pk
+  - changeSet:
+      id: 04-unique-user-email
+      author: liquibase
+      changes:
+        - addUniqueConstraint:
+            tableName: user
+            columnNames: email
+            constraintName: user_email_unique
+  - changeSet:
+      id: 04-pk-user
+      author: liquibase
+      changes:
+        - addPrimaryKey:
+            tableName: user
+            columnNames: user_id
+            constraintName: user_pk
+

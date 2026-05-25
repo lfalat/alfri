@@ -1,0 +1,144 @@
+databaseChangeLog:
+  - changeSet:
+      id: 10-sequences-new
+      author: liquibase
+      changes:
+        - createSequence: { sequenceName: department_department_id_seq, schemaName: public, startValue: 1, incrementBy: 1 }
+        - createSequence: { sequenceName: teacher_teacher_id_seq, schemaName: public, startValue: 1, incrementBy: 1 }
+        - createSequence: { sequenceName: subject_grade_correlation_id_seq, schemaName: public, startValue: 1, incrementBy: 1 }
+        - createSequence: { sequenceName: user_role_id_seq, schemaName: public, startValue: 1, incrementBy: 1 }
+  - changeSet:
+      id: 10-table-department
+      author: liquibase
+      changes:
+        - createTable:
+            tableName: department
+            schemaName: public
+            columns:
+              - column: { name: department_id, type: INT, constraints: { nullable: false } }
+              - column: { name: name, type: VARCHAR(255), constraints: { nullable: false } }
+              - column: { name: abbreviation, type: VARCHAR(10), constraints: { nullable: false } }
+        - addDefaultValue:
+            tableName: department
+            columnName: department_id
+            defaultValueComputed: "nextval('public.department_department_id_seq')"
+        - addPrimaryKey: { tableName: department, columnNames: department_id, constraintName: department_pk }
+  - changeSet:
+      id: 10-table-options_answer
+      author: liquibase
+      changes:
+        - createTable:
+            tableName: options_answer
+            schemaName: public
+            columns:
+              - column: { name: options_answer_id, type: INT, constraints: { nullable: false } }
+              - column: { name: questionnaire_id, type: INT, constraints: { nullable: false } }
+              - column: { name: question_id, type: INT, constraints: { nullable: false } }
+              - column: { name: user_id, type: INT, constraints: { nullable: false } }
+              - column: { name: answer_type_id, type: INT, constraints: { nullable: false } }
+              - column: { name: "timestamp", type: TIMESTAMP, defaultValueComputed: "now()", constraints: { nullable: false } }
+        - addDefaultValue:
+            tableName: options_answer
+            columnName: options_answer_id
+            defaultValueComputed: "nextval('public.options_answer_seq'::regclass)"
+        - addPrimaryKey: { tableName: options_answer, columnNames: options_answer_id, constraintName: options_answer_pk }
+  - changeSet:
+      id: 10-table-user_role
+      author: liquibase
+      changes:
+        - createTable:
+            tableName: user_role
+            schemaName: public
+            columns:
+              - column: { name: id, type: INT, constraints: { nullable: false } }
+              - column: { name: user_id, type: INT }
+              - column: { name: role_id, type: INT }
+        - addDefaultValue:
+            tableName: user_role
+            columnName: id
+            defaultValueComputed: "nextval('public.user_role_id_seq')"
+        - addPrimaryKey: { tableName: user_role, columnNames: id, constraintName: user_role_pk }
+  - changeSet:
+      id: 10-table-subject_grade_correlation
+      author: liquibase
+      changes:
+        - createTable:
+            tableName: subject_grade_correlation
+            schemaName: public
+            columns:
+              - column: { name: id, type: INT, constraints: { nullable: false } }
+              - column: { name: first_subject, type: INT }
+              - column: { name: second_subject, type: INT }
+              - column: { name: correlation, type: DOUBLE PRECISION, constraints: { nullable: false } }
+        - addDefaultValue:
+            tableName: subject_grade_correlation
+            columnName: id
+            defaultValueComputed: "nextval('public.subject_grade_correlation_id_seq')"
+        - addPrimaryKey: { tableName: subject_grade_correlation, columnNames: id, constraintName: subject_grade_correlation_pk }
+  - changeSet:
+      id: 10-table-subject_keyword
+      author: liquibase
+      changes:
+        - createTable:
+            tableName: subject_keyword
+            schemaName: public
+            columns:
+              - column: { name: keyword_id, type: INT, constraints: { nullable: false } }
+              - column: { name: keyword, type: VARCHAR(255), constraints: { nullable: false } }
+              - column: { name: subject_1, type: INT }
+              - column: { name: subject_1_occurence, type: INT, constraints: { nullable: false } }
+              - column: { name: subject_2, type: INT }
+              - column: { name: subject_2_occurence, type: INT, constraints: { nullable: false } }
+              - column: { name: subject_3, type: INT }
+              - column: { name: subject_3_occurence, type: INT, constraints: { nullable: false } }
+        - addDefaultValue:
+            tableName: subject_keyword
+            columnName: keyword_id
+            defaultValueComputed: "nextval('public.subject_keyword_keyword_id_seq')"
+        - addPrimaryKey: { tableName: subject_keyword, columnNames: keyword_id, constraintName: subject_keyword_pk }
+  - changeSet:
+      id: 10-table-teacher
+      author: liquibase
+      changes:
+        - createTable:
+            tableName: teacher
+            schemaName: public
+            columns:
+              - column: { name: teacher_id, type: INT, constraints: { nullable: false } }
+              - column: { name: user_id, type: INT }
+              - column: { name: department_id, type: INT }
+        - addDefaultValue:
+            tableName: teacher
+            columnName: teacher_id
+            defaultValueComputed: "nextval('public.teacher_teacher_id_seq')"
+        - addPrimaryKey: { tableName: teacher, columnNames: teacher_id, constraintName: teacher_pk }
+  - changeSet:
+      id: 10-table-teacher_subject
+      author: liquibase
+      changes:
+        - createTable:
+            tableName: teacher_subject
+            schemaName: public
+            columns:
+              - column: { name: teacher_id, type: INT, constraints: { nullable: false } }
+              - column: { name: subject_id, type: INT, constraints: { nullable: false } }
+        - addPrimaryKey: { tableName: teacher_subject, columnNames: teacher_id, subject_id, constraintName: teacher_subject_pk }
+  - changeSet:
+      id: 10-foreign-keys-new
+      author: liquibase
+      changes:
+        - addForeignKeyConstraint: { baseTableName: teacher, baseColumnNames: user_id, constraintName: teacher_user_fk, referencedTableName: "user", referencedColumnNames: user_id }
+        - addForeignKeyConstraint: { baseTableName: teacher, baseColumnNames: department_id, constraintName: teacher_department_fk, referencedTableName: department, referencedColumnNames: department_id }
+        - addForeignKeyConstraint: { baseTableName: options_answer, baseColumnNames: answer_type_id, constraintName: options_answer_answer_type_fk, referencedTableName: answer_type, referencedColumnNames: answer_type_id }
+        - addForeignKeyConstraint: { baseTableName: options_answer, baseColumnNames: questionnaire_id, constraintName: options_answer_questionnaire_fk, referencedTableName: questionnaire, referencedColumnNames: questionnaire_id }
+        - addForeignKeyConstraint: { baseTableName: options_answer, baseColumnNames: question_id, constraintName: options_answer_question_fk, referencedTableName: question, referencedColumnNames: question_id }
+        - addForeignKeyConstraint: { baseTableName: options_answer, baseColumnNames: user_id, constraintName: options_answer_user_fk, referencedTableName: "user", referencedColumnNames: user_id }
+        - addForeignKeyConstraint: { baseTableName: user_role, baseColumnNames: user_id, constraintName: user_role_user_fk, referencedTableName: "user", referencedColumnNames: user_id }
+        - addForeignKeyConstraint: { baseTableName: user_role, baseColumnNames: role_id, constraintName: user_role_role_fk, referencedTableName: role, referencedColumnNames: role_id }
+        - addForeignKeyConstraint: { baseTableName: subject_grade_correlation, baseColumnNames: first_subject, constraintName: sgc_first_subject_fk, referencedTableName: subject, referencedColumnNames: subject_id }
+        - addForeignKeyConstraint: { baseTableName: subject_grade_correlation, baseColumnNames: second_subject, constraintName: sgc_second_subject_fk, referencedTableName: subject, referencedColumnNames: subject_id }
+        - addForeignKeyConstraint: { baseTableName: subject_keyword, baseColumnNames: subject_1, constraintName: sk_subject1_fk, referencedTableName: subject, referencedColumnNames: subject_id }
+        - addForeignKeyConstraint: { baseTableName: subject_keyword, baseColumnNames: subject_2, constraintName: sk_subject2_fk, referencedTableName: subject, referencedColumnNames: subject_id }
+        - addForeignKeyConstraint: { baseTableName: subject_keyword, baseColumnNames: subject_3, constraintName: sk_subject3_fk, referencedTableName: subject, referencedColumnNames: subject_id }
+        - addForeignKeyConstraint: { baseTableName: teacher_subject, baseColumnNames: teacher_id, constraintName: teacher_subject_teacher_fk, referencedTableName: teacher, referencedColumnNames: teacher_id }
+        - addForeignKeyConstraint: { baseTableName: teacher_subject, baseColumnNames: subject_id, constraintName: teacher_subject_subject_fk, referencedTableName: subject, referencedColumnNames: subject_id }

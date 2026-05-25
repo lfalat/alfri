@@ -1,36 +1,33 @@
-<mat-card>
-  <mat-card-header>
-    <h2>Prehľad predmetov</h2>
-  </mat-card-header>
-  <mat-card-content>
-    <div>
-      <form [formGroup]="filterForm" (ngSubmit)="studyProgramChanged()">
-        <mat-form-field appearance="outline" class="col-12 col-md-4 col-lg-3 col-xl-2">
-          <mat-label>Študijný program</mat-label>
-          <mat-select
-            formControlName="subjectForm"
-            [(value)]="selectedStudyProgramId"
-            (selectionChange)="studyProgramChanged()"
-          >
-            <mat-option
-              *ngFor="let program of studyPrograms$ | async"
-              [value]="program.id"
-            >
-              {{ program.name }}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
-      </form>
-    </div>
+<div class="container">
+  <h2>Prehľad predmetov</h2>
 
-    <app-subjects-table
-      class="overflow-x-scroll"
-      [dataSource$]="dataSource$"
-      [pageData]="pageData"
-      [isLoading]="isLoading"
-      (pageChange)="onPageChange($event)"
-      (subjectDetailNavigate)="navigateToSubjectDetail($event)"
-    >
-    </app-subjects-table>
-  </mat-card-content>
-</mat-card>
+  <mat-card class="p-2">
+    <div class="row">
+      <div class="col-12 col-md-6">
+        <mat-form-field appearance="outline" class="w-100 mb-3">
+          <mat-label>Vyhľadať predmety</mat-label>
+          <input
+            matInput
+            type="text"
+            [ngModel]="searchTerm()"
+            (ngModelChange)="searchTerm.set($event); onSearchChange($event)"
+            placeholder="Zadajte názov predmetu..."
+          />
+          <mat-icon matSuffix>search</mat-icon>
+        </mat-form-field>
+      </div>
+    </div>
+    <mat-card-content>
+      <app-generic-table
+        class="overflow-x-scroll"
+        [data]="subjectsData()"
+        [config]="tableConfig"
+        [loading]="isLoading()"
+        (pageChange)="onPageChange($event)"
+        (sortChange)="onSortChange($event)"
+        (rowClick)="onRowClick($event)"
+      >
+      </app-generic-table>
+    </mat-card-content>
+  </mat-card>
+</div>

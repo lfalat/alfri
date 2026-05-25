@@ -1,0 +1,7 @@
+databaseChangeLog:
+  - changeSet:
+      id: 06-indexes
+      author: liquibase
+      changes:
+        - tagDatabase:
+            tag: version-1.0

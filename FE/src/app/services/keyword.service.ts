@@ -1,16 +1,16 @@
-import { Injectable } from '@angular/core';
-import { environment } from '../../environments/environment';
+import { inject, Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { SubjectExtendedDto } from '../types';
+import { ConfigService } from '@services/config.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class KeywordService {
-  private readonly URL = `${environment.API_URL}/keyword`;
-
-  constructor(private http: HttpClient) {}
+  private readonly http = inject(HttpClient);
+  private readonly config = inject(ConfigService);
+  private readonly URL = `${this.config.apiUrl()}/keyword`;
 
   public searchKeywords(value: string): Observable<string[]> {
     const httpOptions = {
@@ -29,9 +29,6 @@ export class KeywordService {
       }),
     };
 
-    return this.http.get<SubjectExtendedDto[]>(
-      `${this.URL}/${keyword}/subjects`,
-      httpOptions,
-    );
+    return this.http.get<SubjectExtendedDto[]>(`${this.URL}/${keyword}/subjects`, httpOptions);
   }
 }

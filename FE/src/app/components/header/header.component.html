@@ -1,109 +1,60 @@
 <mat-sidenav-container class="sidenav-container">
   <!--   hamburger menu - mobile   -->
-  <mat-sidenav
-    #drawer
-    class="sidenav"
-    fixedInViewport
-    mode="over"
-    [opened]="false"
-  >
+  <mat-sidenav #drawer class="sidenav" fixedInViewport mode="over" [opened]="false">
     <mat-toolbar>ALFRI</mat-toolbar>
     <mat-nav-list>
-      <mat-expansion-panel [class.mat-elevation-z0]="true">
-        <mat-expansion-panel-header *ngIf="formData || authService.hasRole([AuthRole.VEDENIE, AuthRole.ADMIN, AuthRole.TEACHER])" style="padding: 0 16px">
-          <mat-panel-title>
-            <div class="d-flex align-items-center gap-1">
-              <mat-icon>book</mat-icon>
-              Predmety
-            </div>
-          </mat-panel-title>
-        </mat-expansion-panel-header>
+      <!-- Subjects Menu Group -->
+      @if (canAccessSubjects()) {
+        <mat-expansion-panel [class.mat-elevation-z0]="true">
+          <mat-expansion-panel-header style="padding: 0 16px">
+            <mat-panel-title>
+              <div class="d-flex align-items-center gap-1">
+                <mat-icon>book</mat-icon>
+                Predmety
+              </div>
+            </mat-panel-title>
+          </mat-expansion-panel-header>
 
-        <a
-          mat-list-item
-          href="javascript:void(0)"
-          (click)="navigateToSubjects()"
-        >
-          <div class="d-flex align-items-center gap-1">
-            <mat-icon>list_view</mat-icon>
-            Prehľad predmetov
-          </div>
-        </a>
+          @for (item of subjectMenuItems; track item.route) {
+            <a mat-list-item href="javascript:void(0)" (click)="handleMenuItemClick(item)">
+              <div class="d-flex align-items-center gap-1">
+                <mat-icon>{{ item.icon }}</mat-icon>
+                {{ item.label }}
+              </div>
+            </a>
+          }
+        </mat-expansion-panel>
+      }
 
-        <a
-          mat-list-item
-          href="javascript:void(0)"
-          (click)="navigateToPrediction()"
-        >
-          <div class="d-flex align-items-center gap-1">
-            <mat-icon>interests</mat-icon>
-            Záujmy
-          </div>
-        </a>
+      <!-- Reports Menu Group -->
+      @if (canAccessReports()) {
+        <mat-expansion-panel [class.mat-elevation-z0]="true">
+          <mat-expansion-panel-header style="padding: 0 16px">
+            <mat-panel-title>
+              <div class="d-flex align-items-center gap-1">
+                <mat-icon>bar_chart</mat-icon>
+                Analýzy a Reporty
+              </div>
+            </mat-panel-title>
+          </mat-expansion-panel-header>
 
-        <a
-          mat-list-item
-          href="javascript:void(0)"
-          (click)="navigateToSubjectsClustering()"
-        >
-          <div class="d-flex align-items-center gap-1">
-            <mat-icon>bubble_chart</mat-icon>
-            Podobné predmety
-          </div>
-        </a>
+          @for (item of reportMenuItems; track item.route) {
+            <a
+              mat-list-item
+              href="javascript:void(0)"
+              (click)="handleMenuItemClick(item)"
+              [class.selected]="isMenuItemSelected(item.route)"
+            >
+              <div class="d-flex align-items-center gap-1">
+                <mat-icon>{{ item.icon }}</mat-icon>
+                {{ item.label }}
+              </div>
+            </a>
+          }
+        </mat-expansion-panel>
+      }
 
-        <a
-          mat-list-item
-          href="javascript:void(0)"
-          (click)="navigateToPassingPrediction()"
-        >
-          <div class="d-flex align-items-center gap-1">
-            <mat-icon>check_circle</mat-icon>
-            Predikcia absolvovania
-          </div>
-        </a>
-
-        <!--        <a mat-list-item href="javascript:void(0)" (click)="navigateToSubjectChances()">-->
-        <!--          <div class="d-flex align-items-center gap-1">-->
-        <!--            <mat-icon>question_mark</mat-icon>-->
-        <!--            Predikcia-->
-        <!--          </div>-->
-        <!--        </a>-->
-      </mat-expansion-panel>
-
-      <mat-expansion-panel [class.mat-elevation-z0]="true" *ngIf="formData || authService.hasRole([AuthRole.VEDENIE, AuthRole.ADMIN, AuthRole.TEACHER])">
-        <mat-expansion-panel-header style="padding: 0 16px">
-          <mat-panel-title>
-            <div class="d-flex align-items-center gap-1">
-              <mat-icon>bar_chart</mat-icon>
-              Analýzy a Reporty
-            </div>
-          </mat-panel-title>
-        </mat-expansion-panel-header>
-
-        <a
-          mat-list-item
-          href="javascript:void(0)"
-          (click)="navigateToSubjectsReports()"
-        >
-          <div class="d-flex align-items-center gap-1">
-            <mat-icon>summarize</mat-icon>
-            Predmety podľa známok
-          </div>
-        </a>
-
-        <a
-          mat-list-item
-          href="javascript:void(0)"
-          (click)="navigateToSubjectGradeCorrelation()"
-        >
-          <div class="d-flex align-items-center gap-1">
-            <mat-icon>query_stats</mat-icon>
-            Korelačná analýza známok
-          </div>
-        </a>
-      </mat-expansion-panel>
-
+      <!-- Admin Link -->
       <a
         *appHasRole="[AuthRole.ADMIN]"
         mat-list-item
@@ -116,129 +67,151 @@
         </div>
       </a>
 
-      <a mat-list-item href="javascript:void(0)" (click)="navigateToProfile()">
-        <div class="d-flex align-items-center gap-1">
-          <mat-icon>account_circle</mat-icon>
-          Profil
-        </div>
-      </a>
-
-      <a mat-list-item href="javascript:void(0)" (click)="logOut()">
-        <div class="d-flex align-items-center gap-1">
-          <mat-icon>logout</mat-icon>
-          Odhlásiť sa
-        </div>
-      </a>
+      <!-- User Menu Items -->
+      @for (item of userMenuItems; track item.label) {
+        <a mat-list-item href="javascript:void(0)" (click)="handleMenuItemClick(item)">
+          <div class="d-flex align-items-center gap-1">
+            <mat-icon>{{ item.icon }}</mat-icon>
+            {{ item.label }}
+          </div>
+        </a>
+      }
     </mat-nav-list>
   </mat-sidenav>
 
   <!--   top toolbar - PC   -->
   <mat-sidenav-content>
-    <div *ngIf="loggedIn(); else loggedOut">
-      <mat-toolbar color="secondary" class="row">
-        <div class="col-12 col-md-8 d-flex align-items-center gap-3 p-0">
-          <button
-            class="d-block d-md-none"
-            type="button"
-            aria-label="Toggle sidenav"
-            mat-icon-button
-            (click)="openDrawer()"
-          >
-            <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
-          </button>
-
-          <span role="button" class="curs" (click)="navigateToHome()"
-            >ALFRI</span
-          >
-
-          <div class="d-none d-md-block">
-          <button mat-button [matMenuTriggerFor]="subjects_menu" *ngIf="formData || authService.hasRole([AuthRole.VEDENIE, AuthRole.ADMIN, AuthRole.TEACHER])">
-              <mat-icon>book</mat-icon>
-              Predmety
-            </button>
-
-            <button mat-button [matMenuTriggerFor]="reports_menu" *ngIf="formData || authService.hasRole([AuthRole.VEDENIE, AuthRole.ADMIN, AuthRole.TEACHER])">
-              <mat-icon>bar_chart</mat-icon>
-              Analýzy a Reporty
-            </button>
-          </div>
-        </div>
-
-        <div class="col-4 d-none d-md-flex justify-content-end">
-          <button
-            mat-icon-button
-            [matMenuTriggerFor]="menu"
-            aria-label="Open menu"
-            class="menu-avatar-button"
-          >
-            <div mat-icon class="avatar">M</div>
-          </button>
-          <mat-menu #menu="matMenu">
+    @if (loggedIn()) {
+      <mat-card class="position-fixed w-100 toolbar-container">
+        <mat-toolbar color="secondary" class="row">
+          <div class="col-12 col-md-8 d-flex align-items-center gap-3 p-0">
             <button
-              mat-menu-item
-              (click)="navigateToAdminPage()"
-              *appHasRole="[AuthRole.ADMIN]"
+              class="d-block d-md-none"
+              type="button"
+              aria-label="Toggle sidenav"
+              mat-icon-button
+              (click)="openDrawer()"
             >
-              <mat-icon>admin_panel_settings</mat-icon>
-              Administrácia
+              <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
             </button>
-            <button mat-menu-item (click)="navigateToProfile()">
-              <mat-icon>account_circle</mat-icon>
-              Profil
-            </button>
-            <button mat-menu-item (click)="logOut()">
-              <mat-icon>logout</mat-icon>
-              Odhlásiť sa
-            </button>
-          </mat-menu>
-        </div>
-      </mat-toolbar>
-    </div>
 
+            <button type="button" class="brand-button curs fw-bolder" (click)="navigateToHome()">
+              <div class="d-flex align-items-center gap-1">
+                <div class="d-block p-1">
+                  <img
+                    src="assets/images/logo.svg"
+                    width="30"
+                    height="30"
+                    alt="Alfri logo"
+                    class="sidenav-logo"
+                  />
+                </div>
+                <span>ALFRI</span>
+              </div>
+            </button>
+
+            <div class="d-none d-md-block">
+              @if (canAccessSubjects()) {
+                <button mat-button [matMenuTriggerFor]="subjects_menu">
+                  <mat-icon>book</mat-icon>
+                  Predmety
+                </button>
+              }
+
+              @if (canAccessReports()) {
+                <button mat-button [matMenuTriggerFor]="reports_menu">
+                  <mat-icon>bar_chart</mat-icon>
+                  Analýzy a Reporty
+                </button>
+              }
+            </div>
+          </div>
+
+          <div class="col-4 d-none d-md-flex justify-content-end align-items-center">
+            @if (userService.userData()) {
+              <button
+                mat-button
+                [matMenuTriggerFor]="menu"
+                aria-label="Open menu"
+                class="user-profile-button"
+                disableRipple
+              >
+                <div class="user-profile-content">
+                  <div class="user-info">
+                    <div class="user-name">{{ userFullName() }}</div>
+                    <div class="user-role">{{ userRole() }}</div>
+                  </div>
+                  <div class="avatar">{{ userInitials() }}</div>
+                </div>
+              </button>
+              <mat-menu #menu="matMenu">
+                <button
+                  mat-menu-item
+                  (click)="navigateToAdminPage()"
+                  *appHasRole="[AuthRole.ADMIN]"
+                >
+                  <mat-icon>admin_panel_settings</mat-icon>
+                  Administrácia
+                </button>
+
+                @for (item of userMenuItems; track item.label) {
+                  <button mat-menu-item (click)="handleMenuItemClick(item)">
+                    <mat-icon>{{ item.icon }}</mat-icon>
+                    {{ item.label }}
+                  </button>
+                }
+              </mat-menu>
+            }
+          </div>
+        </mat-toolbar>
+      </mat-card>
+    } @else {
+      <mat-card class="position-fixed w-100 toolbar-container">
+        <mat-toolbar class="row">
+          <div class="d-flex align-items-center gap-1">
+            <div class="d-block p-1">
+              <img
+                src="assets/images/logo.svg"
+                width="30"
+                height="30"
+                alt="Alfri logo"
+                class="sidenav-logo"
+              />
+            </div>
+            <span>ALFRI</span>
+          </div>
+        </mat-toolbar>
+      </mat-card>
+    }
+
+    <!-- Subject Menu -->
     <mat-menu #subjects_menu="matMenu">
-      <button mat-menu-item (click)="navigateToSubjects()">
-        <mat-icon>list_view</mat-icon>
-        <span>Prehľad predmetov</span>
-      </button>
-
-      <button mat-menu-item (click)="navigateToPrediction()">
-        <mat-icon>interests</mat-icon>
-        <span>Zaujímavé predmety</span>
-      </button>
-
-      <button mat-menu-item (click)="navigateToSubjectsClustering()">
-        <mat-icon>bubble_chart</mat-icon>
-        <span>Podobné predmety</span>
-      </button>
-
-      <button mat-menu-item (click)="navigateToPassingPrediction()">
-        <mat-icon>check_circle</mat-icon>
-        <span>Predikcia absolvovania</span>
-      </button>
+      @for (item of subjectMenuItems; track item.route) {
+        <button
+          mat-menu-item
+          (click)="handleMenuItemClick(item)"
+          [class.selected]="isMenuItemSelected(item.route)"
+        >
+          <mat-icon>{{ item.icon }}</mat-icon>
+          <span>{{ item.label }}</span>
+        </button>
+      }
     </mat-menu>
 
+    <!-- Reports Menu -->
     <mat-menu #reports_menu="matMenu">
-      <button mat-menu-item (click)="navigateToSubjectsReports()">
-        <mat-icon>summarize</mat-icon>
-        Predmety podľa známok
-      </button>
-
-      <button mat-menu-item (click)="navigateToSubjectGradeCorrelation()">
-        <mat-icon>query_stats</mat-icon>
-        Korelačná analýza známok
-      </button>
-
-      <button mat-menu-item (click)="navigateToKeywords()">
-        <mat-icon>vpn_key</mat-icon>
-        Kľúčové slová
-      </button>
+      @for (item of reportMenuItems; track item.route) {
+        <button
+          mat-menu-item
+          (click)="handleMenuItemClick(item)"
+          [class.selected]="isMenuItemSelected(item.route)"
+        >
+          <mat-icon>{{ item.icon }}</mat-icon>
+          {{ item.label }}
+        </button>
+      }
     </mat-menu>
 
-    <ng-template #loggedOut>
-      <mat-toolbar class="row">
-        <span>Alfri</span>
-      </mat-toolbar>
-    </ng-template>
     <ng-content></ng-content>
   </mat-sidenav-content>
 </mat-sidenav-container>

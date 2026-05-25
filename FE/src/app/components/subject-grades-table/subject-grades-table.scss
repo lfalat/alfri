@@ -1,0 +1,279 @@
+.subject-grades-table-wrapper {
+  background: #fff;
+  border-radius: 1rem;
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e0f2fe;
+  overflow: hidden;
+
+  .table-header {
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid #e0f2fe;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+
+    @media (min-width: 640px) {
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .header-title {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+
+      .icon-container {
+        padding: 0.5rem;
+        background-color: rgba(6, 182, 212, 0.1);
+        border-radius: 0.5rem;
+        color: #0e7490;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        mat-icon {
+          font-size: 1.5rem;
+          width: 1.5rem;
+          height: 1.5rem;
+        }
+      }
+
+      h2 {
+        margin: 0;
+        font-size: 1.125rem;
+        font-weight: 700;
+        color: #0f172a;
+      }
+    }
+
+    .search-container {
+      position: relative;
+      width: 100%;
+
+      @media (min-width: 640px) {
+        width: 16rem;
+      }
+
+      .search-field {
+        width: 100%;
+
+        ::ng-deep {
+          .mat-mdc-text-field-wrapper {
+            background-color: #f8fafc;
+            border-radius: 0.75rem;
+          }
+
+          .mat-mdc-form-field-focus-overlay {
+            background-color: transparent;
+          }
+
+          .mdc-text-field--filled {
+            background-color: #f8fafc;
+          }
+
+          .mat-mdc-form-field-subscript-wrapper {
+            display: none;
+          }
+
+          input {
+            font-size: 0.875rem;
+            color: #0f172a;
+
+            &::placeholder {
+              color: #94a3b8;
+            }
+          }
+
+          mat-icon[matPrefix] {
+            color: #94a3b8;
+            margin-right: 0.5rem;
+            font-size: 1.25rem;
+            width: 1.25rem;
+            height: 1.25rem;
+          }
+        }
+      }
+    }
+  }
+
+  .table-container {
+    overflow-x: auto;
+
+    .grades-table {
+      width: 100%;
+      border-collapse: collapse;
+
+      th {
+        background-color: rgba(248, 250, 252, 0.8);
+        border-bottom: 1px solid #e0f2fe;
+        padding: 1rem 1.5rem;
+        text-align: left;
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: #64748b;
+
+        &.grade-header {
+          text-align: center;
+          width: 8rem;
+        }
+
+        &.credits-header {
+          text-align: right;
+          width: 8rem;
+        }
+      }
+
+      td {
+        padding: 1rem 1.5rem;
+        font-size: 0.875rem;
+        border-bottom: 1px solid #e0f2fe;
+
+        &.subject-name {
+          font-weight: 600;
+          color: #334155;
+        }
+
+        &.grade-cell {
+          text-align: center;
+        }
+
+        &.credits-cell {
+          text-align: right;
+          font-weight: 500;
+          color: #64748b;
+        }
+      }
+
+      .grade-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        height: 2rem;
+        width: 2rem;
+        border-radius: 50%;
+        font-size: 0.875rem;
+        font-weight: 700;
+        border: 1px solid;
+
+        &.grade-a {
+          background-color: rgba(16, 185, 129, 0.1);
+          color: #059669;
+          border-color: rgba(16, 185, 129, 0.2);
+        }
+
+        &.grade-b {
+          background-color: rgba(34, 197, 94, 0.1);
+          color: #16a34a;
+          border-color: rgba(34, 197, 94, 0.2);
+        }
+
+        &.grade-c {
+          background-color: rgba(249, 115, 22, 0.1);
+          color: #ea580c;
+          border-color: rgba(249, 115, 22, 0.2);
+        }
+
+        &.grade-d {
+          background-color: rgba(100, 116, 139, 0.1);
+          color: #64748b;
+          border-color: rgba(100, 116, 139, 0.2);
+        }
+
+        &.grade-e {
+          background-color: rgba(239, 68, 68, 0.1);
+          color: #dc2626;
+          border-color: rgba(239, 68, 68, 0.2);
+        }
+
+        &.grade-fx {
+          background-color: rgba(127, 29, 29, 0.1);
+          color: #991b1b;
+          border-color: rgba(127, 29, 29, 0.2);
+        }
+
+        &.grade-default {
+          background-color: rgba(100, 116, 139, 0.1);
+          color: #64748b;
+          border-color: rgba(100, 116, 139, 0.2);
+        }
+      }
+    }
+  }
+
+  .table-footer {
+    padding: 1rem 1.5rem;
+    border-top: 1px solid #e0f2fe;
+    background-color: rgba(248, 250, 252, 0.5);
+
+    ::ng-deep {
+      .mat-mdc-paginator {
+        background-color: transparent;
+      }
+
+      .mat-mdc-paginator-container {
+        justify-content: space-between;
+        padding: 0;
+        min-height: 48px;
+      }
+
+      .mat-mdc-paginator-page-size {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.875rem;
+        color: #64748b;
+
+        .mat-mdc-paginator-page-size-label {
+          margin: 0;
+        }
+
+        .mat-mdc-form-field {
+          margin-left: 0.5rem;
+        }
+
+        .mat-mdc-select {
+          font-size: 0.75rem;
+          font-weight: 500;
+        }
+      }
+
+      .mat-mdc-paginator-range-label {
+        font-weight: 500;
+        color: #334155;
+        font-size: 0.875rem;
+        margin: 0 2rem;
+      }
+
+      .mat-mdc-paginator-navigation-first,
+      .mat-mdc-paginator-navigation-previous,
+      .mat-mdc-paginator-navigation-next,
+      .mat-mdc-paginator-navigation-last {
+        padding: 0.375rem;
+        border-radius: 0.5rem;
+        transition: all 0.2s ease;
+
+        &:not([disabled]) {
+          color: #64748b;
+        }
+
+        &[disabled] {
+          color: #cbd5e1;
+        }
+      }
+
+      .mat-mdc-icon-button {
+        width: 2rem;
+        height: 2rem;
+        padding: 0;
+
+        .mat-mdc-button-touch-target {
+          width: 2rem;
+          height: 2rem;
+        }
+      }
+    }
+  }
+}

@@ -1,46 +1,36 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { SubjectPassingPredictionResultComponent } from '@components/subject-passing-prediction-result/subject-passing-prediction-result.component';
-import { NgForOf, NgIf } from '@angular/common';
+
 import { SubjectService } from '@services/subject.service';
 import { take } from 'rxjs';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { SubjectPassingPrediction } from '../../types';
-import { MatCard, MatCardContent, MatCardHeader } from '@angular/material/card';
+import { MatCard, MatCardContent } from '@angular/material/card';
 
 @Component({
   selector: 'app-passing-prediction',
   standalone: true,
-  imports: [
-    SubjectPassingPredictionResultComponent,
-    NgForOf,
-    MatProgressSpinner,
-    NgIf,
-    MatCard,
-    MatCardHeader,
-    MatCardContent,
-  ],
+  imports: [SubjectPassingPredictionResultComponent, MatProgressSpinner, MatCard, MatCardContent],
   templateUrl: './passing-prediction.component.html',
   styleUrls: ['./passing-prediction.component.scss'],
 })
 export class PassingPredictionComponent implements OnInit {
   subjects: SubjectPassingPrediction[] = [];
-  isLoading: boolean = true;
-
-  constructor(private subjectService: SubjectService) {}
+  isLoading = signal<boolean>(true);
+  private readonly subjectService = inject(SubjectService);
+  constructor() {}
 
   ngOnInit(): void {
     this.subjectService
       .makeSubjectsPassingAndMarkPredictions()
       .pipe(take(1))
       .subscribe((predictionResult: SubjectPassingPrediction[]) => {
-        this.isLoading = false;
+        this.isLoading.set(false);
         console.log(predictionResult);
         this.subjects = predictionResult;
 
         this.subjects.forEach((subject) => {
-          subject.recommendations = this.generateRecommendations(
-            subject.passingProbability,
-          );
+          subject.recommendations = this.generateRecommendations(subject.passingProbability);
         });
       });
   }

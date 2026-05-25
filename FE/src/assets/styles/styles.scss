@@ -1,0 +1,29 @@
+html,
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+#main-container {
+  display: flex;
+  flex-direction: column;
+  background-color: $base-light;
+  min-height: 100vh;
+  padding-top: 64px;
+}
+
+#main-main {
+  flex-grow: 1;
+  display: flex;
+  padding: 20px 0;
+
+  // Remove padding for auth pages to allow proper centering
+  &:has(.login-container),
+  &:has(.registration-container) {
+    padding: 0;
+  }
+}

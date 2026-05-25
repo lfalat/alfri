@@ -1,0 +1,73 @@
+databaseChangeLog:
+  - changeSet:
+      id: 08-example-roles
+      author: liquibase
+      context: example
+      changes:
+        - insert:
+            tableName: role
+            columns:
+              - column: { name: role_id, valueNumeric: 1 }
+              - column: { name: name, value: 'ADMIN' }
+        - insert:
+            tableName: role
+            columns:
+              - column: { name: role_id, valueNumeric: 2 }
+              - column: { name: name, value: 'STUDENT' }
+        - insert:
+            tableName: role
+            columns:
+              - column: { name: role_id, valueNumeric: 3 }
+              - column: { name: name, value: 'TEACHER' }
+        - insert:
+            tableName: role
+            columns:
+              - column: { name: role_id, valueNumeric: 4 }
+              - column: { name: name, value: 'VISITOR' }
+  - changeSet:
+      id: 08-example-answer-types
+      author: liquibase
+      context: example
+      changes:
+        - insert:
+            tableName: answer_type
+            columns:
+              - column: { name: answer_type_id, valueNumeric: 1 }
+              - column: { name: name, value: 'TEXT' }
+        - insert:
+            tableName: answer_type
+            columns:
+              - column: { name: answer_type_id, valueNumeric: 2 }
+              - column: { name: name, value: 'SINGLE_CHOICE' }
+        - insert:
+            tableName: answer_type
+            columns:
+              - column: { name: answer_type_id, valueNumeric: 3 }
+              - column: { name: name, value: 'MULTI_CHOICE' }
+  - changeSet:
+      id: 08-example-users
+      author: liquibase
+      context: example
+      changes:
+        - insert:
+            tableName: user
+            columns:
+              - column: { name: user_id, valueNumeric: 1 }
+              - column: { name: role_id, valueNumeric: 1 }
+              - column: { name: email, value: 'admin@example.com' }
+              - column: { name: first_name, value: 'System' }
+              - column: { name: last_name, value: 'Administrator' }
+              - column: { name: password, value: '$2a$10$abcdefghijklmnopqrstuv.CuQpJm6cdz9gYqzuQ7kQ0dKkQzu' }
+        - insert:
+            tableName: user
+            columns:
+              - column: { name: user_id, valueNumeric: 2 }
+              - column: { name: role_id, valueNumeric: 2 }
+              - column: { name: email, value: 'student1@example.com' }
+              - column: { name: first_name, value: 'Alice' }
+              - column: { name: last_name, value: 'Student' }
+              - column: { name: password, value: '$2a$10$abcdefghijklmnopqrstuv.CuQpJm6cdz9gYqzuQ7kQ0dKkQzu' }
+      rollback:
+        - delete:
+            tableName: user
+            where: "email in ('admin@example.com','student1@example.com')"

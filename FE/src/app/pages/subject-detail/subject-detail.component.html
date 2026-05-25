@@ -1,25 +1,55 @@
-<div class="container">
-  <mat-card>
-    <mat-card-header>
-      <mat-card-title *ngIf="subjectData" >
-        {{ subjectData.name }}
-      </mat-card-title>
-    </mat-card-header>
+<a
+  class="mb-3 back-button text-primary text-decoration-none"
+  (click)="goBack(); $event.preventDefault()"
+  (keyup.enter)="goBack()"
+  (keyup.space)="goBack(); $event.preventDefault()"
+  role="button"
+  tabindex="0"
+>
+  ← Späť na tabuľku
+</a>
 
-    <mat-card-content>
-      <!-- Chart Section -->
-      <div class="row d-flex justify-content-center align-items-center">
-        <!-- Radar Chart Container -->
-        <div class="col-12 col-md-6 col-lg-4 mb-4">
-          <canvas #chart id="chart" class="p-lg-3"></canvas>
-        </div>
+@if (subjectData) {
+  <h2>
+    {{ subjectData.name }}
+  </h2>
+}
 
-        <!-- Bar Chart Container -->
-        <div class="col-12 col-md-6 col-lg-4 mb-4">
-          <canvas #barChart id="barChart" class="p-lg-3"></canvas>
+<div class="row row-gap-3">
+  <div class="col-12 col-md-6">
+    <mat-card>
+      <!-- Radar Chart Container -->
+      @if (radarChartOptions) {
+        <app-radar-chart [options]="radarChartOptions"></app-radar-chart>
+      }
+    </mat-card>
+  </div>
+  <div class="col-12 col-md-6">
+    <mat-card>
+      <!-- Bar Chart Container -->
+      <canvas #barChart id="barChart"></canvas>
+    </mat-card>
+  </div>
+  <div class="col-12">
+    <mat-card>
+      @if (hasGradeAveragesData() === null) {
+        <!-- Loading state -->
+        <div class="no-data-message">
+          <p class="text-center text-muted py-4">Načítavam dáta...</p>
         </div>
-      </div>
-    </mat-card-content>
-  </mat-card>
+      } @else if (hasGradeAveragesData() === true) {
+        <!-- Line Chart Container -->
+        <canvas #lineChart id="lineChart"></canvas>
+      } @else {
+        <!-- No data state -->
+        <div class="no-data-message">
+          <p class="text-center text-muted py-4">
+            <mat-icon class="info-icon">info</mat-icon>
+            <br />
+            Pre tento predmet nie sú dostupné dáta o vývoji priemernej známky v rokoch.
+          </p>
+        </div>
+      }
+    </mat-card>
+  </div>
 </div>
-

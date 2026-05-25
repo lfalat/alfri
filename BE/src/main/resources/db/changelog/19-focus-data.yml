@@ -1,0 +1,9 @@
+databaseChangeLog:
+  - changeSet:
+      id: 19-focus-data
+      author: auto-generated
+      changes:
+        - sqlFile:
+            path: db/data/focus-data.sql
+            relativeToChangelogFile: false
+

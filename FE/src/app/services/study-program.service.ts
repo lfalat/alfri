@@ -1,16 +1,16 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { StudyProgramDto } from '../types';
-import { environment } from '../../environments/environment';
+import { ConfigService } from '@services/config.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class StudyProgramService {
-  private readonly URL = `${environment.API_URL}/studyProgram`;
-
-  constructor(private http: HttpClient) {}
+  private readonly http = inject(HttpClient);
+  private readonly config = inject(ConfigService);
+  private readonly URL = `${this.config.apiUrl()}/studyProgram`;
 
   public getAll(): Observable<StudyProgramDto[]> {
     const httpOptions = {

@@ -1,0 +1,158 @@
+databaseChangeLog:
+  - changeSet:
+      id: 08-import-subjects
+      author: liquibase
+      changes:
+        - sqlFile:
+            path: ../data/subjects.sql
+            relativeToChangelogFile: true
+            splitStatements: true
+            endDelimiter: ;
+            stripComments: true
+      rollback:
+        - sql:
+            dbms: postgresql
+            splitStatements: true
+            sql: |
+              DELETE FROM subject WHERE subject_id BETWEEN 1 AND 88;
+  - changeSet:
+      id: 08-import-full-scratch2
+      author: liquibase
+      changes:
+        - sqlFile:
+            path: ../data/seed-scratch2.sql
+            relativeToChangelogFile: true
+            splitStatements: true
+            endDelimiter: ;
+            stripComments: true
+      rollback:
+        - sql:
+            dbms: postgresql
+            splitStatements: true
+            sql: |
+              -- Basic rollback deleting inserted rows (danger: may remove existing data if IDs collide)
+              DELETE FROM subject_grades;
+              DELETE FROM focus;
+              DELETE FROM study_program_subject WHERE study_program_id = 3;
+              DELETE FROM student_subject WHERE student_id IN (2,3,4);
+              DELETE FROM student WHERE student_id IN (2,3,4);
+              DELETE FROM subject WHERE subject_id BETWEEN 89 AND 175;
+              DELETE FROM "user" WHERE user_id IN (1,2,3);
+              DELETE FROM questionnaire WHERE questionnaire_id = 2;
+              DELETE FROM study_program WHERE study_program_id = 3;
+              DELETE FROM role WHERE role_id IN (1,2,3);
+              DELETE FROM answer_type WHERE answer_type_id IN (1,2,3,4);
+  - changeSet:
+      id: 08-sequence-setvals
+      author: liquibase
+      changes:
+        - sql:
+            dbms: postgresql
+            splitStatements: true
+            sql: |
+              SELECT setval('public.user_user_id_seq', 4, true);
+              SELECT setval('public.role_role_id_seq', 5, true);
+              SELECT setval('public.answer_type_answer_type_id_seq', 5, true);
+              SELECT setval('public.study_program_id_sequence', 4, true);
+              SELECT setval('public.subject_subject_id_seq', 176, true);
+  - changeSet:
+      id: 08-study-program-subject-data
+      author: liquibase
+      changes:
+        - sql:
+            dbms: postgresql
+            splitStatements: true
+            sql: |
+              INSERT INTO public.study_program_subject (study_program_id, subject_id, obligation, recommended_year, semester_winter) VALUES (3, 19, 'Výb.', 1, false);
+              INSERT INTO public.study_program_subject (study_program_id, subject_id, obligation, recommended_year, semester_winter) VALUES (3, 8, 'Výb.', 1, true);
+              INSERT INTO public.study_program_subject (study_program_id, subject_id, obligation, recommended_year, semester_winter) VALUES (3, 71, 'Výb.', 3, true);
+              INSERT INTO public.study_program_subject (study_program_id, subject_id, obligation, recommended_year, semester_winter) VALUES (3, 38, 'Výb.', 2, true);
+              INSERT INTO public.study_program_subject (study_program_id, subject_id, obligation, recommended_year, semester_winter) VALUES (3, 52, 'Výb.', 2, false);
+              INSERT INTO public.study_program_subject (study_program_id, subject_id, obligation, recommended_year, semester_winter) VALUES (3, 63, 'Pov.', 3, true);
+              INSERT INTO public.study_program_subject (study_program_id, subject_id, obligation, recommended_year, semester_winter) VALUES (3, 12, 'Pov.', 1, false);
+              INSERT INTO public.study_program_subject (study_program_id, subject_id, obligation, recommended_year, semester_winter) VALUES (3, 7, 'Výb.', 1, true);
+              INSERT INTO public.study_program_subject (study_program_id, subject_id, obligation, recommended_year, semester_winter) VALUES (3, 45, 'P.v.', 2, false);
+              INSERT INTO public.study_program_subject (study_program_id, subject_id, obligation, recommended_year, semester_winter) VALUES (3, 44, 'P.v.', 2, false);
+              INSERT INTO public.study_program_subject (study_program_id, subject_id, obligation, recommended_year, semester_winter) VALUES (3, 85, 'Výb.', 3, false);
+              INSERT INTO public.study_program_subject (study_program_id, subject_id, obligation, recommended_year, semester_winter) VALUES (3, 79, 'Pov.', 3, false);
+              INSERT INTO public.study_program_subject (study_program_id, subject_id, obligation, recommended_year, semester_winter) VALUES (3, 18, 'Výb.', 1, false);
+              INSERT INTO public.study_program_subject (study_program_id, subject_id, obligation, recommended_year, semester_winter) VALUES (3, 37, 'Výb.', 2, true);
+              INSERT INTO public.study_program_subject (study_program_id, subject_id, obligation, recommended_year, semester_winter) VALUES (3, 24, 'Pov.', 2, true);
+              INSERT INTO public.study_program_subject (study_program_id, subject_id, obligation, recommended_year, semester_winter) VALUES (3, 31, 'Výb.', 2, true);
+              INSERT INTO public.study_program_subject (study_program_id, subject_id, obligation, recommended_year, semester_winter) VALUES (3, 30, 'Výb.', 2, true);
+              INSERT INTO public.study_program_subject (study_program_id, subject_id, obligation, recommended_year, semester_winter) VALUES (3, 78, 'Výb.', 3, true);
+              INSERT INTO public.study_program_subject (study_program_id, subject_id, obligation, recommended_year, semester_winter) VALUES (3, 72, 'Výb.', 3, true);
+              INSERT INTO public.study_program_subject (study_program_id, subject_id, obligation, recommended_year, semester_winter) VALUES (3, 20, 'Výb.', 1, false);
+              INSERT INTO public.study_program_subject (study_program_id, subject_id, obligation, recommended_year, semester_winter) VALUES (3, 11, 'Pov.', 1, false);
+              INSERT INTO public.study_program_subject (study_program_id, subject_id, obligation, recommended_year, semester_winter) VALUES (3, 10, 'Pov.', 1, false);
+              INSERT INTO public.study_program_subject (study_program_id, subject_id, obligation, recommended_year, semester_winter) VALUES (3, 29, 'P.v.', 2, true);
+              INSERT INTO public.study_program_subject (study_program_id, subject_id, obligation, recommended_year, semester_winter) VALUES (3, 84, 'Výb.', 3, false);
+              INSERT INTO public.study_program_subject (study_program_id, subject_id, obligation, recommended_year, semester_winter) VALUES (3, 80, 'Pov.', 3, false);
+              INSERT INTO public.study_program_subject (study_program_id, subject_id, obligation, recommended_year, semester_winter) VALUES (3, 74, 'Výb.', 3, true);
+              INSERT INTO public.study_program_subject (study_program_id, subject_id, obligation, recommended_year, semester_winter) VALUES (3, 69, 'Výb.', 3, true);
+              INSERT INTO public.study_program_subject (study_program_id, subject_id, obligation, recommended_year, semester_winter) VALUES (3, 21, 'Výb.', 1, false);
+              INSERT INTO public.study_program_subject (study_program_id, subject_id, obligation, recommended_year, semester_winter) VALUES (3, 65, 'P.v.', 3, true);
+              INSERT INTO public.study_program_subject (study_program_id, subject_id, obligation, recommended_year, semester_winter) VALUES (3, 1, 'Pov.', 1, true);
+              INSERT INTO public.study_program_subject (study_program_id, subject_id, obligation, recommended_year, semester_winter) VALUES (3, 32, 'Výb.', 2, true);
+              INSERT INTO public.study_program_subject (study_program_id, subject_id, obligation, recommended_year, semester_winter) VALUES (3, 13, 'Pov.', 1, false);
+              INSERT INTO public.study_program_subject (study_program_id, subject_id, obligation, recommended_year, semester_winter) VALUES (3, 14, 'Pov.', 1, false);
+              INSERT INTO public.study_program_subject (study_program_id, subject_id, obligation, recommended_year, semester_winter) VALUES (3, 73, 'Výb.', 3, true);
+              INSERT INTO public.study_program_subject (study_program_id, subject_id, obligation, recommended_year, semester_winter) VALUES (3, 6, 'Výb.', 1, true);
+              INSERT INTO public.study_program_subject (study_program_id, subject_id, obligation, recommended_year, semester_winter) VALUES (3, 5, 'Pov.', 1, true);
+              INSERT INTO public.study_program_subject (study_program_id, subject_id, obligation, recommended_year, semester_winter) VALUES (3, 36, 'Výb.', 2, true);
+              INSERT INTO public.study_program_subject (study_program_id, subject_id, obligation, recommended_year, semester_winter) VALUES (3, 87, 'Výb.', 3, false);
+              INSERT INTO public.study_program_subject (study_program_id, subject_id, obligation, recommended_year, semester_winter) VALUES (3, 70, 'Výb.', 3, true);
+              INSERT INTO public.study_program_subject (study_program_id, subject_id, obligation, recommended_year, semester_winter) VALUES (3, 68, 'Výb.', 3, true);
+              INSERT INTO public.study_program_subject (study_program_id, subject_id, obligation, recommended_year, semester_winter) VALUES (3, 64, 'P.v.', 3, true);
+              INSERT INTO public.study_program_subject (study_program_id, subject_id, obligation, recommended_year, semester_winter) VALUES (3, 35, 'Výb.', 2, true);
+              INSERT INTO public.study_program_subject (study_program_id, subject_id, obligation, recommended_year, semester_winter) VALUES (3, 83, 'Výb.', 3, false);
+              INSERT INTO public.study_program_subject (study_program_id, subject_id, obligation, recommended_year, semester_winter) VALUES (3, 81, 'Pov.', 3, false);
+              INSERT INTO public.study_program_subject (study_program_id, subject_id, obligation, recommended_year, semester_winter) VALUES (3, 62, 'Pov.', 3, true);
+              INSERT INTO public.study_program_subject (study_program_id, subject_id, obligation, recommended_year, semester_winter) VALUES (3, 61, 'Pov.', 3, true);
+              INSERT INTO public.study_program_subject (study_program_id, subject_id, obligation, recommended_year, semester_winter) VALUES (3, 60, 'Pov.', 3, true);
+              INSERT INTO public.study_program_subject (study_program_id, subject_id, obligation, recommended_year, semester_winter) VALUES (3, 23, 'Pov.', 2, true);
+              INSERT INTO public.study_program_subject (study_program_id, subject_id, obligation, recommended_year, semester_winter) VALUES (3, 22, 'Pov.', 2, true);
+              INSERT INTO public.study_program_subject (study_program_id, subject_id, obligation, recommended_year, semester_winter) VALUES (3, 82, 'Výb.', 3, false);
+              INSERT INTO public.study_program_subject (study_program_id, subject_id, obligation, recommended_year, semester_winter) VALUES (3, 59, 'Pov.', 3, true);
+              INSERT INTO public.study_program_subject (study_program_id, subject_id, obligation, recommended_year, semester_winter) VALUES (3, 40, 'Pov.', 2, false);
+              INSERT INTO public.study_program_subject (study_program_id, subject_id, obligation, recommended_year, semester_winter) VALUES (3, 3, 'Pov.', 1, true);
+              INSERT INTO public.study_program_subject (study_program_id, subject_id, obligation, recommended_year, semester_winter) VALUES (3, 76, 'Výb.', 3, true);
+              INSERT INTO public.study_program_subject (study_program_id, subject_id, obligation, recommended_year, semester_winter) VALUES (3, 34, 'Výb.', 2, true);
+              INSERT INTO public.study_program_subject (study_program_id, subject_id, obligation, recommended_year, semester_winter) VALUES (3, 67, 'Výb.', 3, true);
+              INSERT INTO public.study_program_subject (study_program_id, subject_id, obligation, recommended_year, semester_winter) VALUES (3, 48, 'Výb.', 2, false);
+              INSERT INTO public.study_program_subject (study_program_id, subject_id, obligation, recommended_year, semester_winter) VALUES (3, 75, 'Výb.', 3, true);
+              INSERT INTO public.study_program_subject (study_program_id, subject_id, obligation, recommended_year, semester_winter) VALUES (3, 15, 'Výb.', 1, false);
+              INSERT INTO public.study_program_subject (study_program_id, subject_id, obligation, recommended_year, semester_winter) VALUES (3, 39, 'Pov.', 2, false);
+              INSERT INTO public.study_program_subject (study_program_id, subject_id, obligation, recommended_year, semester_winter) VALUES (3, 4, 'Pov.', 1, true);
+              INSERT INTO public.study_program_subject (study_program_id, subject_id, obligation, recommended_year, semester_winter) VALUES (3, 26, 'Pov.', 2, true);
+              INSERT INTO public.study_program_subject (study_program_id, subject_id, obligation, recommended_year, semester_winter) VALUES (3, 27, 'P.v.', 2, true);
+              INSERT INTO public.study_program_subject (study_program_id, subject_id, obligation, recommended_year, semester_winter) VALUES (3, 66, 'P.v.', 3, true);
+              INSERT INTO public.study_program_subject (study_program_id, subject_id, obligation, recommended_year, semester_winter) VALUES (3, 58, 'Výb.', 2, false);
+              INSERT INTO public.study_program_subject (study_program_id, subject_id, obligation, recommended_year, semester_winter) VALUES (3, 57, 'Výb.', 2, false);
+              INSERT INTO public.study_program_subject (study_program_id, subject_id, obligation, recommended_year, semester_winter) VALUES (3, 2, 'Pov.', 1, true);
+              INSERT INTO public.study_program_subject (study_program_id, subject_id, obligation, recommended_year, semester_winter) VALUES (3, 33, 'Výb.', 2, true);
+              INSERT INTO public.study_program_subject (study_program_id, subject_id, obligation, recommended_year, semester_winter) VALUES (3, 16, 'Výb.', 1, false);
+              INSERT INTO public.study_program_subject (study_program_id, subject_id, obligation, recommended_year, semester_winter) VALUES (3, 47, 'P.v.', 2, false);
+              INSERT INTO public.study_program_subject (study_program_id, subject_id, obligation, recommended_year, semester_winter) VALUES (3, 56, 'Výb.', 2, false);
+              INSERT INTO public.study_program_subject (study_program_id, subject_id, obligation, recommended_year, semester_winter) VALUES (3, 25, 'Pov.', 2, true);
+              INSERT INTO public.study_program_subject (study_program_id, subject_id, obligation, recommended_year, semester_winter) VALUES (3, 77, 'Výb.', 3, true);
+              INSERT INTO public.study_program_subject (study_program_id, subject_id, obligation, recommended_year, semester_winter) VALUES (3, 28, 'P.v.', 2, true);
+              INSERT INTO public.study_program_subject (study_program_id, subject_id, obligation, recommended_year, semester_winter) VALUES (3, 17, 'Výb.', 1, false);
+              INSERT INTO public.study_program_subject (study_program_id, subject_id, obligation, recommended_year, semester_winter) VALUES (3, 42, 'Pov.', 2, false);
+              INSERT INTO public.study_program_subject (study_program_id, subject_id, obligation, recommended_year, semester_winter) VALUES (3, 54, 'Výb.', 2, false);
+              INSERT INTO public.study_program_subject (study_program_id, subject_id, obligation, recommended_year, semester_winter) VALUES (3, 46, 'P.v.', 2, false);
+              INSERT INTO public.study_program_subject (study_program_id, subject_id, obligation, recommended_year, semester_winter) VALUES (3, 50, 'Výb.', 2, false);
+              INSERT INTO public.study_program_subject (study_program_id, subject_id, obligation, recommended_year, semester_winter) VALUES (3, 41, 'Pov.', 2, false);
+              INSERT INTO public.study_program_subject (study_program_id, subject_id, obligation, recommended_year, semester_winter) VALUES (3, 43, 'P.v.', 2, false);
+              INSERT INTO public.study_program_subject (study_program_id, subject_id, obligation, recommended_year, semester_winter) VALUES (3, 9, 'Výb.', 1, true);
+              INSERT INTO public.study_program_subject (study_program_id, subject_id, obligation, recommended_year, semester_winter) VALUES (3, 55, 'Výb.', 2, false);
+              INSERT INTO public.study_program_subject (study_program_id, subject_id, obligation, recommended_year, semester_winter) VALUES (3, 49, 'Výb.', 2, false);
+              INSERT INTO public.study_program_subject (study_program_id, subject_id, obligation, recommended_year, semester_winter) VALUES (3, 51, 'Výb.', 2, false);
+              INSERT INTO public.study_program_subject (study_program_id, subject_id, obligation, recommended_year, semester_winter) VALUES (3, 53, 'Výb.', 2, false);
+              INSERT INTO public.study_program_subject (study_program_id, subject_id, obligation, recommended_year, semester_winter) VALUES (3, 86, 'Výb.', 3, false);
+      rollback:
+        - sql:
+            dbms: postgresql
+            splitStatements: true
+            sql: |
+              DELETE FROM public.study_program_subject WHERE study_program_id = 3 AND subject_id BETWEEN 89 AND 175;

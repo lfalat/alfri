@@ -1,115 +1,165 @@
-<div *ngIf="!isLoading" class="container mt-2">
-  <h1>Môj profil</h1>
-  <div class="row row-gap-2">
-    <div class="col-12 col-md-6 p-1">
-      <div class="card h-100">
-        <div class="card-header">
-          <h2 class="card-title mb-0">Osobne informacie</h2>
+@if (!isLoading()) {
+  <main class="profile-page">
+    <div class="container-fluid px-3 px-md-4 py-4">
+      <!-- Page Header -->
+      <header class="page-header">
+        <h1 class="page-title">Môj profil</h1>
+        <p class="page-subtitle">Správa vašich osobných údajov a prehľad dotazníka.</p>
+      </header>
+
+      <!-- Personal Info and Password Change Grid -->
+      <div class="row g-4">
+        <!-- Personal Information Section -->
+        <div class="col-12 col-lg-6">
+          <mat-card class="profile-card">
+            <div class="profile-card-header">
+              <div class="header-icon-wrapper icon-cyan">
+                <mat-icon>person</mat-icon>
+              </div>
+              <h2 class="header-title">Osobné informácie</h2>
+            </div>
+            <mat-card-content class="profile-card-content">
+              <div class="row g-4">
+                <div class="col-12 col-sm-6">
+                  <div class="info-item">
+                    <div class="info-label">Meno</div>
+                    <p class="info-value">{{ userData.firstName }}</p>
+                  </div>
+                </div>
+                <div class="col-12 col-sm-6">
+                  <div class="info-item">
+                    <div class="info-label">Priezvisko</div>
+                    <p class="info-value">{{ userData.lastName }}</p>
+                  </div>
+                </div>
+                <div class="col-12 col-sm-6">
+                  <div class="info-item">
+                    <div class="info-label">Email</div>
+                    <p class="info-value">{{ userData.email }}</p>
+                  </div>
+                </div>
+                <div class="col-12 col-sm-6">
+                  <div class="info-item">
+                    <div class="info-label">Rola</div>
+                    <p class="info-value">{{ userData.roles[0].name }}</p>
+                  </div>
+                </div>
+              </div>
+            </mat-card-content>
+          </mat-card>
         </div>
-        <div class="card-body">
-          <div class="row">
-            <div class="col-12 row">
-              <div class="col-12 col-md-6">
-                <p class="m-0">Meno</p>
-                <p class="fw-bolder">{{ userData.firstName }}</p>
-              </div>
 
-              <div class="col-12 col-md-6">
-                <p class="m-0">Priezvisko</p>
-                <p class="fw-bolder">{{ userData.lastName }}</p>
+        <!-- Password Change Section -->
+        <div class="col-12 col-lg-6">
+          <mat-card class="profile-card">
+            <div class="profile-card-header">
+              <div class="header-icon-wrapper icon-orange">
+                <mat-icon>lock</mat-icon>
               </div>
+              <h2 class="header-title">Zmena hesla</h2>
             </div>
-            <div class="col-12 row">
-              <div class="col-12 col-md-6">
-                <p class="m-0">Email</p>
-                <p class="fw-bolder">{{ userData.email }}</p>
-              </div>
-
-              <div class="col-12 col-md-6">
-                <p class="m-0">Rola</p>
-                <p class="fw-bolder">{{ userData.roles[0].name }}</p>
-              </div>
-            </div>
-          </div>
+            <mat-card-content class="profile-card-content">
+              <form [formGroup]="profileForm" (ngSubmit)="changePassword()" class="password-form">
+                <div class="form-field-wrapper">
+                  <mat-form-field appearance="outline" class="custom-form-field">
+                    <mat-label>Pôvodné heslo</mat-label>
+                    <input
+                      matInput
+                      [type]="showCurrentPassword() ? 'text' : 'password'"
+                      id="currentPassword"
+                      formControlName="currentPassword"
+                      required
+                    />
+                    <button
+                      mat-icon-button
+                      matSuffix
+                      type="button"
+                      (click)="showCurrentPassword.set(!showCurrentPassword())"
+                      [attr.aria-label]="showCurrentPassword() ? 'Skryť heslo' : 'Zobraziť heslo'"
+                    >
+                      <mat-icon>{{ showCurrentPassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
+                    </button>
+                  </mat-form-field>
+                </div>
+                <div class="row g-3">
+                  <div class="col-12 col-sm-6">
+                    <mat-form-field appearance="outline" class="custom-form-field">
+                      <mat-label>Nové heslo</mat-label>
+                      <input
+                        matInput
+                        [type]="showNewPassword() ? 'text' : 'password'"
+                        id="newPassword"
+                        formControlName="newPassword"
+                        required
+                      />
+                      <button
+                        mat-icon-button
+                        matSuffix
+                        type="button"
+                        (click)="showNewPassword.set(!showNewPassword())"
+                        [attr.aria-label]="showNewPassword() ? 'Skryť heslo' : 'Zobraziť heslo'"
+                      >
+                        <mat-icon>{{ showNewPassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
+                      </button>
+                    </mat-form-field>
+                  </div>
+                  <div class="col-12 col-sm-6">
+                    <mat-form-field appearance="outline" class="custom-form-field">
+                      <mat-label>Potvrdiť nové heslo</mat-label>
+                      <input
+                        matInput
+                        [type]="showConfirmPassword() ? 'text' : 'password'"
+                        id="confirmNewPassword"
+                        formControlName="confirmNewPassword"
+                        required
+                      />
+                      <button
+                        mat-icon-button
+                        matSuffix
+                        type="button"
+                        (click)="showConfirmPassword.set(!showConfirmPassword())"
+                        [attr.aria-label]="showConfirmPassword() ? 'Skryť heslo' : 'Zobraziť heslo'"
+                      >
+                        <mat-icon>{{ showConfirmPassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
+                      </button>
+                    </mat-form-field>
+                  </div>
+                </div>
+                <div class="form-actions d-flex justify-content-end">
+                  <button mat-raised-button color="primary" type="submit" class="submit-btn">
+                    Zmeniť heslo
+                  </button>
+                </div>
+              </form>
+            </mat-card-content>
+          </mat-card>
         </div>
       </div>
-    </div>
 
-    <div class="col-12 col-md-6 p-1">
-      <div class="card">
-        <div class="card-header">
-          <h2 class="card-title mb-0">Zmena hesla</h2>
-        </div>
-        <div class="card-body">
-          <form [formGroup]="profileForm" (ngSubmit)="changePassword()">
-            <div class="form-group">
-              <mat-form-field appearance="fill" class="w-100">
-                <mat-label>Pôvodné heslo</mat-label>
-                <input
-                  matInput
-                  type="password"
-                  id="currentPassword"
-                  formControlName="currentPassword"
-                  required
-                />
-              </mat-form-field>
-            </div>
-            <div class="form-group">
-              <mat-form-field appearance="fill" class="w-100">
-                <mat-label>Nové heslo</mat-label>
-                <input
-                  matInput
-                  type="password"
-                  id="newPassword"
-                  formControlName="newPassword"
-                  required
-                />
-              </mat-form-field>
-            </div>
-            <div class="form-group">
-              <mat-form-field appearance="fill" class="w-100">
-                <mat-label>Potvrď nové heslo</mat-label>
-                <input
-                  matInput
-                  type="password"
-                  id="confirmNewPassword"
-                  formControlName="confirmNewPassword"
-                  required
-                />
-              </mat-form-field>
-            </div>
-            <button mat-raised-button color="primary" type="submit">
-              Zmeň heslo
+      <!-- Student Form Results Section -->
+      @if (formData) {
+        <div class="form-results-section" *appHasRole="[AuthRole.STUDENT]">
+          <!-- Header with Edit Button -->
+          <div class="results-header">
+            <h2 class="results-title">
+              <mat-icon class="title-icon">description</mat-icon>
+              <span>Vyplnený dotazník</span>
+            </h2>
+            <button
+              mat-raised-button
+              color="primary"
+              (click)="redirectToUserForm()"
+              class="edit-btn"
+            >
+              <mat-icon>edit</mat-icon>
+              <span>Upraviť dotazník</span>
             </button>
-          </form>
-        </div>
-      </div>
-    </div>
+          </div>
 
-    <div *ngIf="formData">
-      <div class="col-12 p-0" *appHasRole="[AuthRole.STUDENT]">
-        <div class="card">
-          <div class="card-header">
-            <div class="row">
-              <div class="col">
-                <h2 class="card-title mb-0">Vyplnený dotazník</h2>
-              </div>
-              <div class="col d-flex justify-content-end">
-                <button
-                  mat-raised-button
-                  color="primary"
-                  (click)="redirectToUserForm()"
-                >
-                  Upraviť dotazník
-                </button>
-              </div>
-            </div>
-          </div>
-          <div class="card-body">
-            <app-user-form-results [existingAnswers]="formData" />
-          </div>
+          <!-- User Form Results Component -->
+          <app-user-form-results [existingAnswers]="formData" />
         </div>
-      </div>
+      }
     </div>
-  </div>
-</div>
+  </main>
+}

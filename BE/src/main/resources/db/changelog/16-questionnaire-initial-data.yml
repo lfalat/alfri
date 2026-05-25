@@ -1,0 +1,42 @@
+databaseChangeLog:
+  - changeSet:
+      id: 16-insert-question-options-fakulta-odbor
+      author: liquibase
+      changes:
+        - insert:
+            tableName: question_option
+            columns:
+              - column: { name: question_id, valueNumeric: 107 }
+              - column: { name: question_option, value: 1 }
+              - column: { name: question_value, value: 1 }
+        - insert:
+            tableName: question_option
+            columns:
+              - column: { name: question_id, valueNumeric: 107 }
+              - column: { name: question_option, value: 2 }
+              - column: { name: question_value, value: 2 }
+        - insert:
+            tableName: question_option
+            columns:
+              - column: { name: question_id, valueNumeric: 107 }
+              - column: { name: question_option, value: 3 }
+              - column: { name: question_value, value: 3 }
+        - insert:
+            tableName: question_option
+            columns:
+              - column: { name: question_id, valueNumeric: 108 }
+              - column: { name: question_option, value: 'Fakulta riadenia a informatiky' }
+              - column: { name: question_value, value: 'FRI' }
+        - insert:
+            tableName: question_option
+            columns:
+              - column: { name: question_id, valueNumeric: 109 }
+              - column: { name: question_option, value: 'Informatika' }
+              - column: { name: question_value, value: '3' }
+        - insert:
+            tableName: question_option
+            columns:
+              - column: { name: question_id, valueNumeric: 109 }
+              - column: { name: question_option, value: 'Management' }
+              - column: { name: question_value, value: '4' }
+
