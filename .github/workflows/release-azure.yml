@@ -82,9 +82,18 @@ jobs:
       - name: Build frontend and smoke-check
         run: |
           docker build -t $REGISTRY/alfri-frontend:${{ github.sha }} -f FE/Dockerfile FE/
-          docker run -d --name fe-smoke -p 8090:80 $REGISTRY/alfri-frontend:${{ github.sha }}
-          sleep 5
-          curl -sf --max-time 10 http://localhost:8090/health
+          docker run -d --name fe-smoke -p 8090:80 \
+            -e BACKEND_URL=http://127.0.0.1:8080 \
+            $REGISTRY/alfri-frontend:${{ github.sha }}
+          for i in $(seq 1 15); do
+            if curl -sf --max-time 5 http://localhost:8090/health; then
+              echo "Frontend healthy after ${i}s"; break
+            fi
+            if [ "$i" -eq 15 ]; then
+              echo "Frontend did not become healthy"; docker logs fe-smoke; exit 1
+            fi
+            sleep 1
+          done
           docker rm -f fe-smoke
 
       - name: Build ML service and smoke-check
