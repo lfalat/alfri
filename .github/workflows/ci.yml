@@ -34,6 +34,8 @@ jobs:
         run: npm --prefix FE run build
       - name: Lint
         run: npm --prefix FE run lint
+        env:
+          ESLINT_USE_FLAT_CONFIG: 'false'
 
   test-ml:
     runs-on: ubuntu-latest
