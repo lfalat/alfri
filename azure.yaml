@@ -1,0 +1,42 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/Azure/azure-dev/main/schemas/v1.0/azure.yaml.json
+
+name: alfri
+metadata:
+  template: alfri@0.0.1
+
+infra:
+  provider: bicep
+  path: infra
+
+services:
+  frontend:
+    project: ./FE
+    host: containerapp
+    language: js
+    docker:
+      path: ./FE/Dockerfile
+      context: ./FE
+
+  backend:
+    project: ./BE
+    host: containerapp
+    language: java
+    docker:
+      path: ./Dockerfile.backend
+      context: .
+
+  ml-service:
+    project: ./flask-server
+    host: containerapp
+    language: python
+    docker:
+      path: ./Dockerfile.python
+      context: .
+
+  keycloak:
+    project: ./docker/keycloak
+    host: containerapp
+    language: docker
+    docker:
+      path: ./docker/keycloak/Dockerfile.azure-dev
+      context: .

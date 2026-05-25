@@ -1,0 +1,7 @@
+# Local secret-bearing environment files
+.env
+**/.env
+
+# Python runtime artifacts
+**/__pycache__/
+*.py[cod]

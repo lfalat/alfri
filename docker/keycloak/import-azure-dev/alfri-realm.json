@@ -1,0 +1,102 @@
+{
+  "realm": "alfri",
+  "enabled": true,
+  "displayName": "ALFRI Development",
+  "loginTheme": "alfri",
+  "eventsEnabled": true,
+  "eventsListeners": [
+    "jboss-logging",
+    "alfri"
+  ],
+  "internationalizationEnabled": true,
+  "supportedLocales": [
+    "sk",
+    "en"
+  ],
+  "defaultLocale": "sk",
+  "registrationAllowed": true,
+  "registrationEmailAsUsername": true,
+  "loginWithEmailAllowed": true,
+  "duplicateEmailsAllowed": false,
+  "resetPasswordAllowed": false,
+  "editUsernameAllowed": false,
+  "defaultRoles": [
+    "STUDENT"
+  ],
+  "roles": {
+    "realm": [
+      {
+        "name": "STUDENT",
+        "description": "Student user"
+      },
+      {
+        "name": "TEACHER",
+        "description": "Teacher user"
+      },
+      {
+        "name": "ADMIN",
+        "description": "Application administrator"
+      },
+      {
+        "name": "VEDENIE",
+        "description": "Management user"
+      },
+      {
+        "name": "VISITOR",
+        "description": "Visitor user"
+      },
+      {
+        "name": "default-roles-alfri",
+        "description": "${role_default-roles}",
+        "composite": true,
+        "composites": {
+          "realm": [
+            "offline_access",
+            "uma_authorization",
+            "STUDENT"
+          ]
+        }
+      }
+    ]
+  },
+  "clients": [
+    {
+      "clientId": "alfri-frontend",
+      "name": "ALFRI Frontend",
+      "enabled": true,
+      "publicClient": true,
+      "protocol": "openid-connect",
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": false,
+      "redirectUris": [
+        "${ALFRI_FRONTEND_URL}/*"
+      ],
+      "webOrigins": [
+        "${ALFRI_FRONTEND_URL}"
+      ],
+      "attributes": {
+        "pkce.code.challenge.method": "S256",
+        "post.logout.redirect.uris": "${ALFRI_FRONTEND_URL}/*"
+      },
+      "protocolMappers": [
+        {
+          "name": "realm roles as legacy roles",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-realm-role-mapper",
+          "consentRequired": false,
+          "config": {
+            "multivalued": "true",
+            "userinfo.token.claim": "true",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "claim.name": "roles",
+            "jsonType.label": "String",
+            "usermodel.realmRoleMapping.rolePrefix": "ROLE_"
+          }
+        }
+      ]
+    }
+  ]
+}
