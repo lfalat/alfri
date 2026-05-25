@@ -36,6 +36,8 @@ python:
   passing_mark_prediction_script_path: ${DEV_PASSING_MARK_PREDICTION_SCRIPT_PATH:./python_scripts/neural_network_marks_predictions.py}
   service:
     base-url: ${PYTHON_SERVICE_URL}
+    api-key: ${PYTHON_SERVICE_API_KEY:}
+    timeout-ms: ${PYTHON_SERVICE_TIMEOUT_MS:5000}
     enabled: true
 
 resilience4j:
@@ -81,3 +83,6 @@ keycloak:
 default-user-email: szathmary@stud.uniza.sk
 # roles that you want to have - upper case with comma in between them
 default-user-roles: STUDENT, TEACHER, VISITOR, ADMIN
+
+cors:
+  allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:4200}

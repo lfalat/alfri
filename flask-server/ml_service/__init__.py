@@ -21,6 +21,8 @@ def create_app(test_config=None):
     # load config from the Config object
     from .config import Config
     app.config.from_object(Config())
+    if test_config is not None:
+        app.config.update(test_config)
 
     # --- API key middleware: enforce X-API-Key for API routes starting with /api/ ---
     @app.before_request
@@ -77,6 +79,7 @@ def create_app(test_config=None):
     # Initialize database connection pool
     from .database import DatabaseManager
     import atexit
+    app.config["DATABASE_READY"] = False
     try:
         db_url = app.config.get("DATABASE_URL")
         db_manager = DatabaseManager(db_url, min_connections=1, max_connections=2)
@@ -85,20 +88,23 @@ def create_app(test_config=None):
 
         # Test connection
         if db_manager.test_connection():
+            app.config["DATABASE_READY"] = True
             app.logger.info("Database connection successful")
         else:
             app.logger.warning("Database connection test failed - clustering endpoints may not work")
 
-        # Register cleanup handler for application shutdown (not per-request)
-        atexit.register(lambda: db_manager.close_pool())
+        # Register cleanup handler for application shutdown (not per-request).
+        if app.config.get("REGISTER_DB_SHUTDOWN_HANDLER", True):
+            atexit.register(db_manager.close_pool)
     except Exception as e:
-        app.logger.error(f"Failed to initialize database: {e}")
+        app.logger.error("Failed to initialize database: %s", e)
         app.logger.warning("Clustering endpoints will not be available")
 
 
-    # start model loading in background (non-blocking)
+    # Start model loading unless a narrow test/runtime configuration disables it.
     from . import models
     import threading
+    app.config["MODELS_LOADED"] = False
 
     def _load_models():
         try:
@@ -112,8 +118,13 @@ def create_app(test_config=None):
     # Load models synchronously when using gunicorn preload to ensure models are ready
     # before workers start accepting requests
     import os
-    preload_mode = os.environ.get('GUNICORN_PRELOAD', '0') == '1'
-    if preload_mode:
+    preload_mode = (
+        app.config.get("LOAD_MODELS_SYNCHRONOUSLY", False)
+        or os.environ.get('GUNICORN_PRELOAD', '0') == '1'
+    )
+    if not app.config.get("LOAD_MODELS_ON_STARTUP", True):
+        app.logger.info("Skipping model loading by configuration")
+    elif preload_mode:
         app.logger.info("Loading models synchronously (preload mode)")
         _load_models()
     else:

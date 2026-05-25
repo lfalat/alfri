@@ -1,6 +1,6 @@
 # Azure Deployment Plan: Alfri
 
-> **Status:** Planning - diagnostic analysis complete; implementation not approved
+> **Status:** Phase 1 implemented - ML model artifact normalization blocks strict Azure readiness; Azure provisioning/deployment not approved
 >
 > Generated: 2026-05-25
 
@@ -19,10 +19,10 @@ image refresh.
 | Attribute | Value |
 | --- | --- |
 | Resource group | `alfri-rg` |
-| Subscription ID | `28becc2a-528b-4989-8673-fdc22f5fbff7` |
+| Subscription | `Azure for Students` (`28becc2a-528b-4989-8673-fdc22f5fbff7`) |
 | Existing location | `norwayeast` |
-| Deployment classification | Requires user confirmation: development/demo or production |
-| Reliability/cost posture | Requires user confirmation |
+| Deployment classification | Low-cost development environment |
+| Reliability/cost posture | Consumption/scale-to-zero; accept cold starts and defer production HA upgrades |
 
 Existing resources:
 
@@ -31,9 +31,9 @@ Existing resources:
 | `alfriregistry` | Azure Container Registry Standard | Admin auth enabled; apps pull with password secret |
 | `alfri-postgres` | PostgreSQL Flexible Server `Standard_B1ms` | Public network/password auth; HA and geo backup disabled |
 | `alfri-env` | Container Apps environment | Log Analytics configured; zone redundancy disabled |
-| `alfri-frontend` | Container App | Provisioned revision, zero replicas, public URL returns HTTP 404 |
-| `alfri-backend` | Container App | Provisioned revision, zero replicas, public health URL returns HTTP 404 |
-| `alfri-ml-service` | Container App | Internal app, zero replicas, configured to scale to zero |
+| `alfri-frontend` | Container App | Currently stopped intentionally; will remain scale-to-zero when idle |
+| `alfri-backend` | Container App | Currently stopped intentionally; must become internal-only |
+| `alfri-ml-service` | Container App | Currently stopped intentionally; internal-only |
 
 ## 3. Components Detected Locally
 
@@ -50,19 +50,20 @@ Existing resources:
 | Priority | Finding | Impact | Required Fix |
 | --- | --- | --- | --- |
 | Critical | Azure does not deploy Keycloak, while current backend and frontend require it | A deployment of current source cannot authenticate users or satisfy required backend configuration | Deploy a production-configured Keycloak app backed by PostgreSQL, or explicitly migrate authentication before deploying current source |
-| Critical | Azure endpoints currently return HTTP 404 and apps report `Stopped` with zero replicas | Application is not usable in Azure now | After configuration remediation, start/redeploy apps and verify endpoints; confirm whether stop was intentional for cost control |
+| Informational | Azure endpoints currently return HTTP 404 and apps report `Stopped` with zero replicas | Expected while development services are intentionally stopped | New deployment will support scale-to-zero; verification calls will cold-start services when testing |
 | Critical | Cloud app settings do not match current source variables/profile | A new backend/frontend revision is expected to fail or point browsers at localhost | Define one Azure runtime contract and IaC-managed settings: backend database, ML, Keycloak, JWT; frontend API/Keycloak values |
 | Critical | Plain Container App environment values are used for database/JWT settings; `BE/.env` is tracked | Credential disclosure and rotation risk | Rotate real credentials, remove tracked env secrets, add ignore coverage, provision Key Vault and secret references using managed identity |
 | High | Current publishing workflow builds only backend/frontend to Docker Hub; Azure uses ACR and also needs ML/Keycloak images | Local state cannot be reproduced from CI/CD | Replace with an ACR/Container Apps release workflow that builds all required images from one commit and deploys them together |
-| High | `FE/docker-entrypoint.sh` is required by the tracked Dockerfile but is not tracked | A clean CI checkout cannot build the current frontend image | Commit the runtime entrypoint with the associated frontend changes |
+| High | The tracked frontend entrypoint substitutes a JSON file containing literal localhost values and leaves Nginx targeting `localhost:8080` | The image builds but runtime Azure routing/configuration remains local-only | Render a container-specific browser config template and an internal-backend Nginx proxy at startup |
 | High | Backend/frontend use stale March image tag; ML uses mutable `latest` last updated in January | Releases are inconsistent and rollback is unreliable | Tag every image with the same Git commit SHA; deploy by immutable tag or digest; retain revision rollback |
 | High | ACR admin auth is enabled and Container Apps have no identity | Registry password compromise/pull failures on rotation | Assign managed identity and `AcrPull`; configure identity-based pulls; disable ACR admin credentials after migration |
-| High | PostgreSQL is public with `AllowAzureServices`, password-only auth, no HA, minimal backup posture | Network exposure, weak credential posture, and material outage/data-recovery risk | Use private networking or tightly scoped connectivity; require TLS validation; choose HA/geo-backup/retention based on production requirements |
+| High | PostgreSQL is public with `AllowAzureServices`, password-only auth, no HA, minimal backup posture | Network exposure and weak credential posture; reliability is acceptable only as a development tradeoff | Enforce TLS and secret management now; retain low-cost server/backup posture unless the environment becomes production; consider private networking later |
 | High | Production Keycloak realm material is local-only and includes test users/passwords | Auth redirect failure and unacceptable production accounts | Separate production realm initialization; configure HTTPS frontend redirects/origins and remove development users/passwords |
 | Medium | Frontend Nginx proxies `/api` to its own `localhost:8080`; entrypoint templates different settings from Azure | API requests fail if the Nginx proxy route is used; runtime substitution is currently incomplete | Select one routing model: browser-to-public backend, or Nginx-to-internal backend using a templated backend URL |
 | Medium | Backend production ML default is `http://python-service:8000`; Azure ML service is `alfri-ml-service` on port `5000` | Prediction calls fail after redeploy unless overridden correctly | Set `PYTHON_SERVICE_BASE_URL=http://alfri-ml-service` or standardize the property and internal service name |
 | Medium | ML app readiness checks loaded models but not database; database startup failures are logged and ignored | Revision appears ready while clustering endpoints fail | Add dependency-aware readiness and alerts; use database connectivity settings appropriate for production |
 | Medium | ML API-key protection is opt-in and currently not wired consistently | Internal ML endpoints have no application-level authorization, or break when enabled one-sidedly | Set shared secret through Key Vault references for ML and backend, or adopt managed service-to-service protection |
+| High | Bundled sklearn model artifacts were serialized with `scikit-learn 1.5.0`, while the rebuilt ML image resolves `1.8.0` | Model inference may be behaviorally incompatible even though the permissive local runtime reports ready | Re-export all sklearn artifacts under one pinned runtime; set `FAIL_ON_MODEL_VERSION_MISMATCH=true` for Azure so readiness rejects incompatible artifacts until then |
 | Medium | Backend only has default TCP ACA probes; ML/frontend have no explicit application-level probes | Configuration errors are not caught by readiness checks | Configure HTTP startup/readiness/liveness probes for backend and ML; provide a frontend health endpoint |
 | Medium | Backend accepts CORS from any origin despite an Azure origin setting being present | Browser API exposure is broader than intended | Bind and enforce explicit allowed frontend origins, or use same-origin frontend proxy routing |
 | Medium | No Key Vault or Application Insights resource is present in the resource group | Secret governance and diagnostics are limited | Add Key Vault, application telemetry, dashboards/alerts; retain Log Analytics integration |
@@ -73,7 +74,7 @@ Existing resources:
 microservice workload. AKS is not required solely because the service performs
 ML inference.
 
-Recommended secure routing:
+Agreed low-cost development routing:
 
 | Component | Azure Service | Exposure |
 | --- | --- | --- |
@@ -84,10 +85,19 @@ Recommended secure routing:
 | Application/Keycloak databases | PostgreSQL Flexible Server | Private access preferred |
 | Images | Azure Container Registry | Managed-identity pulls |
 | Secrets | Azure Key Vault | Managed-identity references in Container Apps |
-| Logs/metrics/traces | Log Analytics + Application Insights | Centralized diagnostics and alerts |
+| Logs | Existing Log Analytics | Preserve current logging; defer new Application Insights cost |
 
-Alternative: keep the backend external and configure strict CORS if the SPA must
-call it directly. This is simpler but exposes an additional public endpoint.
+### Cost Profile
+
+| App | Ingress | Proposed Resources | Scale |
+| --- | --- | --- | --- |
+| `alfri-frontend` | External | `0.25` CPU / `0.5Gi` | `min=0`, `max=1` |
+| `alfri-backend` | Internal | `0.5` CPU / `1Gi` | `min=0`, `max=1` |
+| `alfri-ml-service` | Internal | existing `1` CPU / `2Gi` initially | `min=0`, `max=1` |
+| `alfri-keycloak` | External | `0.5` CPU / `1Gi`, increase only if startup proves insufficient | `min=0`, `max=1` |
+
+Cold starts are accepted. Keycloak cold starts will be the most visible latency
+tradeoff; its probe timings will allow for JVM startup.
 
 ## 6. Automation Recipe
 
@@ -117,21 +127,116 @@ Proposed release stages:
    health and authenticated API flow, ML readiness/prediction, and database
    migration state.
 
-## 7. Execution Gate And Pending Decisions
+## 7. Provisioning Limit Checklist
 
-No deployment or application remediation has been performed.
+This plan reuses `alfri-env`, `alfriregistry`, `alfri-postgres`, and Log
+Analytics. It creates one Container App and one Key Vault; it updates three
+existing Container Apps.
 
-Before artifacts can be generated and validated, confirm:
+| Resource Type | Number To Deploy | Total After Deployment | Limit/Quota | Evidence |
+| --- | ---: | ---: | ---: | --- |
+| `Microsoft.App/containerApps` in existing environment | 1 (`alfri-keycloak`) | 4 apps; proposed max active cores `2.25` initially, `2.75` if Keycloak needs `1` CPU | `100` Consumption cores in `alfri-env` | `az containerapp env list-usages`; all apps `maxReplicas=1` |
+| `Microsoft.KeyVault/vaults` | 1 | 1 vault with fewer than 10 initial secrets | Operational limit of `300` secret creates per 10 seconds per vault | Existing count `0`; Microsoft Learn Key Vault service limits |
+| `Microsoft.DBforPostgreSQL/flexibleServers/databases` | 1 logical DB (`keycloak`) under existing server | `alfri` plus `keycloak` DB | Existing server resource is reused; no additional server compute provisioned | Child database creation only |
 
-1. Is `alfri-rg` intended for production, or is it a low-cost development/demo environment?
-2. Should Azure run Keycloak to match local behavior, or should authentication be replaced with a managed identity provider as a separate migration?
-3. Should the backend be internal behind the frontend proxy (recommended), or remain a public API?
+`az quota list` was attempted for `Microsoft.App` but `Microsoft.Quota` is not
+registered in the subscription. It is unnecessary for this existing-environment
+addition because the Container Apps environment reports its Consumption-core
+capacity directly. If later work creates a new environment or increases scale,
+register `Microsoft.Quota` as an explicit approved preflight step.
 
-After those answers, this plan must be finalized with resource quantities,
-subscription/location confirmation, policy and quota checks, then approved
-before execution.
+## 8. Execution Plan
 
-## 8. Verification Evidence
+Phase 1 source/configuration work is implemented. Strict Azure ML readiness now
+rejects incompatible serialized model artifacts until they are normalized.
+Azure resource provisioning and deployment remain gated for later approval.
+
+### Phase 1: Make The Application Cloud-Configurable
+
+1. Remove tracked secret material from `BE/.env`, add repository-level env
+   ignores/examples, and prepare secret rotation for any value used in Azure.
+2. Commit and use the frontend runtime entrypoint; template Nginx so `/api`
+   proxies to `http://alfri-backend`, while browser runtime configuration uses
+   `/api` and the external Keycloak URL.
+3. Add a backend `azure-dev` configuration contract for PostgreSQL TLS,
+   internal ML URL, Keycloak external issuer/internal management endpoint,
+   webhook secret, and health endpoints. Restrict CORS because the browser will
+   reach the backend through same-origin frontend routing.
+4. Standardize ML production configuration and the shared backend-to-ML API
+   key input, make readiness expose unusable model/database state, and provide
+   an Azure-target strict model-version compatibility gate.
+5. Build a Keycloak Azure image containing the event-listener provider, theme,
+   and an Azure-development realm import without seeded fixed-password users.
+   Configure HTTPS redirect origins for the frontend FQDN.
+
+### Phase 2: Capture Azure Configuration As Code
+
+1. Add `azure.yaml` and Bicep modules under `infra/`, referencing the existing
+   ACR, PostgreSQL server, and Container Apps environment instead of replacing
+   them.
+2. Create one Key Vault and store only references in IaC. Provision secret
+   values outside source control for PostgreSQL credentials, JWT signing,
+   Keycloak admin/bootstrap data, Keycloak webhook authentication, and ML API
+   authentication.
+3. Enable system-assigned identities on the four Container Apps, assign
+   `AcrPull` at ACR scope, and grant only required Key Vault secret-read access.
+   After identity-based image pulls are verified, disable ACR admin auth.
+4. Create the `keycloak` logical database on the existing Flexible Server and,
+   through a controlled idempotent bootstrap SQL step, create a dedicated
+   Keycloak database role whose password is stored in Key Vault. Configure
+   Keycloak to connect over TLS. This reuses the existing managed PostgreSQL
+   server; database HA/private access are deliberately deferred.
+5. Configure ingress: frontend and Keycloak external; backend and ML internal.
+   Configure HTTP probes, single-replica maximums, and scale-to-zero behavior.
+
+### Phase 3: Automate Build And Release
+
+1. Replace the Docker Hub publish workflow with GitHub Actions authenticated to
+   Azure by workload identity federation; do not store an Azure client secret.
+2. Run backend tests, frontend build/tests, ML tests, and local Docker health
+   checks before publishing.
+3. Build all four images using the same build contexts used locally and push
+   them to ACR with a single immutable commit-SHA tag.
+4. Run an infrastructure preview (`azd provision --preview` or Bicep
+   `what-if`) before provisioning changes.
+5. Release image revisions in dependency order: ML, Keycloak, backend,
+   frontend. Fail the deployment if probes or endpoint smoke tests fail.
+6. Retain prior revisions and image digests for rollback; never deploy from
+   `latest`.
+
+### Phase 4: Validate The Development Deployment
+
+1. Re-run local Compose health checks before cloud deployment.
+2. Invoke the Azure validation workflow before provisioning or deploying.
+3. Test Keycloak discovery and browser login redirect, frontend asset/runtime
+   configuration, frontend-proxied backend health/API access, backend-to-ML
+   calls, and Liquibase/database connectivity.
+4. Confirm idle services scale back to zero after tests and document cold-start
+   expectations for future developers.
+
+## 9. Planned File Changes
+
+| Area | Files/Artifacts |
+| --- | --- |
+| Plan and Azure orchestration | `.azure/deployment-plan.md`, `azure.yaml`, `infra/*.bicep` |
+| CI/CD | `.github/workflows/*azure*.yml` replacing Docker Hub-only publishing |
+| Frontend routing/runtime config | `FE/nginx.conf`, `FE/docker-entrypoint.sh`, `FE/docker-config.template.json`, `FE/Dockerfile` |
+| Backend Azure profile/security | `BE/src/main/resources/application-azure-dev.yml`, relevant configuration and health/security classes |
+| ML config/readiness | `flask-server/ml_service/config.py`, readiness/database handling, Docker build inputs if needed |
+| Keycloak deployment | `docker/keycloak/Dockerfile.azure-dev`, Azure-development realm import/theme packaging |
+| Secret hygiene | repository ignore/example env files; removal of tracked `BE/.env` content |
+
+## 10. Deferred Development-Environment Tradeoffs
+
+- ACR Premium/geo-replication is not implemented for a low-cost development
+  environment.
+- PostgreSQL HA and geo-redundant backup are not implemented now.
+- Private network integration for PostgreSQL is deferred; TLS and secret
+  protection are implemented first.
+- Application Insights is deferred while existing Log Analytics remains in use.
+- Services are allowed to scale to zero; cold-start latency is accepted.
+
+## 11. Verification Evidence
 
 | Check | Result |
 | --- | --- |
@@ -143,8 +248,15 @@ before execution.
 | Azure backend public health URL | HTTP 404 on 2026-05-25 |
 | Azure active revisions | Provisioned/healthy but zero replicas for all three deployed apps |
 | Azure Advisor | High-availability recommendations for ACR; geo-redundant backup recommendation for PostgreSQL |
+| Phase 1 static/config validation | `git diff --check`, realm JSON parsing, and `docker compose -f docker-compose.local.yml config --quiet` pass |
+| Phase 1 frontend | Angular production build passes with existing Sass/CommonJS/bundle budget warnings; frontend image smoke renders `/api` proxy configuration and `/health` returns HTTP 200 |
+| Phase 1 backend | Backend image builds under Java 21; `mvn -B test` in a Java 21 container passes with 1 test and 0 failures |
+| Phase 1 ML unit suite | Final ML image runs 20 passing tests; it emits scikit-learn version mismatch warnings for checked-in KMeans artifacts |
+| Phase 1 ML strict Azure-target readiness | With `FAIL_ON_MODEL_VERSION_MISMATCH=true`, preload rejects 8 incompatible sklearn artifacts and `/health/ready` returns expected HTTP 503 |
+| Phase 1 Keycloak Azure-development image | Optimized Keycloak image with provider, theme, and seed-free realm builds successfully; existing custom internal SPI warning is recorded |
+| Docker build context cleanup | Frontend context is about 20 kB and final ML context about 25 kB, excluding local dependency artifacts |
 
-## 9. References
+## 12. References
 
 - https://learn.microsoft.com/azure/container-apps/github-actions
 - https://learn.microsoft.com/azure/container-apps/managed-identity-image-pull
@@ -153,3 +265,5 @@ before execution.
 - https://learn.microsoft.com/azure/container-apps/manage-secrets
 - https://learn.microsoft.com/azure/postgresql/security/security-overview
 - https://learn.microsoft.com/azure/postgresql/high-availability/concepts-high-availability
+- https://www.keycloak.org/server/containers
+- https://www.keycloak.org/server/importExport

@@ -2,7 +2,7 @@
 
 Provides:
 - GET /health/live -> 200 always
-- GET /health/ready -> 200 when models loaded, 503 otherwise
+- GET /health/ready -> 200 when models and the database are ready, 503 otherwise
 """
 from flask import Blueprint, current_app, jsonify
 
@@ -16,9 +16,11 @@ def live():
 
 @health_bp.route("/health/ready", methods=["GET"])
 def ready():
-    # models.py will set an app.config flag when models are loaded
-    ready_flag = current_app.config.get("MODELS_LOADED", False)
-    if ready_flag:
-        return jsonify({"status": "ready"}), 200
-    return jsonify({"status": "not ready"}), 503
-
+    models_ready = current_app.config.get("MODELS_LOADED", False)
+    database_ready = current_app.config.get("DATABASE_READY", False)
+    state = {
+        "status": "ready" if models_ready and database_ready else "not ready",
+        "models": "ready" if models_ready else "not ready",
+        "database": "ready" if database_ready else "not ready",
+    }
+    return jsonify(state), 200 if models_ready and database_ready else 503

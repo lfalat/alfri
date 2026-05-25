@@ -3,6 +3,7 @@ package sk.uniza.fri.alfri.service.implementation;
 import jakarta.annotation.PostConstruct;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
@@ -26,15 +27,23 @@ import java.util.Map;
 public class KeycloakAuthClient {
     private final RestClient restClient;
     private final KeycloakProperties keycloakProperties;
+    private final boolean validateConnectivityOnStartup;
 
     public KeycloakAuthClient(RestClient.Builder restClientBuilder,
-                              KeycloakProperties keycloakProperties) {
+                              KeycloakProperties keycloakProperties,
+                              @Value("${keycloak.validate-connectivity-on-startup:true}")
+                              boolean validateConnectivityOnStartup) {
         this.restClient = restClientBuilder.build();
         this.keycloakProperties = keycloakProperties;
+        this.validateConnectivityOnStartup = validateConnectivityOnStartup;
     }
 
     @PostConstruct
     public void verifyKeycloakConnectivity() {
+        if (!validateConnectivityOnStartup) {
+            log.info("Skipping Keycloak connectivity startup validation");
+            return;
+        }
         String healthUrl = keycloakProperties.healthReadyUri();
         log.info("Verifying Keycloak connectivity at {}", healthUrl);
         restClient.get()

@@ -5,6 +5,7 @@ Loads configuration from environment variables and supports a JSON MODEL_MAP.
 import os
 import json
 from typing import Dict, Any, List
+from urllib.parse import quote_plus
 
 
 def _parse_json_env(var_name: str, default=None):
@@ -76,6 +77,9 @@ class Config:
 
     MODE = os.getenv("MODE", "dev")
     LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO")
+    LOAD_MODELS_ON_STARTUP = os.getenv("LOAD_MODELS_ON_STARTUP", "true").lower() in ("1", "true", "yes")
+    FAIL_ON_MODEL_VERSION_MISMATCH = os.getenv("FAIL_ON_MODEL_VERSION_MISMATCH", "false").lower() in ("1", "true", "yes")
+    REGISTER_DB_SHUTDOWN_HANDLER = os.getenv("REGISTER_DB_SHUTDOWN_HANDLER", "true").lower() in ("1", "true", "yes")
     # Use the DEFAULT_MODEL_MAP by default; allow override via env var MODEL_MAP (JSON)
     MODEL_MAP = _parse_json_env("MODEL_MAP", default=DEFAULT_MODEL_MAP) or DEFAULT_MODEL_MAP
 
@@ -91,9 +95,10 @@ class Config:
     API_KEYS: List[str] = [k.strip() for k in _raw_api_keys.split(",") if k.strip()] if _raw_api_keys else []
 
     # Database configuration
-    DATABASE_HOST = os.getenv("DATABASE_DEV_URL", "localhost:5432/alfri")
-    DATABASE_USER = os.getenv("DATABASE_DEV_USER", "alfri")
-    DATABASE_PASSWORD = os.getenv("DATABASE_DEV_PASSWORD", "changeme")
+    DATABASE_HOST = os.getenv("DATABASE_HOST") or os.getenv("DATABASE_DEV_URL", "localhost:5432/alfri")
+    DATABASE_USER = os.getenv("DATABASE_USER") or os.getenv("DATABASE_DEV_USER", "alfri")
+    DATABASE_PASSWORD = os.getenv("DATABASE_PASSWORD") or os.getenv("DATABASE_DEV_PASSWORD", "changeme")
+    DATABASE_SSLMODE = os.getenv("DATABASE_SSLMODE", "require" if MODE == "prod" else "prefer")
 
     # Parse host:port/database format
     _db_parts = DATABASE_HOST.split("/")
@@ -103,7 +108,10 @@ class Config:
     DATABASE_PORT = int(_host_port[1]) if len(_host_port) > 1 else 5432
 
     # Construct PostgreSQL connection string
-    DATABASE_URL = f"postgresql://{DATABASE_USER}:{DATABASE_PASSWORD}@{DATABASE_HOST_ONLY}:{DATABASE_PORT}/{DATABASE_NAME}"
+    DATABASE_URL = os.getenv("DATABASE_URL") or (
+        f"postgresql://{quote_plus(DATABASE_USER)}:{quote_plus(DATABASE_PASSWORD)}@"
+        f"{DATABASE_HOST_ONLY}:{DATABASE_PORT}/{DATABASE_NAME}?sslmode={DATABASE_SSLMODE}"
+    )
 
     # Add other config defaults as needed
 

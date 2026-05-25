@@ -10,19 +10,19 @@ os.environ.setdefault("API_KEY", "testkey")
 
 from ml_service import create_app
 
+CLUSTERING_MODEL_MAP = {
+    "kmeans_model": {"type": "kmeans", "path": "kmeans_model.pkl", "studyProgramId": 3},
+    "kmeans_model_manazment": {"type": "kmeans", "path": "kmeans_model_manazment.pkl", "studyProgramId": 4},
+}
+
 
 @pytest.fixture
 def app():
-    import time
-    app = create_app()
-    # Wait for models and database to initialize
-    max_wait = 10
-    start = time.time()
-    while time.time() - start < max_wait:
-        if app.config.get("MODEL_REGISTRY") and app.config.get("DB_MANAGER"):
-            break
-        time.sleep(0.1)
-    return app
+    return create_app({
+        "LOAD_MODELS_ON_STARTUP": True,
+        "LOAD_MODELS_SYNCHRONOUSLY": True,
+        "MODEL_MAP": CLUSTERING_MODEL_MAP,
+    })
 
 
 @pytest.fixture
@@ -139,4 +139,3 @@ def test_clustering_stats_with_database(client):
         # Verify cluster distribution
         total = sum(body["clusterDistribution"].values())
         assert total == body["nSubjects"]
-

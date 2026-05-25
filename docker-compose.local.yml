@@ -25,8 +25,8 @@ services:
       KEYCLOAK_INTERNAL_ISSUER_URI: http://keycloak:8080/realms/alfri
       KEYCLOAK_JWK_SET_URI: http://keycloak:8080/realms/alfri/protocol/openid-connect/certs
       KEYCLOAK_EVENT_WEBHOOK_SECRET: ${KEYCLOAK_EVENT_WEBHOOK_SECRET:-changeme}
-      # Shared X-API-KEY for local testing (value from .env)
-      X_API_KEY: ${X_API_KEY:-changeme}
+      # Shared API key for backend-to-ML calls.
+      PYTHON_SERVICE_API_KEY: ${ML_API_KEY:-changeme}
       # Dapr app id for local runs (optional; see README/prompts)
       DAPR_APP_ID: alfri-backend
       DAPR_HTTP_BASE_URL: http://backend-dapr:3500
@@ -48,7 +48,8 @@ services:
       dockerfile: Dockerfile
     container_name: alfri_fe
     environment:
-      API_URL: http://localhost:8080/api
+      BACKEND_URL: http://backend:8080
+      API_URL: /api
       ENVIRONMENT: dev
       KEYCLOAK_URL: http://localhost:8180
       KEYCLOAK_REALM: alfri
@@ -70,6 +71,7 @@ services:
       DATABASE_DEV_URL: ${DATABASE_DEV_URL:-db:5432/alfri}
       DATABASE_DEV_USER: ${DATABASE_DEV_USER:-alfri}
       DATABASE_DEV_PASSWORD: ${DATABASE_DEV_PASSWORD:-changeme}
+      API_KEY: ${ML_API_KEY:-changeme}
     ports:
       - "5000:5000"
     networks:

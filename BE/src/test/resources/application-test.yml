@@ -31,6 +31,15 @@ python:
 
 
 keycloak:
+  issuer-uri: http://localhost:8180/realms/alfri
+  internal-issuer-uri: http://localhost:8180/realms/alfri
+  realm: alfri
+  client-id: alfri-frontend
+  admin-realm: master
+  admin-client-id: admin-cli
+  admin-username: admin
+  admin-password: admin
+  validate-connectivity-on-startup: false
   events:
     webhook-secret: changeme
 # email of user that you want to act as

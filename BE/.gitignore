@@ -24,6 +24,9 @@
 hs_err_pid*
 replay_pid*
 
+# Local runtime configuration and credentials
+.env
+
 ### Intellij
 .idea
 
@@ -45,4 +48,3 @@ buildNumber.properties
 .project
 # JDT-specific (Eclipse Java Development Tools)
 .classpath
-
