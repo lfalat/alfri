@@ -24,12 +24,12 @@ echo "Setting secrets in Key Vault: $KV"
 echo "(values are read interactively and never written to disk)"
 echo ""
 
-read -r -s -p "pg-password (PostgreSQL admin password): " PG_PASS; echo
-read -r -s -p "keycloak-admin-password: " KC_ADMIN_PASS; echo
-read -r -s -p "keycloak-db-password (password for the 'keycloak' PG role): " KC_DB_PASS; echo
-read -r -s -p "keycloak-webhook-secret: " KC_WEBHOOK; echo
-read -r -s -p "ml-api-key: " ML_KEY; echo
-echo ""
+read -r -p "pg-password (PostgreSQL admin password): " PG_PASS
+read -r -p "keycloak-admin-password: " KC_ADMIN_PASS
+read -r -p "keycloak-db-password (password for the 'keycloak' PG role): " KC_DB_PASS
+read -r -p "keycloak-webhook-secret: " KC_WEBHOOK
+read -r -p "ml-api-key: " ML_KEY
+echo
 
 az keyvault secret set --vault-name "$KV" --name pg-password              --value "$PG_PASS"       --output none
 az keyvault secret set --vault-name "$KV" --name keycloak-admin-password   --value "$KC_ADMIN_PASS" --output none

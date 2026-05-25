@@ -327,7 +327,6 @@ resource keycloakApp 'Microsoft.App/containerApps@2024-03-01' = {
             cpu: json('0.5')
             memory: '1Gi'
           }
-          args: ['start', '--import-realm']
           env: [
             { name: 'KC_DB', value: 'postgres' }
             { name: 'KC_DB_URL', value: 'jdbc:postgresql://${pgHost}:5432/keycloak?sslmode=require' }
@@ -341,6 +340,7 @@ resource keycloakApp 'Microsoft.App/containerApps@2024-03-01' = {
             { name: 'KEYCLOAK_ADMIN_PASSWORD', secretRef: 'keycloak-admin-password' }
             { name: 'KC_HEALTH_ENABLED', value: 'true' }
             { name: 'KC_METRICS_ENABLED', value: 'true' }
+            { name: 'ALFRI_FRONTEND_URL', value: 'https://${frontendFqdn}' }
           ]
           probes: [
             {

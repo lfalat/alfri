@@ -20,9 +20,6 @@
   "duplicateEmailsAllowed": false,
   "resetPasswordAllowed": false,
   "editUsernameAllowed": false,
-  "defaultRoles": [
-    "STUDENT"
-  ],
   "roles": {
     "realm": [
       {
@@ -51,8 +48,6 @@
         "composite": true,
         "composites": {
           "realm": [
-            "offline_access",
-            "uma_authorization",
             "STUDENT"
           ]
         }
