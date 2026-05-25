@@ -62,7 +62,9 @@ jobs:
 
       - name: Health-check frontend container
         run: |
-          docker run -d --name fe-check -p 8090:80 alfri-frontend:ci
+          docker run -d --name fe-check -p 8090:80 \
+            -e BACKEND_URL=http://127.0.0.1:8080 \
+            alfri-frontend:ci
           for i in $(seq 1 15); do
             if curl -sf --max-time 5 http://localhost:8090/health; then
               echo "Frontend healthy after ${i}s"
