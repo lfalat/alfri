@@ -26,25 +26,6 @@ export const tokenAppGuard: CanActivateFn = (
 };
 
 /**
- * Guard that redirects logged in users away from auth pages (e.g. login/register)
- */
-export const loggedOutOnlyGuard: CanActivateFn = (
-  ..._args: [ActivatedRouteSnapshot, RouterStateSnapshot]
-) => {
-  const router = inject(Router);
-  const userService = inject(UserService);
-
-  // If user is logged in, redirect to home and block route activation
-  if (userService.loggedIn()) {
-    router.navigate(['/home']);
-    return false;
-  }
-
-  // If not logged in, allow access to the route (login/register)
-  return true;
-};
-
-/**
  * Role based auth guard
  */
 export const roleAppGuard: CanActivateFn = (route: ActivatedRouteSnapshot) => {

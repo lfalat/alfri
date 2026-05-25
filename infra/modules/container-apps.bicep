@@ -316,6 +316,11 @@ resource keycloakApp 'Microsoft.App/containerApps@2024-03-01' = {
           keyVaultUrl: '${keyVaultUri}secrets/keycloak-admin-password'
           identity: keycloakIdentityId
         }
+        {
+          name: 'keycloak-webhook-secret'
+          keyVaultUrl: '${keyVaultUri}secrets/keycloak-webhook-secret'
+          identity: keycloakIdentityId
+        }
       ]
     }
     template: {
@@ -341,6 +346,8 @@ resource keycloakApp 'Microsoft.App/containerApps@2024-03-01' = {
             { name: 'KC_HEALTH_ENABLED', value: 'true' }
             { name: 'KC_METRICS_ENABLED', value: 'true' }
             { name: 'ALFRI_FRONTEND_URL', value: 'https://${frontendFqdn}' }
+            { name: 'ALFRI_KEYCLOAK_EVENT_WEBHOOK_URL', value: 'http://alfri-backend/api/internal/keycloak/users' }
+            { name: 'ALFRI_KEYCLOAK_EVENT_WEBHOOK_SECRET', secretRef: 'keycloak-webhook-secret' }
           ]
           probes: [
             {

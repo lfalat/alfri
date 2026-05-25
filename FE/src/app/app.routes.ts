@@ -1,8 +1,6 @@
 import type { Routes } from '@angular/router';
 import { HomeComponent } from '@pages/home/home.component';
-import { LoginComponent } from '@pages/login/login.component';
-import { RegistrationComponent } from '@pages/registration/registration.component';
-import { AuthGuards, loggedOutOnlyGuard, roleAppGuard, tokenAppGuard } from './auth-guards';
+import { AuthGuards, roleAppGuard, tokenAppGuard } from './auth-guards';
 import { ErrorPageComponent } from '@pages/error-page/error-page.component';
 import { ProfileComponent } from '@pages/profile/profile.component';
 import { inject } from '@angular/core';
@@ -20,21 +18,11 @@ import { KeywordsComponent } from '@pages/keywords/keywords.component';
 import { AuthRole } from '@enums/auth-role';
 
 export const routes: Routes = [
-  { path: '', redirectTo: 'login', pathMatch: 'full' },
+  { path: '', redirectTo: 'home', pathMatch: 'full' },
   {
     path: 'home',
     component: HomeComponent,
     canActivate: [(_route, state) => inject(AuthGuards).canActivate(state.url)],
-  },
-  {
-    path: 'login',
-    component: LoginComponent,
-    canActivate: [loggedOutOnlyGuard],
-  },
-  {
-    path: 'register',
-    component: RegistrationComponent,
-    canActivate: [loggedOutOnlyGuard],
   },
   {
     path: 'subjects',
@@ -106,5 +94,5 @@ export const routes: Routes = [
     canActivate: [tokenAppGuard],
   },
   { path: '404', component: ErrorPageComponent },
-  { path: '**', redirectTo: 'login' },
+  { path: '**', redirectTo: '404' },
 ];

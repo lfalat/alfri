@@ -21,7 +21,7 @@ export class KeycloakService {
         clientId: this.clientId,
       },
       initOptions: {
-        onLoad: 'check-sso',
+        onLoad: 'login-required',
         pkceMethod: 'S256',
         checkLoginIframe: false,
       },
@@ -50,7 +50,7 @@ export class KeycloakService {
 
   async logout(): Promise<void> {
     this.authenticatedSignal.set(false);
-    await this.keycloak.logout(`${window.location.origin}/login`);
+    await this.keycloak.logout(window.location.origin);
   }
 
   async getToken(): Promise<string | null> {
